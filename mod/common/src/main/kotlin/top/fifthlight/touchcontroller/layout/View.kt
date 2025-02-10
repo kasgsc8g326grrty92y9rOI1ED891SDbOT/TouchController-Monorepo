@@ -39,8 +39,8 @@ fun Context.View() {
                     INITIAL -> {
                         if (!releasedView) {
                             val pressTime = timer.tick - previousState.pressTime
-                            // Pressed less than 5 ticks and not moving, recognized as short click
-                            if (pressTime < 5 && !previousState.moving) {
+                            // Pressed less than time threshold and not moving, recognized as short click
+                            if (pressTime < config.viewHoldDetectTicks && !previousState.moving) {
                                 val crosshairTarget = viewActionProvider.getCrosshairTarget() ?: break
                                 when (crosshairTarget) {
                                     CrosshairTarget.BLOCK -> {
@@ -117,27 +117,27 @@ fun Context.View() {
         val crosshairTarget = viewActionProvider.getCrosshairTarget()
         val itemUsable = player.hasItemsOnHand(config.usableItems)
 
-        // If pointer kept still and held for 5 tick
-        if (pressTime == 5 && !moving) {
-            if (itemUsable) {
+        // If pointer kept still and held for hold-detecting ticks in config
+        if (viewState == INITIAL && pressTime >= config.viewHoldDetectTicks && !moving) {
+            viewState = if (itemUsable) {
                 // Trigger item long click
                 useKeyState.locked = true
-                viewState = USING
+                USING
             } else {
                 when (crosshairTarget) {
                     CrosshairTarget.BLOCK -> {
                         // Trigger block breaking
                         attackKeyState.locked = true
-                        viewState = BREAKING
+                        BREAKING
                     }
 
                     CrosshairTarget.ENTITY -> {
                         // Trigger item use once and consume
                         useKeyState.click()
-                        viewState = CONSUMED
+                        CONSUMED
                     }
 
-                    CrosshairTarget.MISS, null -> {}
+                    CrosshairTarget.MISS, null -> CONSUMED
                 }
             }
         }

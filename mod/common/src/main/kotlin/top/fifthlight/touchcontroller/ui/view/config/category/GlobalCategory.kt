@@ -198,6 +198,21 @@ data object GlobalCategory : ConfigCategory(
                             }
                         },
                     )
+                    IntSliderConfigItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        name = Text.translatable(Texts.SCREEN_OPTIONS_CATEGORY_CONTROL_VIEW_HOLD_DETECT_TICKS_TITLE),
+                        value = config.viewHoldDetectTicks,
+                        onValueChanged = { viewModel.updateConfig { copy(viewHoldDetectTicks = it) } },
+                        range = 1..60,
+                        onHovered = {
+                            if (it) {
+                                hoverData = HoverData(
+                                    name = Texts.SCREEN_OPTIONS_CATEGORY_CONTROL_VIEW_HOLD_DETECT_TICKS_TITLE,
+                                    description = Texts.SCREEN_OPTIONS_CATEGORY_CONTROL_VIEW_HOLD_DETECT_TICKS_DESCRIPTION,
+                                )
+                            }
+                        },
+                    )
                 }
 
                 var crosshairGroupExpanded by remember { mutableStateOf(true) }

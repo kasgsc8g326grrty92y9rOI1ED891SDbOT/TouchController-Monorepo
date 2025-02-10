@@ -19,6 +19,7 @@ data class GlobalConfig(
     // Control
     val viewMovementSensitivity: Float = 495f,
     val viewHoldDetectThreshold: Int = 2,
+    val viewHoldDetectTicks: Int = 5,
 
     // Crosshair
     val crosshair: CrosshairConfig = CrosshairConfig(),

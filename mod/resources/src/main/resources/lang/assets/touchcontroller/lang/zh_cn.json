@@ -43,7 +43,9 @@
   "touchcontroller.screen.options.category.control.view_movement_sensitivity.title": "视角移动灵敏度",
   "touchcontroller.screen.options.category.control.view_movement_sensitivity.description": "设置横向滑动整个屏幕时视野旋转的角度。",
   "touchcontroller.screen.options.category.control.view_hold_detect_threshold.title": "长按检测阈值",
-  "touchcontroller.screen.options.category.control.view_hold_detect_threshold.description": "设置判断屏幕点击是移动或者是长按移动距离的阈值。",
+  "touchcontroller.screen.options.category.control.view_hold_detect_threshold.description": "设置判断屏幕点击是长按还是移动所需要的最小移动距离。",
+  "touchcontroller.screen.options.category.control.view_hold_detect_ticks.title": "长按检测时间",
+  "touchcontroller.screen.options.category.control.view_hold_detect_ticks.description": "设置判断屏幕点击是否为长按所需要的最小按下时间。",
 
   "touchcontroller.screen.options.category.global.debug.title": "调试",
   "touchcontroller.screen.options.category.global.debug.show_pointers.title": "显示指针位置",

@@ -44,6 +44,8 @@
   "touchcontroller.screen.options.category.control.view_movement_sensitivity.description": "Set the angle of view direction changed when scroll the whole screen horizontally",
   "touchcontroller.screen.options.category.control.view_hold_detect_threshold.title": "Hold-detect threshold",
   "touchcontroller.screen.options.category.control.view_hold_detect_threshold.description": "Set the distance threshold of determining whether a pointer is moving or a long click.",
+  "touchcontroller.screen.options.category.control.view_hold_detect_ticks.title": "Hold-detect time",
+  "touchcontroller.screen.options.category.control.view_hold_detect_ticks.description": "Set the minimum pressing time of determining whether a pointer is a long click.",
 
   "touchcontroller.screen.options.category.global.debug.title": "Debug",
   "touchcontroller.screen.options.category.global.debug.show_pointers.title": "Show pointers",
