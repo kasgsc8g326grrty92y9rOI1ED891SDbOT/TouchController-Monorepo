@@ -34,7 +34,7 @@ public class ClientPlayerInteractionManagerMixin {
     @Final
     private ClientPlayNetworkHandler networkHandler;
     @Unique
-    private boolean resetPlayerLookTarget = false;
+    private boolean resetPlayerLookTarget;
 
     @Unique
     private float prevYaw;

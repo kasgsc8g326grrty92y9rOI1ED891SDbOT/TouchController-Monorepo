@@ -34,7 +34,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
     @Final
     private MinecraftClient client;
     @Unique
-    private boolean resetPlayerLookTarget = false;
+    private boolean resetPlayerLookTarget;
     @Unique
     private float prevYaw;
     @Unique
