@@ -240,6 +240,9 @@
   "touchcontroller.screen.options.widget.panorama_button.name": "全景图按钮",
   "touchcontroller.screen.options.widget.panorama_button.property.size": "按键大小: %s%%",
   "touchcontroller.screen.options.widget.panorama_button.property.classic": "经典外观",
+  "touchcontroller.screen.options.widget.hide_hud_button.name": "隐藏 HUD 按钮",
+  "touchcontroller.screen.options.widget.hide_hud_button.property.size": "按键大小: %s%%",
+  "touchcontroller.screen.options.widget.hide_hud_button.property.classic": "经典外观",
 
   "touchcontroller.screen.options.presets.title": "预设",
 

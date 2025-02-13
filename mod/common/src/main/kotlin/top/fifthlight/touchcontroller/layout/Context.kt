@@ -83,6 +83,7 @@ data class ContextResult(
     var boatRight: Boolean = false,
     var showBlockOutline: Boolean = false,
     var nextPerspective: Boolean = false,
+    var hideHud: Boolean = false,
 )
 
 enum class DPadDirection {

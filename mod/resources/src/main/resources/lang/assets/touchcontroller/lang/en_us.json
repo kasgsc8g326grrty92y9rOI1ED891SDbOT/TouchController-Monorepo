@@ -240,6 +240,9 @@
   "touchcontroller.screen.options.widget.panorama_button.name": "Panorama button",
   "touchcontroller.screen.options.widget.panorama_button.property.size": "Button size: %s%%",
   "touchcontroller.screen.options.widget.panorama_button.property.classic": "Classic look",
+  "touchcontroller.screen.options.widget.hide_hud_button.name": "Hide HUD Button",
+  "touchcontroller.screen.options.widget.hide_hud_button.property.size": "Button size: %s%%",
+  "touchcontroller.screen.options.widget.hide_hud_button.property.classic": "Classic look",
 
   "touchcontroller.screen.options.presets.title": "Presets",
 

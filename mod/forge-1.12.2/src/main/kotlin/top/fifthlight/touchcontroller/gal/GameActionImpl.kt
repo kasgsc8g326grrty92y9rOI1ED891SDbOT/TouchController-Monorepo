@@ -46,4 +46,10 @@ object GameActionImpl : GameAction {
             client.ingameGUI.chatGUI.printChatMessage(message)
         }
     }
+
+    override var hudHidden: Boolean
+        get() = client.gameSettings.hideGUI
+        set(value) {
+            client.gameSettings.hideGUI = value
+        }
 }

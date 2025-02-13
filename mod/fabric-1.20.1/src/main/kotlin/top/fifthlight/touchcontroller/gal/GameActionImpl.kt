@@ -53,4 +53,10 @@ object GameActionImpl : GameAction {
             }
         }
     }
+
+    override var hudHidden: Boolean
+        get() = client.options.hudHidden
+        set(value) {
+            client.options.hudHidden = value
+        }
 }

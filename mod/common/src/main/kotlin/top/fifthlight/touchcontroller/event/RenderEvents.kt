@@ -164,6 +164,9 @@ object RenderEvents : KoinComponent {
         if (result.nextPerspective) {
             gameAction.nextPerspective()
         }
+        if (result.hideHud) {
+            gameAction.hudHidden = !gameAction.hudHidden
+        }
         result.lookDirection?.let { (x, y) ->
             player.changeLookDirection(x.toDouble(), y.toDouble())
         }

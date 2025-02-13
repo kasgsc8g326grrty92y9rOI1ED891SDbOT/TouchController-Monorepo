@@ -100,6 +100,10 @@ private val DEFAULT_CONFIGS = persistentListOf(
         name = Texts.SCREEN_OPTIONS_WIDGET_PLAYER_LIST_BUTTON_NAME,
         config = PlayerListButton()
     ),
+    WidgetItem(
+        name = Texts.SCREEN_OPTIONS_WIDGET_HIDE_HUD_BUTTON_NAME,
+        config = HideHudButton()
+    ),
 )
 
 @Composable

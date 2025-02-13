@@ -16,4 +16,5 @@ interface GameAction : KoinComponent {
         val textFactory: TextFactory = get()
         sendMessage(textFactory.of(Texts.WARNING_TAKE_PANORAMA_UNSUPPORTED))
     }
+    var hudHidden: Boolean
 }

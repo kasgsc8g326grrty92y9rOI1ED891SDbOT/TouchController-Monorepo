@@ -42,4 +42,10 @@ object GameActionImpl : GameAction {
             }
         }
     }
+
+    override var hudHidden: Boolean
+        get() = client.options.hideGui
+        set(value) {
+            client.options.hideGui = value
+        }
 }
