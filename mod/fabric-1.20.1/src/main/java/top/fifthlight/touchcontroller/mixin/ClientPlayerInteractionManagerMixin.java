@@ -94,9 +94,9 @@ public abstract class ClientPlayerInteractionManagerMixin {
             return;
         }
         resetPlayerLookTarget = false;
-        this.sendSequencedPacket(this.client.world, sequence -> new PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(), player.getPitch(), player.isOnGround()));
         player.setYaw(prevYaw);
         player.setPitch(prevPitch);
+        this.sendSequencedPacket(this.client.world, sequence -> new PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(), player.getPitch(), player.isOnGround()));
     }
 
     @Inject(

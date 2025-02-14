@@ -81,9 +81,9 @@ public abstract class MultiPlayerGameModeMixin {
             return;
         }
         touchController$resetPlayerLookTarget = false;
-        this.startPrediction(this.minecraft.level, sequence -> new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
         player.setYRot(touchController$prevYaw);
         player.setXRot(touchController$prevPitch);
+        this.startPrediction(this.minecraft.level, sequence -> new ServerboundMovePlayerPacket.Rot(player.getYRot(), player.getXRot(), player.onGround()));
     }
 
     @Inject(
