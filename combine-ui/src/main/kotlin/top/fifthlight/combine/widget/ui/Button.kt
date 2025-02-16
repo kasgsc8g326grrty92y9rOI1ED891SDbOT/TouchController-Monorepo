@@ -100,13 +100,13 @@ fun Button(
         modifier = Modifier
             .border(texture)
             .minSize(48, 20)
-            .focusable(interactionSource)
             .clickable(interactionSource) {
                 if (clickSound) {
                     soundManager.play(SoundKind.BUTTON_PRESS, 1f)
                 }
                 onClick()
             }
+            .focusable(interactionSource)
             .then(modifier),
         alignment = Alignment.Center,
     ) {

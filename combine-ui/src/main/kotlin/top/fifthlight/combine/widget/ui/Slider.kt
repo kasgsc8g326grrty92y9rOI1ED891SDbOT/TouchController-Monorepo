@@ -92,12 +92,12 @@ fun Slider(
     Canvas(
         modifier = Modifier
             .height(height = 16)
-            .focusable(interactionSource)
             .draggable(interactionSource) { _, absolute ->
                 val rawProgress = (absolute.x - handleLeftHalfWidth) / (size.width - handleTexture.size.width)
                 val newProgress = rawProgress.coerceIn(0f, 1f)
                 onValueChanged(newProgress.toValue())
             }
+            .focusable(interactionSource)
             .then(modifier),
     ) { node ->
         with(canvas) {

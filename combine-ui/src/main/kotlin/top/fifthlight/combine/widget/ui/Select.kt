@@ -154,10 +154,10 @@ fun <T> SelectScope.SelectItemList(
             Text(
                 modifier = Modifier
                     .border(texture)
-                    .focusable(interactionSource)
                     .clickable(interactionSource) {
                         onItemSelected(index)
-                    },
+                    }
+                    .focusable(interactionSource),
                 color = if (index == selectedIndex) {
                     Colors.BLACK
                 } else {

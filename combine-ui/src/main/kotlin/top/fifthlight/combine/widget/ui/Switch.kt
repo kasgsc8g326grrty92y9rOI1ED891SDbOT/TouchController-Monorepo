@@ -61,13 +61,13 @@ fun Switch(
     Canvas(
         modifier = Modifier
             .size(texture.size)
-            .focusable(interactionSource)
             .clickable(interactionSource) {
                 if (clickSound) {
                     soundManager.play(SoundKind.BUTTON_PRESS, 1f)
                 }
                 onChanged(!checked)
             }
+            .focusable(interactionSource)
             .then(modifier),
     ) {
         canvas.drawTexture(
