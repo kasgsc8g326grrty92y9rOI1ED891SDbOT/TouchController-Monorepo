@@ -150,7 +150,7 @@ fun Canvas.drawNinePatchTexture(
             size = IntSize(textureSize.width - scaleArea.right, scaleArea.top)
         ),
         dst = IntRect(
-            offset = IntOffset(dstBottomRightCornerOffset.left, dstRect.top),
+            offset = dstRect.offset + IntOffset(dstBottomRightCornerOffset.left, dstRect.top),
             size = IntSize(textureSize.width - scaleArea.right, scaleArea.top)
         )
     )

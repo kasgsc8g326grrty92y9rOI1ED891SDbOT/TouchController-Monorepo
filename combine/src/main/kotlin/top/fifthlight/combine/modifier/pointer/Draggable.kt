@@ -14,11 +14,13 @@ import top.fifthlight.data.Offset
 
 sealed class DragInteraction : Interaction {
     data object Empty : DragInteraction()
+    data object Hover : DragInteraction()
     data object Active : DragInteraction()
 }
 
 class DragState internal constructor(
     internal var pressed: Boolean = false,
+    internal var entered: Boolean = false,
     internal var lastPosition: Offset? = null
 )
 
@@ -26,22 +28,33 @@ class DragState internal constructor(
 fun Modifier.draggable(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     dragState: DragState = remember { DragState() },
-    onDrag: (Offset) -> Unit
+    onDrag: (relative: Offset) -> Unit
+) = then(DraggableModifierNode(interactionSource, dragState, onDrag = { relative, _ -> onDrag(relative) }))
+
+@Composable
+fun Modifier.draggable(
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    dragState: DragState = remember { DragState() },
+    onDrag: Placeable.(relative: Offset, absolute: Offset) -> Unit
 ) = then(DraggableModifierNode(interactionSource, dragState, onDrag = onDrag))
 
 private data class DraggableModifierNode(
     val interactionSource: MutableInteractionSource,
     val dragState: DragState,
-    val onDrag: (Offset) -> Unit,
+    val onDrag: Placeable.(relative: Offset, absolute: Offset) -> Unit,
 ) : Modifier.Node<DraggableModifierNode>, PointerInputModifierNode {
 
     override fun onPointerEvent(
         event: PointerEvent,
         node: Placeable,
         layoutNode: LayoutNode,
-        children: (PointerEvent) -> Boolean
+        children: (PointerEvent) -> Boolean,
     ): Boolean {
         when (event.type) {
+            PointerEventType.Enter -> dragState.entered = true
+
+            PointerEventType.Leave -> dragState.entered = false
+
             PointerEventType.Press -> {
                 dragState.pressed = true
                 dragState.lastPosition = event.position
@@ -50,11 +63,12 @@ private data class DraggableModifierNode(
             PointerEventType.Move -> {
                 if (dragState.pressed) {
                     val lastPosition = dragState.lastPosition
+                    val absolutePosition = event.position - node.absolutePosition
                     if (lastPosition != null) {
                         val diff = event.position - lastPosition
-                        onDrag(diff)
+                        onDrag(node, diff, absolutePosition)
                     } else {
-                        onDrag(Offset.ZERO)
+                        onDrag(node, Offset.ZERO, absolutePosition)
                     }
                     dragState.lastPosition = event.position
                 }
@@ -67,7 +81,11 @@ private data class DraggableModifierNode(
         if (dragState.pressed) {
             interactionSource.tryEmit(DragInteraction.Active)
         } else {
-            interactionSource.tryEmit(DragInteraction.Empty)
+            if (dragState.entered) {
+                interactionSource.tryEmit(DragInteraction.Hover)
+            } else {
+                interactionSource.tryEmit(DragInteraction.Empty)
+            }
         }
         return true
     }
