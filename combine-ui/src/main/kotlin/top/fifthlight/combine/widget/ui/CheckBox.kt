@@ -1,0 +1,69 @@
+package top.fifthlight.combine.widget.ui
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
+import top.fifthlight.combine.input.MutableInteractionSource
+import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.combine.modifier.focus.focusable
+import top.fifthlight.combine.modifier.pointer.clickable
+import top.fifthlight.combine.ui.style.TextureSet
+import top.fifthlight.touchcontroller.assets.Textures
+
+data class CheckBoxTextureSet(
+    val unchecked: TextureSet,
+    val checked: TextureSet,
+)
+
+val defaultCheckBoxTextureSet = CheckBoxTextureSet(
+    unchecked = TextureSet(
+        normal = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX,
+        focus = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX,
+        hover = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX,
+        active = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX,
+        disabled = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX,
+    ),
+    checked = TextureSet(
+        normal = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX_CHECKED,
+        focus = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX_CHECKED,
+        hover = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX_CHECKED,
+        active = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX_CHECKED,
+        disabled = Textures.GUI_WIDGET_CHECKBOX_CHECKBOX_CHECKED,
+    )
+)
+
+val LocalCheckBoxTextureSet = staticCompositionLocalOf<CheckBoxTextureSet> { defaultCheckBoxTextureSet }
+
+@Composable
+fun CheckBox(
+    modifier: Modifier = Modifier,
+    textureSet: CheckBoxTextureSet = LocalCheckBoxTextureSet.current,
+    value: Boolean,
+    onValueChanged: ((Boolean) -> Unit)?,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val state by widgetState(interactionSource)
+    val currentTextureSet = if (value) {
+        textureSet.checked
+    } else {
+        textureSet.unchecked
+    }
+    val texture = currentTextureSet.getByState(state)
+
+    val modifier = if (onValueChanged == null) {
+        modifier
+    } else {
+        Modifier
+            .clickable(interactionSource) {
+                onValueChanged(!value)
+            }
+            .focusable(interactionSource)
+            .then(modifier)
+    }
+
+    Icon(
+        modifier = modifier,
+        texture = texture
+    )
+}

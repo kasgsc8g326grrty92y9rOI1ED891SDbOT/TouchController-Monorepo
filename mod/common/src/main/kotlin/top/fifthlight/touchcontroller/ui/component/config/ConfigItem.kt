@@ -47,8 +47,8 @@ fun SwitchConfigItem(
     ) {
         Text(name)
         Switch(
-            checked = value,
-            onChanged = onValueChanged
+            value = value,
+            onValueChanged = onValueChanged
         )
     }
 }
@@ -290,8 +290,8 @@ fun ItemListConfigItem(
                 Text(subclass.name)
                 ItemShower(items = subclass.items)
                 Switch(
-                    checked = value.subclasses.contains(subclass),
-                    onChanged = {
+                    value = value.subclasses.contains(subclass),
+                    onValueChanged = {
                         if (it) {
                             onValueChanged(value.copy(subclasses = value.subclasses.add(subclass)))
                         } else {

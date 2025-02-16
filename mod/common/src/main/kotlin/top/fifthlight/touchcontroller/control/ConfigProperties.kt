@@ -32,8 +32,8 @@ class BooleanProperty<Config : ControllerWidget>(
             Text(message)
             Spacer(modifier.weight(1f))
             Switch(
-                checked = getValue(widgetConfig),
-                onChanged = {
+                value = getValue(widgetConfig),
+                onValueChanged = {
                     onConfigChanged(setValue(widgetConfig, it))
                 }
             )

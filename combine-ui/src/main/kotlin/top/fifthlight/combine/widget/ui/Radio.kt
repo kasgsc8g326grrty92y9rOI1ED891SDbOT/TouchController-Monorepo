@@ -11,44 +11,45 @@ import top.fifthlight.combine.modifier.pointer.clickable
 import top.fifthlight.combine.ui.style.TextureSet
 import top.fifthlight.touchcontroller.assets.Textures
 
-data class SwitchTextureSet(
-    val off: TextureSet,
-    val on: TextureSet,
+data class RadioTextureSet(
+    val unchecked: TextureSet,
+    val checked: TextureSet,
 )
 
-val defaultSwitchTexture = SwitchTextureSet(
-    off = TextureSet(
-        normal = Textures.GUI_WIDGET_SWITCH_SWITCH_OFF,
-        focus = Textures.GUI_WIDGET_SWITCH_SWITCH_OFF_HOVER,
-        hover = Textures.GUI_WIDGET_SWITCH_SWITCH_OFF_HOVER,
-        active = Textures.GUI_WIDGET_SWITCH_SWITCH_OFF_ACTIVE,
-        disabled = Textures.GUI_WIDGET_SWITCH_SWITCH_OFF_DISABLED,
+val defaultRadioTextureSet = RadioTextureSet(
+    unchecked = TextureSet(
+        normal = Textures.GUI_WIDGET_RADIO_RADIO,
+        focus = Textures.GUI_WIDGET_RADIO_RADIO,
+        hover = Textures.GUI_WIDGET_RADIO_RADIO,
+        active = Textures.GUI_WIDGET_RADIO_RADIO,
+        disabled = Textures.GUI_WIDGET_RADIO_RADIO,
     ),
-    on = TextureSet(
-        normal = Textures.GUI_WIDGET_SWITCH_SWITCH_ON,
-        focus = Textures.GUI_WIDGET_SWITCH_SWITCH_ON_HOVER,
-        hover = Textures.GUI_WIDGET_SWITCH_SWITCH_ON_HOVER,
-        active = Textures.GUI_WIDGET_SWITCH_SWITCH_ON_ACTIVE,
-        disabled = Textures.GUI_WIDGET_SWITCH_SWITCH_ON_DISABLED,
-    ),
+    checked = TextureSet(
+        normal = Textures.GUI_WIDGET_RADIO_RADIO_CHECKED,
+        focus = Textures.GUI_WIDGET_RADIO_RADIO_CHECKED,
+        hover = Textures.GUI_WIDGET_RADIO_RADIO_CHECKED,
+        active = Textures.GUI_WIDGET_RADIO_RADIO_CHECKED,
+        disabled = Textures.GUI_WIDGET_RADIO_RADIO_CHECKED,
+    )
 )
 
-val LocalSwitchTexture = staticCompositionLocalOf<SwitchTextureSet> { defaultSwitchTexture }
+val LocalRadioTextureSet = staticCompositionLocalOf<RadioTextureSet> { defaultRadioTextureSet }
 
 @Composable
-fun Switch(
+fun Radio(
     modifier: Modifier = Modifier,
-    textureSet: SwitchTextureSet = LocalSwitchTexture.current,
+    textureSet: RadioTextureSet = LocalRadioTextureSet.current,
     value: Boolean,
     onValueChanged: ((Boolean) -> Unit)?,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val state by widgetState(interactionSource)
-    val texture = if (value) {
-        textureSet.on.getByState(state)
+    val currentTextureSet = if (value) {
+        textureSet.checked
     } else {
-        textureSet.off.getByState(state)
+        textureSet.unchecked
     }
+    val texture = currentTextureSet.getByState(state)
 
     val modifier = if (onValueChanged == null) {
         modifier
@@ -63,6 +64,6 @@ fun Switch(
 
     Icon(
         modifier = modifier,
-        texture = texture,
+        texture = texture
     )
 }

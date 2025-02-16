@@ -82,8 +82,8 @@ data object LayoutCategory : ConfigCategory(
 
                 Text(Text.translatable(Texts.SCREEN_OPTIONS_WIDGET_LOCK_MOVING_TITLE))
                 Switch(
-                    checked = uiState.lockMoving,
-                    onChanged = {
+                    value = uiState.lockMoving,
+                    onValueChanged = {
                         viewModel.setLockMoving(it)
                     }
                 )
