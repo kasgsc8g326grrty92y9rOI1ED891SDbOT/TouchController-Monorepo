@@ -22,16 +22,12 @@ val LocalCombineOwner: ProvidableCompositionLocal<CombineOwner> =
 val LocalTextMeasurer: ProvidableCompositionLocal<TextMeasurer> =
     staticCompositionLocalOf { error("No TextMeasurer in context") }
 
-abstract class CombineCoroutineDispatcher : CoroutineDispatcher() {
-    abstract fun execute()
-}
-
 interface DisposableLayer {
     fun dispose()
 }
 
 class CombineOwner(
-    private val dispatcher: CombineCoroutineDispatcher,
+    private val dispatcher: CoroutineDispatcher,
     private val textMeasurer: TextMeasurer
 ) : CoroutineScope, PointerEventReceiver, TextInputReceiver, KeyEventReceiver {
     private val clock = BroadcastFrameClock()
@@ -149,7 +145,6 @@ class CombineOwner(
 
     fun render(size: IntSize, context: RenderContext) {
         clock.sendFrame(System.nanoTime())
-        dispatcher.execute()
         for (layer in layers) {
             layer.rootNode.measure(
                 Constraints(

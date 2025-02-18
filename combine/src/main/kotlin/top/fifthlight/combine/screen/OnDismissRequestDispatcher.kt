@@ -38,7 +38,7 @@ private class OnDismissRequestDispatcherImpl : OnDismissRequestDispatcher {
     }
 
     override fun dispatchOnDismissed() {
-        handlers.forEach(OnDismissHandler::handleOnDismissed)
+        handlers.lastOrNull { it.isEnabled }?.handleOnDismissed()
     }
 
     override fun hasEnabledCallbacks(): Boolean = handlers.any { it.isEnabled }

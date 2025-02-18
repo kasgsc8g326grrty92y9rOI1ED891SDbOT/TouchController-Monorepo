@@ -10,6 +10,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     api(libs.kotlinx.collections.immutable)
     api(libs.compose.runtime)
+    api(libs.compose.runtime.saveable)
     api(project(":common-data"))
 }
 

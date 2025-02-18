@@ -5,6 +5,7 @@ import top.fifthlight.combine.input.InteractionSource
 import top.fifthlight.combine.modifier.focus.FocusInteraction
 import top.fifthlight.combine.modifier.pointer.ClickInteraction
 import top.fifthlight.combine.modifier.pointer.DragInteraction
+import top.fifthlight.combine.ui.style.ColorSet
 import top.fifthlight.combine.ui.style.NinePatchTextureSet
 import top.fifthlight.combine.ui.style.TextureSet
 
@@ -33,6 +34,17 @@ internal fun TextureSet.getByState(state: WidgetState, disabled: Boolean = false
 }
 
 internal fun NinePatchTextureSet.getByState(state: WidgetState, disabled: Boolean = false) = if (disabled) {
+    this.disabled
+} else {
+    when (state) {
+        WidgetState.NORMAL -> normal
+        WidgetState.HOVER -> hover
+        WidgetState.ACTIVE -> active
+        WidgetState.FOCUS -> focus
+    }
+}
+
+internal fun ColorSet.getByState(state: WidgetState, disabled: Boolean = false) = if (disabled) {
     this.disabled
 } else {
     when (state) {

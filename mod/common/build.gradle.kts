@@ -23,7 +23,6 @@ dependencies {
     implementation(project(":proxy-client"))
     implementation(project(":proxy-server"))
 
-    api(libs.compose.runtime)
     api(project(":combine"))
     api(project(":combine-ui"))
 
@@ -36,6 +35,10 @@ dependencies {
     api(libs.kotlinx.collections.immutable)
     api(libs.kotlinx.serialization.json)
     api(libs.kotlinx.coroutines.core)
+
+    api(libs.voyager.navigator)
+    api(libs.voyager.screenModel)
+    api(libs.voyager.koin)
 }
 
 kotlin {

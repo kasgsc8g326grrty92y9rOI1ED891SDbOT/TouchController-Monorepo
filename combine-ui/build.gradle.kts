@@ -15,6 +15,7 @@ tasks.compileKotlin {
 
 dependencies {
     implementation(project(":combine"))
+    api(libs.koin.compose)
 }
 
 kotlin {

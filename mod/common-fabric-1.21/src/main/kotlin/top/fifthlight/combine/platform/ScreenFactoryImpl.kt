@@ -9,6 +9,8 @@ import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import org.koin.compose.KoinContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.lwjgl.glfw.GLFW
 import top.fifthlight.combine.data.LocalDataComponentTypeFactory
 import top.fifthlight.combine.data.LocalItemFactory
@@ -32,6 +34,7 @@ import top.fifthlight.combine.util.CloseHandler
 import top.fifthlight.combine.util.LocalCloseHandler
 import top.fifthlight.data.IntSize
 import top.fifthlight.data.Offset
+import top.fifthlight.touchcontroller.gal.GameDispatcher
 import kotlin.coroutines.CoroutineContext
 import top.fifthlight.combine.data.Text as CombineText
 
@@ -46,11 +49,11 @@ private class ScreenCloseHandler(private val screen: Screen) : CloseHandler {
 private class CombineScreen(
     title: Text,
     private val parent: Screen?,
-) : Screen(title), CoroutineScope {
+) : Screen(title), CoroutineScope, KoinComponent {
     private val currentClient = MinecraftClient.getInstance()
     private var initialized = false
     private val textMeasurer = TextMeasurerImpl(currentClient.textRenderer)
-    private val dispatcher = GameDispatcherImpl(currentClient)
+    private val dispatcher: GameDispatcher by inject()
     private val soundManager = SoundManagerImpl(currentClient.soundManager)
     private val closeHandler = ScreenCloseHandler(this@CombineScreen)
     private val dismissDispatcher = OnDismissRequestDispatcher()
