@@ -15,7 +15,10 @@ import top.fifthlight.combine.modifier.pointer.clickable
 import top.fifthlight.combine.modifier.pointer.consumePress
 import top.fifthlight.combine.node.LocalTextMeasurer
 import top.fifthlight.combine.paint.Colors
-import top.fifthlight.combine.ui.style.*
+import top.fifthlight.combine.ui.style.ColorTheme
+import top.fifthlight.combine.ui.style.LocalColorTheme
+import top.fifthlight.combine.ui.style.NinePatchTextureSet
+import top.fifthlight.combine.ui.style.TextStyle
 import top.fifthlight.combine.widget.base.Popup
 import top.fifthlight.combine.widget.base.layout.Box
 import top.fifthlight.combine.widget.base.layout.Row
@@ -194,15 +197,11 @@ fun Select(
 
     var anchor by remember { mutableStateOf<IntRect?>(null) }
     val colorTheme = colorTheme ?: ColorTheme.light
-    val textStyle = textStyle ?: LocalTextStyle.current.copy(
-        //shadow = true,
-    )
 
     @Composable
     fun ContentStyle(content: @Composable () -> Unit) {
         CompositionLocalProvider(
             LocalColorTheme provides colorTheme,
-            LocalTextStyle provides textStyle,
             content = content,
         )
     }

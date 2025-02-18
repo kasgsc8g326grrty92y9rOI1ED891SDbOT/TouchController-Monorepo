@@ -8,6 +8,8 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.util.ChatAllowedCharacters
 import org.koin.compose.KoinContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 import top.fifthlight.combine.data.DataComponentTypeFactory
@@ -22,6 +24,7 @@ import top.fifthlight.combine.input.pointer.PointerEventType
 import top.fifthlight.combine.input.pointer.PointerType
 import top.fifthlight.combine.node.CombineOwner
 import top.fifthlight.combine.paint.RenderContext
+import top.fifthlight.combine.screen.LocalOnDismissRequestDispatcher
 import top.fifthlight.combine.screen.LocalScreenFactory
 import top.fifthlight.combine.screen.OnDismissRequestDispatcher
 import top.fifthlight.combine.screen.ScreenFactory
@@ -30,6 +33,7 @@ import top.fifthlight.combine.util.CloseHandler
 import top.fifthlight.combine.util.LocalCloseHandler
 import top.fifthlight.data.IntSize
 import top.fifthlight.data.Offset
+import top.fifthlight.touchcontroller.gal.GameDispatcher
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.sign
 import top.fifthlight.combine.data.Text as CombineText
@@ -44,11 +48,11 @@ private class ScreenCloseHandler(private val screen: CombineScreen) : CloseHandl
 
 private class CombineScreen(
     private val parent: GuiScreen?,
-) : GuiScreen(), CoroutineScope {
+) : GuiScreen(), CoroutineScope, KoinComponent {
     private val client = Minecraft.getMinecraft()
     private var initialized = false
     private val textMeasurer = TextMeasurerImpl(client.fontRenderer)
-    private val dispatcher = GameDispatcherImpl(client)
+    private val dispatcher: GameDispatcher by inject()
     private val soundManager = SoundManagerImpl(client.soundHandler)
     private val closeHandler = ScreenCloseHandler(this@CombineScreen)
     private val dismissDispatcher = OnDismissRequestDispatcher()
@@ -69,6 +73,7 @@ private class CombineScreen(
                     LocalDataComponentTypeFactory provides DataComponentTypeFactory.Unsupported,
                     LocalClipboard provides ClipboardHandlerImpl,
                     LocalScreenFactory provides ScreenFactoryImpl,
+                    LocalOnDismissRequestDispatcher provides dismissDispatcher,
                 ) {
                     content()
                 }

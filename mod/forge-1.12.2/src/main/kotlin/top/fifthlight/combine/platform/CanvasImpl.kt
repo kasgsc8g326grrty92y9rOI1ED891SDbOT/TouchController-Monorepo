@@ -33,6 +33,7 @@ class CanvasImpl(
     }
 
     private val client = Minecraft.getMinecraft()
+    override val textLineHeight: Int = fontRenderer.FONT_HEIGHT
     private val scaledResolution by lazy { ScaledResolution(client) }
     private val itemRenderer = client.renderItem
     override var blendEnabled = true
@@ -140,25 +141,6 @@ class CanvasImpl(
 
     override fun drawText(offset: IntOffset, width: Int, text: CombineText, color: Color) =
         drawText(offset, width, text.toMinecraft().formattedText, color)
-
-    override fun drawTextWithShadow(offset: IntOffset, text: String, color: Color) {
-        withBlend {
-            fontRenderer.drawStringWithShadow(text, offset.x.toFloat(), offset.y.toFloat(), color.value)
-        }
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, width: Int, text: String, color: Color) {
-        // TODO wrap text
-        withBlend {
-            fontRenderer.drawStringWithShadow(text, offset.x.toFloat(), offset.y.toFloat(), color.value)
-        }
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, text: CombineText, color: Color) =
-        drawTextWithShadow(offset, text.toMinecraft().formattedText, color)
-
-    override fun drawTextWithShadow(offset: IntOffset, width: Int, text: CombineText, color: Color) =
-        drawTextWithShadow(offset, width, text.toMinecraft().formattedText, color)
 
     override fun drawTexture(
         texture: Texture,

@@ -9,16 +9,20 @@ import top.fifthlight.combine.modifier.focus.focusable
 import top.fifthlight.combine.modifier.placement.minSize
 import top.fifthlight.combine.modifier.pointer.clickable
 import top.fifthlight.combine.paint.Color
+import top.fifthlight.combine.paint.Colors
 import top.fifthlight.combine.sound.LocalSoundManager
 import top.fifthlight.combine.sound.SoundKind
-import top.fifthlight.combine.ui.style.*
+import top.fifthlight.combine.ui.style.ColorSet
+import top.fifthlight.combine.ui.style.ColorTheme
+import top.fifthlight.combine.ui.style.LocalColorTheme
+import top.fifthlight.combine.ui.style.TextStyle
 import top.fifthlight.combine.widget.base.layout.Box
 import top.fifthlight.combine.widget.base.layout.BoxScope
 
 val defaultTextButtonColorSet = ColorSet(
-    normal = Color(0xFFC6C6C6u),
-    focus = Color(0xFF717171u),
-    hover = Color(0xFF717171u),
+    normal = Colors.TRANSPARENT,
+    focus = Color(0x55FFFFFFu),
+    hover = Color(0x55FFFFFFu),
     active = Color(0xFF228207u),
     disabled = Color(0xFF323335u),
 )
@@ -55,12 +59,8 @@ fun TextButton(
         alignment = Alignment.Center,
     ) {
         val colorTheme = colorTheme ?: ColorTheme.dark
-        val textStyle = textStyle ?: LocalTextStyle.current.copy(
-            //shadow = true,
-        )
         CompositionLocalProvider(
             LocalColorTheme provides colorTheme,
-            LocalTextStyle provides textStyle,
         ) {
             content()
         }

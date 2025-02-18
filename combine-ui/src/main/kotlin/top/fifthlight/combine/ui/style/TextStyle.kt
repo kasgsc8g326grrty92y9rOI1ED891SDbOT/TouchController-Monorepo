@@ -7,7 +7,6 @@ import top.fifthlight.combine.data.TextFactory
 val LocalTextStyle = staticCompositionLocalOf<TextStyle> { TextStyle.default }
 
 data class TextStyle(
-    val shadow: Boolean = false,
     val bold: Boolean = false,
     val underline: Boolean = false,
     val italic: Boolean = false,

@@ -60,6 +60,7 @@ enum class GuiTexture {
 }
 
 interface Canvas {
+    val textLineHeight: Int
     var blendEnabled: Boolean
     val textMeasurer: TextMeasurer
 
@@ -73,12 +74,8 @@ interface Canvas {
     fun drawRect(offset: IntOffset = IntOffset.ZERO, size: IntSize = IntSize.ZERO, color: Color)
     fun drawText(offset: IntOffset, text: String, color: Color)
     fun drawText(offset: IntOffset, width: Int, text: String, color: Color)
-    fun drawTextWithShadow(offset: IntOffset, text: String, color: Color)
-    fun drawTextWithShadow(offset: IntOffset, width: Int, text: String, color: Color)
     fun drawText(offset: IntOffset, text: Text, color: Color)
     fun drawText(offset: IntOffset, width: Int, text: Text, color: Color)
-    fun drawTextWithShadow(offset: IntOffset, text: Text, color: Color)
-    fun drawTextWithShadow(offset: IntOffset, width: Int, text: Text, color: Color)
     fun drawTexture(
         texture: Texture,
         dstRect: Rect,

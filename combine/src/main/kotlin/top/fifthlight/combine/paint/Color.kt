@@ -32,4 +32,5 @@ object Colors {
     val RED = Color(0xFFFF0000u)
     val GREEN = Color(0xFF00FF00u)
     val BLUE = Color(0xFF0000FFu)
+    val TRANSPARENT = Color(0x00000000u)
 }

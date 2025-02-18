@@ -47,6 +47,7 @@ class CanvasImpl(
         enableBlend()
     }
 
+    override val textLineHeight: Int = textRenderer.lineHeight
     override var blendEnabled = true
     override val textMeasurer: TextMeasurer = TextMeasurerImpl(textRenderer)
 
@@ -99,24 +100,6 @@ class CanvasImpl(
 
     override fun drawText(offset: IntOffset, width: Int, text: CombineText, color: Color) {
         drawContext.drawWordWrap(textRenderer, text.toMinecraft(), offset.x, offset.y, width, color.value)
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, text: String, color: Color) {
-        drawContext.drawString(textRenderer, text, offset.x, offset.y, color.value, true)
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, width: Int, text: String, color: Color) {
-        // TODO wrap text
-        drawContext.drawString(textRenderer, text, offset.x, offset.y, color.value, true)
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, text: CombineText, color: Color) {
-        drawContext.drawString(textRenderer, text.toMinecraft(), offset.x, offset.y, color.value, true)
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, width: Int, text: CombineText, color: Color) {
-        // TODO wrap text
-        drawContext.drawString(textRenderer, text.toMinecraft(), offset.x, offset.y, color.value, true)
     }
 
     override fun drawTexture(

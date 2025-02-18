@@ -1,5 +1,6 @@
 package top.fifthlight.combine.platform
 
+import net.minecraft.text.LiteralTextContent
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
@@ -38,7 +39,7 @@ class TextBuilderImpl(
     }
 
     override fun append(string: String) {
-        this.text.append(string)
+        this.text.append(MutableText.of(LiteralTextContent(string)).setStyle(style))
     }
 
     override fun appendWithoutStyle(text: CombineText) {

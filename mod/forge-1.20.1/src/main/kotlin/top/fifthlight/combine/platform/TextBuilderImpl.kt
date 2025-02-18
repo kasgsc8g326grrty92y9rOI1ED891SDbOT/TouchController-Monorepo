@@ -3,6 +3,7 @@ package top.fifthlight.combine.platform
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
+import net.minecraft.network.chat.contents.LiteralContents
 import top.fifthlight.combine.data.TextBuilder
 import top.fifthlight.combine.data.Text as CombineText
 
@@ -38,7 +39,7 @@ class TextBuilderImpl(
     }
 
     override fun append(string: String) {
-        this.text.append(string)
+        this.text.append(MutableComponent.create(LiteralContents(string)).setStyle(style))
     }
 
     override fun appendWithoutStyle(text: CombineText) {

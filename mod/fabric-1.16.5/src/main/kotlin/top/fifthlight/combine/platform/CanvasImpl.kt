@@ -42,6 +42,7 @@ class CanvasImpl(
     }
 
     private val client = MinecraftClient.getInstance()
+    override val textLineHeight: Int = textRenderer.fontHeight
     override var blendEnabled = true
     override val textMeasurer: TextMeasurer = TextMeasurerImpl(textRenderer)
 
@@ -155,30 +156,6 @@ class CanvasImpl(
         var y = offset.y.toFloat()
         for (line in textRenderer.wrapLines(text.toMinecraft(), width)) {
             textRenderer.draw(matrices, line, offset.x.toFloat(), y, color.value)
-            y += textRenderer.fontHeight
-        }
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, text: String, color: Color) {
-        textRenderer.drawWithShadow(matrices, text, offset.x.toFloat(), offset.y.toFloat(), color.value)
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, width: Int, text: String, color: Color) {
-        var y = offset.y.toFloat()
-        for (line in textRenderer.wrapLines(Text.of(text), width)) {
-            textRenderer.drawWithShadow(matrices, line, offset.x.toFloat(), y, color.value)
-            y += textRenderer.fontHeight
-        }
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, text: CombineText, color: Color) {
-        textRenderer.drawWithShadow(matrices, text.toMinecraft(), offset.x.toFloat(), offset.y.toFloat(), color.value)
-    }
-
-    override fun drawTextWithShadow(offset: IntOffset, width: Int, text: CombineText, color: Color) {
-        var y = offset.y.toFloat()
-        for (line in textRenderer.wrapLines(text.toMinecraft(), width)) {
-            textRenderer.drawWithShadow(matrices, line, offset.x.toFloat(), y, color.value)
             y += textRenderer.fontHeight
         }
     }

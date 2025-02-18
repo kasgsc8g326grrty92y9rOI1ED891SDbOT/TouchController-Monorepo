@@ -25,14 +25,12 @@ fun Text(
             text = text,
             modifier = modifier,
             color = color,
-            shadow = textStyle.shadow,
         )
     } else {
         BaseText(
             text = text,
             modifier = modifier,
             color = color,
-            shadow = textStyle.shadow,
         )
     }
 }
@@ -51,14 +49,12 @@ fun Text(
             text = text,
             modifier = modifier,
             color = color,
-            shadow = textStyle.shadow,
         )
     } else {
         BaseText(
             text = text,
             modifier = modifier,
             color = color,
-            shadow = textStyle.shadow,
         )
     }
 }

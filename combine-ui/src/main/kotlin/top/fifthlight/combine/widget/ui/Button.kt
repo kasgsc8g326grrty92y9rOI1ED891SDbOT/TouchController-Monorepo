@@ -10,7 +10,10 @@ import top.fifthlight.combine.modifier.placement.minSize
 import top.fifthlight.combine.modifier.pointer.clickable
 import top.fifthlight.combine.sound.LocalSoundManager
 import top.fifthlight.combine.sound.SoundKind
-import top.fifthlight.combine.ui.style.*
+import top.fifthlight.combine.ui.style.ColorTheme
+import top.fifthlight.combine.ui.style.LocalColorTheme
+import top.fifthlight.combine.ui.style.NinePatchTextureSet
+import top.fifthlight.combine.ui.style.TextStyle
 import top.fifthlight.combine.widget.base.layout.Box
 import top.fifthlight.combine.widget.base.layout.BoxScope
 import top.fifthlight.touchcontroller.assets.Textures
@@ -46,7 +49,7 @@ fun GuideButton(
     textStyle: TextStyle? = null,
     onClick: () -> Unit,
     clickSound: Boolean = true,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Button(
         modifier = modifier,
@@ -68,7 +71,7 @@ fun WarningButton(
     textStyle: TextStyle? = null,
     onClick: () -> Unit,
     clickSound: Boolean = true,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Button(
         modifier = modifier,
@@ -89,7 +92,7 @@ fun Button(
     textStyle: TextStyle? = null,
     onClick: () -> Unit,
     clickSound: Boolean = true,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val soundManager = LocalSoundManager.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -111,12 +114,8 @@ fun Button(
         alignment = Alignment.Center,
     ) {
         val colorTheme = colorTheme ?: ColorTheme.light
-        val textStyle = textStyle ?: LocalTextStyle.current.copy(
-            //shadow = true,
-        )
         CompositionLocalProvider(
             LocalColorTheme provides colorTheme,
-            LocalTextStyle provides textStyle,
         ) {
             content()
         }

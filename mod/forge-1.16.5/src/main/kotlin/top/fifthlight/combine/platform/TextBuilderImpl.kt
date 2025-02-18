@@ -38,7 +38,7 @@ class TextBuilderImpl(
     }
 
     override fun append(string: String) {
-        this.text.append(string)
+        this.text.append(StringTextComponent(string).setStyle(style))
     }
 
     override fun appendWithoutStyle(text: CombineText) {

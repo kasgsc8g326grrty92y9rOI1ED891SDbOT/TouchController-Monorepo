@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.util.text.ITextComponent
 import org.koin.compose.KoinContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.lwjgl.glfw.GLFW
 import top.fifthlight.combine.data.LocalDataComponentTypeFactory
 import top.fifthlight.combine.data.LocalItemFactory
@@ -21,6 +23,7 @@ import top.fifthlight.combine.input.pointer.PointerEventType
 import top.fifthlight.combine.input.pointer.PointerType
 import top.fifthlight.combine.node.CombineOwner
 import top.fifthlight.combine.paint.RenderContext
+import top.fifthlight.combine.screen.LocalOnDismissRequestDispatcher
 import top.fifthlight.combine.screen.LocalScreenFactory
 import top.fifthlight.combine.screen.OnDismissRequestDispatcher
 import top.fifthlight.combine.screen.ScreenFactory
@@ -29,6 +32,7 @@ import top.fifthlight.combine.util.CloseHandler
 import top.fifthlight.combine.util.LocalCloseHandler
 import top.fifthlight.data.IntSize
 import top.fifthlight.data.Offset
+import top.fifthlight.touchcontroller.gal.GameDispatcher
 import kotlin.coroutines.CoroutineContext
 import top.fifthlight.combine.data.Text as CombineText
 
@@ -43,11 +47,11 @@ private class ScreenCloseHandler(private val screen: Screen) : CloseHandler {
 private class CombineScreen(
     title: ITextComponent,
     private val parent: Screen?,
-) : Screen(title), CoroutineScope {
+) : Screen(title), CoroutineScope, KoinComponent {
     private val client = Minecraft.getInstance()
     private var initialized = false
     private val textMeasurer = TextMeasurerImpl(client.font)
-    private val dispatcher = GameDispatcherImpl(client)
+    private val dispatcher: GameDispatcher by inject()
     private val soundManager = SoundManagerImpl(client.soundManager)
     private val closeHandler = ScreenCloseHandler(this@CombineScreen)
     private val dismissDispatcher = OnDismissRequestDispatcher()
@@ -68,6 +72,7 @@ private class CombineScreen(
                     LocalDataComponentTypeFactory provides FoodComponentTypeFactoryImpl,
                     LocalClipboard provides ClipboardHandlerImpl,
                     LocalScreenFactory provides ScreenFactoryImpl,
+                    LocalOnDismissRequestDispatcher provides dismissDispatcher,
                 ) {
                     content()
                 }

@@ -14,7 +14,6 @@ fun BaseText(
     text: Text,
     modifier: Modifier = Modifier,
     color: Color = Colors.WHITE,
-    shadow: Boolean = false,
 ) {
     val textMeasurer = LocalTextMeasurer.current
     Layout(
@@ -28,11 +27,7 @@ fun BaseText(
             layout(measureResult.width, measureResult.height) {}
         },
         renderer = { node ->
-            if (shadow) {
-                canvas.drawTextWithShadow(IntOffset.ZERO, node.width, text, color)
-            } else {
-                canvas.drawText(IntOffset.ZERO, node.width, text, color)
-            }
+            canvas.drawText(IntOffset.ZERO, node.width, text, color)
         }
     )
 }
@@ -42,7 +37,6 @@ fun BaseText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Colors.WHITE,
-    shadow: Boolean = false,
 ) {
     val textMeasurer = LocalTextMeasurer.current
     Layout(
@@ -56,11 +50,7 @@ fun BaseText(
             layout(measureResult.width, measureResult.height) {}
         },
         renderer = { node ->
-            if (shadow) {
-                canvas.drawTextWithShadow(IntOffset.ZERO, node.width, text, color)
-            } else {
-                canvas.drawText(IntOffset.ZERO, node.width, text, color)
-            }
+            canvas.drawText(IntOffset.ZERO, node.width, text, color)
         }
     )
 }
