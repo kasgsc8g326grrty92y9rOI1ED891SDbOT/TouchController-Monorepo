@@ -12,11 +12,11 @@ body:
             label: 检查项
             description: 在提交前，请确认以下内容：
             options:
-                -   label: 此功能未被提出过（可以在[这里](https://github.com/fifth-light/TouchController/issues?q=is%3Aissue)进行搜索）
+                -   label: 此功能未被提出过（可以在[这里](https://github.com/TouchController/TouchController/issues?q=is%3Aissue)进行搜索）
                     required: true
-                -   label: 我已知晓：如果只是有一些想法，而不是具体的新功能，需要在 [Discussions](https://github.com/fifth-light/TouchController/discussions/new?category=%E6%83%B3%E6%B3%95) 中提交
+                -   label: 我已知晓：如果只是有一些想法，而不是具体的新功能，需要在 [Discussions](https://github.com/TouchController/TouchController/discussions/new?category=%E6%83%B3%E6%B3%95) 中提交
                     required: true
-                -   label: 此功能不在 [Pull Requests](https://github.com/fifth-light/TouchController/pulls) 中
+                -   label: 此功能不在 [Pull Requests](https://github.com/TouchController/TouchController/pulls) 中
                     required: true
                 -   label: TouchController 模组的最新版本并未添加此功能
                     required: true

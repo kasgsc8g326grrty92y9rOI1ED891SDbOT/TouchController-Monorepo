@@ -6,7 +6,7 @@ other problems are welcome if you found!
 ## Download and install
 
 You can download the latest release of TouchController mod
-on [Modrinth](https://modrinth.com/mod/touchcontroller#download), [Github Releases](https://github.com/fifth-light/TouchController/releases), [Gitee Releases](https://gitee.com/fifth_light/TouchController/releases)
+on [Modrinth](https://modrinth.com/mod/touchcontroller#download), [Github Releases](https://github.com/TouchController/TouchController/releases), [Gitee Releases](https://gitee.com/fifth_light/TouchController/releases)
 and [MC 百科](https://www.mcmod.cn/download/17432.html).
 
 On different mod loaders, TouchController needs dependency mod as below:
@@ -33,7 +33,7 @@ Below are platforms TouchController supports:
 - [Fold Craft Launcher](https://github.com/FCL-Team/FoldCraftLauncher)
 - [Zalith Launcher](https://github.com/ZalithLauncher/ZalithLauncher)
 - [Pojav Glow·Worm](https://github.com/Vera-Firefly/Pojav-Glow-Worm)
-- [My fork of PojavLauncher](https://github.com/fifth-light/PojavLauncher)(No longer update)
+- [My fork of PojavLauncher](https://github.com/TouchController/PojavLauncher)(No longer update)
 
 Support for touch screen for X11 and Wayland on Linux may be added in the future. iOS and macOS will not be supported
 because I don't have corresponding environment and devices, but pull requests for iOS and macOS supported will be
@@ -89,7 +89,7 @@ Finally, you can run `./gradlew build` to compile, and built file can bu found i
 
 ## 下载与安装
 
-你可以在 [Modrinth](https://modrinth.com/mod/touchcontroller#download)、[Github Releases](https://github.com/fifth-light/TouchController/releases) 、[Gitee 发行版](https://gitee.com/fifth_light/TouchController/releases)
+你可以在 [Modrinth](https://modrinth.com/mod/touchcontroller#download)、[Github Releases](https://github.com/TouchController/TouchController/releases) 、[Gitee 发行版](https://gitee.com/fifth_light/TouchController/releases)
 和 [MC 百科](https://www.mcmod.cn/download/17432.html) 上下载 TouchController 的最新发布版。
 
 根据不同的 mod 加载器，TouchController 需要如下的前置 mod：
@@ -116,7 +116,7 @@ Finally, you can run `./gradlew build` to compile, and built file can bu found i
 - [官方版 Fold Craft Launcher](https://github.com/FCL-Team/FoldCraftLauncher)
 - [官方版 Zalith Launcher](https://github.com/ZalithLauncher/ZalithLauncher)
 - [官方版 Pojav Glow·Worm](https://github.com/Vera-Firefly/Pojav-Glow-Worm)
-- [我修改后的 PojavLauncher](https://github.com/fifth-light/PojavLauncher)
+- [我修改后的 PojavLauncher](https://github.com/TouchController/PojavLauncher)
 
 在未来可能会添加 Linux 上 X11 和 Wayland 触屏的支持。iOS 和 macOS 由于没有相应环境和设备，不会提供支持，但是接受 iOS 和 macOS 支持的 Pull
 Request。
@@ -263,10 +263,10 @@ bin 目录加入 PATH 环境变量即可。
 
 ## Star 历史
 
-<a href="https://star-history.com/#fifth-light/TouchController&Date">
+<a href="https://star-history.com/#TouchController/TouchController&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=fifth-light/TouchController&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=fifth-light/TouchController&type=Date" />
-   <img alt="Star 历史图表" src="https://api.star-history.com/svg?repos=fifth-light/TouchController&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=TouchController/TouchController&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=TouchController/TouchController&type=Date" />
+   <img alt="Star 历史图表" src="https://api.star-history.com/svg?repos=TouchController/TouchController&type=Date" />
  </picture>
 </a>

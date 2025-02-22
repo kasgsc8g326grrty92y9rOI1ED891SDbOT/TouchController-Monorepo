@@ -12,9 +12,9 @@ body:
             label: Checklist
             description: "Before reporting, please confirm the following:"
             options:
-                -   label: This bug has not been reported before (you can search [here](https://github.com/fifth-light/TouchController/issues?q=is%3Aissue))
+                -   label: This bug has not been reported before (you can search [here](https://github.com/TouchController/TouchController/issues?q=is%3Aissue))
                     required: true
-                -   label: The fix for this bug is not in [Pull Requests](https://github.com/fifth-light/TouchController/pulls)
+                -   label: The fix for this bug is not in [Pull Requests](https://github.com/TouchController/TouchController/pulls)
                     required: true
                 -   label: I have updated the TouchController mod to the latest version
                     required: true

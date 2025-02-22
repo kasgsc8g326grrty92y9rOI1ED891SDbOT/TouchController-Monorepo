@@ -30,7 +30,7 @@ mavenPublishing {
         name.set("Proxy client library of TouchController")
         description.set("A library for connecting to the Minecraft mod TouchController.")
         inceptionYear.set("2024")
-        url.set("https://github.com/fifth-light/TouchController")
+        url.set("https://github.com/TouchController/TouchController")
         licenses {
             license {
                 name.set("GNU Lesser General Public License v3.0")
@@ -46,9 +46,9 @@ mavenPublishing {
             }
         }
         scm {
-            url.set("https://github.com/fifth-light/TouchController")
-            connection.set("scm:git:https://github.com/fifth-light/TouchController.git")
-            developerConnection.set("scm:git:ssh://git@github.com:fifth-light/TouchController.git")
+            url.set("https://github.com/TouchController/TouchController")
+            connection.set("scm:git:https://github.com/TouchController/TouchController.git")
+            developerConnection.set("scm:git:ssh://git@github.com:TouchController/TouchController.git")
         }
     }
 }
