@@ -28,7 +28,7 @@ fun ItemButton(
             .background(
                 when (state) {
                     WidgetState.NORMAL, WidgetState.FOCUS -> Colors.TRANSPARENT
-                    WidgetState.HOVER, WidgetState.ACTIVE -> Colors.WHITE
+                    WidgetState.HOVER, WidgetState.ACTIVE -> Colors.TRANSPARENT_WHITE
                 }
             )
             .clickable(interactionSource) {

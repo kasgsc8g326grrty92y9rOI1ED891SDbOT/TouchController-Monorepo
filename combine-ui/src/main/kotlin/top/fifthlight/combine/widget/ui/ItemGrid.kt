@@ -81,7 +81,7 @@ fun ItemGrid(
                     val offset = IntOffset(x, y) * 16
                     hoverPosition?.let { position ->
                         if (position.x == x && position.y == y) {
-                            fillRect(offset, IntSize(16), Colors.WHITE)
+                            fillRect(offset, IntSize(16), Colors.TRANSPARENT_WHITE)
                         }
                     }
                     drawItemStack(offset = offset, stack = stack)

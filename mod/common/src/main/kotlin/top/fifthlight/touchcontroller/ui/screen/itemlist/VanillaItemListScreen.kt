@@ -10,6 +10,7 @@ import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.combine.modifier.drawing.background
 import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.fillMaxHeight
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
@@ -22,6 +23,7 @@ import top.fifthlight.combine.widget.base.layout.FlowRow
 import top.fifthlight.combine.widget.base.layout.Row
 import top.fifthlight.combine.widget.ui.*
 import top.fifthlight.data.IntSize
+import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.gal.PlayerInventory
@@ -93,13 +95,21 @@ class VanillaItemListScreen(
                                 modifier = Modifier.weight(1f).fillMaxWidth(),
                                 alignment = Alignment.Center,
                             ) {
+                                val backpackBackground = BackgroundTextures.BACKPACK
+                                val padding = (backpackBackground.size.width - 16) / 2
                                 Column(
-                                    modifier = Modifier.width(16 * 9),
+                                    modifier = Modifier.width(backpackBackground.size.width * 9),
                                     verticalArrangement = Arrangement.spacedBy(4, Alignment.CenterVertically),
                                 ) {
                                     @Composable
-                                    fun Item(itemStack: ItemStack) {
+                                    fun Item(
+                                        itemStack: ItemStack,
+                                        modifier: Modifier = Modifier,
+                                    ) {
                                         ItemButton(
+                                            modifier = Modifier
+                                                .padding(padding)
+                                                .then(modifier),
                                             onClick = { onItemSelected(itemStack.item) },
                                             itemStack = itemStack,
                                         )
@@ -110,8 +120,8 @@ class VanillaItemListScreen(
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                     ) {
                                         Column {
-                                            Text("Equipment")
-                                            Row {
+                                            Text(Text.translatable(Texts.SCREEN_ITEM_LIST_INVENTORY_ARMOR))
+                                            Row(modifier = Modifier.background(backpackBackground)) {
                                                 for (index in 0 until 4) {
                                                     Item(playerInventory.armor[index])
                                                 }
@@ -119,16 +129,19 @@ class VanillaItemListScreen(
                                         }
                                         playerInventory.offHand?.let { offHand ->
                                             Column {
-                                                Text("Off hand")
-                                                Item(offHand)
+                                                Text(Text.translatable(Texts.SCREEN_ITEM_LIST_INVENTORY_OFFHAND))
+                                                Item(
+                                                    modifier = Modifier.background(backpackBackground),
+                                                    itemStack = offHand
+                                                )
                                             }
                                         }
                                     }
 
                                     Column {
-                                        Text("Hotbar")
+                                        Text(Text.translatable(Texts.SCREEN_ITEM_LIST_INVENTORY_MAIN))
                                         for (y in 0 until 4) {
-                                            Row {
+                                            Row(modifier = Modifier.background(backpackBackground)) {
                                                 for (x in 0 until 9) {
                                                     val index = y * 9 + x
                                                     Item(playerInventory.main[index])
