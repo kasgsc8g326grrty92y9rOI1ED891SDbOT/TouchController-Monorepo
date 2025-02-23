@@ -21,7 +21,7 @@ object PlayerControllerMPHelper : KoinComponent {
     @JvmStatic
     fun beforeUsingItem(controller: PlayerControllerMP, player: EntityPlayer, hand: EnumHand) {
         val itemStack = player.getHeldItem(hand)
-        val crosshairAimingItems = globalConfigHolder.config.value.crosshairAimingItems
+        val crosshairAimingItems = globalConfigHolder.config.value.item.crosshairAimingItems
         if (itemStack.item.toCombine() !in crosshairAimingItems) {
             return
         }

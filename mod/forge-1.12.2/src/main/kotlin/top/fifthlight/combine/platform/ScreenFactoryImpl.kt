@@ -48,6 +48,7 @@ private class ScreenCloseHandler(private val screen: CombineScreen) : CloseHandl
 
 private class CombineScreen(
     private val parent: GuiScreen?,
+    private val renderBackground: Boolean,
 ) : GuiScreen(), CoroutineScope, KoinComponent {
     private val client = Minecraft.getMinecraft()
     private var initialized = false
@@ -184,7 +185,10 @@ private class CombineScreen(
     private var lastMouseY: Int = -1
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        this.drawDefaultBackground()
+        if (renderBackground) {
+            this.drawDefaultBackground()
+        }
+
         super.drawScreen(mouseX, mouseY, partialTicks)
         if (mouseX != lastMouseX || mouseY != lastMouseY) {
             owner.onPointerEvent(
@@ -226,11 +230,12 @@ object ScreenFactoryImpl : ScreenFactory {
     var screenSwitching = false
 
     override fun openScreen(
+        renderBackground: Boolean,
         title: CombineText,
         content: @Composable () -> Unit
     ) {
         val client = Minecraft.getMinecraft()
-        val screen = getScreen(client.currentScreen, title, content)
+        val screen = getScreen(client.currentScreen, renderBackground, title, content)
         screenSwitching = true
         client.displayGuiScreen(screen as GuiScreen)
         screenSwitching = false
@@ -238,10 +243,11 @@ object ScreenFactoryImpl : ScreenFactory {
 
     override fun getScreen(
         parent: Any?,
+        renderBackground: Boolean,
         title: CombineText,
         content: @Composable () -> Unit
     ): Any {
-        val screen = CombineScreen(parent as GuiScreen)
+        val screen = CombineScreen(parent as GuiScreen, renderBackground)
         screen.setContent {
             content()
         }

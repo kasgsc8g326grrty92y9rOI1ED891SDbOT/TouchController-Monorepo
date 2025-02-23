@@ -26,7 +26,7 @@ public abstract class CursorLockMixin {
             return;
         }
         var config = configHolder.getConfig().getValue();
-        if (config.getDisableMouseLock()) {
+        if (config.getRegular().getDisableMouseLock()) {
             GLFW.glfwSetInputMode(handler, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
     }

@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import top.fifthlight.combine.platform.TextImpl;
 import top.fifthlight.touchcontroller.ui.screen.ConfigScreenKt;
 
 @Mixin(ControlsOptionsScreen.class)
@@ -25,10 +26,16 @@ public abstract class ControlsOptionsScreenMixin extends Screen {
         var doneButton = (ButtonWidget) screen.children().get(screen.children().size() - 1);
         doneButton.setPosition(doneButton.getX(), doneButton.getY() + 24);
 
+        var textObj = ConfigScreenKt.getConfigScreenButtonText();
+        if (textObj instanceof TextImpl) {
+            textObj = ((TextImpl) textObj).getInner();
+        }
+        Text text = (Text) textObj;
+
         addDrawableChild(
                 ButtonWidget
                         .builder(
-                                (Text) ConfigScreenKt.getConfigScreenButtonText(),
+                                text,
                                 btn -> client.setScreen((Screen) ConfigScreenKt.getConfigScreen(screen))
                         )
                         .dimensions(screen.width / 2 - 155, screen.height / 6 + 60, 150, 20)

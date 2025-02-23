@@ -9,6 +9,7 @@ import kotlin.math.max
 @Composable
 fun FlowRow(
     modifier: Modifier = Modifier,
+    maxColumns: Int = Int.MAX_VALUE,
     content: @Composable () -> Unit = {},
 ) {
     // TODO add arrangement support for flow line
@@ -21,14 +22,17 @@ fun FlowRow(
             var cursorPosition = IntOffset(0, 0)
             var maxWidth = 0
             var rowMaxHeight = 0
+            var column = 0
 
             val placeables = measurables.mapIndexed { index, measurable ->
                 val placeable = measurable.measure(childConstraint)
-                if (placeable.width + cursorPosition.left > constraints.maxWidth) {
+                if (placeable.width + cursorPosition.left > constraints.maxWidth || column >= maxColumns) {
                     // Break line
                     cursorPosition = IntOffset(0, cursorPosition.y + rowMaxHeight)
                     rowMaxHeight = 0
+                    column = 0
                 }
+                column++
                 childPositions[index] = cursorPosition
                 cursorPosition = IntOffset(cursorPosition.x + placeable.width, cursorPosition.y)
                 maxWidth = max(maxWidth, cursorPosition.x)

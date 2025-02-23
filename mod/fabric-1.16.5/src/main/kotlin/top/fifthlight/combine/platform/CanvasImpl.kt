@@ -14,13 +14,11 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.Quaternion
 import net.minecraft.util.math.Vec3f
 import org.lwjgl.opengl.GL11
+import top.fifthlight.combine.data.BackgroundTexture
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
 import top.fifthlight.combine.paint.*
-import top.fifthlight.data.IntOffset
-import top.fifthlight.data.IntRect
-import top.fifthlight.data.IntSize
-import top.fifthlight.data.Rect
+import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.mixin.Matrix4fAccessor
 import top.fifthlight.combine.data.Text as CombineText
@@ -32,7 +30,6 @@ class CanvasImpl(
 ) : Canvas, DrawableHelper() {
     companion object {
         private val IDENTIFIER_ATLAS = Identifier("touchcontroller", "textures/gui/atlas.png")
-        private val IDENTIFIER_WIDGETS = Identifier("textures/gui/widgets.png")
     }
 
     init {
@@ -158,22 +155,18 @@ class CanvasImpl(
         }
     }
 
-    override fun drawTexture(
-        texture: Texture,
+    private fun drawTexture(
+        identifier: Identifier,
         dstRect: Rect,
-        srcRect: IntRect,
-        tint: Color,
+        uvRect: Rect,
+        tint: Color = Colors.WHITE,
     ) {
         if (blendEnabled) {
             enableBlend()
         } else {
             disableBlend()
         }
-        this.client.textureManager.bindTexture(IDENTIFIER_ATLAS)
-        val uvRect = Rect(
-            offset = (texture.atlasOffset + srcRect.offset).toOffset() / Textures.atlasSize.toSize(),
-            size = srcRect.size.toSize() / Textures.atlasSize.toSize(),
-        )
+        this.client.textureManager.bindTexture(identifier)
         val matrix = matrices.peek().model
         val bufferBuilder = Tessellator.getInstance().buffer
         bufferBuilder.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE)
@@ -201,36 +194,29 @@ class CanvasImpl(
         BufferRenderer.draw(bufferBuilder)
     }
 
-    private fun drawButtonTexture(dstRect: IntRect, textureY: Int) {
-        client.textureManager.bindTexture(IDENTIFIER_WIDGETS)
-        drawTexture(
-            matrices,
-            dstRect.offset.x,
-            dstRect.offset.y,
-            0,
-            textureY,
-            dstRect.size.width / 2,
-            dstRect.size.height,
-        )
-        drawTexture(
-            matrices,
-            dstRect.offset.x + dstRect.size.width / 2,
-            dstRect.offset.y,
-            200 - dstRect.size.width / 2,
-            textureY,
-            dstRect.size.width / 2,
-            dstRect.size.height,
-        )
-    }
+    override fun drawTexture(
+        texture: Texture,
+        dstRect: Rect,
+        srcRect: IntRect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = IDENTIFIER_ATLAS,
+        dstRect = dstRect,
+        uvRect = Rect(
+            offset = (texture.atlasOffset + srcRect.offset).toOffset() / Textures.atlasSize.toSize(),
+            size = srcRect.size.toSize() / Textures.atlasSize.toSize(),
+        ),
+        tint = tint,
+    )
 
-    override fun drawGuiTexture(texture: GuiTexture, dstRect: IntRect) {
-        when (texture) {
-            GuiTexture.BUTTON -> drawButtonTexture(dstRect, 66)
-            GuiTexture.BUTTON_HOVER -> drawButtonTexture(dstRect, 86)
-            GuiTexture.BUTTON_ACTIVE -> drawButtonTexture(dstRect, 86)
-            GuiTexture.BUTTON_DISABLED -> drawButtonTexture(dstRect, 46)
-        }
-    }
+    override fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float, dstRect: Rect) = drawTexture(
+        identifier = texture.identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = Rect(
+            offset = Offset.ZERO,
+            size = dstRect.size / texture.size.toSize() / scale,
+        ),
+    )
 
     override fun drawItemStack(offset: IntOffset, size: IntSize, stack: ItemStack) {
         val matrix = matrices.peek().model

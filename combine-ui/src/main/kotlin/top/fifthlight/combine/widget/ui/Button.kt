@@ -13,9 +13,9 @@ import top.fifthlight.combine.sound.SoundKind
 import top.fifthlight.combine.ui.style.ColorTheme
 import top.fifthlight.combine.ui.style.LocalColorTheme
 import top.fifthlight.combine.ui.style.NinePatchTextureSet
-import top.fifthlight.combine.ui.style.TextStyle
 import top.fifthlight.combine.widget.base.layout.Box
 import top.fifthlight.combine.widget.base.layout.BoxScope
+import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.Textures
 
 val defaultButtonTexture = NinePatchTextureSet(
@@ -46,7 +46,7 @@ fun GuideButton(
     modifier: Modifier = Modifier,
     textureSet: NinePatchTextureSet = guideButtonTexture,
     colorTheme: ColorTheme? = ColorTheme.dark,
-    textStyle: TextStyle? = null,
+    minSize: IntSize = IntSize(48, 20),
     onClick: () -> Unit,
     clickSound: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
@@ -55,7 +55,7 @@ fun GuideButton(
         modifier = modifier,
         textureSet = textureSet,
         colorTheme = colorTheme,
-        textStyle = textStyle,
+        minSize = minSize,
         onClick = onClick,
         clickSound = clickSound,
         content = content
@@ -68,7 +68,7 @@ fun WarningButton(
     modifier: Modifier = Modifier,
     textureSet: NinePatchTextureSet = warningButtonTexture,
     colorTheme: ColorTheme? = ColorTheme.dark,
-    textStyle: TextStyle? = null,
+    minSize: IntSize = IntSize(48, 20),
     onClick: () -> Unit,
     clickSound: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
@@ -77,7 +77,7 @@ fun WarningButton(
         modifier = modifier,
         textureSet = textureSet,
         colorTheme = colorTheme,
-        textStyle = textStyle,
+        minSize = minSize,
         onClick = onClick,
         clickSound = clickSound,
         content = content
@@ -89,7 +89,7 @@ fun Button(
     modifier: Modifier = Modifier,
     textureSet: NinePatchTextureSet = LocalButtonTexture.current,
     colorTheme: ColorTheme? = null,
-    textStyle: TextStyle? = null,
+    minSize: IntSize = IntSize(48, 20),
     onClick: () -> Unit,
     clickSound: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
@@ -102,7 +102,7 @@ fun Button(
     Box(
         modifier = Modifier
             .border(texture)
-            .minSize(48, 20)
+            .minSize(minSize)
             .clickable(interactionSource) {
                 if (clickSound) {
                     soundManager.play(SoundKind.BUTTON_PRESS, 1f)

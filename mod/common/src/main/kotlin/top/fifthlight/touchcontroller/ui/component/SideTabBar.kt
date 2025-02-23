@@ -7,6 +7,7 @@ import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
+import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.placement.width
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.base.layout.Column
@@ -33,9 +34,10 @@ fun SideTabBar(
     val navigator = LocalNavigator.current
     Column(
         modifier = Modifier
+            .width(130)
+            .padding(2)
             .verticalScroll()
             .border(Textures.WIDGET_BACKGROUND_BACKGROUND_DARK)
-            .width(130)
             .then(modifier),
         verticalArrangement = Arrangement.spacedBy(12),
     ) {
@@ -48,7 +50,7 @@ fun SideTabBar(
                     for (tab in tabs) {
                         TabButton(
                             modifier = Modifier.fillMaxWidth(),
-                            selected = navigator?.lastItem == tab,
+                            checked = navigator?.lastItem == tab,
                             onClick = { onTabSelected(tab) }
                         ) {
                             Text(tab.options.title)

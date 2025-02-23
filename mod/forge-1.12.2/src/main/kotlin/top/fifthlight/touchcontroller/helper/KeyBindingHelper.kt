@@ -23,12 +23,12 @@ object KeyBindingHelper : KoinComponent {
         var config = configHolder.config.value
 
         if (keyBinding == client.gameSettings.keyBindAttack || keyBinding == client.gameSettings.keyBindUseItem) {
-            return config.disableMouseClick || config.enableTouchEmulation
+            return config.regular.disableMouseClick || config.debug.enableTouchEmulation
         }
 
         for (i in 0 until 9) {
             if (keyBinding == client.gameSettings.keyBindsHotbar[i]) {
-                return config.disableHotBarKey
+                return config.regular.disableHotBarKey
             }
         }
 

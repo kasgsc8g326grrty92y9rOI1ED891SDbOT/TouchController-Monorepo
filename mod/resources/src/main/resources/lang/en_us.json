@@ -75,7 +75,7 @@
   "touchcontroller.screen.config.item.usable_items.description": "Items can be used by long pressing the screen without selecting blocks.",
   "touchcontroller.screen.config.item.show_crosshair_items.title": "Items which show crosshair when holding",
   "touchcontroller.screen.config.item.show_crosshair_items.description": "Items which show crosshair when holding to help you to aim",
-  "touchcontroller.screen.config.item.crosshair_aiming_items.title": "Items which aiming by crosshair when placing",
+  "touchcontroller.screen.config.item.crosshair_aiming_items.title": "Items needing aim correction",
   "touchcontroller.screen.config.item.crosshair_aiming_items.description": "Items which aiming by crosshair when placing, such as buckets and boats. If there are problems placing items, you can try adding them to this list.",
   "touchcontroller.screen.config.item.whitelist.title": "Whitelist",
   "touchcontroller.screen.config.item.blacklist.title": "Blacklist",
@@ -86,6 +86,21 @@
   "touchcontroller.screen.config.item.component.empty": "No component",
   "touchcontroller.screen.config.item.component.and_more_components": "and %d components",
   "touchcontroller.screen.config.item.edit.title": "Edit",
+
+  "touchcontroller.screen.item_list.title": "Item list",
+  "touchcontroller.screen.item_list.content": "Item list content",
+  "touchcontroller.screen.item_list.default": "Default item list",
+  "touchcontroller.screen.item_list.jei_items": "JEI item list",
+  "touchcontroller.screen.item_list.nei_items": "NEI item list",
+  "touchcontroller.screen.item_list.rei_items": "REI item list",
+  "touchcontroller.screen.item_list.emi_items": "EMI item list",
+  "touchcontroller.screen.item_list.vanilla_inventory": "Vanilla item list",
+  "touchcontroller.screen.item_list.search_placeholder": "Search...",
+  "touchcontroller.screen.item_list.remove": "Remove >",
+  "touchcontroller.screen.item_list.no_tab_selected": "No tab selected",
+  "touchcontroller.screen.item_list.inventory.main": "Inventory",
+  "touchcontroller.screen.item_list.inventory.armor": "Equipment",
+  "touchcontroller.screen.item_list.inventory.offhand": "Offhand",
 
   "touchcontroller.screen.license.title": "License",
 
@@ -204,6 +219,7 @@
   "touchcontroller.widget.attack_button.property.style.new": "New",
 
   "touchcontroller.widget.inventory_button.name": "Inventory button",
+  "touchcontroller.widget.inventory_button.property.classic": "Classic look",
 
   "touchcontroller.widget.perspective_switch_button.name": "Perspective switch button",
   "touchcontroller.widget.perspective_switch_button.property.size": "Button size: %s%%",

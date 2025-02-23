@@ -3,23 +3,20 @@ package top.fifthlight.touchcontroller.ui.tab.general
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.navigator.LocalNavigator
 import org.koin.compose.koinInject
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.background
-import top.fifthlight.combine.modifier.placement.fillMaxHeight
-import top.fifthlight.combine.modifier.placement.fillMaxWidth
+import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.base.layout.Column
-import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.config.GlobalConfigHolder
 import top.fifthlight.touchcontroller.config.RegularConfig
-import top.fifthlight.touchcontroller.ui.component.*
+import top.fifthlight.touchcontroller.ui.component.SwitchPreferenceItem
 import top.fifthlight.touchcontroller.ui.tab.Tab
 import top.fifthlight.touchcontroller.ui.tab.TabGroup
 import top.fifthlight.touchcontroller.ui.tab.TabOptions
@@ -33,89 +30,63 @@ object RegularTab : Tab() {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.current
-        Scaffold(
-            topBar = {
-                AppBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    leading = {
-                        BackButton(
-                            screenName = Text.translatable(Texts.SCREEN_CONFIG_TITLE),
-                            close = true
-                        )
-                    },
-                    title = {
-                        Text(Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_TITLE))
-                    },
-                )
-            },
-            sideBar = {
-                SideTabBar(
-                    modifier = Modifier.fillMaxHeight(),
-                    onTabSelected = {
-                        navigator?.replace(it)
-                    }
-                )
-            },
-        ) { modifier ->
-            Column(
-                modifier = Modifier
-                    .padding(8)
-                    .verticalScroll()
-                    .background(BackgroundTextures.BRICK_BACKGROUND)
-                    .then(modifier),
-                verticalArrangement = Arrangement.spacedBy(8),
-            ) {
-                val globalConfigHolder: GlobalConfigHolder = koinInject()
-                val globalConfig by globalConfigHolder.config.collectAsState()
-                fun update(editor: RegularConfig.() -> RegularConfig) {
-                    globalConfigHolder.saveConfig(globalConfig.let { config ->
-                        config.copy(regular = editor(config.regular))
-                    })
-                }
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_MOUSE_MOVE_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_MOUSE_MOVE_DESCRIPTION),
-                    value = globalConfig.regular.disableMouseMove,
-                    onValueChanged = { update { copy(disableMouseMove = it) } }
-                )
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_MOUSE_CLICK_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_MOUSE_CLICK_DESCRIPTION),
-                    value = globalConfig.regular.disableMouseClick,
-                    onValueChanged = { update { copy(disableMouseClick = it) } }
-                )
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_CURSOR_LOCK_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_CURSOR_LOCK_DESCRIPTION),
-                    value = globalConfig.regular.disableMouseLock,
-                    onValueChanged = { update { copy(disableMouseLock = it) } }
-                )
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_CROSSHAIR_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_CROSSHAIR_DESCRIPTION),
-                    value = globalConfig.regular.disableCrosshair,
-                    onValueChanged = { update { copy(disableCrosshair = it) } }
-                )
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_HOT_BAR_KEY_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_HOT_BAR_KEY_DESCRIPTION),
-                    value = globalConfig.regular.disableHotBarKey,
-                    onValueChanged = { update { copy(disableHotBarKey = it) } }
-                )
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_VIBRATION_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_VIBRATION_DESCRIPTION),
-                    value = globalConfig.regular.vibration,
-                    onValueChanged = { update { copy(vibration = it) } }
-                )
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_QUICK_HAND_SWAP_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_QUICK_HAND_SWAP_DESCRIPTION),
-                    value = globalConfig.regular.quickHandSwap,
-                    onValueChanged = { update { copy(quickHandSwap = it) } }
-                )
+        Column(
+            modifier = Modifier
+                .padding(8)
+                .verticalScroll()
+                .background(BackgroundTextures.BRICK_BACKGROUND)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8),
+        ) {
+            val globalConfigHolder: GlobalConfigHolder = koinInject()
+            val globalConfig by globalConfigHolder.config.collectAsState()
+            fun update(editor: RegularConfig.() -> RegularConfig) {
+                globalConfigHolder.saveConfig(globalConfig.let { config ->
+                    config.copy(regular = editor(config.regular))
+                })
             }
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_MOUSE_MOVE_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_MOUSE_MOVE_DESCRIPTION),
+                value = globalConfig.regular.disableMouseMove,
+                onValueChanged = { update { copy(disableMouseMove = it) } }
+            )
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_MOUSE_CLICK_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_MOUSE_CLICK_DESCRIPTION),
+                value = globalConfig.regular.disableMouseClick,
+                onValueChanged = { update { copy(disableMouseClick = it) } }
+            )
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_CURSOR_LOCK_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_CURSOR_LOCK_DESCRIPTION),
+                value = globalConfig.regular.disableMouseLock,
+                onValueChanged = { update { copy(disableMouseLock = it) } }
+            )
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_CROSSHAIR_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_CROSSHAIR_DESCRIPTION),
+                value = globalConfig.regular.disableCrosshair,
+                onValueChanged = { update { copy(disableCrosshair = it) } }
+            )
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_HOT_BAR_KEY_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_HOT_BAR_KEY_DESCRIPTION),
+                value = globalConfig.regular.disableHotBarKey,
+                onValueChanged = { update { copy(disableHotBarKey = it) } }
+            )
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_VIBRATION_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_VIBRATION_DESCRIPTION),
+                value = globalConfig.regular.vibration,
+                onValueChanged = { update { copy(vibration = it) } }
+            )
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_QUICK_HAND_SWAP_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_QUICK_HAND_SWAP_DESCRIPTION),
+                value = globalConfig.regular.quickHandSwap,
+                onValueChanged = { update { copy(quickHandSwap = it) } }
+            )
         }
     }
 }

@@ -15,7 +15,7 @@ import top.fifthlight.touchcontroller.assets.Textures
 fun AppBar(
     modifier: Modifier = Modifier,
     leading: @Composable RowScope.() -> Unit = {},
-    title: @Composable RowScope.() -> Unit,
+    title: @Composable RowScope.() -> Unit = {},
     trailing: @Composable RowScope.() -> Unit = {},
 ) {
     Box(

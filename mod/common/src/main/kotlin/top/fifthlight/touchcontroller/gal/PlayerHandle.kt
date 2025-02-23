@@ -1,5 +1,6 @@
 package top.fifthlight.touchcontroller.gal
 
+import kotlinx.collections.immutable.PersistentList
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.touchcontroller.config.ItemList
 
@@ -14,12 +15,19 @@ enum class RidingEntityType {
     OTHER,
 }
 
+data class PlayerInventory(
+    val main: PersistentList<ItemStack>,
+    val armor: PersistentList<ItemStack>,
+    val offHand: ItemStack?,
+)
+
 interface PlayerHandle {
     fun hasItemsOnHand(list: ItemList): Boolean
     fun changeLookDirection(deltaYaw: Double, deltaPitch: Double)
     var currentSelectedSlot: Int
     fun dropSlot(index: Int)
     fun getInventorySlot(index: Int): ItemStack
+    fun getInventory(): PlayerInventory
     val isUsingItem: Boolean
     val onGround: Boolean
     var isFlying: Boolean

@@ -10,14 +10,20 @@ import cafe.adriel.voyager.navigator.NavigatorDisposeBehavior
 fun TouchControllerNavigator(
     screen: Screen,
     disposeBehavior: NavigatorDisposeBehavior = NavigatorDisposeBehavior(),
+    content: @Composable (Navigator) -> Unit = { CurrentScreen() },
 ) {
     Navigator(
         screen = screen,
         disposeBehavior = disposeBehavior,
     ) { navigator ->
-        DismissHandler(navigator.canPop || navigator.parent?.canPop == true) {
-            navigator.pop()
+        val parent = navigator.parent
+        DismissHandler(navigator.canPop || parent?.canPop == true) {
+            if (navigator.canPop) {
+                navigator.pop()
+            } else if (parent != null && parent.canPop) {
+                parent.pop()
+            }
         }
-        CurrentScreen()
+        content(navigator)
     }
 }

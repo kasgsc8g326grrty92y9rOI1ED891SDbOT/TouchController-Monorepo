@@ -24,7 +24,7 @@ object EntityRendererHelper : KoinComponent {
     @JvmStatic
     fun doDisableMouseDirection(): Boolean {
         var config = globalConfigHolder.config.value
-        return config.disableMouseMove
+        return config.regular.disableMouseMove
     }
 
     private fun getProjectionMatrix(farPlaneDistance: Float, fov: Float): Matrix4f {

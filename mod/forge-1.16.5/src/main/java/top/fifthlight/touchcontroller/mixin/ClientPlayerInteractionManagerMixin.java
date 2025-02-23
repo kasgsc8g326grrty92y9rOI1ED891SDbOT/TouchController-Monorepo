@@ -45,7 +45,7 @@ public class ClientPlayerInteractionManagerMixin {
     private boolean touchController$crosshairAimingContainItem(Item item) {
         GlobalConfigHolder globalConfigHolder = KoinJavaComponent.get(GlobalConfigHolder.class);
         GlobalConfig globalConfig = globalConfigHolder.getConfig().getValue();
-        return ItemFactoryImplKt.contains(globalConfig.getCrosshairAimingItems(), item);
+        return ItemFactoryImplKt.contains(globalConfig.getItem().getCrosshairAimingItems(), item);
     }
 
     @Unique

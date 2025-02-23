@@ -47,6 +47,7 @@ private class ScreenCloseHandler(private val screen: Screen) : CloseHandler {
 private class CombineScreen(
     title: ITextComponent,
     private val parent: Screen?,
+    private val renderBackground: Boolean,
 ) : Screen(title), CoroutineScope, KoinComponent {
     private val client = Minecraft.getInstance()
     private var initialized = false
@@ -203,7 +204,9 @@ private class CombineScreen(
     }
 
     override fun render(martices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
-        this.renderBackground(martices)
+        if (renderBackground) {
+            this.renderBackground(martices)
+        }
 
         val canvas = CanvasImpl(martices)
         val context = RenderContext(canvas)
@@ -221,20 +224,22 @@ private class CombineScreen(
 
 object ScreenFactoryImpl : ScreenFactory {
     override fun openScreen(
+        renderBackground: Boolean,
         title: CombineText,
         content: @Composable () -> Unit
     ) {
         val client = Minecraft.getInstance()
-        val screen = getScreen(client.screen, title, content)
+        val screen = getScreen(client.screen, renderBackground, title, content)
         client.setScreen(screen as Screen)
     }
 
     override fun getScreen(
         parent: Any?,
+        renderBackground: Boolean,
         title: CombineText,
         content: @Composable () -> Unit
     ): Any {
-        val screen = CombineScreen(title.toMinecraft(), parent as Screen)
+        val screen = CombineScreen(title.toMinecraft(), parent as Screen, renderBackground)
         screen.setContent {
             content()
         }

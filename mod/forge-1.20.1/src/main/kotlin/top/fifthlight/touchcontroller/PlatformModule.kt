@@ -34,4 +34,5 @@ val platformModule = module {
     single<KeyBindingHandler> { KeyBindingHandlerImpl }
     single<GameDispatcher> { GameDispatcherImpl }
     single<TextMeasurer> { TextMeasurerImpl }
+    single<VanillaItemListProvider> { VanillaItemListProviderImpl }
 }

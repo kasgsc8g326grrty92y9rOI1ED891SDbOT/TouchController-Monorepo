@@ -1,6 +1,6 @@
 [versions]
 fabric-loader = "0.16.9"
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 loom = "1.9-SNAPSHOT"
 forge-gradle = "6.0.29"
 kotlinpoet = "2.0.0"
@@ -10,7 +10,7 @@ collections-immutable = "0.3.8"
 parchmentmc-librarian-forgegradle = "1.+"
 mixin = "0.7.+"
 gr8 = "0.11.2"
-koin = "4.0.1"
+koin = "4.0.2"
 # DONT UPDATE IT BECAUSE JOML 1.10.5 IS USED WHEN MINECRAFT INTRODUCE JOML IN VERSION 1.19.3
 #noinspection GradleDependency
 joml = "1.10.5"
@@ -20,7 +20,7 @@ slf4j = "2.0.16"
 log4j = "2.8.1"
 aboutlibraries = "11.5.0"
 junit = "5.11.4"
-voyager = "1.1.0-beta02"
+voyager = "1.1.0-beta03"
 
 # Android
 agp = "8.7.3"

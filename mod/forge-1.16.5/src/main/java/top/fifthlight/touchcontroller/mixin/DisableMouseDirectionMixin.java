@@ -26,7 +26,7 @@ abstract class DisableMouseDirectionMixin {
             return;
         }
         GlobalConfig config = configHolder.getConfig().getValue();
-        if (config.getDisableMouseMove()) {
+        if (config.getRegular().getDisableMouseMove()) {
             ci.cancel();
         }
     }

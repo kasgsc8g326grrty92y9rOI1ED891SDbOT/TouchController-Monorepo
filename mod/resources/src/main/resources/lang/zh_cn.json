@@ -75,8 +75,8 @@
   "touchcontroller.screen.config.item.usable_items.description": "配置可通过长按屏幕使用的物品。",
   "touchcontroller.screen.config.item.show_crosshair_items.title": "手持时显示准心的物品",
   "touchcontroller.screen.config.item.show_crosshair_items.description": "配置手持时显示准心的物品，以帮助你瞄准。",
-  "touchcontroller.screen.config.item.crosshair_aiming_items.title": "只能使用准星瞄准放置的物品",
-  "touchcontroller.screen.config.item.crosshair_aiming_items.description": "配置只能使用准星瞄准放置的物品，例如水桶、船等物品。如果使用物品时放置位置有问题，可以尝试添加物品到此项。",
+  "touchcontroller.screen.config.item.crosshair_aiming_items.title": "需要修正使用方向的物品",
+  "touchcontroller.screen.config.item.crosshair_aiming_items.description": "配置需要修正使用方向的物品，例如水桶、船等物品。如果使用物品时放置位置有问题，可以尝试添加物品到此项。",
   "touchcontroller.screen.config.item.whitelist.title": "白名单",
   "touchcontroller.screen.config.item.blacklist.title": "黑名单",
   "touchcontroller.screen.config.item.item.empty": "没有物品",
@@ -86,6 +86,21 @@
   "touchcontroller.screen.config.item.component.empty": "没有组件",
   "touchcontroller.screen.config.item.component.and_more_components": "以及 %d 个组件",
   "touchcontroller.screen.config.item.edit.title": "编辑",
+
+  "touchcontroller.screen.item_list.title": "物品列表",
+  "touchcontroller.screen.item_list.content": "物品列表显示内容",
+  "touchcontroller.screen.item_list.default": "默认物品表",
+  "touchcontroller.screen.item_list.jei_items": "JEI 物品表",
+  "touchcontroller.screen.item_list.nei_items": "NEI 物品表",
+  "touchcontroller.screen.item_list.rei_items": "REI 物品表",
+  "touchcontroller.screen.item_list.emi_items": "EMI 物品表",
+  "touchcontroller.screen.item_list.vanilla_inventory": "原版物品栏",
+  "touchcontroller.screen.item_list.search_placeholder": "搜索…",
+  "touchcontroller.screen.item_list.remove": "移除 >",
+  "touchcontroller.screen.item_list.no_tab_selected": "没有选中标签页",
+  "touchcontroller.screen.item_list.inventory.main": "物品栏",
+  "touchcontroller.screen.item_list.inventory.armor": "装备栏",
+  "touchcontroller.screen.item_list.inventory.offhand": "副手",
 
   "touchcontroller.screen.license.title": "许可证",
 
@@ -204,6 +219,7 @@
   "touchcontroller.widget.attack_button.property.style.new": "新样式",
 
   "touchcontroller.widget.inventory_button.name": "物品栏按钮",
+  "touchcontroller.widget.inventory_button.property.classic": "经典外观",
 
   "touchcontroller.widget.perspective_switch_button.name": "视角切换按钮",
   "touchcontroller.widget.perspective_switch_button.property.size": "按键大小: %s%%",

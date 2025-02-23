@@ -13,13 +13,11 @@ import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import org.joml.Quaternionf
+import top.fifthlight.combine.data.BackgroundTexture
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
 import top.fifthlight.combine.paint.*
-import top.fifthlight.data.IntOffset
-import top.fifthlight.data.IntRect
-import top.fifthlight.data.IntSize
-import top.fifthlight.data.Rect
+import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import java.util.function.Supplier
 import top.fifthlight.combine.data.Text as CombineText
@@ -38,8 +36,6 @@ class CanvasImpl(
 ) : Canvas {
     companion object {
         private val IDENTIFIER_ATLAS = ResourceLocation("touchcontroller", "textures/gui/atlas.png")
-        private val IDENTIFIER_WIDGETS =
-            ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "textures/gui/widgets.png")
     }
 
     init {
@@ -102,22 +98,18 @@ class CanvasImpl(
         drawContext.drawWordWrap(textRenderer, text.toMinecraft(), offset.x, offset.y, width, color.value)
     }
 
-    override fun drawTexture(
-        texture: Texture,
+    private fun drawTexture(
+        identifier: ResourceLocation,
         dstRect: Rect,
-        srcRect: IntRect,
-        tint: Color,
+        uvRect: Rect,
+        tint: Color = Colors.WHITE,
     ) {
         if (blendEnabled) {
             enableBlend()
         } else {
             disableBlend()
         }
-        RenderSystem.setShaderTexture(0, IDENTIFIER_ATLAS)
-        val uvRect = Rect(
-            offset = (texture.atlasOffset + srcRect.offset).toOffset() / Textures.atlasSize.toSize(),
-            size = srcRect.size.toSize() / Textures.atlasSize.toSize(),
-        )
+        RenderSystem.setShaderTexture(0, identifier)
         withShader({ GameRenderer.getPositionTexColorShader()!! }) {
             val matrix = drawContext.pose().last().pose()
             val bufferBuilder = Tesselator.getInstance().builder
@@ -146,30 +138,29 @@ class CanvasImpl(
         }
     }
 
-    private fun drawButtonTexture(dstRect: IntRect, textureY: Int) {
-        drawContext.blitNineSliced(
-            IDENTIFIER_WIDGETS,
-            dstRect.left,
-            dstRect.top,
-            dstRect.size.width,
-            dstRect.size.height,
-            20,
-            4,
-            200,
-            20,
-            0,
-            textureY,
-        )
-    }
+    override fun drawTexture(
+        texture: Texture,
+        dstRect: Rect,
+        srcRect: IntRect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = IDENTIFIER_ATLAS,
+        dstRect = dstRect,
+        uvRect = Rect(
+            offset = (texture.atlasOffset + srcRect.offset).toOffset() / Textures.atlasSize.toSize(),
+            size = srcRect.size.toSize() / Textures.atlasSize.toSize(),
+        ),
+        tint = tint,
+    )
 
-    override fun drawGuiTexture(texture: GuiTexture, dstRect: IntRect) {
-        when (texture) {
-            GuiTexture.BUTTON -> drawButtonTexture(dstRect, 66)
-            GuiTexture.BUTTON_HOVER -> drawButtonTexture(dstRect, 86)
-            GuiTexture.BUTTON_ACTIVE -> drawButtonTexture(dstRect, 86)
-            GuiTexture.BUTTON_DISABLED -> drawButtonTexture(dstRect, 46)
-        }
-    }
+    override fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float, dstRect: Rect) = drawTexture(
+        identifier = texture.identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = Rect(
+            offset = Offset.ZERO,
+            size = dstRect.size / texture.size.toSize() / scale,
+        ),
+    )
 
     override fun drawItemStack(offset: IntOffset, size: IntSize, stack: ItemStack) {
         val minecraftStack = ((stack as? ItemStackImpl) ?: return).inner

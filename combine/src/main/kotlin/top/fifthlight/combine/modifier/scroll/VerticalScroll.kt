@@ -9,7 +9,7 @@ import top.fifthlight.combine.layout.MeasureScope
 import top.fifthlight.combine.layout.Placeable
 import top.fifthlight.combine.modifier.*
 import top.fifthlight.combine.node.LayoutNode
-import top.fifthlight.combine.paint.Colors
+import top.fifthlight.combine.paint.Color
 import top.fifthlight.combine.paint.RenderContext
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntRect
@@ -135,7 +135,7 @@ private data class VerticalScrollNode(
                 fillRect(
                     offset = IntOffset(node.width - 3, barY),
                     size = IntSize(3, barHeight),
-                    color = Colors.ALTERNATE_WHITE,
+                    color = Color(0x66FFFFFFu),
                 )
             }
             popClip()

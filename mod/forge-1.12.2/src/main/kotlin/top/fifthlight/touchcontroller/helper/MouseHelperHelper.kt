@@ -12,6 +12,6 @@ object MouseHelperHelper : KoinComponent {
     @JvmStatic
     fun doDisableMouseGrab(): Boolean {
         val config = configHolder.config.value
-        return config.disableMouseLock
+        return config.regular.disableMouseLock
     }
 }

@@ -9,20 +9,17 @@ import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11
+import top.fifthlight.combine.data.BackgroundTexture
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
 import top.fifthlight.combine.paint.*
-import top.fifthlight.data.IntOffset
-import top.fifthlight.data.IntRect
-import top.fifthlight.data.IntSize
-import top.fifthlight.data.Rect
+import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.combine.data.Text as CombineText
 
 class CanvasImpl : Canvas, Gui() {
     companion object {
         private val IDENTIFIER_ATLAS = ResourceLocation("touchcontroller", "textures/gui/atlas.png")
-        private val IDENTIFIER_WIDGETS = ResourceLocation("textures/gui/widgets.png")
     }
 
     init {
@@ -139,17 +136,13 @@ class CanvasImpl : Canvas, Gui() {
     override fun drawText(offset: IntOffset, width: Int, text: CombineText, color: Color) =
         drawText(offset, width, text.toMinecraft().formattedText, color)
 
-    override fun drawTexture(
-        texture: Texture,
+    private fun drawTexture(
+        identifier: ResourceLocation,
         dstRect: Rect,
-        srcRect: IntRect,
-        tint: Color,
+        uvRect: Rect,
+        tint: Color = Colors.WHITE,
     ) {
-        this.client.textureManager.bindTexture(IDENTIFIER_ATLAS)
-        val uvRect = Rect(
-            offset = (texture.atlasOffset + srcRect.offset).toOffset() / Textures.atlasSize.toSize(),
-            size = srcRect.size.toSize() / Textures.atlasSize.toSize(),
-        )
+        this.client.textureManager.bindTexture(identifier)
         GlStateManager.color(tint.r / 256f, tint.g / 256f, tint.b / 256f, tint.a / 256f)
         val tessellator = Tessellator.getInstance()
         val bufferBuilder = tessellator.buffer
@@ -173,35 +166,29 @@ class CanvasImpl : Canvas, Gui() {
         tessellator.draw()
     }
 
-    private fun drawButtonTexture(dstRect: IntRect, textureY: Int) {
-        client.textureManager.bindTexture(IDENTIFIER_WIDGETS)
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F)
-        drawTexturedModalRect(
-            dstRect.offset.x,
-            dstRect.offset.y,
-            0,
-            textureY,
-            dstRect.size.width / 2,
-            dstRect.size.height,
-        )
-        drawTexturedModalRect(
-            dstRect.offset.x + dstRect.size.width / 2,
-            dstRect.offset.y,
-            200 - dstRect.size.width / 2,
-            textureY,
-            dstRect.size.width / 2,
-            dstRect.size.height,
-        )
-    }
+    override fun drawTexture(
+        texture: Texture,
+        dstRect: Rect,
+        srcRect: IntRect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = IDENTIFIER_ATLAS,
+        dstRect = dstRect,
+        uvRect = Rect(
+            offset = (texture.atlasOffset + srcRect.offset).toOffset() / Textures.atlasSize.toSize(),
+            size = srcRect.size.toSize() / Textures.atlasSize.toSize(),
+        ),
+        tint = tint,
+    )
 
-    override fun drawGuiTexture(texture: GuiTexture, dstRect: IntRect) {
-        when (texture) {
-            GuiTexture.BUTTON -> drawButtonTexture(dstRect, 66)
-            GuiTexture.BUTTON_HOVER -> drawButtonTexture(dstRect, 86)
-            GuiTexture.BUTTON_ACTIVE -> drawButtonTexture(dstRect, 86)
-            GuiTexture.BUTTON_DISABLED -> drawButtonTexture(dstRect, 46)
-        }
-    }
+    override fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float, dstRect: Rect) = drawTexture(
+        identifier = texture.identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = Rect(
+            offset = Offset.ZERO,
+            size = dstRect.size / texture.size.toSize() / scale,
+        ),
+    )
 
     override fun drawItemStack(offset: IntOffset, size: IntSize, stack: ItemStack) {
         val minecraftStack = ((stack as? ItemStackImpl) ?: return).inner

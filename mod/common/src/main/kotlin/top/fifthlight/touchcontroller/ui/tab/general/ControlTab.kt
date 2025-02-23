@@ -3,23 +3,22 @@ package top.fifthlight.touchcontroller.ui.tab.general
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.navigator.LocalNavigator
 import org.koin.compose.koinInject
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.background
-import top.fifthlight.combine.modifier.placement.fillMaxHeight
-import top.fifthlight.combine.modifier.placement.fillMaxWidth
+import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.base.layout.Column
-import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.config.ControlConfig
 import top.fifthlight.touchcontroller.config.GlobalConfigHolder
-import top.fifthlight.touchcontroller.ui.component.*
+import top.fifthlight.touchcontroller.ui.component.IntSliderPreferenceItem
+import top.fifthlight.touchcontroller.ui.component.SliderPreferenceItem
+import top.fifthlight.touchcontroller.ui.component.SwitchPreferenceItem
 import top.fifthlight.touchcontroller.ui.tab.Tab
 import top.fifthlight.touchcontroller.ui.tab.TabGroup
 import top.fifthlight.touchcontroller.ui.tab.TabOptions
@@ -33,80 +32,54 @@ object ControlTab : Tab() {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.current
-        Scaffold(
-            topBar = {
-                AppBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    leading = {
-                        BackButton(
-                            screenName = Text.translatable(Texts.SCREEN_CONFIG_TITLE),
-                            close = true
-                        )
-                    },
-                    title = {
-                        Text(Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_TITLE))
-                    },
-                )
-            },
-            sideBar = {
-                SideTabBar(
-                    modifier = Modifier.fillMaxHeight(),
-                    onTabSelected = {
-                        navigator?.replace(it)
-                    }
-                )
-            },
-        ) { modifier ->
-            Column(
-                modifier = Modifier
-                    .padding(8)
-                    .verticalScroll()
-                    .background(BackgroundTextures.BRICK_BACKGROUND)
-                    .then(modifier),
-                verticalArrangement = Arrangement.spacedBy(8),
-            ) {
-                val globalConfigHolder: GlobalConfigHolder = koinInject()
-                val globalConfig by globalConfigHolder.config.collectAsState()
-                fun update(editor: ControlConfig.() -> ControlConfig) {
-                    globalConfigHolder.saveConfig(globalConfig.let { config ->
-                        config.copy(control = editor(config.control))
-                    })
-                }
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_SPLIT_CONTROLS_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_SPLIT_CONTROLS_DESCRIPTION),
-                    value = globalConfig.control.splitControls,
-                    onValueChanged = { update { copy(splitControls = it) } }
-                )
-                SwitchPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_TOUCH_GESTURE_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_TOUCH_GESTURE_DESCRIPTION),
-                    value = globalConfig.control.disableTouchGesture,
-                    onValueChanged = { update { copy(disableTouchGesture = it) } }
-                )
-                SliderPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_MOVEMENT_SENSITIVITY_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_MOVEMENT_SENSITIVITY_DESCRIPTION),
-                    range = 0f..900f,
-                    value = globalConfig.control.viewMovementSensitivity,
-                    onValueChanged = { update { copy(viewMovementSensitivity = it) } }
-                )
-                IntSliderPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_HOLD_DETECT_THRESHOLD_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_HOLD_DETECT_THRESHOLD_DESCRIPTION),
-                    range = 0..10,
-                    value = globalConfig.control.viewHoldDetectThreshold,
-                    onValueChanged = { update { copy(viewHoldDetectThreshold = it) } }
-                )
-                IntSliderPreferenceItem(
-                    title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_HOLD_DETECT_TICKS_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_HOLD_DETECT_TICKS_DESCRIPTION),
-                    range = 1..60,
-                    value = globalConfig.control.viewHoldDetectTicks,
-                    onValueChanged = { update { copy(viewHoldDetectTicks = it) } }
-                )
+        Column(
+            modifier = Modifier
+                .padding(8)
+                .verticalScroll()
+                .background(BackgroundTextures.BRICK_BACKGROUND)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8),
+        ) {
+            val globalConfigHolder: GlobalConfigHolder = koinInject()
+            val globalConfig by globalConfigHolder.config.collectAsState()
+            fun update(editor: ControlConfig.() -> ControlConfig) {
+                globalConfigHolder.saveConfig(globalConfig.let { config ->
+                    config.copy(control = editor(config.control))
+                })
             }
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_SPLIT_CONTROLS_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_SPLIT_CONTROLS_DESCRIPTION),
+                value = globalConfig.control.splitControls,
+                onValueChanged = { update { copy(splitControls = it) } }
+            )
+            SwitchPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_TOUCH_GESTURE_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_REGULAR_DISABLE_TOUCH_GESTURE_DESCRIPTION),
+                value = globalConfig.control.disableTouchGesture,
+                onValueChanged = { update { copy(disableTouchGesture = it) } }
+            )
+            SliderPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_MOVEMENT_SENSITIVITY_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_MOVEMENT_SENSITIVITY_DESCRIPTION),
+                range = 0f..900f,
+                value = globalConfig.control.viewMovementSensitivity,
+                onValueChanged = { update { copy(viewMovementSensitivity = it) } }
+            )
+            IntSliderPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_HOLD_DETECT_THRESHOLD_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_HOLD_DETECT_THRESHOLD_DESCRIPTION),
+                range = 0..10,
+                value = globalConfig.control.viewHoldDetectThreshold,
+                onValueChanged = { update { copy(viewHoldDetectThreshold = it) } }
+            )
+            IntSliderPreferenceItem(
+                title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_HOLD_DETECT_TICKS_TITLE),
+                description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_HOLD_DETECT_TICKS_DESCRIPTION),
+                range = 1..60,
+                value = globalConfig.control.viewHoldDetectTicks,
+                onValueChanged = { update { copy(viewHoldDetectTicks = it) } }
+            )
         }
     }
 }

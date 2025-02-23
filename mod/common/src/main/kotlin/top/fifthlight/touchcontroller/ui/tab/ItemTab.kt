@@ -1,6 +1,8 @@
 package top.fifthlight.touchcontroller.ui.tab
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -10,8 +12,7 @@ import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.background
-import top.fifthlight.combine.modifier.placement.fillMaxHeight
-import top.fifthlight.combine.modifier.placement.fillMaxWidth
+import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.base.layout.Column
@@ -21,7 +22,8 @@ import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.config.GlobalConfigHolder
 import top.fifthlight.touchcontroller.config.ItemList
-import top.fifthlight.touchcontroller.ui.component.*
+import top.fifthlight.touchcontroller.ui.component.HorizontalPreferenceItem
+import top.fifthlight.touchcontroller.ui.screen.ItemListScreen
 
 object ItemTabs : KoinComponent {
     private val globalConfigHolder: GlobalConfigHolder by inject()
@@ -74,44 +76,27 @@ class ItemTab(
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        Scaffold(
-            topBar = {
-                AppBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    leading = {
-                        BackButton(
-                            screenName = Text.translatable(Texts.SCREEN_CONFIG_TITLE),
-                            close = true
-                        )
-                    },
-                    title = {
-                        Text(options.title)
-                    },
-                )
-            },
-            sideBar = {
-                SideTabBar(
-                    modifier = Modifier.fillMaxHeight(),
-                    onTabSelected = {
-                        navigator?.replace(it)
-                    }
-                )
-            },
-        ) { modifier ->
-            Column(
-                modifier = Modifier
-                    .padding(8)
-                    .verticalScroll()
-                    .background(BackgroundTextures.BRICK_BACKGROUND)
-                    .then(modifier),
-                verticalArrangement = Arrangement.spacedBy(8),
-            ) {
+        val value by value.collectAsState(null)
+        Column(
+            modifier = Modifier
+                .padding(8)
+                .verticalScroll()
+                .background(BackgroundTextures.BRICK_BACKGROUND)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8),
+        ) {
+            value?.let { value ->
                 HorizontalPreferenceItem(
                     title = Text.translatable(Texts.SCREEN_CONFIG_ITEM_WHITELIST_TITLE),
                 ) {
                     Button(
                         onClick = {
-
+                            navigator?.push(
+                                ItemListScreen(
+                                    initialValue = value.whitelist,
+                                    onValueChanged = { onValueChanged(value.copy(whitelist = it)) }
+                                )
+                            )
                         }
                     ) {
                         Text(Text.translatable(Texts.SCREEN_CONFIG_ITEM_EDIT_TITLE))
@@ -122,7 +107,12 @@ class ItemTab(
                 ) {
                     Button(
                         onClick = {
-
+                            navigator?.push(
+                                ItemListScreen(
+                                    initialValue = value.blacklist,
+                                    onValueChanged = { onValueChanged(value.copy(blacklist = it)) }
+                                )
+                            )
                         }
                     ) {
                         Text(Text.translatable(Texts.SCREEN_CONFIG_ITEM_EDIT_TITLE))

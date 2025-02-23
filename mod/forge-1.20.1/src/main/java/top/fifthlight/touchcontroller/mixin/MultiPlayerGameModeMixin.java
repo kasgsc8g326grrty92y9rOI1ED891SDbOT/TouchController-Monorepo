@@ -49,7 +49,7 @@ public abstract class MultiPlayerGameModeMixin {
     private boolean touchController$crosshairAimingContainItem(Item item) {
         GlobalConfigHolder globalConfigHolder = KoinJavaComponent.get(GlobalConfigHolder.class);
         var globalConfig = globalConfigHolder.getConfig().getValue();
-        return ItemFactoryImplKt.contains(globalConfig.getCrosshairAimingItems(), item);
+        return ItemFactoryImplKt.contains(globalConfig.getItem().getCrosshairAimingItems(), item);
     }
 
     @Unique

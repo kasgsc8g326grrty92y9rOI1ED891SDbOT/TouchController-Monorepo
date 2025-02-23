@@ -6,6 +6,9 @@ import top.fifthlight.combine.layout.MeasureScope
 import top.fifthlight.combine.modifier.Constraints
 import top.fifthlight.combine.modifier.LayoutModifierNode
 import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.data.IntSize
+
+fun Modifier.minSize(size: IntSize): Modifier = then(MinSizeNode(width = size.width, height = size.height))
 
 fun Modifier.minSize(width: Int, height: Int): Modifier = then(MinSizeNode(width = width, height = height))
 

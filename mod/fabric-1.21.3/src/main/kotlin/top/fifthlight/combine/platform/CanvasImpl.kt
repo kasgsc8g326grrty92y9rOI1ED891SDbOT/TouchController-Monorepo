@@ -10,13 +10,11 @@ import net.minecraft.client.render.*
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import org.joml.Quaternionf
+import top.fifthlight.combine.data.BackgroundTexture
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
 import top.fifthlight.combine.paint.*
-import top.fifthlight.data.IntOffset
-import top.fifthlight.data.IntRect
-import top.fifthlight.data.IntSize
-import top.fifthlight.data.Rect
+import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.mixin.DrawContextAccessor
 import top.fifthlight.combine.data.Text as CombineText
@@ -99,17 +97,13 @@ class CanvasImpl(
         drawContext.drawTextWrapped(textRenderer, text.toMinecraft(), offset.x, offset.y, width, color.value)
     }
 
-    override fun drawTexture(
-        texture: Texture,
+    private fun drawTexture(
+        identifier: Identifier,
         dstRect: Rect,
-        srcRect: IntRect,
-        tint: Color,
+        uvRect: Rect,
+        tint: Color = Colors.WHITE,
     ) {
-        val renderLayer = RenderLayer::getGuiTextured.invoke(IDENTIFIER_ATLAS)
-        val uvRect = Rect(
-            offset = (texture.atlasOffset + srcRect.offset).toOffset() / Textures.atlasSize.toSize(),
-            size = srcRect.size.toSize() / Textures.atlasSize.toSize(),
-        )
+        val renderLayer = RenderLayer::getGuiTextured.invoke(identifier)
         withShader(ShaderProgramKeys.POSITION_TEX_COLOR) {
             val matrix = drawContext.matrices.peek().positionMatrix
             val vertexConsumer = vertexConsumers.getBuffer(renderLayer)
@@ -132,16 +126,29 @@ class CanvasImpl(
         }
     }
 
-    override fun drawGuiTexture(texture: GuiTexture, dstRect: IntRect) {
-        drawContext.drawGuiTexture(
-            RenderLayer::getGuiTextured,
-            texture.toIdentifier(),
-            dstRect.left,
-            dstRect.top,
-            dstRect.size.width,
-            dstRect.size.height
-        )
-    }
+    override fun drawTexture(
+        texture: Texture,
+        dstRect: Rect,
+        srcRect: IntRect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = IDENTIFIER_ATLAS,
+        dstRect = dstRect,
+        uvRect = Rect(
+            offset = (texture.atlasOffset + srcRect.offset).toOffset() / Textures.atlasSize.toSize(),
+            size = srcRect.size.toSize() / Textures.atlasSize.toSize(),
+        ),
+        tint = tint,
+    )
+
+    override fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float, dstRect: Rect) = drawTexture(
+        identifier = texture.identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = Rect(
+            offset = Offset.ZERO,
+            size = dstRect.size / texture.size.toSize() / scale,
+        ),
+    )
 
     override fun drawItemStack(offset: IntOffset, size: IntSize, stack: ItemStack) {
         val minecraftStack = ((stack as? ItemStackImpl) ?: return).inner

@@ -1,5 +1,6 @@
 package top.fifthlight.touchcontroller.gal
 
+import kotlinx.collections.immutable.toPersistentList
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.world.InteractionHand
@@ -55,6 +56,12 @@ value class PlayerHandleImpl(val inner: LocalPlayer) : PlayerHandle {
     }
 
     override fun getInventorySlot(index: Int): ItemStack = ItemStackImpl(inner.inventory.getItem(index))
+
+    override fun getInventory() = PlayerInventory(
+        main = inner.inventory.items.map { it.toCombine() }.toPersistentList(),
+        armor = inner.inventory.armor.map { it.toCombine() }.toPersistentList(),
+        offHand = inner.inventory.offhand.first().toCombine(),
+    )
 
     override val isUsingItem: Boolean
         get() = inner.isUsingItem

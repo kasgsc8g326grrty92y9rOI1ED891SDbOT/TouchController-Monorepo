@@ -23,6 +23,7 @@ import kotlin.uuid.Uuid
 @SerialName("inventory_button")
 data class InventoryButton(
     val size: Float = 1f,
+    val classic: Boolean = true,
     override val id: Uuid = Uuid.random(),
     override val align: Align = Align.CENTER_BOTTOM,
     override val offset: IntOffset = IntOffset(101, 0),
@@ -44,6 +45,11 @@ data class InventoryButton(
                         round(it * 100f).toString()
                     )
                 }
+            ),
+            BooleanProperty(
+                getValue = { it.classic },
+                setValue = { config, value -> config.copy(classic = value) },
+                message = textFactory.of(Texts.WIDGET_INVENTORY_BUTTON_PROPERTY_CLASSIC),
             )
         ) as PersistentList<Property<ControllerWidget, *>>
     }
@@ -54,7 +60,7 @@ data class InventoryButton(
     override fun size(): IntSize = IntSize((size * 22).toInt())
 
     override fun layout(context: Context) {
-        context.InventoryButton()
+        context.InventoryButton(this)
     }
 
     override fun cloneBase(

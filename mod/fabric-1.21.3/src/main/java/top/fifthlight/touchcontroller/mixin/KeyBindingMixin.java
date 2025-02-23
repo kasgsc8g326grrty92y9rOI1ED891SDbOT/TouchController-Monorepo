@@ -39,12 +39,12 @@ public abstract class KeyBindingMixin implements ClickableKeyBinding {
         KeyBinding keyBinding = KEY_TO_BINDINGS.get(key);
 
         if (keyBinding == client.options.attackKey || keyBinding == client.options.useKey) {
-            return config.getDisableMouseClick() || config.getEnableTouchEmulation();
+            return config.getRegular().getDisableMouseClick() || config.getDebug().getEnableTouchEmulation();
         }
 
         for (int i = 0; i < 9; i++) {
             if (client.options.hotbarKeys[i] == keyBinding) {
-                return config.getDisableHotBarKey();
+                return config.getRegular().getDisableHotBarKey();
             }
         }
 
