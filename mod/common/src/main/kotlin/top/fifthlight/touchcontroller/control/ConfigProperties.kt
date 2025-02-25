@@ -92,14 +92,13 @@ class AnchorProperty<Config : ControllerWidget> : ControllerWidget.Property<Conf
                 expanded = expanded,
                 onExpandedChanged = { expanded = it },
                 dropDownContent = {
-                    val paddingWidth = 4
-                    val panelWidth = contentWidth - paddingWidth * 2
+                    val buttonWidth = contentWidth / 3
                     @Composable
                     fun AnchorButton(
                         anchor: Align
                     ) = IconButton(
                         minSize = IntSize(
-                            width = panelWidth / 3,
+                            width = buttonWidth,
                             height = 20,
                         ),
                         selected = config.align == anchor,
@@ -114,9 +113,7 @@ class AnchorProperty<Config : ControllerWidget> : ControllerWidget.Property<Conf
                     }
 
                     Column(
-                        modifier = Modifier
-                            .padding(paddingWidth)
-                            .width(contentWidth),
+                        modifier = Modifier.width(contentWidth),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(4),
                     ) {
