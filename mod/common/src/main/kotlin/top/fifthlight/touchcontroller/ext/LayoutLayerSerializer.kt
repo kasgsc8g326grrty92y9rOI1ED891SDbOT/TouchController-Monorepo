@@ -10,8 +10,8 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.serializer
-import top.fifthlight.touchcontroller.config.DEFAULT_LAYER_NAME
 import top.fifthlight.touchcontroller.config.LayoutLayer
+import top.fifthlight.touchcontroller.config.LayoutLayer.Companion.DEFAULT_LAYER_NAME
 import top.fifthlight.touchcontroller.config.LayoutLayerCondition
 import top.fifthlight.touchcontroller.control.ControllerWidget
 
