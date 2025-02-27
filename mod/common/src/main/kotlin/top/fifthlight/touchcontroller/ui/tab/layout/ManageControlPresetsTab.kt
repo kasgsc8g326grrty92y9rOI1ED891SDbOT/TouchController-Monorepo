@@ -11,7 +11,6 @@ import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.background
 import top.fifthlight.combine.modifier.drawing.border
-import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.widget.base.layout.Box
@@ -48,7 +47,6 @@ object ManageControlPresetsTab : Tab() {
                     leading = {
                         BackButton(
                             screenName = Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_TITLE),
-                            close = false
                         )
                     },
                 )

@@ -91,7 +91,6 @@ private fun ConfigScreen() {
                         leading = {
                             BackButton(
                                 screenName = Text.translatable(Texts.SCREEN_CONFIG_TITLE),
-                                close = true
                             )
                         },
                         title = {

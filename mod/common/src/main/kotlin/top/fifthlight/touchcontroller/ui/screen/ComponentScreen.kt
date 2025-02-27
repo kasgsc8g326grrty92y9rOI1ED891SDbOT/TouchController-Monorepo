@@ -1,11 +1,6 @@
 package top.fifthlight.touchcontroller.ui.screen
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import kotlinx.collections.immutable.PersistentList
@@ -20,12 +15,10 @@ import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.fillMaxHeight
-import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.base.layout.Column
-import top.fifthlight.combine.widget.base.layout.FlowRow
 import top.fifthlight.combine.widget.base.layout.Row
 import top.fifthlight.combine.widget.ui.EditText
 import top.fifthlight.combine.widget.ui.Text
@@ -48,7 +41,6 @@ class ComponentScreen(
                     leading = {
                         BackButton(
                             screenName = Text.translatable(Texts.SCREEN_COMPONENT_LIST_TITLE),
-                            close = false
                         )
                     },
                 )

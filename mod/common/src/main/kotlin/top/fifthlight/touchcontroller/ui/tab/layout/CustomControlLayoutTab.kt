@@ -226,7 +226,6 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                         leading = {
                             BackButton(
                                 screenName = Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_TITLE),
-                                close = false,
                             )
 
                             val copiedWidget = uiState.pageState.copiedWidget
@@ -350,7 +349,6 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                         leading = {
                             BackButton(
                                 screenName = Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_TITLE),
-                                close = false
                             )
                         },
                     )

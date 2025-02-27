@@ -45,7 +45,6 @@ class ItemListScreen(
                     leading = {
                         BackButton(
                             screenName = Text.translatable(Texts.SCREEN_ITEM_LIST_TITLE),
-                            close = false
                         )
                     },
                 )
