@@ -36,6 +36,7 @@ data class AscendButton(
     val size: Float = 2f,
     val texture: AscendButtonTexture = AscendButtonTexture.CLASSIC,
     override val id: Uuid = fastRandomUuid(),
+    override val name: Name = Name.Translatable(Texts.WIDGET_ASCEND_BUTTON_NAME),
     override val align: Align = Align.RIGHT_BOTTOM,
     override val offset: IntOffset = IntOffset.ZERO,
     override val opacity: Float = 1f,
@@ -84,11 +85,14 @@ data class AscendButton(
 
     override fun cloneBase(
         id: Uuid,
+        name: Name,
         align: Align,
         offset: IntOffset,
         opacity: Float,
         lockMoving: Boolean
     ) = copy(
+        id = id,
+        name = name,
         align = align,
         offset = offset,
         opacity = opacity,

@@ -25,7 +25,7 @@ class ControllerLayoutSerializer : KSerializer<ControllerLayout> {
     override val descriptor: SerialDescriptor = PersistentListDescriptor()
 
     override fun serialize(encoder: Encoder, value: ControllerLayout) =
-        delegatedSerializer.serialize(encoder, value.layers)
+        delegatedSerializer.serialize(encoder, value)
 
     override fun deserialize(decoder: Decoder) =
         ControllerLayout(delegatedSerializer.deserialize(decoder).toPersistentList())

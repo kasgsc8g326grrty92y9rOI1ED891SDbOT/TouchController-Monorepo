@@ -6,86 +6,102 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import top.fifthlight.combine.data.Identifier
+import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.control.ControllerWidget
 import top.fifthlight.touchcontroller.ext.ControllerLayoutSerializer
 import top.fifthlight.touchcontroller.ext.LayerConditionSerializer
 import top.fifthlight.touchcontroller.ext.LayoutLayerSerializer
 
 @Serializable
-enum class LayerConditionValue {
+enum class LayerConditionValue(val text: Identifier) {
     @SerialName("never")
-    NEVER,
+    NEVER(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_NEVER),
 
     @SerialName("want")
-    WANT,
+    WANT(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_WANT),
 
     @SerialName("require")
-    REQUIRE,
+    REQUIRE(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_REQUIRE);
+
+    companion object {
+        val allValues = persistentListOf(
+            NEVER,
+            WANT,
+            REQUIRE,
+            null,
+        )
+    }
+}
+
+fun LayerConditionValue?.text() = when (this) {
+    null -> Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_IGNORE
+    else -> this.text
 }
 
 @Serializable
-enum class LayerConditionKey {
+enum class LayerConditionKey(val text: Identifier) {
     @SerialName("swimming")
-    SWIMMING,
+    SWIMMING(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_SWIMMING),
 
     @SerialName("underwater")
-    UNDERWATER,
+    UNDERWATER(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_UNDERWATER),
 
     @SerialName("flying")
-    FLYING,
+    FLYING(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_FLYING),
 
     @SerialName("can_fly")
-    CAN_FLY,
+    CAN_FLY(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_CAN_FLY),
 
     @SerialName("sneaking")
-    SNEAKING,
+    SNEAKING(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_SNEAKING),
 
     @SerialName("sprinting")
-    SPRINTING,
+    SPRINTING(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_SPRINTING),
 
     @SerialName("on_ground")
-    ON_GROUND,
+    ON_GROUND(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_ON_GROUND),
 
     @SerialName("no_on_ground")
-    NOT_ON_GROUND,
+    NOT_ON_GROUND(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_NOT_ON_GROUND),
 
     @SerialName("using_item")
-    USING_ITEM,
+    USING_ITEM(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_USING_ITEM),
 
     @SerialName("on_minecart")
-    ON_MINECART,
+    ON_MINECART(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_ON_MINECART),
 
     @SerialName("on_boat")
-    ON_BOAT,
+    ON_BOAT(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_ON_BOAT),
 
     @SerialName("on_pig")
-    ON_PIG,
+    ON_PIG(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_ON_PIG),
 
     @SerialName("on_horse")
-    ON_HORSE,
+    ON_HORSE(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_ON_HORSE),
 
     @SerialName("on_camel")
-    ON_CAMEL,
+    ON_CAMEL(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_ON_CAMEL),
 
     @SerialName("on_llama")
-    ON_LLAMA,
+    ON_LLAMA(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_ON_LLAMA),
 
     @SerialName("on_strider")
-    ON_STRIDER,
+    ON_STRIDER(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_ON_STRIDER),
 
     @SerialName("riding")
-    RIDING,
+    RIDING(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_RIDING),
 }
 
 @Serializable(with = LayerConditionSerializer::class)
 @JvmInline
 value class LayoutLayerCondition(
     val conditions: PersistentMap<LayerConditionKey, LayerConditionValue> = persistentMapOf()
-) {
+) : PersistentMap<LayerConditionKey, LayerConditionValue> by conditions {
     fun check(currentState: PersistentMap<LayerConditionKey, Boolean>): Boolean {
         var haveWant = false
         var haveFulfilledWant = false
-        for (condition in conditions) {
+        for (condition in this) {
             val current = currentState[condition.key]
             when (condition.value) {
                 LayerConditionValue.NEVER -> if (current == true) {
@@ -106,15 +122,6 @@ value class LayoutLayerCondition(
         }
         return !(haveWant && !haveFulfilledWant)
     }
-
-    operator fun get(key: LayerConditionKey): LayerConditionValue? = conditions[key]
-    fun set(key: LayerConditionKey, value: LayerConditionValue?) = LayoutLayerCondition(
-        if (value == null) {
-            conditions.remove(key)
-        } else {
-            conditions.put(key, value)
-        }
-    )
 }
 
 fun layoutLayerConditionOf(vararg pairs: Pair<LayerConditionKey, LayerConditionValue>) =
@@ -135,6 +142,6 @@ data class LayoutLayer(
 @Serializable(with = ControllerLayoutSerializer::class)
 value class ControllerLayout(
     val layers: PersistentList<LayoutLayer> = persistentListOf(),
-)
+) : PersistentList<LayoutLayer> by layers
 
 fun controllerLayoutOf(vararg layers: LayoutLayer) = ControllerLayout(persistentListOf(*layers))

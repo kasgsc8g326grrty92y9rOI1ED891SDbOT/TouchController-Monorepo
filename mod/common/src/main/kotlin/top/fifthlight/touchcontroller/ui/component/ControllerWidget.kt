@@ -19,28 +19,28 @@ import top.fifthlight.touchcontroller.layout.DrawQueue
 @Composable
 fun ControllerWidget(
     modifier: Modifier = Modifier,
-    config: ControllerWidget,
+    widget: ControllerWidget,
 ) {
     val itemListProvider: DefaultItemListProvider = koinInject()
-    val drawQueue = remember(config, itemListProvider) {
+    val drawQueue = remember(widget, itemListProvider) {
         val queue = DrawQueue()
         val context = Context(
             windowSize = IntSize.ZERO,
             windowScaledSize = IntSize.ZERO,
             drawQueue = queue,
-            size = config.size(),
+            size = widget.size(),
             screenOffset = IntOffset.ZERO,
             pointers = mutableMapOf(),
             result = ContextResult(),
             config = GlobalConfig.default(itemListProvider),
-            opacity = config.opacity,
+            opacity = widget.opacity,
         )
-        config.layout(context)
+        widget.layout(context)
         queue
     }
     Canvas(
         modifier = Modifier
-            .size(config.size())
+            .size(widget.size())
             .then(modifier)
     ) {
         canvas.withBlend {
@@ -61,14 +61,14 @@ fun ControllerWidget(
 @Composable
 fun ScaledControllerWidget(
     modifier: Modifier = Modifier,
-    config: ControllerWidget,
+    widget: ControllerWidget,
 ) {
     var entrySize by remember { mutableStateOf(IntSize.ZERO) }
     val itemListProvider: DefaultItemListProvider = koinInject()
-    val (drawQueue, componentScaleFactor, offset) = remember(config, entrySize, itemListProvider) {
+    val (drawQueue, componentScaleFactor, offset) = remember(widget, entrySize, itemListProvider) {
         val queue = DrawQueue()
 
-        val widgetSize = config.size()
+        val widgetSize = widget.size()
         val widthFactor = if (widgetSize.width > entrySize.width) {
             entrySize.width.toFloat() / widgetSize.width.toFloat()
         } else 1f
@@ -83,14 +83,14 @@ fun ScaledControllerWidget(
             windowSize = IntSize.ZERO,
             windowScaledSize = IntSize.ZERO,
             drawQueue = queue,
-            size = config.size(),
+            size = widget.size(),
             screenOffset = IntOffset.ZERO,
             pointers = mutableMapOf(),
             result = ContextResult(),
             config = GlobalConfig.default(itemListProvider),
-            opacity = config.opacity,
+            opacity = widget.opacity,
         )
-        config.layout(context)
+        widget.layout(context)
         Triple(queue, componentScaleFactor, offset)
     }
     Canvas(

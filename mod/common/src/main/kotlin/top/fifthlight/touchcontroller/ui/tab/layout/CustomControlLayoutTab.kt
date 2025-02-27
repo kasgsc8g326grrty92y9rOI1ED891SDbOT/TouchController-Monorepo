@@ -23,7 +23,6 @@ import top.fifthlight.combine.paint.Colors
 import top.fifthlight.combine.widget.base.layout.Box
 import top.fifthlight.combine.widget.base.layout.Column
 import top.fifthlight.combine.widget.base.layout.Row
-import top.fifthlight.combine.widget.base.layout.Spacer
 import top.fifthlight.combine.widget.ui.*
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntRect
@@ -171,7 +170,7 @@ private fun LayoutEditorPanel(
                     modifier = Modifier
                         .then(ControllerWidgetModifierNode(widget))
                         .then(dragModifier),
-                    config = widget
+                    widget = widget
                 )
             } else {
                 ControllerWidget(
@@ -180,7 +179,7 @@ private fun LayoutEditorPanel(
                         .clickable {
                             onSelectedWidgetChanged(index)
                         },
-                    config = widget
+                    widget = widget
                 )
             }
         }
@@ -227,7 +226,7 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                         leading = {
                             BackButton(
                                 screenName = Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_TITLE),
-                                close = false
+                                close = false,
                             )
 
                             val copiedWidget = uiState.pageState.copiedWidget

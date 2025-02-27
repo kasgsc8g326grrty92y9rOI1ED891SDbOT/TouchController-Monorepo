@@ -44,6 +44,7 @@ data class SprintButton(
     val texture: SprintButtonTexture = SprintButtonTexture.CLASSIC,
     val trigger: SprintButtonTrigger = SprintButtonTrigger.SINGLE_CLICK_LOCK,
     override val id: Uuid = fastRandomUuid(),
+    override val name: Name = Name.Translatable(Texts.WIDGET_SPRINT_BUTTON_NAME),
     override val align: Align = Align.RIGHT_BOTTOM,
     override val offset: IntOffset = IntOffset.ZERO,
     override val opacity: Float = 1f,
@@ -100,11 +101,14 @@ data class SprintButton(
 
     override fun cloneBase(
         id: Uuid,
+        name: Name,
         align: Align,
         offset: IntOffset,
         opacity: Float,
         lockMoving: Boolean
     ) = copy(
+        id = id,
+        name = name,
         align = align,
         offset = offset,
         opacity = opacity,

@@ -28,7 +28,7 @@ class CustomControlLayoutTabModel : TouchControllerScreenModel() {
                 is PresetConfig.BuiltIn -> CustomControlLayoutTabState.Disabled
                 is PresetConfig.Custom -> {
                     val selectedPreset = presets[preset.uuid]
-                    val selectedLayer = selectedPreset?.layout?.layers?.getOrNull(selectState.selectedLayerIndex)
+                    val selectedLayer = selectedPreset?.layout?.getOrNull(selectState.selectedLayerIndex)
                     val selectedWidget = selectedLayer?.widgets?.getOrNull(selectState.selectedWidgetIndex)
                     CustomControlLayoutTabState.Enabled(
                         allPresets = presets,
@@ -121,27 +121,53 @@ class CustomControlLayoutTabModel : TouchControllerScreenModel() {
         pageState.getAndUpdate { it.copy(selectedWidgetIndex = index) }
     }
 
-    private fun editLayer(action: LayoutLayer.() -> LayoutLayer) {
+    fun editLayer(action: LayoutLayer.() -> LayoutLayer) {
         val uiState = uiState.value as? CustomControlLayoutTabState.Enabled ?: return
         val selectedPreset = uiState.selectedPreset ?: return
         val selectedPresetUuid = uiState.selectedPresetUuid ?: return
         val selectedLayerIndex =
-            uiState.pageState.selectedLayerIndex.takeIf { it in selectedPreset.layout.layers.indices } ?: return
-        val selectedLayer = uiState.selectedLayer ?: return
-        val newPreset = selectedPreset.copy(
-            layout = ControllerLayout(
-                selectedPreset.layout.layers.set(selectedLayerIndex, action(selectedLayer))
+            uiState.pageState.selectedLayerIndex.takeIf { it in selectedPreset.layout.indices } ?: return
+        editPreset(selectedPresetUuid) {
+            copy(
+                layout = ControllerLayout(
+                    layout.set(selectedLayerIndex, action(layout[selectedLayerIndex]))
+                )
             )
-        )
-        presetManager.savePreset(selectedPresetUuid, newPreset)
+        }
+    }
+
+    fun deleteLayer(index: Int) {
+        pageState.getAndUpdate {
+            it.copy(
+                selectedWidgetIndex = -1,
+                selectedLayerIndex = -1,
+            )
+        }
+        val uiState = uiState.value as? CustomControlLayoutTabState.Enabled ?: return
+        val selectedPresetUuid = uiState.selectedPresetUuid ?: return
+        editPreset(selectedPresetUuid) {
+            copy(layout = ControllerLayout(layout.removeAt(index)))
+        }
+    }
+
+    fun selectLayer(index: Int) {
+        pageState.getAndUpdate {
+            it.copy(
+                selectedWidgetIndex = -1,
+                selectedLayerIndex = index,
+            )
+        }
     }
 
     fun editWidget(index: Int, widget: ControllerWidget) {
         editLayer { copy(widgets = widgets.set(index, widget)) }
     }
 
-    fun newWidget(widget: ControllerWidget) {
-        editLayer { copy(widgets = widgets.add(widget)) }
+    fun newWidget(widget: ControllerWidget): Int {
+        val newWidget = widget.newId()
+        var index = 0
+        editLayer { copy(widgets = widgets.add(newWidget)).also { index = it.widgets.size - 1 } }
+        return index
     }
 
     fun deleteWidget(index: Int) {

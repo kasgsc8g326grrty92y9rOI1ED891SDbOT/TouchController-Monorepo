@@ -88,15 +88,20 @@ class PresetManager : KoinComponent {
     fun savePreset(uuid: Uuid, preset: LayoutPreset) {
         presetDir.createDirectories()
         getPresetFile(uuid).outputStream().use { json.encodeToStream(preset, it) }
+        var addedPresets = false
         val newPresets = _presets.updateAndGet {
             if (it.containsKey(uuid)) {
+                addedPresets = false
                 val index = it.orderedEntries.indexOfFirst { (id, _) -> id == uuid }
                 PresetsContainer(it.orderedEntries.set(index, Pair(uuid, preset)))
             } else {
+                addedPresets = true
                 PresetsContainer(it.orderedEntries + (uuid to preset))
             }
         }
-        saveOrder(newPresets.order)
+        if (addedPresets) {
+            saveOrder(newPresets.order)
+        }
     }
 
     fun movePreset(uuid: Uuid, offset: Int) {

@@ -13,12 +13,11 @@ fun FlowRow(
     expandColumnWidth: Boolean = false,
     content: @Composable () -> Unit = {},
 ) {
-    // TODO add arrangement support for flow line
     Layout(
         modifier = modifier,
         measurePolicy = { measurables, constraints ->
             val childConstraint = if (expandColumnWidth) {
-                val width = constraints.maxWidth / 2
+                val width = constraints.maxWidth / maxColumns
                 constraints.copy(
                     minWidth = width,
                     maxWidth = width,

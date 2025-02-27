@@ -7,10 +7,9 @@ import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.pointer.consumePress
-import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.base.Dialog
-import top.fifthlight.combine.widget.base.layout.BoxScope
 import top.fifthlight.combine.widget.base.layout.Column
+import top.fifthlight.combine.widget.base.layout.ColumnScope
 import top.fifthlight.combine.widget.base.layout.Row
 import top.fifthlight.combine.widget.base.layout.RowScope
 import top.fifthlight.touchcontroller.assets.Textures
@@ -20,14 +19,13 @@ fun AlertDialog(
     onDismissRequest: (() -> Unit)? = null,
     title: @Composable () -> Unit = {},
     action: @Composable RowScope.() -> Unit = {},
-    content: @Composable BoxScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Column(
             modifier = Modifier
                 .padding(8)
                 .border(Textures.WIDGET_BACKGROUND_BACKGROUND_GRAY)
-                .verticalScroll()
                 .consumePress(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8)

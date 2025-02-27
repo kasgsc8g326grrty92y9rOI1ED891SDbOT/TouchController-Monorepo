@@ -39,6 +39,7 @@ data class PerspectiveSwitchButton(
     val size: Float = 1f,
     val style: PerspectiveSwitchButtonStyle = PerspectiveSwitchButtonStyle.CLASSIC,
     override val id: Uuid = fastRandomUuid(),
+    override val name: Name = Name.Translatable(Texts.WIDGET_PERSPECTIVE_SWITCH_BUTTON_NAME),
     override val align: Align = Align.CENTER_TOP,
     override val offset: IntOffset = IntOffset.ZERO,
     override val opacity: Float = 1f,
@@ -88,11 +89,14 @@ data class PerspectiveSwitchButton(
 
     override fun cloneBase(
         id: Uuid,
+        name: Name,
         align: Align,
         offset: IntOffset,
         opacity: Float,
         lockMoving: Boolean
     ) = copy(
+        id = id,
+        name = name,
         align = align,
         offset = offset,
         opacity = opacity,

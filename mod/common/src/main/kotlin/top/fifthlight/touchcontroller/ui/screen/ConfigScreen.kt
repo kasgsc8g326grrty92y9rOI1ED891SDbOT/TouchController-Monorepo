@@ -12,8 +12,8 @@ import top.fifthlight.combine.widget.base.layout.Box
 import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.ui.component.*
-import top.fifthlight.touchcontroller.ui.tab.AboutTab
 import top.fifthlight.touchcontroller.ui.tab.Tab
+import top.fifthlight.touchcontroller.ui.tab.general.RegularTab
 
 fun getConfigScreenButtonText(): Any = with(GlobalContext.get()) {
     val textFactory: TextFactory = get()
@@ -28,7 +28,7 @@ fun getConfigScreen(parent: Any?): Any? = with(GlobalContext.get()) {
         renderBackground = false,
         title = textFactory.of(Texts.SCREEN_CONFIG_TITLE)
     ) {
-        TouchControllerNavigator(AboutTab) { navigator ->
+        TouchControllerNavigator(RegularTab) { navigator ->
             val currentTab = (navigator.lastItem as? Tab)?.takeIf { !it.options.openAsScreen }
             currentTab?.let {
                 Scaffold(

@@ -24,6 +24,7 @@ data class InventoryButton(
     val size: Float = 1f,
     val classic: Boolean = true,
     override val id: Uuid = fastRandomUuid(),
+    override val name: Name = Name.Translatable(Texts.WIDGET_INVENTORY_BUTTON_NAME),
     override val align: Align = Align.CENTER_BOTTOM,
     override val offset: IntOffset = IntOffset(101, 0),
     override val opacity: Float = 1f,
@@ -64,11 +65,14 @@ data class InventoryButton(
 
     override fun cloneBase(
         id: Uuid,
+        name: Name,
         align: Align,
         offset: IntOffset,
         opacity: Float,
         lockMoving: Boolean
     ) = copy(
+        id = id,
+        name = name,
         align = align,
         offset = offset,
         opacity = opacity,

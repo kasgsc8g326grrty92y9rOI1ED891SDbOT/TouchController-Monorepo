@@ -20,7 +20,7 @@ class PresetsTabModel(
         _uiState.value = PresetsTabState.Empty
     }
 
-    fun openCreatePresetBox() {
+    fun openCreatePresetDialog() {
         _uiState.value = PresetsTabState.Create()
     }
 
@@ -40,7 +40,7 @@ class PresetsTabModel(
         clearState()
     }
 
-    fun openEditPresetBox(uuid: Uuid, preset: LayoutPreset) {
+    fun openEditPresetDialog(uuid: Uuid, preset: LayoutPreset) {
         _uiState.value = PresetsTabState.Edit(
             uuid = uuid,
             name = preset.name,

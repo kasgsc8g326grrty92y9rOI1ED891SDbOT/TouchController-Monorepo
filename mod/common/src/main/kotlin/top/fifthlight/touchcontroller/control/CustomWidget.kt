@@ -11,6 +11,7 @@ import top.fifthlight.combine.paint.drawNinePatchTexture
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntRect
 import top.fifthlight.data.IntSize
+import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.ext.fastRandomUuid
 import top.fifthlight.touchcontroller.layout.*
 import kotlin.uuid.Uuid
@@ -25,6 +26,7 @@ data class CustomWidget(
     val swipeTrigger: Boolean = false,
     val action: ButtonTrigger = ButtonTrigger.Press(),
     override val id: Uuid = fastRandomUuid(),
+    override val name: Name = Name.Translatable(Texts.WIDGET_CUSTOM_BUTTON_NAME),
     override val align: Align = Align.RIGHT_BOTTOM,
     override val offset: IntOffset = IntOffset.ZERO,
     override val opacity: Float = 1f,
@@ -209,11 +211,14 @@ data class CustomWidget(
 
     override fun cloneBase(
         id: Uuid,
+        name: Name,
         align: Align,
         offset: IntOffset,
         opacity: Float,
         lockMoving: Boolean
     ) = copy(
+        id = id,
+        name = name,
         align = align,
         offset = offset,
         opacity = opacity,

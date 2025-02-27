@@ -27,7 +27,7 @@ class LayerConditionSerializer : KSerializer<LayoutLayerCondition> {
     override val descriptor: SerialDescriptor = PersistentMapDescriptor()
 
     override fun serialize(encoder: Encoder, value: LayoutLayerCondition) =
-        mapSerializer.serialize(encoder, value.conditions)
+        mapSerializer.serialize(encoder, value)
 
     override fun deserialize(decoder: Decoder) =
         LayoutLayerCondition(mapSerializer.deserialize(decoder).toPersistentMap())

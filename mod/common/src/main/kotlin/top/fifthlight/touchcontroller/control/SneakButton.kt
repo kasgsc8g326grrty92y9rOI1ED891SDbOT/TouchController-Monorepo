@@ -61,6 +61,7 @@ data class SneakButton(
     val texture: SneakButtonTexture = SneakButtonTexture.CLASSIC,
     val trigger: SneakButtonTrigger = SneakButtonTrigger.DOUBLE_CLICK_LOCK,
     override val id: Uuid = fastRandomUuid(),
+    override val name: Name = Name.Translatable(Texts.WIDGET_SNEAK_BUTTON_NAME),
     override val align: Align = Align.RIGHT_BOTTOM,
     override val offset: IntOffset = IntOffset.ZERO,
     override val opacity: Float = 1f,
@@ -121,11 +122,14 @@ data class SneakButton(
 
     override fun cloneBase(
         id: Uuid,
+        name: Name,
         align: Align,
         offset: IntOffset,
         opacity: Float,
         lockMoving: Boolean
     ) = copy(
+        id = id,
+        name = name,
         align = align,
         offset = offset,
         opacity = opacity,

@@ -1,29 +1,56 @@
 package top.fifthlight.touchcontroller.control
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import top.fifthlight.combine.data.Identifier
+import top.fifthlight.combine.data.LocalTextFactory
 import top.fifthlight.combine.data.TextFactory
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.ext.fastRandomUuid
 import top.fifthlight.touchcontroller.layout.Align
 import top.fifthlight.touchcontroller.layout.Context
 import kotlin.math.round
 import kotlin.uuid.Uuid
 
+@Immutable
 @Serializable
 sealed class ControllerWidget {
     abstract val id: Uuid
+    abstract val name: Name
     abstract val align: Align
     abstract val offset: IntOffset
     abstract val opacity: Float
     abstract val lockMoving: Boolean
+
+    @Immutable
+    @Serializable
+    sealed class Name {
+        @Serializable
+        @SerialName("translatable")
+        data class Translatable(val identifier: Identifier) : Name()
+
+        @Serializable
+        @SerialName("literal")
+        data class Literal(val string: String) : Name()
+
+        fun getString(textFactory: TextFactory) = when (this) {
+            is Translatable -> textFactory.of(identifier)
+            is Literal -> textFactory.literal(string)
+        }
+
+        @Composable
+        fun getString() = getString(LocalTextFactory.current)
+    }
 
     interface Property<Config : ControllerWidget, Value> {
         @Composable
@@ -68,11 +95,14 @@ sealed class ControllerWidget {
 
     abstract fun cloneBase(
         id: Uuid = this.id,
+        name: Name = this.name,
         align: Align = this.align,
         offset: IntOffset = this.offset,
         opacity: Float = this.opacity,
         lockMoving: Boolean = this.lockMoving,
     ): ControllerWidget
 
-    open fun newId() = cloneBase()
+    open fun newId() = cloneBase(
+        id = fastRandomUuid(),
+    )
 }

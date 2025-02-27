@@ -36,4 +36,5 @@ val appModule = module {
     factory { CustomControlLayoutTabModel() }
     factory { params -> PresetsTabModel(params[0]) }
     factory { params -> LayersTabModel(params[0]) }
+    factory { params -> WidgetsTabModel(params[0]) }
 }

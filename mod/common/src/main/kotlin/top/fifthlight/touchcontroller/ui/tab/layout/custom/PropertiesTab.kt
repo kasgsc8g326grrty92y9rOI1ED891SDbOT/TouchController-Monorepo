@@ -2,7 +2,6 @@ package top.fifthlight.touchcontroller.ui.tab.layout.custom
 
 import androidx.compose.runtime.Composable
 import top.fifthlight.combine.data.Text
-import top.fifthlight.combine.data.Texture
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
@@ -32,23 +31,25 @@ object PropertiesTab : CustomTab() {
             sideBarAtRight = sideBarAtRight,
             tabsButton = tabsButton,
             actions = {
-                val moveLocked = uiState.pageState.moveLocked
-                IconButton(
-                    onClick = {
-                        screenModel.setMoveLocked(!moveLocked)
+                if (uiState.selectedLayer != null) {
+                    val moveLocked = uiState.pageState.moveLocked
+                    IconButton(
+                        onClick = {
+                            screenModel.setMoveLocked(!moveLocked)
+                        }
+                    ) {
+                        if (moveLocked) {
+                            Icon(Textures.ICON_LOCK)
+                        } else {
+                            Icon(Textures.ICON_UNLOCK)
+                        }
                     }
-                ) {
-                    if (moveLocked) {
-                        Icon(Textures.ICON_LOCK)
-                    } else {
-                        Icon(Textures.ICON_UNLOCK)
-                    }
-                }
 
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(Textures.ICON_FORMAT_PAINTER)
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        Icon(Textures.ICON_FORMAT_PAINTER)
+                    }
                 }
             }
         ) { modifier ->

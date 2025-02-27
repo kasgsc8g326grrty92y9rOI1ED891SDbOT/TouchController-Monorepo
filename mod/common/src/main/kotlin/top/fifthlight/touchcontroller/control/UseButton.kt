@@ -43,6 +43,7 @@ data class UseButton(
     val texture: UseButtonTexture = UseButtonTexture.CLASSIC,
     val trigger: UseButtonTrigger = UseButtonTrigger.HOLD,
     override val id: Uuid = fastRandomUuid(),
+    override val name: Name = Name.Translatable(Texts.WIDGET_USE_BUTTON_NAME),
     override val align: Align = Align.RIGHT_BOTTOM,
     override val offset: IntOffset = IntOffset.ZERO,
     override val opacity: Float = 1f,
@@ -99,11 +100,14 @@ data class UseButton(
 
     override fun cloneBase(
         id: Uuid,
+        name: Name,
         align: Align,
         offset: IntOffset,
         opacity: Float,
         lockMoving: Boolean
     ) = copy(
+        id = id,
+        name = name,
         align = align,
         offset = offset,
         opacity = opacity,

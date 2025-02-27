@@ -130,7 +130,7 @@ object RenderEvents : KoinComponent {
             config = configHolder.config.value,
             presetControlInfo = preset.controlInfo,
         ).run {
-            Hud(layers = preset.layout.layers)
+            Hud(layers = preset.layout)
             result
         }
         drawQueue.enqueue { canvas ->
