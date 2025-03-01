@@ -61,6 +61,12 @@ data class BuiltinPresetKey(
         ) : MoveMethod()
     }
 
+    val preset = BuiltinPresets.default.mapWidgets { widget ->
+        widget.cloneBase(
+            opacity = opacity,
+        )
+    }
+
     companion object {
         val DEFAULT = BuiltinPresetKey()
     }

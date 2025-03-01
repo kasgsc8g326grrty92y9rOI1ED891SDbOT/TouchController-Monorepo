@@ -12,9 +12,7 @@ import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.background
 import top.fifthlight.combine.modifier.drawing.border
-import top.fifthlight.combine.modifier.placement.fillMaxHeight
-import top.fifthlight.combine.modifier.placement.fillMaxWidth
-import top.fifthlight.combine.modifier.placement.padding
+import top.fifthlight.combine.modifier.placement.*
 import top.fifthlight.combine.modifier.pointer.toggleable
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.ui.style.ColorTheme
@@ -25,10 +23,13 @@ import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.TextureSet
 import top.fifthlight.touchcontroller.assets.Textures
+import top.fifthlight.touchcontroller.config.ControllerLayout
+import top.fifthlight.touchcontroller.config.LayerConditionValue
 import top.fifthlight.touchcontroller.config.preset.PresetConfig
 import top.fifthlight.touchcontroller.config.preset.builtin.BuiltinPresetKey
 import top.fifthlight.touchcontroller.ui.component.AppBar
 import top.fifthlight.touchcontroller.ui.component.BackButton
+import top.fifthlight.touchcontroller.ui.component.ControllerWidget
 import top.fifthlight.touchcontroller.ui.component.Scaffold
 import top.fifthlight.touchcontroller.ui.model.LocalConfigScreenModel
 import top.fifthlight.touchcontroller.ui.model.ManageControlPresetsTabModel
@@ -80,6 +81,28 @@ private fun RadioBoxItem(
     }
 }
 
+@Composable
+private fun PresetPreview(
+    modifier: Modifier = Modifier,
+    preset: ControllerLayout = ControllerLayout(),
+) {
+    Box(modifier = modifier) {
+        for (layer in preset.layers) {
+            if (layer.condition.values.any { it != LayerConditionValue.NEVER }) {
+                continue
+            }
+            for (widget in layer.widgets) {
+                ControllerWidget(
+                    modifier = Modifier
+                        .alignment(widget.align.alignment)
+                        .offset(widget.align.normalizeOffset(widget.offset)),
+                    widget = widget,
+                )
+            }
+        }
+    }
+}
+
 object ManageControlPresetsTab : Tab() {
     override val options = TabOptions(
         titleId = Texts.SCREEN_CONFIG_LAYOUT_MANAGE_CONTROL_PRESET,
@@ -126,6 +149,10 @@ object ManageControlPresetsTab : Tab() {
                             alignment = Alignment.Center,
                         ) {
                             Text("Real-time preview")
+                            PresetPreview(
+                                modifier = Modifier.fillMaxSize(),
+                                preset = currentPresetConfig.key.preset.layout,
+                            )
                         }
                         Row(
                             modifier = Modifier

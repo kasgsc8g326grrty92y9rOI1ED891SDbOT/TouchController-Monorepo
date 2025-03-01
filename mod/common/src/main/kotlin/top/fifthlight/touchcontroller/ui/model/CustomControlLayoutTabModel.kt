@@ -9,7 +9,6 @@ import top.fifthlight.touchcontroller.config.preset.LayoutPreset
 import top.fifthlight.touchcontroller.config.preset.PresetConfig
 import top.fifthlight.touchcontroller.config.preset.PresetManager
 import top.fifthlight.touchcontroller.config.preset.builtin.BuiltinPresetKey
-import top.fifthlight.touchcontroller.config.preset.builtin.preset
 import top.fifthlight.touchcontroller.control.ControllerWidget
 import top.fifthlight.touchcontroller.ext.combineStates
 import top.fifthlight.touchcontroller.ext.fastRandomUuid

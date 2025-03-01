@@ -2,17 +2,12 @@ package top.fifthlight.touchcontroller.config.preset.builtin
 
 import kotlinx.collections.immutable.persistentListOf
 import top.fifthlight.data.IntOffset
-import top.fifthlight.touchcontroller.config.ControllerLayout
-import top.fifthlight.touchcontroller.config.LayerConditionKey
-import top.fifthlight.touchcontroller.config.LayerConditionValue
-import top.fifthlight.touchcontroller.config.LayoutLayer
-import top.fifthlight.touchcontroller.config.controllerLayoutOf
-import top.fifthlight.touchcontroller.config.layoutLayerConditionOf
+import top.fifthlight.touchcontroller.config.*
 import top.fifthlight.touchcontroller.config.preset.LayoutPreset
 import top.fifthlight.touchcontroller.control.*
 import top.fifthlight.touchcontroller.layout.Align
 
-private object BuiltinPresets {
+object BuiltinPresets {
     val default = LayoutPreset(
         name = "Default",
         layout = controllerLayoutOf(
@@ -198,6 +193,3 @@ private object BuiltinPresets {
         )
     )
 }
-
-val BuiltinPresetKey.preset
-    get() = BuiltinPresets.default

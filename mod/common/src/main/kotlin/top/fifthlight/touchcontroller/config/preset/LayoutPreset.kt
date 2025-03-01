@@ -3,13 +3,11 @@ package top.fifthlight.touchcontroller.config.preset
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import top.fifthlight.data.IntOffset
-import top.fifthlight.touchcontroller.config.*
-import top.fifthlight.touchcontroller.control.*
+import top.fifthlight.touchcontroller.config.ControllerLayout
+import top.fifthlight.touchcontroller.control.ControllerWidget
 import top.fifthlight.touchcontroller.ext.LayoutPresetsSerializer
-import top.fifthlight.touchcontroller.layout.Align
 
 @Immutable
 @Serializable
@@ -18,6 +16,12 @@ data class LayoutPreset(
     val controlInfo: PresetControlInfo = PresetControlInfo(),
     val layout: ControllerLayout = ControllerLayout(),
 ) {
+    fun mapWidgets(transform: (ControllerWidget) -> ControllerWidget) = copy(
+        layout = ControllerLayout(layout.layers.map { layer ->
+            layer.copy(widgets = layer.widgets.map(transform).toPersistentList())
+        }.toPersistentList())
+    )
+
     companion object {
         const val DEFAULT_PRESET_NAME = "Unnamed preset"
     }

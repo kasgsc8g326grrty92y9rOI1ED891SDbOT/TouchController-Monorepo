@@ -1,8 +1,8 @@
 package top.fifthlight.touchcontroller.config
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory
 import top.fifthlight.touchcontroller.config.preset.PresetConfig
 import top.fifthlight.touchcontroller.config.preset.PresetManager
 import top.fifthlight.touchcontroller.config.preset.builtin.BuiltinPresetKey
-import top.fifthlight.touchcontroller.config.preset.builtin.preset
 import top.fifthlight.touchcontroller.ext.combineStates
 import top.fifthlight.touchcontroller.gal.DefaultItemListProvider
 import java.io.IOException

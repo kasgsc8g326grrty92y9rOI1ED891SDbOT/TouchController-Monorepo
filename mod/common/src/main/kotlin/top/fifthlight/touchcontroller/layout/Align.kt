@@ -1,60 +1,66 @@
 package top.fifthlight.touchcontroller.layout
 
+import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntSize
 
-enum class Align {
-    LEFT_TOP,
-    CENTER_TOP,
-    RIGHT_TOP,
-    LEFT_CENTER,
-    CENTER_CENTER,
-    RIGHT_CENTER,
-    LEFT_BOTTOM,
-    CENTER_BOTTOM,
-    RIGHT_BOTTOM;
+enum class Align(val alignment: Alignment) {
+    LEFT_TOP(Alignment.TopLeft),
+    CENTER_TOP(Alignment.TopCenter),
+    RIGHT_TOP(Alignment.TopRight),
+    LEFT_CENTER(Alignment.CenterLeft),
+    CENTER_CENTER(Alignment.Center),
+    RIGHT_CENTER(Alignment.CenterRight),
+    LEFT_BOTTOM(Alignment.BottomLeft),
+    CENTER_BOTTOM(Alignment.BottomCenter),
+    RIGHT_BOTTOM(Alignment.BottomRight);
 
-    fun alignOffset(windowSize: IntSize, size: IntSize, offset: IntOffset): IntOffset {
-        return when (this) {
-            LEFT_TOP -> offset
+    fun normalizeOffset(offset: IntOffset) = when (this) {
+        LEFT_TOP, CENTER_TOP, LEFT_CENTER, CENTER_CENTER -> offset
+        RIGHT_TOP, RIGHT_CENTER -> IntOffset(-offset.x, offset.y)
+        LEFT_BOTTOM, CENTER_BOTTOM -> IntOffset(offset.x, -offset.y)
+        RIGHT_BOTTOM -> -offset
+    }
 
-            CENTER_TOP -> IntOffset(
-                x = (windowSize.width - size.width) / 2 + offset.x,
-                y = offset.y
-            )
+    fun alignOffset(windowSize: IntSize, size: IntSize, offset: IntOffset) = when (this) {
+        LEFT_TOP -> offset
 
-            RIGHT_TOP -> IntOffset(
-                x = windowSize.width - size.width - offset.x,
-                y = offset.y,
-            )
+        CENTER_TOP -> IntOffset(
+            x = (windowSize.width - size.width) / 2 + offset.x,
+            y = offset.y
+        )
 
-            LEFT_CENTER -> IntOffset(
-                x = offset.x,
-                y = (windowSize.height - size.height) / 2 + offset.y
-            )
+        RIGHT_TOP -> IntOffset(
+            x = windowSize.width - size.width - offset.x,
+            y = offset.y,
+        )
 
-            CENTER_CENTER -> (windowSize - size) / 2 + offset
+        LEFT_CENTER -> IntOffset(
+            x = offset.x,
+            y = (windowSize.height - size.height) / 2 + offset.y
+        )
 
-            RIGHT_CENTER -> IntOffset(
-                x = windowSize.width - size.width - offset.x,
-                y = (windowSize.height - size.height) / 2 + offset.y
-            )
+        CENTER_CENTER -> (windowSize - size) / 2 + offset
 
-            LEFT_BOTTOM -> IntOffset(
-                x = offset.x,
-                y = windowSize.height - size.height - offset.y,
-            )
+        RIGHT_CENTER -> IntOffset(
+            x = windowSize.width - size.width - offset.x,
+            y = (windowSize.height - size.height) / 2 + offset.y
+        )
 
-            CENTER_BOTTOM -> IntOffset(
-                x = (windowSize.width - size.width) / 2 + offset.x,
-                y = windowSize.height - size.height - offset.y,
-            )
+        LEFT_BOTTOM -> IntOffset(
+            x = offset.x,
+            y = windowSize.height - size.height - offset.y,
+        )
 
-            RIGHT_BOTTOM -> IntOffset(
-                x = windowSize.width - size.width - offset.x,
-                y = windowSize.height - size.height - offset.y,
-            )
-        }
+        CENTER_BOTTOM -> IntOffset(
+            x = (windowSize.width - size.width) / 2 + offset.x,
+            y = windowSize.height - size.height - offset.y,
+        )
+
+        RIGHT_BOTTOM -> IntOffset(
+            x = windowSize.width - size.width - offset.x,
+            y = windowSize.height - size.height - offset.y,
+        )
     }
 }
 

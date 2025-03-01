@@ -122,13 +122,8 @@ private fun LayoutEditorPanel(
                         .draggable { offset ->
                             dragTotalOffset += offset
                             val intOffset = dragTotalOffset.toIntOffset()
-                            val appliedOffset = when (widget.align) {
-                                Align.LEFT_TOP, Align.CENTER_TOP, Align.LEFT_CENTER, Align.CENTER_CENTER -> intOffset
-                                Align.RIGHT_TOP, Align.RIGHT_CENTER -> IntOffset(-intOffset.x, intOffset.y)
-                                Align.LEFT_BOTTOM, Align.CENTER_BOTTOM -> IntOffset(intOffset.x, -intOffset.y)
-                                Align.RIGHT_BOTTOM -> -intOffset
-                            }
-                            val widgetOffset = widgetInitialOffset + appliedOffset
+                            val normalizedOffset = widget.align.normalizeOffset(intOffset)
+                            val widgetOffset = widgetInitialOffset + normalizedOffset
                             val widgetSize = widget.size()
                             val clampedOffset = IntOffset(
                                 x = when (widget.align) {
