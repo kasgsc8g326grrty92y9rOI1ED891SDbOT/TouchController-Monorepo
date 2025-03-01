@@ -22,24 +22,28 @@ import top.fifthlight.combine.widget.ui.Switch
 import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.config.GlobalConfigHolder
 import top.fifthlight.touchcontroller.config.ItemList
+import top.fifthlight.touchcontroller.gal.DefaultItemListProvider
 import top.fifthlight.touchcontroller.ui.component.HorizontalPreferenceItem
+import top.fifthlight.touchcontroller.ui.model.ConfigScreenModel
 import top.fifthlight.touchcontroller.ui.screen.ComponentScreen
 import top.fifthlight.touchcontroller.ui.screen.ItemListScreen
 
-object ItemTabs : KoinComponent {
-    private val globalConfigHolder: GlobalConfigHolder by inject()
+class ItemTabs(
+    private val configScreenModel: ConfigScreenModel,
+) : KoinComponent {
+    private val itemListProvider: DefaultItemListProvider by inject()
 
     val usableItemsTab = ItemTab(
         options = TabOptions(
             titleId = Texts.SCREEN_CONFIG_ITEM_USABLE_ITEMS_TITLE,
             group = TabGroup.ItemGroup,
             index = 0,
+            onReset = { copy(item = item.copy(usableItems = itemListProvider.usableItems)) },
         ),
-        value = globalConfigHolder.config.map { it.item.usableItems },
+        value = configScreenModel.uiState.map { it.config.item.usableItems },
         onValueChanged = {
-            globalConfigHolder.updateConfig { copy(item = item.copy(usableItems = it)) }
+            configScreenModel.updateConfig { copy(item = item.copy(usableItems = it)) }
         }
     )
 
@@ -47,11 +51,12 @@ object ItemTabs : KoinComponent {
         options = TabOptions(
             titleId = Texts.SCREEN_CONFIG_ITEM_SHOW_CROSSHAIR_ITEMS_TITLE,
             group = TabGroup.ItemGroup,
-            index = 0,
+            index = 1,
+            onReset = { copy(item = item.copy(showCrosshairItems = itemListProvider.showCrosshairItems)) },
         ),
-        value = globalConfigHolder.config.map { it.item.showCrosshairItems },
+        value = configScreenModel.uiState.map { it.config.item.showCrosshairItems },
         onValueChanged = {
-            globalConfigHolder.updateConfig { copy(item = item.copy(showCrosshairItems = it)) }
+            configScreenModel.updateConfig { copy(item = item.copy(showCrosshairItems = it)) }
         }
     )
 
@@ -59,11 +64,12 @@ object ItemTabs : KoinComponent {
         options = TabOptions(
             titleId = Texts.SCREEN_CONFIG_ITEM_CROSSHAIR_AIMING_ITEMS_TITLE,
             group = TabGroup.ItemGroup,
-            index = 0,
+            index = 2,
+            onReset = { copy(item = item.copy(crosshairAimingItems = itemListProvider.crosshairAimingItems)) },
         ),
-        value = globalConfigHolder.config.map { it.item.crosshairAimingItems },
+        value = configScreenModel.uiState.map { it.config.item.crosshairAimingItems },
         onValueChanged = {
-            globalConfigHolder.updateConfig { copy(item = item.copy(crosshairAimingItems = it)) }
+            configScreenModel.updateConfig { copy(item = item.copy(crosshairAimingItems = it)) }
         }
     )
 }

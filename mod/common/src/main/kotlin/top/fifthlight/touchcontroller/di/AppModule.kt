@@ -32,9 +32,10 @@ val appModule = module {
     factory { params -> ItemListScreenModel(params[0], params[1]) }
     factory { params -> ComponentScreenModel(params[0], params[1]) }
     factory { AboutScreenModel() }
-    factory { ManageControlPresetsTabModel() }
-    factory { CustomControlLayoutTabModel() }
+    factory { params -> ManageControlPresetsTabModel(params[0]) }
+    factory { params -> CustomControlLayoutTabModel(params[0]) }
     factory { params -> PresetsTabModel(params[0]) }
     factory { params -> LayersTabModel(params[0]) }
     factory { params -> WidgetsTabModel(params[0]) }
+    factory { ConfigScreenModel() }
 }

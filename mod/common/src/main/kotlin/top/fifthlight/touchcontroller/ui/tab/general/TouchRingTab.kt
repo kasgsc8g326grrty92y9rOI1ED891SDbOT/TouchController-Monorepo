@@ -3,7 +3,6 @@ package top.fifthlight.touchcontroller.ui.tab.general
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import org.koin.compose.koinInject
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
@@ -14,10 +13,10 @@ import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.base.layout.Column
 import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.config.GlobalConfigHolder
 import top.fifthlight.touchcontroller.config.TouchRingConfig
 import top.fifthlight.touchcontroller.ui.component.IntSliderPreferenceItem
 import top.fifthlight.touchcontroller.ui.component.SliderPreferenceItem
+import top.fifthlight.touchcontroller.ui.model.LocalConfigScreenModel
 import top.fifthlight.touchcontroller.ui.tab.Tab
 import top.fifthlight.touchcontroller.ui.tab.TabGroup
 import top.fifthlight.touchcontroller.ui.tab.TabOptions
@@ -27,10 +26,12 @@ object TouchRingTab : Tab() {
         titleId = Texts.SCREEN_CONFIG_GENERAL_TOUCH_RING_TITLE,
         group = TabGroup.GeneralGroup,
         index = 2,
+        onReset = { copy(touchRing = TouchRingConfig()) },
     )
 
     @Composable
     override fun Content() {
+        val screenModel = LocalConfigScreenModel.current
         Column(
             modifier = Modifier
                 .padding(8)
@@ -39,10 +40,10 @@ object TouchRingTab : Tab() {
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8),
         ) {
-            val globalConfigHolder: GlobalConfigHolder = koinInject()
-            val globalConfig by globalConfigHolder.config.collectAsState()
+            val uiState by screenModel.uiState.collectAsState()
+            val globalConfig = uiState.config
             fun update(editor: TouchRingConfig.() -> TouchRingConfig) {
-                globalConfigHolder.updateConfig { copy(touchRing = editor(touchRing)) }
+                screenModel.updateConfig { copy(touchRing = editor(touchRing)) }
             }
             IntSliderPreferenceItem(
                 title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_TOUCH_RING_RADIUS_TITLE),

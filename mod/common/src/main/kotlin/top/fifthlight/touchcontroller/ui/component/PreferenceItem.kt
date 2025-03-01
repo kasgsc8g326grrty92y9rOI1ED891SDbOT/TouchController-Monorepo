@@ -16,6 +16,7 @@ import top.fifthlight.combine.widget.ui.IntSlider
 import top.fifthlight.combine.widget.ui.Slider
 import top.fifthlight.combine.widget.ui.Switch
 import top.fifthlight.combine.widget.ui.Text
+import top.fifthlight.touchcontroller.assets.Texts
 
 @Composable
 fun VerticalPreferenceItem(
@@ -99,13 +100,18 @@ fun SliderPreferenceItem(
     modifier: Modifier = Modifier,
     title: Text,
     description: Text? = null,
+    percent: Boolean = true,
     range: ClosedFloatingPointRange<Float>,
     value: Float,
     onValueChanged: (Float) -> Unit,
 ) {
     VerticalPreferenceItem(
         modifier = modifier,
-        title = title,
+        title = if (percent) {
+            Text.format(Texts.SCREEN_CONFIG_PERCENT, title, (value * 100).toInt().toString())
+        } else {
+            Text.format(Texts.SCREEN_CONFIG_VALUE, title, value.toInt().toString())
+        },
         description = description,
     ) {
         Slider(
@@ -116,7 +122,6 @@ fun SliderPreferenceItem(
         )
     }
 }
-
 
 @Composable
 fun IntSliderPreferenceItem(
@@ -129,7 +134,7 @@ fun IntSliderPreferenceItem(
 ) {
     VerticalPreferenceItem(
         modifier = modifier,
-        title = title,
+        title = Text.format(Texts.SCREEN_CONFIG_VALUE, title, value.toString()),
         description = description,
     ) {
         IntSlider(

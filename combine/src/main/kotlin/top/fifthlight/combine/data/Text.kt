@@ -31,13 +31,26 @@ interface Text {
     fun copy(): Text
     operator fun plus(other: Text): Text
 
+    @Composable
+    fun native(): Any = LocalTextFactory.current.toNative(this)
+
     companion object {
         @Composable
         fun translatable(identifier: Identifier) = LocalTextFactory.current.of(identifier)
 
         @Composable
-        fun format(identifier: Identifier, vararg arguments: Any?) =
-            LocalTextFactory.current.format(identifier, *arguments)
+        fun format(identifier: Identifier, vararg arguments: Any?): Text {
+            val factory = LocalTextFactory.current
+            val outArguments = Array<Any?>(arguments.size) { index ->
+                val item = arguments[index]
+                if (item is Text) {
+                    factory.toNative(item)
+                } else {
+                    item
+                }
+            }
+            return factory.format(identifier, *outArguments)
+        }
 
         @Composable
         fun empty() = LocalTextFactory.current.empty()

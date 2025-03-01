@@ -1,33 +1,84 @@
 package top.fifthlight.touchcontroller.ui.tab.layout
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import org.koin.core.parameter.parametersOf
+import top.fifthlight.combine.data.LocalTextFactory
 import top.fifthlight.combine.data.Text
+import top.fifthlight.combine.input.MutableInteractionSource
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.background
 import top.fifthlight.combine.modifier.drawing.border
+import top.fifthlight.combine.modifier.placement.fillMaxHeight
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.padding
-import top.fifthlight.combine.widget.base.layout.Box
-import top.fifthlight.combine.widget.base.layout.Column
-import top.fifthlight.combine.widget.base.layout.Row
+import top.fifthlight.combine.modifier.pointer.toggleable
+import top.fifthlight.combine.modifier.scroll.verticalScroll
+import top.fifthlight.combine.ui.style.ColorTheme
+import top.fifthlight.combine.ui.style.LocalColorTheme
+import top.fifthlight.combine.widget.base.layout.*
 import top.fifthlight.combine.widget.ui.*
 import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.assets.TextureSet
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.config.preset.PresetConfig
+import top.fifthlight.touchcontroller.config.preset.builtin.BuiltinPresetKey
 import top.fifthlight.touchcontroller.ui.component.AppBar
 import top.fifthlight.touchcontroller.ui.component.BackButton
 import top.fifthlight.touchcontroller.ui.component.Scaffold
+import top.fifthlight.touchcontroller.ui.model.LocalConfigScreenModel
 import top.fifthlight.touchcontroller.ui.model.ManageControlPresetsTabModel
 import top.fifthlight.touchcontroller.ui.tab.Tab
 import top.fifthlight.touchcontroller.ui.tab.TabGroup
 import top.fifthlight.touchcontroller.ui.tab.TabOptions
+
+@Composable
+private fun CheckBoxContainer(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .padding(4)
+            .border(Textures.WIDGET_BACKGROUND_FLOAT_WINDOW)
+            .then(modifier),
+        verticalArrangement = Arrangement.spacedBy(4),
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun CheckBoxItem(
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    value: Boolean,
+    onValueChanged: (Boolean) -> Unit,
+    content: @Composable RowScope.() -> Unit,
+) {
+    Row(
+        modifier = Modifier.toggleable(
+            interactionSource = interactionSource,
+            value = value,
+            onValueChanged = onValueChanged
+        ),
+        horizontalArrangement = Arrangement.spacedBy(4),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CheckBoxIcon(
+            interactionSource = interactionSource,
+            value = value,
+        )
+        CompositionLocalProvider(
+            LocalColorTheme provides ColorTheme.light,
+        ) {
+            content()
+        }
+    }
+}
 
 object ManageControlPresetsTab : Tab() {
     override val options = TabOptions(
@@ -52,74 +103,268 @@ object ManageControlPresetsTab : Tab() {
                 )
             },
         ) { modifier ->
-            val screenModel = koinScreenModel<ManageControlPresetsTabModel>()
+            val configScreenModel = LocalConfigScreenModel.current
+            val screenModel = koinScreenModel<ManageControlPresetsTabModel> { parametersOf(configScreenModel) }
             val presetConfig by screenModel.presetConfig.collectAsState()
-            if (presetConfig != null) {
-                Column(
+            val currentPresetConfig = presetConfig
+            if (currentPresetConfig != null) {
+                val presetKey = currentPresetConfig.key
+                Row(
                     modifier = Modifier
                         .background(BackgroundTextures.BRICK_BACKGROUND)
                         .then(modifier)
                 ) {
-                    Box(
+                    Column(
                         modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth(),
-                        alignment = Alignment.Center,
+                            .weight(6f)
+                            .fillMaxHeight(),
                     ) {
-                        Text("Real-time preview")
-                    }
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Column(
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            alignment = Alignment.Center,
+                        ) {
+                            Text("Real-time preview")
+                        }
+                        Row(
                             modifier = Modifier
                                 .padding(4)
                                 .border(Textures.WIDGET_BACKGROUND_BACKGROUND_DARK)
-                                .weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(4),
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4),
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(4),
+                            ) {
+                                Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_TEXTURE_STYLE))
+                                CheckBoxContainer {
+                                    for (textureSet in TextureSet.TextureSetKey.entries) {
+                                        CheckBoxItem(
+                                            value = presetKey.textureSet == textureSet,
+                                            onValueChanged = {
+                                                screenModel.updateKey { copy(textureSet = textureSet) }
+                                            },
+                                        ) {
+                                            Text(Text.translatable(textureSet.titleText))
+                                        }
+                                    }
+                                }
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(4),
                             ) {
                                 Text(
-                                    modifier = Modifier.weight(1f),
-                                    text = "Texture set",
+                                    Text.format(
+                                        Texts.SCREEN_CONFIG_PERCENT,
+                                        Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_OPACITY),
+                                        (presetKey.opacity * 100).toInt().toString()
+                                    )
                                 )
-                                Select(
-                                    expanded = false,
-                                    onExpandedChanged = {},
-                                    dropDownContent = {},
-                                    content = {
-                                        Text("Classic")
-                                        SelectIcon(false)
-                                    }
-                                )
-                            }
-                            Column {
-                                Text("Opacity")
                                 Slider(
                                     modifier = Modifier.fillMaxWidth(),
                                     range = 0f..1f,
-                                    value = .6f,
-                                    onValueChanged = {}
+                                    value = presetKey.opacity,
+                                    onValueChanged = {
+                                        screenModel.updateKey { copy(opacity = it) }
+                                    },
                                 )
-                            }
-                            Column {
-                                Text("Size")
+
+                                Text(
+                                    Text.format(
+                                        Texts.SCREEN_CONFIG_PERCENT,
+                                        Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_SCALE),
+                                        (presetKey.scale * 100).toInt().toString()
+                                    )
+                                )
                                 Slider(
                                     modifier = Modifier.fillMaxWidth(),
-                                    range = 0f..4f,
-                                    value = 1f,
-                                    onValueChanged = {}
+                                    range = .5f..4f,
+                                    value = presetKey.scale,
+                                    onValueChanged = {
+                                        screenModel.updateKey { copy(scale = it) }
+                                    },
                                 )
                             }
                         }
-                        Column(
-                            modifier = Modifier
-                                .border(Textures.WIDGET_BACKGROUND_BACKGROUND_DARK)
-                                .weight(1f)
-                        ) {
+                    }
+                    Column(
+                        modifier = Modifier
+                            .padding(4)
+                            .weight(4f)
+                            .verticalScroll()
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.spacedBy(4),
+                    ) {
+                        Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_CONTROL_STYLE))
+                        CheckBoxContainer(modifier = Modifier.fillMaxWidth()) {
+                            CheckBoxItem(
+                                value = presetKey.controlStyle == BuiltinPresetKey.ControlStyle.TouchGesture,
+                                onValueChanged = {
+                                    screenModel.updateKey {
+                                        if (presetKey.controlStyle != BuiltinPresetKey.ControlStyle.TouchGesture) {
+                                            copy(controlStyle = BuiltinPresetKey.ControlStyle.TouchGesture)
+                                        } else {
+                                            this
+                                        }
+                                    }
+                                }
+                            ) {
+                                Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_CONTROL_STYLE_CLICK_TO_INTERACT))
+                            }
 
+                            CheckBoxItem(
+                                value = presetKey.controlStyle is BuiltinPresetKey.ControlStyle.SplitControls,
+                                onValueChanged = {
+                                    screenModel.updateKey {
+                                        if (presetKey.controlStyle !is BuiltinPresetKey.ControlStyle.SplitControls) {
+                                            copy(controlStyle = BuiltinPresetKey.ControlStyle.SplitControls())
+                                        } else {
+                                            this
+                                        }
+                                    }
+                                }
+                            ) {
+                                Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_CONTROL_STYLE_AIMING_BY_CROSSHAIR))
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_ATTACK_AND_INTERACT_BY_BUTTON),
+                            )
+                            Switch(
+                                enabled = presetKey.controlStyle is BuiltinPresetKey.ControlStyle.SplitControls,
+                                value = (presetKey.controlStyle as? BuiltinPresetKey.ControlStyle.SplitControls)?.buttonInteraction == true,
+                                onValueChanged = {
+                                    screenModel.updateKey {
+                                        if (controlStyle is BuiltinPresetKey.ControlStyle.SplitControls) {
+                                            copy(controlStyle = controlStyle.copy(buttonInteraction = it))
+                                        } else {
+                                            this
+                                        }
+                                    }
+                                },
+                            )
+                        }
+
+                        Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_MOVE_METHOD))
+                        CheckBoxContainer(modifier = Modifier.fillMaxWidth()) {
+                            CheckBoxItem(
+                                value = presetKey.moveMethod is BuiltinPresetKey.MoveMethod.Dpad,
+                                onValueChanged = {
+                                    screenModel.updateKey {
+                                        if (moveMethod !is BuiltinPresetKey.MoveMethod.Dpad) {
+                                            copy(moveMethod = BuiltinPresetKey.MoveMethod.Dpad())
+                                        } else {
+                                            this
+                                        }
+                                    }
+                                }
+                            ) {
+                                Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_MOVE_METHOD_DPAD))
+                            }
+
+                            CheckBoxItem(
+                                value = presetKey.moveMethod is BuiltinPresetKey.MoveMethod.Joystick,
+                                onValueChanged = {
+                                    screenModel.updateKey {
+                                        if (moveMethod !is BuiltinPresetKey.MoveMethod.Joystick) {
+                                            copy(moveMethod = BuiltinPresetKey.MoveMethod.Joystick())
+                                        } else {
+                                            this
+                                        }
+                                    }
+                                }
+                            ) {
+                                Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_MOVE_METHOD_JOYSTICK))
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_SPRINT_USING_JOYSTICK),
+                            )
+                            Switch(
+                                enabled = presetKey.moveMethod is BuiltinPresetKey.MoveMethod.Joystick,
+                                value = (presetKey.moveMethod as? BuiltinPresetKey.MoveMethod.Joystick)?.triggerSprint == true,
+                                onValueChanged = {
+                                    screenModel.updateKey {
+                                        if (moveMethod is BuiltinPresetKey.MoveMethod.Joystick) {
+                                            copy(moveMethod = moveMethod.copy(triggerSprint = it))
+                                        } else {
+                                            this
+                                        }
+                                    }
+                                },
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_SWAP_JUMP_AND_SNEAK),
+                            )
+                            Switch(
+                                enabled = presetKey.moveMethod is BuiltinPresetKey.MoveMethod.Dpad,
+                                value = (presetKey.moveMethod as? BuiltinPresetKey.MoveMethod.Dpad)?.swapJumpAndSneak == true,
+                                onValueChanged = {
+                                    screenModel.updateKey {
+                                        if (moveMethod is BuiltinPresetKey.MoveMethod.Dpad) {
+                                            copy(moveMethod = moveMethod.copy(swapJumpAndSneak = it))
+                                        } else {
+                                            this
+                                        }
+                                    }
+                                },
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_SPRINT),
+                            )
+                            var expanded by remember { mutableStateOf(false) }
+                            Select(
+                                expanded = expanded,
+                                onExpandedChanged = { expanded = it },
+                                dropDownContent = {
+                                    val selectedIndex =
+                                        BuiltinPresetKey.SprintButtonLocation.entries.indexOf(presetKey.sprintButtonLocation)
+                                    val textFactory = LocalTextFactory.current
+                                    SelectItemList(
+                                        modifier = Modifier.verticalScroll(),
+                                        items = BuiltinPresetKey.SprintButtonLocation.entries,
+                                        textProvider = { textFactory.of(it.nameId) },
+                                        selectedIndex = selectedIndex,
+                                        onItemSelected = { index ->
+                                            expanded = false
+                                            screenModel.updateKey {
+                                                copy(sprintButtonLocation = BuiltinPresetKey.SprintButtonLocation.entries[index])
+                                            }
+                                        }
+                                    )
+                                }
+                            ) {
+                                Text(Text.translatable(presetKey.sprintButtonLocation.nameId))
+                                SelectIcon(expanded = expanded)
+                            }
                         }
                     }
                 }

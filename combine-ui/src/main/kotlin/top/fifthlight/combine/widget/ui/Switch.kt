@@ -49,19 +49,20 @@ val LocalSwitchTexture = staticCompositionLocalOf<SwitchTextureSet> { defaultSwi
 fun Switch(
     modifier: Modifier = Modifier,
     textureSet: SwitchTextureSet = LocalSwitchTexture.current,
+    enabled: Boolean = true,
     value: Boolean,
     onValueChanged: ((Boolean) -> Unit)?,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val state by widgetState(interactionSource)
     val texture = if (value) {
-        textureSet.on.getByState(state)
+        textureSet.on.getByState(state, enabled = enabled)
     } else {
-        textureSet.off.getByState(state)
+        textureSet.off.getByState(state, enabled = enabled)
     }
-    val handleTexture = textureSet.handle.getByState(state)
+    val handleTexture = textureSet.handle.getByState(state, enabled = enabled)
 
-    val modifier = if (onValueChanged == null) {
+    val modifier = if (onValueChanged == null || !enabled) {
         modifier
     } else {
         Modifier

@@ -6,6 +6,7 @@ import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.collections.immutable.PersistentList
 import org.koin.core.component.KoinComponent
+import org.koin.core.parameter.parametersOf
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
@@ -36,6 +37,7 @@ import top.fifthlight.touchcontroller.control.ControllerWidget
 import top.fifthlight.touchcontroller.layout.Align
 import top.fifthlight.touchcontroller.ui.component.*
 import top.fifthlight.touchcontroller.ui.model.CustomControlLayoutTabModel
+import top.fifthlight.touchcontroller.ui.model.LocalConfigScreenModel
 import top.fifthlight.touchcontroller.ui.state.CustomControlLayoutTabState
 import top.fifthlight.touchcontroller.ui.tab.Tab
 import top.fifthlight.touchcontroller.ui.tab.TabGroup
@@ -215,7 +217,8 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val screenModel: CustomControlLayoutTabModel = koinScreenModel()
+        val configScreenModel = LocalConfigScreenModel.current
+        val screenModel: CustomControlLayoutTabModel = koinScreenModel { parametersOf(configScreenModel) }
         val currentUiState by screenModel.uiState.collectAsState()
         val uiState = currentUiState
         if (uiState is CustomControlLayoutTabState.Enabled) {

@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import org.koin.core.component.inject
 import top.fifthlight.touchcontroller.config.ControllerLayout
-import top.fifthlight.touchcontroller.config.GlobalConfigHolder
 import top.fifthlight.touchcontroller.config.LayoutLayer
 import top.fifthlight.touchcontroller.config.preset.LayoutPreset
 import top.fifthlight.touchcontroller.config.preset.PresetConfig
@@ -18,12 +17,14 @@ import top.fifthlight.touchcontroller.ui.state.CustomControlLayoutTabState
 import top.fifthlight.touchcontroller.ui.state.CustomControlLayoutTabState.Enabled.PageState
 import kotlin.uuid.Uuid
 
-class CustomControlLayoutTabModel : TouchControllerScreenModel() {
-    private val globalConfigHolder: GlobalConfigHolder by inject()
+class CustomControlLayoutTabModel(
+    private val configScreenModel: ConfigScreenModel,
+) : TouchControllerScreenModel() {
     private val presetManager: PresetManager by inject()
     private val pageState = MutableStateFlow(PageState())
     val uiState =
-        combineStates(globalConfigHolder.config, presetManager.presets, pageState) { config, presets, selectState ->
+        combineStates(configScreenModel.uiState, presetManager.presets, pageState) { uiState, presets, selectState ->
+            val config = uiState.config
             when (val preset = config.preset) {
                 is PresetConfig.BuiltIn -> CustomControlLayoutTabState.Disabled
                 is PresetConfig.Custom -> {
@@ -43,7 +44,7 @@ class CustomControlLayoutTabModel : TouchControllerScreenModel() {
         }
 
     fun enableCustomLayout() {
-        globalConfigHolder.updateConfig {
+        configScreenModel.updateConfig {
             if (preset is PresetConfig.BuiltIn) {
                 copy(preset = PresetConfig.Custom())
             } else {
@@ -74,7 +75,7 @@ class CustomControlLayoutTabModel : TouchControllerScreenModel() {
                 selectedWidgetIndex = -1
             )
         }
-        globalConfigHolder.updateConfig {
+        configScreenModel.updateConfig {
             copy(preset = PresetConfig.Custom(uuid))
         }
     }
@@ -91,7 +92,7 @@ class CustomControlLayoutTabModel : TouchControllerScreenModel() {
             name = "New preset"
         )
         presetManager.savePreset(uuid, preset)
-        globalConfigHolder.updateConfig {
+        configScreenModel.updateConfig {
             copy(preset = PresetConfig.Custom(uuid = uuid))
         }
     }
@@ -104,7 +105,7 @@ class CustomControlLayoutTabModel : TouchControllerScreenModel() {
             )
         }
         presetManager.removePreset(uuid)
-        globalConfigHolder.updateConfig {
+        configScreenModel.updateConfig {
             if (preset is PresetConfig.Custom && preset.uuid == uuid) {
                 copy(preset = PresetConfig.Custom())
             } else {

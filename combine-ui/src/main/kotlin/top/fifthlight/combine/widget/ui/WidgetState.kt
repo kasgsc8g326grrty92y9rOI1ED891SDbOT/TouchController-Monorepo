@@ -24,15 +24,15 @@ enum class WidgetState(val priority: Int) : Comparable<WidgetState> {
     }
 }
 
-fun TextureSet.getByState(state: WidgetState, disabled: Boolean = false) = if (disabled) {
-    this.disabled
-} else {
+fun TextureSet.getByState(state: WidgetState, enabled: Boolean = true) = if (enabled) {
     when (state) {
         WidgetState.NORMAL -> normal
         WidgetState.HOVER -> hover
         WidgetState.ACTIVE -> active
         WidgetState.FOCUS -> focus
     }
+} else {
+    this.disabled
 }
 
 fun NinePatchTextureSet.getByState(state: WidgetState, enabled: Boolean = true) = if (enabled) {

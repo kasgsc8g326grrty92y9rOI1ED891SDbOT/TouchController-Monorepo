@@ -2,6 +2,8 @@ package top.fifthlight.touchcontroller.ui.screen
 
 import androidx.compose.runtime.*
 import cafe.adriel.voyager.navigator.CurrentScreen
+import kotlinx.collections.immutable.persistentListOf
+import org.koin.compose.koinInject
 import org.koin.core.context.GlobalContext
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.data.TextFactory
@@ -12,134 +14,168 @@ import top.fifthlight.combine.modifier.placement.fillMaxHeight
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.minWidth
 import top.fifthlight.combine.screen.ScreenFactory
+import top.fifthlight.combine.util.LocalCloseHandler
 import top.fifthlight.combine.widget.base.layout.Box
 import top.fifthlight.combine.widget.base.layout.Column
 import top.fifthlight.combine.widget.base.layout.Row
 import top.fifthlight.combine.widget.ui.*
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.config.preset.PresetConfig
 import top.fifthlight.touchcontroller.ui.component.*
+import top.fifthlight.touchcontroller.ui.model.ConfigScreenModel
+import top.fifthlight.touchcontroller.ui.model.LocalConfigScreenModel
+import top.fifthlight.touchcontroller.ui.tab.OnResetHandler
 import top.fifthlight.touchcontroller.ui.tab.Tab
+import top.fifthlight.touchcontroller.ui.tab.TabGroup
 import top.fifthlight.touchcontroller.ui.tab.general.RegularTab
 
 @Composable
 private fun ConfigScreen() {
-    TouchControllerNavigator(RegularTab) { navigator ->
-        val currentTab = (navigator.lastItem as? Tab)?.takeIf { !it.options.openAsScreen }
-        currentTab?.let {
-            var openResetDialog by remember { mutableStateOf(false) }
-            if (openResetDialog) {
-                AlertDialog(
-                    modifier = Modifier
-                        .fillMaxWidth(.4f)
-                        .minWidth(230),
-                    onDismissRequest = {
-                        openResetDialog = false
-                    },
-                    title = {
-                        Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_TITLE))
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(4),
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(4),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Button(
-                                modifier = Modifier.weight(1f),
-                                onClick = {
+    val closeHandler = LocalCloseHandler.current
+    val screenModel: ConfigScreenModel = koinInject()
+    DisposableEffect(screenModel) {
+        onDispose {
+            screenModel.onDispose()
+        }
+    }
 
-                                }
-                            ) {
-                                Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_CURRENT_TAB))
-                            }
-                            Button(
-                                modifier = Modifier.weight(1f),
-                                onClick = {
+    val tabGroups = remember {
+        val allTabs = Tab.getAllTabs(screenModel)
+        (persistentListOf(null) + TabGroup.allGroups).map { group ->
+            Pair(group, allTabs.filter { it.options.group == group }.sortedBy { it.options.index })
+        }
+    }
 
-                                }
-                            ) {
-                                Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_LAYOUT_SETTINGS))
-                            }
-                        }
-                        WarningButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-
-                            }
-                        ) {
-                            Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_ALL_SETTINGS))
-                        }
-                        GuideButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                openResetDialog = false
-                            }
-                        ) {
-                            Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_CANCEL))
-                        }
-                    }
-                }
-            }
-
-            Scaffold(
-                topBar = {
-                    AppBar(
-                        modifier = Modifier.fillMaxWidth(),
-                        leading = {
-                            BackButton(
-                                screenName = Text.translatable(Texts.SCREEN_CONFIG_TITLE),
-                            )
+    CompositionLocalProvider(LocalConfigScreenModel provides screenModel) {
+        TouchControllerNavigator(RegularTab) { navigator ->
+            val currentTab = (navigator.lastItem as? Tab)?.takeIf { !it.options.openAsScreen }
+            currentTab?.let {
+                var onResetTab by remember { mutableStateOf<OnResetHandler?>(null) }
+                val currentOnResetTab = onResetTab
+                if (currentOnResetTab != null) {
+                    AlertDialog(
+                        modifier = Modifier
+                            .fillMaxWidth(.4f)
+                            .minWidth(230),
+                        onDismissRequest = {
+                            onResetTab = null
                         },
                         title = {
-                            Text(currentTab.options.title)
-                        },
-                        trailing = {
+                            Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_TITLE))
+                        }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(4),
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(4),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Button(
+                                    modifier = Modifier.weight(1f),
+                                    onClick = {
+                                        screenModel.updateConfig(currentOnResetTab)
+                                        onResetTab = null
+                                    }
+                                ) {
+                                    Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_CURRENT_TAB))
+                                }
+                                Button(
+                                    modifier = Modifier.weight(1f),
+                                    onClick = {
+                                        screenModel.updateConfig {
+                                            copy(preset = PresetConfig.BuiltIn())
+                                        }
+                                        onResetTab = null
+                                    }
+                                ) {
+                                    Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_LAYOUT_SETTINGS))
+                                }
+                            }
                             WarningButton(
+                                modifier = Modifier.fillMaxWidth(),
                                 onClick = {
-                                    openResetDialog = true
+                                    screenModel.resetConfig()
+                                    onResetTab = null
                                 }
                             ) {
-                                Text(Text.translatable(Texts.SCREEN_CONFIG_RESET))
+                                Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_ALL_SETTINGS))
                             }
-                            Button(
+                            GuideButton(
+                                modifier = Modifier.fillMaxWidth(),
                                 onClick = {
-
+                                    onResetTab = null
                                 }
                             ) {
-                                Text(Text.translatable(Texts.SCREEN_CONFIG_UNDO))
-                            }
-                            Button(
-                                onClick = {
-
-                                }
-                            ) {
-                                Text(Text.translatable(Texts.SCREEN_CONFIG_CANCEL))
+                                Text(Text.translatable(Texts.SCREEN_CONFIG_RESET_CANCEL))
                             }
                         }
-                    )
-                },
-                leftSideBar = {
-                    SideTabBar(
-                        modifier = Modifier.fillMaxHeight(),
-                        onTabSelected = { tab, options ->
-                            if (options.openAsScreen) {
-                                navigator.push(tab)
-                            } else {
-                                navigator.replace(tab)
-                            }
-                        }
-                    )
-                },
-            ) { modifier ->
-                Box(modifier) {
-                    CurrentScreen()
+                    }
                 }
+
+                Scaffold(
+                    topBar = {
+                        AppBar(
+                            modifier = Modifier.fillMaxWidth(),
+                            leading = {
+                                BackButton(
+                                    screenName = Text.translatable(Texts.SCREEN_CONFIG_TITLE),
+                                )
+                            },
+                            title = {
+                                Text(currentTab.options.title)
+                            },
+                            trailing = {
+                                val onReset = currentTab.options.onReset
+                                if (onReset != null) {
+                                    WarningButton(
+                                        onClick = {
+                                            onResetTab = onReset
+                                        }
+                                    ) {
+                                        Text(Text.translatable(Texts.SCREEN_CONFIG_RESET))
+                                    }
+                                    Button(
+                                        onClick = {
+                                            screenModel.undoConfig()
+                                        }
+                                    ) {
+                                        Text(Text.translatable(Texts.SCREEN_CONFIG_UNDO))
+                                    }
+                                    Button(
+                                        onClick = {
+                                            screenModel.undoConfig()
+                                            closeHandler.close()
+                                        }
+                                    ) {
+                                        Text(Text.translatable(Texts.SCREEN_CONFIG_CANCEL))
+                                    }
+                                }
+                            }
+                        )
+                    },
+                    leftSideBar = {
+                        SideTabBar(
+                            modifier = Modifier.fillMaxHeight(),
+                            onTabSelected = { tab, options ->
+                                if (options.openAsScreen) {
+                                    navigator.push(tab)
+                                } else {
+                                    navigator.replace(tab)
+                                }
+                            },
+                            tabGroups = tabGroups,
+                        )
+                    },
+                ) { modifier ->
+                    Box(modifier) {
+                        CurrentScreen()
+                    }
+                }
+            } ?: run {
+                CurrentScreen()
             }
-        } ?: run {
-            CurrentScreen()
         }
     }
 }

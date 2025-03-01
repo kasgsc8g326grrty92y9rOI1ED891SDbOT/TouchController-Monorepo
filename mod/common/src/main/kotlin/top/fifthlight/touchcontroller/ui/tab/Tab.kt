@@ -1,12 +1,13 @@
 package top.fifthlight.touchcontroller.ui.tab
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.screen.Screen
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import top.fifthlight.combine.data.Identifier
 import top.fifthlight.combine.data.Text
+import top.fifthlight.touchcontroller.config.GlobalConfig
+import top.fifthlight.touchcontroller.ui.model.ConfigScreenModel
 import top.fifthlight.touchcontroller.ui.tab.general.ControlTab
 import top.fifthlight.touchcontroller.ui.tab.general.DebugTab
 import top.fifthlight.touchcontroller.ui.tab.general.RegularTab
@@ -15,11 +16,14 @@ import top.fifthlight.touchcontroller.ui.tab.layout.CustomControlLayoutTab
 import top.fifthlight.touchcontroller.ui.tab.layout.GuiControlLayoutTab
 import top.fifthlight.touchcontroller.ui.tab.layout.ManageControlPresetsTab
 
+typealias OnResetHandler = GlobalConfig.() -> GlobalConfig
+
 data class TabOptions(
     private val titleId: Identifier,
     val group: TabGroup? = null,
     val index: Int,
     val openAsScreen: Boolean = false,
+    val onReset: OnResetHandler? = null,
 ) {
     val title: Text
         @Composable
@@ -28,18 +32,24 @@ data class TabOptions(
 
 abstract class Tab : Screen {
     abstract val options: TabOptions
+
+    companion object {
+        fun getAllTabs(configScreenModel: ConfigScreenModel): PersistentList<Tab> {
+            val itemTabs = ItemTabs(configScreenModel)
+            return persistentListOf<Tab>(
+                AboutTab,
+                ManageControlPresetsTab,
+                CustomControlLayoutTab,
+                GuiControlLayoutTab,
+                RegularTab,
+                ControlTab,
+                TouchRingTab,
+                DebugTab,
+                itemTabs.usableItemsTab,
+                itemTabs.showCrosshairItemsTab,
+                itemTabs.crosshairAimingItemsTab,
+            )
+        }
+    }
 }
 
-val allTabs = persistentListOf<Tab>(
-    AboutTab,
-    ManageControlPresetsTab,
-    CustomControlLayoutTab,
-    GuiControlLayoutTab,
-    RegularTab,
-    ControlTab,
-    TouchRingTab,
-    DebugTab,
-    ItemTabs.usableItemsTab,
-    ItemTabs.showCrosshairItemsTab,
-    ItemTabs.crosshairAimingItemsTab,
-)

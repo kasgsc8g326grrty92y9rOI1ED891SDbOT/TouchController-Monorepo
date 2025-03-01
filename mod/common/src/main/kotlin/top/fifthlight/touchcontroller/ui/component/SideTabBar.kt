@@ -2,7 +2,6 @@ package top.fifthlight.touchcontroller.ui.component
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.LocalNavigator
-import kotlinx.collections.immutable.persistentListOf
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.border
@@ -16,18 +15,12 @@ import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.ui.tab.Tab
 import top.fifthlight.touchcontroller.ui.tab.TabGroup
 import top.fifthlight.touchcontroller.ui.tab.TabOptions
-import top.fifthlight.touchcontroller.ui.tab.allTabs
-
-private val tabGroups by lazy {
-    (persistentListOf(null) + TabGroup.allGroups).map { group ->
-        Pair(group, allTabs.filter { it.options.group == group }.sortedBy { it.options.index })
-    }
-}
 
 @Composable
 fun SideTabBar(
     modifier: Modifier = Modifier,
     onTabSelected: (Tab, TabOptions) -> Unit,
+    tabGroups: List<Pair<TabGroup?, List<Tab>>>,
 ) {
     val navigator = LocalNavigator.current
     Column(
@@ -52,7 +45,7 @@ fun SideTabBar(
                             checked = navigator?.lastItem == tab,
                             onClick = {
                                 onTabSelected(tab, options)
-                            }
+                            },
                         ) {
                             Text(options.title)
                         }

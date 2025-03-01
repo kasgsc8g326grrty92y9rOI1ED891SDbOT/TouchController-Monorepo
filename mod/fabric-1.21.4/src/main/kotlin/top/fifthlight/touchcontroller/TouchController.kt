@@ -17,7 +17,6 @@ import org.koin.dsl.module
 import org.koin.logger.slf4jLogger
 import org.slf4j.LoggerFactory
 import top.fifthlight.combine.platform.CanvasImpl
-import top.fifthlight.touchcontroller.config.GameConfigEditor
 import top.fifthlight.touchcontroller.config.GlobalConfigHolder
 import top.fifthlight.touchcontroller.di.appModule
 import top.fifthlight.touchcontroller.event.*

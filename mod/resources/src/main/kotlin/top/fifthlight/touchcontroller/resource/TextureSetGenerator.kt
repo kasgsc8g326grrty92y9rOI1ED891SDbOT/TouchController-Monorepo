@@ -238,6 +238,11 @@ fun generateTextureSet(textures: Map<String, PlacedTexture>, basePath: Path, out
                     )
                     .addParameter(
                         ParameterSpec
+                            .builder("titleText", identifierTypeName)
+                            .build()
+                    )
+                    .addParameter(
+                        ParameterSpec
                             .builder("textureSet", textureSetTypeName)
                             .build()
                     )
@@ -247,6 +252,12 @@ fun generateTextureSet(textures: Map<String, PlacedTexture>, basePath: Path, out
                 PropertySpec
                     .builder("nameText", identifierTypeName)
                     .initializer("nameText")
+                    .build()
+            )
+            addProperty(
+                PropertySpec
+                    .builder("titleText", identifierTypeName)
+                    .initializer("titleText")
                     .build()
             )
             addProperty(
@@ -267,6 +278,7 @@ fun generateTextureSet(textures: Map<String, PlacedTexture>, basePath: Path, out
                                 .build()
                         )
                         .addSuperclassConstructorParameter("Texts.TEXTURE_SET_%L_NAME", setName.uppercase())
+                        .addSuperclassConstructorParameter("Texts.TEXTURE_SET_%L_TITLE", setName.uppercase())
                         .addSuperclassConstructorParameter("%L.INSTANCE", setName.snakeToCamelCase(true))
                         .build()
                 )

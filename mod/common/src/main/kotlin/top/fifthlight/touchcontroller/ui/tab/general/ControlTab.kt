@@ -3,7 +3,6 @@ package top.fifthlight.touchcontroller.ui.tab.general
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import org.koin.compose.koinInject
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
@@ -15,9 +14,9 @@ import top.fifthlight.combine.widget.base.layout.Column
 import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.config.ControlConfig
-import top.fifthlight.touchcontroller.config.GlobalConfigHolder
 import top.fifthlight.touchcontroller.ui.component.IntSliderPreferenceItem
 import top.fifthlight.touchcontroller.ui.component.SliderPreferenceItem
+import top.fifthlight.touchcontroller.ui.model.LocalConfigScreenModel
 import top.fifthlight.touchcontroller.ui.tab.Tab
 import top.fifthlight.touchcontroller.ui.tab.TabGroup
 import top.fifthlight.touchcontroller.ui.tab.TabOptions
@@ -27,10 +26,12 @@ object ControlTab : Tab() {
         titleId = Texts.SCREEN_CONFIG_GENERAL_CONTROL_TITLE,
         group = TabGroup.GeneralGroup,
         index = 1,
+        onReset = { copy(control = ControlConfig()) },
     )
 
     @Composable
     override fun Content() {
+        val screenModel = LocalConfigScreenModel.current
         Column(
             modifier = Modifier
                 .padding(8)
@@ -39,14 +40,15 @@ object ControlTab : Tab() {
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8),
         ) {
-            val globalConfigHolder: GlobalConfigHolder = koinInject()
-            val globalConfig by globalConfigHolder.config.collectAsState()
+            val uiState by screenModel.uiState.collectAsState()
+            val globalConfig = uiState.config
             fun update(editor: ControlConfig.() -> ControlConfig) {
-                globalConfigHolder.updateConfig { copy(control = editor(control)) }
+                screenModel.updateConfig { copy(control = editor(control)) }
             }
             SliderPreferenceItem(
                 title = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_MOVEMENT_SENSITIVITY_TITLE),
                 description = Text.translatable(Texts.SCREEN_CONFIG_GENERAL_CONTROL_VIEW_MOVEMENT_SENSITIVITY_DESCRIPTION),
+                percent = false,
                 range = 0f..900f,
                 value = globalConfig.control.viewMovementSensitivity,
                 onValueChanged = { update { copy(viewMovementSensitivity = it) } }

@@ -2,37 +2,48 @@ package top.fifthlight.touchcontroller.config.preset.builtin
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import top.fifthlight.combine.data.Identifier
+import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.TextureSet
 
 @Serializable
 data class BuiltinPresetKey(
+    @SerialName("texture_set")
     val textureSet: TextureSet.TextureSetKey = TextureSet.TextureSetKey.CLASSIC,
-    val controlStyle: ControlStyle = ControlStyle.CLICK_TO_INTERACT,
+    @SerialName("control_style")
+    val controlStyle: ControlStyle = ControlStyle.TouchGesture,
+    @SerialName("move_method")
     val moveMethod: MoveMethod = MoveMethod.Dpad(),
+    @SerialName("sprint_button_location")
     val sprintButtonLocation: SprintButtonLocation = SprintButtonLocation.NONE,
+    @SerialName("opacity")
+    val opacity: Float = .6f,
+    @SerialName("scale")
+    val scale: Float = 1f,
 ) {
     @Serializable
-    enum class ControlStyle {
+    sealed class ControlStyle {
         @SerialName("touch_gesture")
-        CLICK_TO_INTERACT,
+        data object TouchGesture : ControlStyle()
 
-        @SerialName("split_controls_and_touch_gesture")
-        AIM_BY_CROSSHAIR,
-
-        @SerialName("split_controls_and_buttons")
-        AIM_BY_CROSSHAIR_AND_USE_BUTTON_TO_INTERACT
+        @SerialName("split_controls")
+        data class SplitControls(
+            val buttonInteraction: Boolean = true,
+        ) : ControlStyle()
     }
 
     @Serializable
-    enum class SprintButtonLocation {
+    enum class SprintButtonLocation(
+        val nameId: Identifier,
+    ) {
         @SerialName("none")
-        NONE,
+        NONE(Texts.SCREEN_MANAGE_CONTROL_PRESET_SPRINT_NONE),
 
         @SerialName("right_top")
-        RIGHT_TOP,
+        RIGHT_TOP(Texts.SCREEN_MANAGE_CONTROL_PRESET_SPRINT_RIGHT_TOP),
 
         @SerialName("right")
-        RIGHT,
+        RIGHT(Texts.SCREEN_MANAGE_CONTROL_PRESET_SPRINT_RIGHT),
     }
 
     @Serializable
