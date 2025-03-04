@@ -120,22 +120,22 @@ private val hueSliderTrackDrawable = GradientDrawable(
 )
 
 private val presetColors = persistentListOf(
-    Color(0xFFFFFFFFu),
-    Color(0xFFFF681Fu),
-    Color(0xFFFF00FFu),
-    Color(0xFF9AC0CDu),
-    Color(0xFFFFFF00u),
-    Color(0xFFBFFF00u),
-    Color(0xFFFF69B4u),
-    Color(0xFF808080u),
-    Color(0xFFD3D3D3u),
-    Color(0xFF00FFFFu),
-    Color(0xFFA020F0u),
-    Color(0xFF0000FFu),
-    Color(0xFF8B4513u),
-    Color(0xFF00FF00u),
-    Color(0xFFFF0000u),
-    Color(0xFF000000u),
+    Color(0xFFFED83Du),
+    Color(0xFF80C71Fu),
+    Color(0xFF3AB3DAu),
+    Color(0xFFF38BAAu),
+    Color(0xFFF9801Du),
+    Color(0xFF5E7C16u),
+    Color(0xFF169C9Cu),
+    Color(0xFFC74EBDu),
+    Color(0xFFB02E26u),
+    Color(0xFF835432u),
+    Color(0xFF3C44AAu),
+    Color(0xFF8932B8u),
+    Color(0xFFF9FFFEu),
+    Color(0xFF9D9D97u),
+    Color(0xFF474F52u),
+    Color(0xFF1D1D21u),
 )
 
 @Composable

@@ -58,6 +58,8 @@ private data class DraggableModifierNode(
             PointerEventType.Press -> {
                 dragState.pressed = true
                 dragState.lastPosition = event.position
+                val absolutePosition = event.position - node.absolutePosition
+                onDrag(node, Offset.ZERO, absolutePosition)
             }
 
             PointerEventType.Move -> {
