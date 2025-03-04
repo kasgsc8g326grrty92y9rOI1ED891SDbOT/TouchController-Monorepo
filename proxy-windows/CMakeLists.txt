@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_SHARED_LINKER_FLAGS " -static")
 
 include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag(-Wno-ignored-attributes HAVE_NO_IGNORE_ATTRIBUTE)
 
 find_package(JNI REQUIRED)
 find_library(WS2_32_LIBRARY ws2_32)
