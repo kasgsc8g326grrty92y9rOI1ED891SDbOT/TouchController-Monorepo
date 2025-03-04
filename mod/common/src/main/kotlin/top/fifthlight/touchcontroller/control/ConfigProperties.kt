@@ -519,7 +519,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
         },
         defaultValue = EmptyTexture.EMPTY_1,
         name = textFactory.of(Texts.WIDGET_TEXTURE_NINE_PATCH_TEXTURE),
-        items = EmptyTexture.entries.map { Pair(it, textFactory.literal(it.name)) },
+        items = EmptyTexture.entries.map { Pair(it, textFactory.of(it.nameId)) },
     )
 
     private val ninePatchTexturePaddingProperty = paddingProperty(

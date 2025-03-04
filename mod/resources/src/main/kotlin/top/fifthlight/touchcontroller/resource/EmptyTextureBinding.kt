@@ -7,6 +7,7 @@ import java.nio.file.Path
 
 fun generateEmptyTextureBinding(textures: Map<String, PlacedTexture>, outputDir: Path) {
     val textureTypeName = ClassName("top.fifthlight.combine.data", "NinePatchTexture")
+    val identifierTypeName = ClassName("top.fifthlight.combine.data", "Identifier")
     val emptyTextureType = TypeSpec.enumBuilder("EmptyTexture").run {
         addAnnotation(Serializable::class)
         primaryConstructor(
@@ -17,12 +18,23 @@ fun generateEmptyTextureBinding(textures: Map<String, PlacedTexture>, outputDir:
                         .builder("texture", textureTypeName)
                         .build()
                 )
+                .addParameter(
+                    ParameterSpec
+                        .builder("nameId", identifierTypeName)
+                        .build()
+                )
                 .build()
         )
         addProperty(
             PropertySpec
                 .builder("texture", textureTypeName)
                 .initializer("texture")
+                .build()
+        )
+        addProperty(
+            PropertySpec
+                .builder("nameId", identifierTypeName)
+                .initializer("nameId")
                 .build()
         )
         for ((key, value) in textures.entries.filter { it.key.startsWith("EMPTY_") }.sortedBy { it.key }) {
@@ -42,6 +54,7 @@ fun generateEmptyTextureBinding(textures: Map<String, PlacedTexture>, outputDir:
                             .build()
                     )
                     .addSuperclassConstructorParameter("Textures.%L", key)
+                    .addSuperclassConstructorParameter("Texts.EMPTY_TEXTURE_%L", name)
                     .build()
             )
         }
