@@ -24,7 +24,7 @@ val compileNativeTasks = targets.mapValues { (arch, target) ->
         val buildCommands = listOf(
             "cd /work",
             "JAVA_HOME=lib/jvm cmake -DCMAKE_TOOLCHAIN_FILE=/toolchain/$target.cmake -S . -B build/cmake/$arch",
-            "cmake --config Release --build build/cmake/$arch -j",
+            "cmake --build build/cmake/$arch --config Release --parallel ${Runtime.getRuntime().availableProcessors()}",
         ).joinToString("; ")
         commandLine(buildList {
             add(podmanCommand)
