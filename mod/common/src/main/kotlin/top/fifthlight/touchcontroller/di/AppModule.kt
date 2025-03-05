@@ -8,6 +8,7 @@ import top.fifthlight.touchcontroller.about.ResourcesAboutInfoProvider
 import top.fifthlight.touchcontroller.config.GlobalConfigHolder
 import top.fifthlight.touchcontroller.model.ControllerHudModel
 import top.fifthlight.touchcontroller.model.TouchStateModel
+import top.fifthlight.touchcontroller.platform.PlatformProvider
 
 val appModule = module {
     single {
@@ -24,5 +25,6 @@ val appModule = module {
     single { GlobalConfigHolder() }
     single { ControllerHudModel() }
     single { TouchStateModel() }
+    single { PlatformProvider() }
     single<AboutInfoProvider> { ResourcesAboutInfoProvider }
 }
