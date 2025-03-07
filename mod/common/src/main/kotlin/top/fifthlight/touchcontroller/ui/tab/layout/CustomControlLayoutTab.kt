@@ -277,7 +277,7 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                                 enabled = uiState.pageState.editState?.undoStack?.haveUndoItem == true,
                                 onClick = { screenModel.undo() },
                             ) {
-                                Icon(Textures.ICON_REVOKE)
+                                Icon(Textures.ICON_UNDO)
                             }
                             IconButton(
                                 enabled = uiState.pageState.editState?.undoStack?.haveRedoItem == true,
