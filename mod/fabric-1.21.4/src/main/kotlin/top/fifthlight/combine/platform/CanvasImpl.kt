@@ -16,8 +16,8 @@ import top.fifthlight.combine.paint.*
 import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.mixin.DrawContextAccessor
+import top.fifthlight.combine.data.Identifier as CombineIdentifier
 import top.fifthlight.combine.data.Text as CombineText
-
 
 private inline fun withShader(program: ShaderProgramKey, crossinline block: () -> Unit) {
     val originalShader = RenderSystem.getShader()
@@ -148,6 +148,18 @@ class CanvasImpl(
             .texture(uvRect.right, uvRect.top)
             .color(tint.value)
     }
+
+    override fun drawTexture(
+        identifier: CombineIdentifier,
+        dstRect: Rect,
+        uvRect: Rect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = uvRect,
+        tint = tint,
+    )
 
     override fun drawTexture(
         texture: Texture,

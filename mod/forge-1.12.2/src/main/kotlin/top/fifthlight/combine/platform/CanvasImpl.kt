@@ -12,6 +12,7 @@ import net.minecraft.util.ResourceLocation
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL11
 import top.fifthlight.combine.data.BackgroundTexture
+import top.fifthlight.combine.data.Identifier
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
 import top.fifthlight.combine.paint.*
@@ -239,6 +240,18 @@ class CanvasImpl : Canvas, Gui() {
             .endVertex()
         tessellator.draw()
     }
+
+    override fun drawTexture(
+        identifier: Identifier,
+        dstRect: Rect,
+        uvRect: Rect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = uvRect,
+        tint = tint,
+    )
 
     override fun drawTexture(
         texture: Texture,

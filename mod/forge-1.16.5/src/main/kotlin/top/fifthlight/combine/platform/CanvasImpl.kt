@@ -15,6 +15,7 @@ import net.minecraft.util.math.vector.Vector3f
 import net.minecraft.util.text.ITextComponent
 import org.lwjgl.opengl.GL11
 import top.fifthlight.combine.data.BackgroundTexture
+import top.fifthlight.combine.data.Identifier
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
 import top.fifthlight.combine.paint.*
@@ -232,6 +233,18 @@ class CanvasImpl(
         bufferBuilder.end()
         WorldVertexBufferUploader.end(bufferBuilder)
     }
+
+    override fun drawTexture(
+        identifier: Identifier,
+        dstRect: Rect,
+        uvRect: Rect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = uvRect,
+        tint = tint,
+    )
 
     override fun drawTexture(
         texture: Texture,

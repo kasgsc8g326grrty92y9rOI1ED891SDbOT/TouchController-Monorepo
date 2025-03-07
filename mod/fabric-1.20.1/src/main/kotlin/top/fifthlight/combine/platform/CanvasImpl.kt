@@ -16,6 +16,7 @@ import top.fifthlight.combine.paint.*
 import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import java.util.function.Supplier
+import top.fifthlight.combine.data.Identifier as CombineIdentifier
 import top.fifthlight.combine.data.Text as CombineText
 
 inline fun withShader(program: Supplier<ShaderProgram>, crossinline block: () -> Unit) {
@@ -165,6 +166,18 @@ class CanvasImpl(
             BufferRenderer.drawWithGlobalProgram(bufferBuilder.end())
         }
     }
+
+    override fun drawTexture(
+        identifier: CombineIdentifier,
+        dstRect: Rect,
+        uvRect: Rect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = uvRect,
+        tint = tint,
+    )
 
     override fun drawTexture(
         texture: Texture,

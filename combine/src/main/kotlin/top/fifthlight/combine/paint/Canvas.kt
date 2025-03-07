@@ -72,6 +72,12 @@ interface Canvas {
     fun drawText(offset: IntOffset, text: Text, color: Color)
     fun drawText(offset: IntOffset, width: Int, text: Text, color: Color)
     fun drawTexture(
+        identifier: Identifier,
+        dstRect: Rect,
+        uvRect: Rect,
+        tint: Color = Colors.WHITE,
+    )
+    fun drawTexture(
         texture: Texture,
         dstRect: Rect,
         srcRect: IntRect = IntRect(IntOffset.ZERO, texture.size),

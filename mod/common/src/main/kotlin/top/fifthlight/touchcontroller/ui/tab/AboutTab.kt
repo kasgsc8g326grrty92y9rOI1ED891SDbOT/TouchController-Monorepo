@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import top.fifthlight.combine.data.Identifier
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
@@ -17,6 +18,7 @@ import top.fifthlight.combine.modifier.placement.height
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.paint.Colors
+import top.fifthlight.combine.paint.RawTextureDrawable
 import top.fifthlight.combine.widget.base.layout.Column
 import top.fifthlight.combine.widget.base.layout.Row
 import top.fifthlight.combine.widget.ui.Icon
@@ -57,7 +59,7 @@ object AboutTab : Tab() {
                 horizontalArrangement = Arrangement.spacedBy(8),
             ) {
                 Icon(
-                    drawable = Textures.CONTROL_CLASSIC_DPAD_UP,
+                    drawable = RawTextureDrawable(Identifier.of("touchcontroller", "textures/icon.png")),
                     size = IntSize(iconSize),
                 )
                 Column(

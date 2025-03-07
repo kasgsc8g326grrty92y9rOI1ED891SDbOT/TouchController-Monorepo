@@ -3,6 +3,7 @@ package top.fifthlight.combine.paint
 import androidx.compose.runtime.Immutable
 import kotlinx.collections.immutable.PersistentList
 import top.fifthlight.combine.data.BackgroundTexture
+import top.fifthlight.combine.data.Identifier
 import top.fifthlight.data.*
 import kotlin.math.max
 
@@ -60,6 +61,25 @@ data class PaddingDrawable(
 
     override fun Canvas.draw(rect: IntRect) {
         drawable.run { draw(rect + extraPadding) }
+    }
+}
+
+@Immutable
+data class RawTextureDrawable(
+    val identifier: Identifier
+) : Drawable {
+    override val size: IntSize
+        get() = IntSize.ZERO
+
+    override val padding: IntPadding
+        get() = IntPadding.ZERO
+
+    override fun Canvas.draw(rect: IntRect) {
+        drawTexture(
+            identifier = identifier,
+            dstRect = rect.toRect(),
+            uvRect = Rect.ONE,
+        )
     }
 }
 

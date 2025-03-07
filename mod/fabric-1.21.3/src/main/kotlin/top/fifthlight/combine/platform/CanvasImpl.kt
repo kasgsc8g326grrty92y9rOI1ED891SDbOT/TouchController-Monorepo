@@ -16,6 +16,7 @@ import top.fifthlight.combine.paint.*
 import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.mixin.DrawContextAccessor
+import top.fifthlight.combine.data.Identifier as CombineIdentifier
 import top.fifthlight.combine.data.Text as CombineText
 
 
@@ -126,7 +127,7 @@ class CanvasImpl(
         identifier: Identifier,
         dstRect: Rect,
         uvRect: Rect,
-        tint: Color = Colors.WHITE,
+        tint: Color,
     ) {
         val renderLayer = RenderLayer.getGuiTextured(identifier)
         val matrix = drawContext.matrices.peek().positionMatrix
@@ -150,6 +151,18 @@ class CanvasImpl(
     }
 
     override fun drawTexture(
+        identifier: CombineIdentifier,
+        dstRect: Rect,
+        uvRect: Rect,
+        tint: Color,
+    ) = drawTexture(
+        identifier = identifier.toMinecraft(),
+        dstRect = dstRect,
+        uvRect = uvRect,
+        tint = tint,
+    )
+
+    override fun drawTexture(
         texture: Texture,
         dstRect: Rect,
         srcRect: IntRect,
@@ -165,7 +178,7 @@ class CanvasImpl(
     )
 
     override fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float, dstRect: Rect) = drawTexture(
-        identifier = texture.identifier.toMinecraft(),
+        identifier = texture.identifier,
         dstRect = dstRect,
         uvRect = Rect(
             offset = Offset.ZERO,

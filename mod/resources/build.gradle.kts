@@ -92,6 +92,9 @@ val jarTasks = listOf(
         from(generateAtlasFile) {
             into("assets/touchcontroller/textures/gui")
         }
+        from(fileTree(resourcesDir.file("icon.png"))) {
+            into("assets/touchcontroller/textures")
+        }
         from(fileTree(resourcesDir.dir("texture/background"))) {
             into("assets/touchcontroller/textures/gui/background")
         }
