@@ -5,9 +5,7 @@ import org.koin.dsl.module
 import top.fifthlight.combine.data.DataComponentTypeFactory
 import top.fifthlight.combine.data.ItemFactory
 import top.fifthlight.combine.data.TextFactory
-import top.fifthlight.combine.paint.Canvas
 import top.fifthlight.combine.paint.TextMeasurer
-import top.fifthlight.combine.platform_1_21_3_1_21_4.CanvasImpl
 import top.fifthlight.combine.platform_1_21_3_1_21_4.DataComponentTypeFactoryImpl
 import top.fifthlight.combine.platform_1_21_3_1_21_4.ItemFactoryImpl
 import top.fifthlight.combine.platform_1_21_x.ScreenFactoryImpl
@@ -45,5 +43,4 @@ val platformModule = module {
     single<GameDispatcher> { GameDispatcherImpl }
     single<TextMeasurer> { TextMeasurerImpl }
     single<VanillaItemListProvider> { VanillaItemListProviderImpl }
-    factory<Canvas> { params -> CanvasImpl(params.get()) }
 }

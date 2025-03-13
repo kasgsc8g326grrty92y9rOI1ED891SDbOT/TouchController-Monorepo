@@ -13,11 +13,11 @@ class CanvasImpl(
     drawContext: GuiGraphics,
 ) : CanvasImpl(drawContext) {
     override fun drawText(offset: IntOffset, width: Int, text: String, color: Color) {
-        drawContext.drawWordWrap(textRenderer, Component.literal(text), offset.x, offset.y, width, color.value)
+        drawContext.drawWordWrap(textRenderer, Component.literal(text), offset.x, offset.y, width, color.value, false)
     }
 
     override fun drawText(offset: IntOffset, width: Int, text: CombineText, color: Color) {
-        drawContext.drawWordWrap(textRenderer, text.toMinecraft(), offset.x, offset.y, width, color.value)
+        drawContext.drawWordWrap(textRenderer, text.toMinecraft(), offset.x, offset.y, width, color.value, false)
     }
 
     override fun pushClip(absoluteArea: IntRect, relativeArea: IntRect) {
