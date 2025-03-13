@@ -36,13 +36,20 @@ object PropertiesTab : CustomTab() {
                     IconButton(
                         onClick = {
                             screenModel.setMoveLocked(!moveLocked)
-                        }
+                        },
+                        selected = moveLocked,
                     ) {
-                        if (moveLocked) {
-                            Icon(Textures.ICON_LOCK)
-                        } else {
-                            Icon(Textures.ICON_UNLOCK)
-                        }
+                        Icon(Textures.ICON_LOCK)
+                    }
+
+                    val highlight = uiState.pageState.highlight
+                    IconButton(
+                        onClick = {
+                            screenModel.setHighlight(!highlight)
+                        },
+                        selected = highlight,
+                    ) {
+                        Icon(Textures.ICON_LIGHT)
                     }
 
                     IconButton(

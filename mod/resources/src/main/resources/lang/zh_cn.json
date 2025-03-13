@@ -378,9 +378,7 @@
   "touchcontroller.widget.perspective_switch_button.property.size": "按键大小: %s%%",
   "touchcontroller.widget.perspective_switch_button.property.style": "样式",
   "touchcontroller.widget.perspective_switch_button.property.style.classic": "经典",
-  "touchcontroller.widget.perspective_switch_button.property.style.classic_simple": "经典简约",
   "touchcontroller.widget.perspective_switch_button.property.style.new": "新样式",
-  "touchcontroller.widget.perspective_switch_button.property.style.new_simple": "新样式简约",
 
   "touchcontroller.widget.screenshot_button.name": "截屏按钮",
   "touchcontroller.widget.screenshot_button.property.size": "按键大小: %s%%",

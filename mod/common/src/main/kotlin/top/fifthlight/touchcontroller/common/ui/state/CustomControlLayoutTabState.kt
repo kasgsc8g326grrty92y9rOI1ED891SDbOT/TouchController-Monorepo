@@ -91,6 +91,7 @@ sealed class CustomControlLayoutTabState {
             val selectedLayerIndex: Int = 0,
             val selectedWidgetIndex: Int = -1,
             val moveLocked: Boolean = false,
+            val highlight: Boolean = false,
             val showSideBar: Boolean = false,
             val copiedWidget: ControllerWidget? = null,
             val editState: EditState? = null,

@@ -84,6 +84,7 @@ private fun LayoutEditorPanel(
     layer: LayoutLayer,
     layerIndex: Int,
     lockMoving: Boolean = false,
+    highlight: Boolean = false,
     onWidgetChanged: (Int, ControllerWidget) -> Unit = { _, _ -> },
 ) {
     val selectedWidget = layer.widgets.getOrNull(selectedWidgetIndex)
@@ -144,7 +145,7 @@ private fun LayoutEditorPanel(
             }
         )
 
-        var dragTotalOffset by remember(selectedWidgetIndex) { mutableStateOf(Offset.ZERO) }
+        var dragTotalOffset by remember(selectedWidgetIndex, layerIndex) { mutableStateOf(Offset.ZERO) }
         LaunchedEffect(selectedWidget) {
             dragTotalOffset = Offset.ZERO
         }
@@ -157,6 +158,8 @@ private fun LayoutEditorPanel(
                 } else {
                     Modifier.innerLine(Colors.WHITE)
                 }
+            } else if (highlight) {
+                Modifier.innerLine(Colors.YELLOW)
             } else {
                 Modifier
             }
@@ -308,6 +311,7 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                             layer = uiState.selectedLayer,
                             layerIndex = uiState.pageState.selectedLayerIndex,
                             lockMoving = uiState.pageState.moveLocked,
+                            highlight = uiState.pageState.highlight,
                             onWidgetChanged = screenModel::editWidget,
                         )
                     } else if (uiState.selectedPreset != null) {

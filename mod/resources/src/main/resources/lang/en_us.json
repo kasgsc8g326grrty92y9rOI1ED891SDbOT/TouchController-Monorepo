@@ -378,9 +378,7 @@
   "touchcontroller.widget.perspective_switch_button.property.size": "Button size: %s%%",
   "touchcontroller.widget.perspective_switch_button.property.style": "Style",
   "touchcontroller.widget.perspective_switch_button.property.style.classic": "Classic",
-  "touchcontroller.widget.perspective_switch_button.property.style.classic_simple": "Classic simple",
   "touchcontroller.widget.perspective_switch_button.property.style.new": "New",
-  "touchcontroller.widget.perspective_switch_button.property.style.new_simple": "New simple",
 
   "touchcontroller.widget.screenshot_button.name": "Screenshot button",
   "touchcontroller.widget.screenshot_button.property.size": "Button size: %s%%",

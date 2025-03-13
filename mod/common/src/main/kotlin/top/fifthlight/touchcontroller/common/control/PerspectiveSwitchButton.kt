@@ -23,14 +23,8 @@ enum class PerspectiveSwitchButtonStyle {
     @SerialName("classic")
     CLASSIC,
 
-    @SerialName("classic_simple")
-    CLASSIC_SIMPLE,
-
     @SerialName("new")
     NEW,
-
-    @SerialName("new_simple")
-    NEW_SIMPLE
 }
 
 @Serializable
@@ -67,9 +61,7 @@ data class PerspectiveSwitchButton(
                 name = textFactory.format(Texts.WIDGET_PERSPECTIVE_SWITCH_BUTTON_PROPERTY_STYLE),
                 items = listOf(
                     PerspectiveSwitchButtonStyle.CLASSIC to textFactory.of(Texts.WIDGET_PERSPECTIVE_SWITCH_BUTTON_PROPERTY_STYLE_CLASSIC),
-                    PerspectiveSwitchButtonStyle.CLASSIC_SIMPLE to textFactory.of(Texts.WIDGET_PERSPECTIVE_SWITCH_BUTTON_PROPERTY_STYLE_CLASSIC_SIMPLE),
                     PerspectiveSwitchButtonStyle.NEW to textFactory.of(Texts.WIDGET_PERSPECTIVE_SWITCH_BUTTON_PROPERTY_STYLE_NEW),
-                    PerspectiveSwitchButtonStyle.NEW_SIMPLE to textFactory.of(Texts.WIDGET_PERSPECTIVE_SWITCH_BUTTON_PROPERTY_STYLE_NEW_SIMPLE),
                 ),
             ),
         ) as PersistentList<Property<ControllerWidget, *>>

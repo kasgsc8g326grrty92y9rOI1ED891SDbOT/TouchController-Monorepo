@@ -114,6 +114,10 @@ class CustomControlLayoutTabModel(
         pageState.getAndUpdate { it.copy(moveLocked = moveLocked) }
     }
 
+    fun setHighlight(highlight: Boolean) {
+        pageState.getAndUpdate { it.copy(highlight = highlight) }
+    }
+
     fun undo() {
         pageState.getAndUpdate { pageState ->
             if (pageState.editState != null) {
