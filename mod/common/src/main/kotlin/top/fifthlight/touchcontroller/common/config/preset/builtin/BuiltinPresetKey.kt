@@ -9,6 +9,7 @@ import top.fifthlight.touchcontroller.common.config.controllerLayoutOf
 import top.fifthlight.touchcontroller.common.config.preset.LayoutPreset
 import top.fifthlight.touchcontroller.common.config.preset.PresetControlInfo
 import top.fifthlight.touchcontroller.common.control.CustomWidget
+import top.fifthlight.touchcontroller.common.control.InventoryButton
 
 @Serializable
 data class BuiltinPresetKey(
@@ -90,11 +91,11 @@ data class BuiltinPresetKey(
                 BuiltinLayers.ridingOnEntityLayer.getByKey(this),
             )
         ).mapWidgets { widget ->
-            val baseWidget = widget.cloneBase(opacity = opacity)
-            when (baseWidget) {
+            when (widget) {
                 // TODO
-                is CustomWidget -> baseWidget
-                else -> baseWidget
+                is CustomWidget -> widget
+                is InventoryButton -> widget
+                else -> widget.cloneBase(opacity = opacity)
             }
         }
     }
