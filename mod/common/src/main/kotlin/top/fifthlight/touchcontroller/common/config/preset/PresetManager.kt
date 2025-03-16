@@ -113,7 +113,10 @@ class PresetManager : KoinComponent {
             if (addedPresets) {
                 saveOrder(newPresets.order)
             }
-        } catch (_: IOException) {
+        } catch (ex: IOException) {
+            if (create) {
+                logger.warn("Failed to save preset: ", ex)
+            }
         }
     }
 

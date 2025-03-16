@@ -70,6 +70,13 @@ sealed class ControllerWidget {
         private val textFactory: TextFactory by inject()
 
         val properties = persistentListOf<Property<ControllerWidget, *>>(
+            NameProperty(
+                getValue = { it.name },
+                setValue = { config, value ->
+                    config.cloneBase(name = value)
+                },
+                name = textFactory.of(Texts.WIDGET_GENERAL_PROPERTY_NAME),
+            ),
             BooleanProperty(
                 getValue = { it.lockMoving },
                 setValue = { config, value ->

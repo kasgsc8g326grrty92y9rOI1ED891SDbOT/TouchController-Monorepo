@@ -1,15 +1,27 @@
 package top.fifthlight.combine.widget.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import top.fifthlight.combine.input.InteractionSource
 import top.fifthlight.combine.input.MutableInteractionSource
+import top.fifthlight.combine.layout.Alignment
+import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.focus.focusable
+import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.pointer.clickable
+import top.fifthlight.combine.modifier.pointer.toggleable
+import top.fifthlight.combine.ui.style.ColorTheme
 import top.fifthlight.combine.ui.style.DrawableSet
+import top.fifthlight.combine.ui.style.LocalColorTheme
+import top.fifthlight.combine.widget.base.layout.Column
+import top.fifthlight.combine.widget.base.layout.ColumnScope
+import top.fifthlight.combine.widget.base.layout.Row
+import top.fifthlight.combine.widget.base.layout.RowScope
 import top.fifthlight.touchcontroller.assets.Textures
 
 data class RadioDrawableSet(
@@ -55,6 +67,70 @@ fun RadioIcon(
         modifier = modifier,
         drawable = drawable,
     )
+}
+
+@Composable
+fun RadioRow(
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .padding(4)
+            .border(Textures.WIDGET_BACKGROUND_FLOAT_WINDOW)
+            .then(modifier),
+        horizontalArrangement = Arrangement.spacedBy(4),
+    ) {
+        CompositionLocalProvider(
+            LocalColorTheme provides ColorTheme.light,
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun RadioColumn(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .padding(4)
+            .border(Textures.WIDGET_BACKGROUND_FLOAT_WINDOW)
+            .then(modifier),
+        verticalArrangement = Arrangement.spacedBy(4),
+    ) {
+        CompositionLocalProvider(
+            LocalColorTheme provides ColorTheme.light,
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun RadioBoxItem(
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    value: Boolean,
+    onValueChanged: (Boolean) -> Unit,
+    content: @Composable RowScope.() -> Unit,
+) {
+    Row(
+        modifier = Modifier.toggleable(
+            interactionSource = interactionSource,
+            value = value,
+            onValueChanged = onValueChanged
+        ),
+        horizontalArrangement = Arrangement.spacedBy(4),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioIcon(
+            interactionSource = interactionSource,
+            value = value,
+        )
+        content()
+    }
 }
 
 @Composable

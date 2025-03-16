@@ -16,6 +16,7 @@
     "InGameHudMixin",
     "KeyBindingMixin",
     "KeyboardInputMixin",
+    "KeyMappingGetterMixin",
     "MultiPlayerGameModeMixin"
   ]
 }

@@ -18,6 +18,7 @@ import top.fifthlight.touchcontroller.common.control.WidgetTriggerAction
 import top.fifthlight.touchcontroller.common.gal.CameraPerspective
 import top.fifthlight.touchcontroller.common.gal.KeyBindingHandler
 import top.fifthlight.touchcontroller.common.state.Pointer
+import kotlin.uuid.Uuid
 
 data class DoubleClickState(private val clickTime: Int = 15) {
     private var lastClick: Int = -1
@@ -40,6 +41,53 @@ data class DoubleClickState(private val clickTime: Int = 15) {
 
     fun clear() {
         this.lastClick = -1
+    }
+}
+
+class DoubleClickCounter(
+    private val lastClickTimes: MutableMap<Uuid, CounterEntry> = mutableMapOf()
+) {
+    data class CounterEntry(
+        val lastClickTick: Int = -1,
+        val lastUpdateTick: Int,
+    )
+
+    fun update(tick: Int, uuid: Uuid) {
+        val entry = lastClickTimes[uuid]
+        if (entry == null) {
+            lastClickTimes[uuid] = CounterEntry(lastUpdateTick = tick)
+        } else {
+            lastClickTimes[uuid] = entry.copy(lastUpdateTick = tick)
+        }
+    }
+
+    fun click(tick: Int, uuid: Uuid, interval: Int): Boolean {
+        val lastClick = lastClickTimes[uuid]
+        if (lastClick == null) {
+            return false
+        }
+
+        val lastClickTime = lastClick.lastClickTick
+        val timeDelta = tick - lastClickTime
+        val doubleClicked = timeDelta <= interval
+        if (doubleClicked) {
+            lastClickTimes[uuid] = lastClick.copy(lastClickTick = -1)
+        } else {
+            lastClickTimes[uuid] = lastClick.copy(lastClickTick = tick)
+        }
+
+        return doubleClicked
+    }
+
+    fun reset(uuid: Uuid) {
+        val entry = lastClickTimes[uuid]
+        if (entry != null) {
+            lastClickTimes[uuid] = entry.copy(lastClickTick = -1)
+        }
+    }
+
+    fun clean(tick: Int) {
+        lastClickTimes.values.removeIf { it.lastUpdateTick < tick }
     }
 }
 
@@ -88,6 +136,7 @@ data class ContextResult(
     var showBlockOutline: Boolean = false,
     var nextPerspective: Boolean = false,
     var hideHud: Boolean = false,
+    val pendingAction: MutableList<WidgetTriggerAction> = mutableListOf(),
 )
 
 enum class DPadDirection {
@@ -111,6 +160,7 @@ data class ContextStatus(
     val quickHandSwap: DoubleClickState = DoubleClickState(7),
     var lastDpadDirection: DPadDirection? = null,
     var wasSprinting: Boolean = false,
+    val doubleClickCounter: DoubleClickCounter = DoubleClickCounter(),
 )
 
 data class ContextCounter(
@@ -129,7 +179,6 @@ data class Context(
     val screenOffset: IntOffset,
     val opacity: Float = 1f,
     val pointers: MutableMap<Int, Pointer> = mutableMapOf(),
-    val pendingAction: MutableList<WidgetTriggerAction> = mutableListOf(),
     val input: ContextInput = ContextInput(),
     val result: ContextResult = ContextResult(),
     val status: ContextStatus = ContextStatus(),

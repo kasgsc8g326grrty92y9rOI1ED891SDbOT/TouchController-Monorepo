@@ -1,6 +1,9 @@
 package top.fifthlight.touchcontroller.common.control
 
 import androidx.compose.runtime.*
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
+import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import top.fifthlight.combine.data.LocalTextFactory
@@ -27,10 +30,40 @@ import top.fifthlight.data.IntPadding
 import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.*
 import top.fifthlight.touchcontroller.common.annoations.DontTranslate
+import top.fifthlight.touchcontroller.common.control.ButtonTrigger.DoubleClickTrigger
+import top.fifthlight.touchcontroller.common.gal.KeyBindingHandler
 import top.fifthlight.touchcontroller.common.layout.Align
 import top.fifthlight.touchcontroller.common.ui.component.AppBar
 import top.fifthlight.touchcontroller.common.ui.component.BackButton
+import top.fifthlight.touchcontroller.common.ui.component.ListButton
 import top.fifthlight.touchcontroller.common.ui.component.Scaffold
+import top.fifthlight.touchcontroller.common.ui.component.TabButton
+
+@Immutable
+class NameProperty<Config : ControllerWidget>(
+    private val getValue: (Config) -> ControllerWidget.Name,
+    private val setValue: (Config, ControllerWidget.Name) -> Config,
+    private val name: Text
+) : ControllerWidget.Property<Config, ControllerWidget.Name>, KoinComponent {
+    @Composable
+    override fun controller(modifier: Modifier, config: ControllerWidget, onConfigChanged: (ControllerWidget) -> Unit) {
+        @Suppress("UNCHECKED_CAST")
+        val widgetConfig = config as Config
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(4),
+        ) {
+            Text(name)
+            EditText(
+                modifier = Modifier.fillMaxWidth(),
+                value = getValue(widgetConfig).asString(),
+                onValueChanged = {
+                    onConfigChanged(setValue(config, ControllerWidget.Name.Literal(it)))
+                }
+            )
+        }
+    }
+}
 
 @Immutable
 class BooleanProperty<Config : ControllerWidget>(
@@ -90,7 +123,10 @@ class AnchorProperty<Config : ControllerWidget> : ControllerWidget.Property<Conf
 
         @Suppress("UNCHECKED_CAST")
         val widgetConfig = config as Config
-        Column(modifier) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(4),
+        ) {
             Text(Text.translatable(Texts.WIDGET_GENERAL_PROPERTY_ANCHOR_NAME))
 
             var expanded by remember { mutableStateOf(false) }
@@ -390,9 +426,12 @@ class TextureCoordinateProperty<Config : ControllerWidget>(
                 .height(24)
                 .then(modifier),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4),
         ) {
-            Text(name)
-            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                modifier = Modifier.weight(1f),
+                text = name,
+            )
             Icon(
                 modifier = Modifier.fillMaxHeight(),
                 drawable = value.texture,
@@ -574,7 +613,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
             textFactory.format(
                 Texts.SCREEN_CONFIG_PERCENT,
                 textFactory.toNative(name),
-                it.toString()
+                (it * 100).toInt().toString()
             )
         },
     )
@@ -858,6 +897,542 @@ class ButtonActiveTextureProperty<Config : ControllerWidget>(
             if (value is ButtonActiveTexture.Texture) {
                 textureProperty.controller()
             }
+        }
+    }
+}
+
+@Immutable
+class KeyBindingProperty<Config : ControllerWidget>(
+    private val getValue: (Config) -> String?,
+    private val setValue: (Config, String?) -> Config,
+    private val name: Text,
+) : ControllerWidget.Property<Config, String?>, KoinComponent {
+    @Composable
+    override fun controller(modifier: Modifier, config: ControllerWidget, onConfigChanged: (ControllerWidget) -> Unit) {
+        @Suppress("UNCHECKED_CAST")
+        val widgetConfig = config as Config
+        val value = getValue(widgetConfig)
+
+        val keyBindingHandler: KeyBindingHandler = koinInject()
+        val keyBindings = remember(keyBindingHandler) { keyBindingHandler.getAllStates() }
+        val (keyBindingsWithCategories, keyCategories) = remember(keyBindings) {
+            val keyBindingsWithCategories = keyBindings.values
+                .groupBy { it.categoryId }
+                .mapValues { (_, bindings) -> bindings.sortedBy { it.id } }
+            val keyCategories = keyBindingsWithCategories.keys.toList().sorted()
+            Pair(keyBindingsWithCategories, keyCategories)
+        }
+
+        val keyBinding = remember(value, keyBindings) { value?.let { keyBindings[it] } }
+
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(4),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = name,
+            )
+
+            if (value == null) {
+                Text(Text.translatable(Texts.WIDGET_KEY_BINDING_EMPTY))
+            } else {
+                Text(text = keyBinding?.name ?: Text.translatable(Texts.WIDGET_KEY_BINDING_UNKNOWN))
+            }
+
+            var showDialog by remember { mutableStateOf(false) }
+            IconButton(onClick = {
+                showDialog = true
+            }) {
+                Icon(Textures.ICON_EDIT)
+            }
+
+            IconButton(onClick = {
+                onConfigChanged(setValue(config, null))
+            }) {
+                Icon(Textures.ICON_DELETE)
+            }
+
+            if (showDialog) {
+                AlertDialog(
+                    modifier = Modifier
+                        .fillMaxWidth(.6f)
+                        .fillMaxHeight(.8f),
+                    onDismissRequest = {
+                        showDialog = false
+                    },
+                    title = {
+                        Text(Text.translatable(Texts.WIDGET_KEY_BINDING_SELECT_TITLE))
+                    },
+                    action = {
+                        Button(onClick = {
+                            showDialog = false
+                        }) {
+                            Text(Text.translatable(Texts.WIDGET_KEY_BINDING_SELECT_FINISH))
+                        }
+                    },
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4),
+                    ) {
+                        var selectedCategory by remember {
+                            mutableStateOf(
+                                keyBinding?.categoryId ?: keyCategories.first()
+                            )
+                        }
+                        Column(
+                            modifier = Modifier
+                                .weight(3f)
+                                .verticalScroll(),
+                        ) {
+                            for (category in keyCategories) {
+                                val firstKey = keyBindingsWithCategories[category]?.firstOrNull() ?: continue
+                                TabButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = { selectedCategory = category }
+                                ) {
+                                    Text(firstKey.categoryName)
+                                }
+                            }
+                        }
+                        Column(
+                            modifier = Modifier
+                                .weight(7f)
+                                .verticalScroll(),
+                        ) {
+                            val categoryKeys = keyBindingsWithCategories[selectedCategory] ?: return@Column
+                            for (key in categoryKeys) {
+                                ListButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    checked = value == key.id,
+                                    onClick = {
+                                        onConfigChanged(setValue(config, key.id))
+                                    },
+                                ) {
+                                    Text(key.name)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Immutable
+class TriggerActionProperty<Config : ControllerWidget>(
+    private val getValue: (Config) -> WidgetTriggerAction?,
+    private val setValue: (Config, WidgetTriggerAction?) -> Config,
+    private val name: Text,
+) : ControllerWidget.Property<Config, WidgetTriggerAction?>, KoinComponent {
+    private val textFactory: TextFactory by inject()
+
+    private fun keyBindingProperty(
+        getKeyBinding: (WidgetTriggerAction?) -> String?,
+        setKeyBinding: (WidgetTriggerAction?, String?) -> WidgetTriggerAction?,
+        name: Text,
+    ) = KeyBindingProperty<Config>(
+        getValue = { getKeyBinding(getValue(it)) },
+        setValue = { config, value -> setValue(config, setKeyBinding(getValue(config), value)) },
+        name = name,
+    )
+
+    private val keyClickBindingProperty = keyBindingProperty(
+        getKeyBinding = { (it as? WidgetTriggerAction.Key.Click)?.keyBinding },
+        setKeyBinding = { config, value ->
+            when (config) {
+                is WidgetTriggerAction.Key.Click -> config.copy(keyBinding = value)
+                else -> config
+            }
+        },
+        name = textFactory.of(Texts.WIDGET_TRIGGER_KEY_BINDING),
+    )
+
+    private val keyLockBindingProperty = keyBindingProperty(
+        getKeyBinding = { (it as? WidgetTriggerAction.Key.Lock)?.keyBinding },
+        setKeyBinding = { config, value ->
+            when (config) {
+                is WidgetTriggerAction.Key.Lock -> config.copy(keyBinding = value)
+                else -> config
+            }
+        },
+        name = textFactory.of(Texts.WIDGET_TRIGGER_KEY_BINDING),
+    )
+
+    @Composable
+    override fun controller(
+        modifier: Modifier,
+        config: ControllerWidget,
+        onConfigChanged: (ControllerWidget) -> Unit
+    ) {
+        @Suppress("UNCHECKED_CAST")
+        val widgetConfig = config as Config
+        val value = getValue(widgetConfig)
+
+        @Composable
+        fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
+            modifier = Modifier.fillMaxWidth(),
+            config = config,
+            onConfigChanged = onConfigChanged,
+        )
+
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(4),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(name)
+
+                var expanded by remember { mutableStateOf(false) }
+                Select(
+                    expanded = expanded,
+                    onExpandedChanged = { expanded = it },
+                    dropDownContent = {
+                        DropdownItemList(
+                            modifier = Modifier.verticalScroll(),
+                            items = persistentListOf(
+                                Pair(Text.translatable(WidgetTriggerAction.Type.NONE.nameId)) {
+                                    onConfigChanged(setValue(config, null))
+                                },
+                                Pair(Text.translatable(WidgetTriggerAction.Type.KEY.nameId)) {
+                                    if (value !is WidgetTriggerAction.Key) {
+                                        onConfigChanged(setValue(config, WidgetTriggerAction.Key.Click()))
+                                    }
+                                },
+                                Pair(Text.translatable(WidgetTriggerAction.Type.GAME.nameId)) {
+                                    if (value !is WidgetTriggerAction.Game) {
+                                        onConfigChanged(setValue(config, WidgetTriggerAction.Game.GameMenu))
+                                    }
+                                },
+                                Pair(Text.translatable(WidgetTriggerAction.Type.PLAYER.nameId)) {
+                                    if (value !is WidgetTriggerAction.Player) {
+                                        onConfigChanged(setValue(config, WidgetTriggerAction.Player.StartSprint))
+                                    }
+                                },
+                            ),
+                        )
+                    }
+                ) {
+                    val actionType = value?.actionType ?: WidgetTriggerAction.Type.NONE
+                    Text(Text.translatable(actionType.nameId))
+                    SelectIcon(expanded = expanded)
+                }
+            }
+            when (value) {
+                is WidgetTriggerAction.Key -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = Text.translatable(Texts.WIDGET_TRIGGER_KEY_TYPE)
+                        )
+                        RadioRow {
+                            RadioBoxItem(
+                                value = value is WidgetTriggerAction.Key.Click,
+                                onValueChanged = { checked ->
+                                    if (checked && value !is WidgetTriggerAction.Key.Click) {
+                                        onConfigChanged(setValue(config, WidgetTriggerAction.Key.Click()))
+                                    }
+                                },
+                            ) {
+                                Text(Text.translatable(Texts.WIDGET_TRIGGER_KEY_CLICK))
+                            }
+                            RadioBoxItem(
+                                value = value is WidgetTriggerAction.Key.Lock,
+                                onValueChanged = { checked ->
+                                    if (checked && value !is WidgetTriggerAction.Key.Lock) {
+                                        onConfigChanged(setValue(config, WidgetTriggerAction.Key.Lock()))
+                                    }
+                                },
+                            ) {
+                                Text(Text.translatable(Texts.WIDGET_TRIGGER_KEY_LOCK))
+                            }
+                        }
+                    }
+                    when (value) {
+                        is WidgetTriggerAction.Key.Click -> {
+                            keyClickBindingProperty.controller()
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = Text.translatable(Texts.WIDGET_TRIGGER_KEY_KEEP_FOR_CLIENT_TICK),
+                                )
+                                Switch(
+                                    value = value.keepInClientTick,
+                                    onValueChanged = {
+                                        onConfigChanged(setValue(config, value.copy(keepInClientTick = it)))
+                                    }
+                                )
+                            }
+                        }
+
+                        is WidgetTriggerAction.Key.Lock -> {
+                            keyLockBindingProperty.controller()
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = Text.translatable(Texts.WIDGET_TRIGGER_KEY_LOCK_TYPE),
+                                )
+                                var expanded by remember { mutableStateOf(false) }
+                                Select(
+                                    expanded = expanded,
+                                    onExpandedChanged = { expanded = it },
+                                    dropDownContent = {
+                                        DropdownItemList(
+                                            modifier = Modifier.verticalScroll(),
+                                            items = WidgetTriggerAction.Key.Lock.LockActionType.entries.map {
+                                                Pair(Text.translatable(it.nameId)) {
+                                                    onConfigChanged(setValue(config, value.copy(lockType = it)))
+                                                }
+                                            }.toPersistentList()
+                                        )
+                                    }
+                                ) {
+                                    Text(Text.translatable(value.lockType.nameId))
+                                    SelectIcon(expanded = expanded)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                is WidgetTriggerAction.Game -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = Text.translatable(Texts.WIDGET_TRIGGER_GAME_ACTION_TYPE),
+                        )
+                        var expanded by remember { mutableStateOf(false) }
+                        Select(
+                            expanded = expanded,
+                            onExpandedChanged = { expanded = it },
+                            dropDownContent = {
+                                DropdownItemList(
+                                    modifier = Modifier.verticalScroll(),
+                                    items = WidgetTriggerAction.Game.all.map {
+                                        Pair(Text.translatable(it.nameId)) {
+                                            onConfigChanged(setValue(config, it))
+                                        }
+                                    }.toPersistentList()
+                                )
+                            }
+                        ) {
+                            Text(Text.translatable(value.nameId))
+                            SelectIcon(expanded = expanded)
+                        }
+                    }
+                }
+
+                is WidgetTriggerAction.Player -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = Text.translatable(Texts.WIDGET_TRIGGER_PLAYER_ACTION_TYPE),
+                        )
+                        var expanded by remember { mutableStateOf(false) }
+                        Select(
+                            expanded = expanded,
+                            onExpandedChanged = { expanded = it },
+                            dropDownContent = {
+                                DropdownItemList(
+                                    modifier = Modifier.verticalScroll(),
+                                    items = WidgetTriggerAction.Player.all.map {
+                                        Pair(Text.translatable(it.nameId)) {
+                                            onConfigChanged(setValue(config, it))
+                                        }
+                                    }.toPersistentList()
+                                )
+                            }
+                        ) {
+                            Text(Text.translatable(value.nameId))
+                            SelectIcon(expanded = expanded)
+                        }
+                    }
+                }
+
+                null -> {}
+            }
+        }
+    }
+}
+
+@Immutable
+class DoubleClickTriggerProperty<Config : ControllerWidget>(
+    private val getValue: (Config) -> DoubleClickTrigger,
+    private val setValue: (Config, DoubleClickTrigger) -> Config,
+    private val name: Text,
+) : ControllerWidget.Property<Config, DoubleClickTrigger>, KoinComponent {
+    private val textFactory: TextFactory by inject()
+
+    private fun triggerActionProperty(
+        getAction: (DoubleClickTrigger) -> WidgetTriggerAction?,
+        setAction: (DoubleClickTrigger, WidgetTriggerAction?) -> DoubleClickTrigger,
+        name: Text,
+    ) = TriggerActionProperty<Config>(
+        getValue = { getAction(getValue(it)) },
+        setValue = { config, value -> setValue(config, setAction(getValue(config), value)) },
+        name = name,
+    )
+
+    private val actionProperty = triggerActionProperty(
+        getAction = { it.action },
+        setAction = { config, value -> config.copy(action = value) },
+        name = textFactory.of(Texts.WIDGET_DOUBLE_TRIGGER_ACTION)
+    )
+
+    @Composable
+    override fun controller(modifier: Modifier, config: ControllerWidget, onConfigChanged: (ControllerWidget) -> Unit) {
+        @Suppress("UNCHECKED_CAST")
+        val widgetConfig = config as Config
+        val value = getValue(widgetConfig)
+
+        @Composable
+        fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
+            modifier = Modifier.fillMaxWidth(),
+            config = config,
+            onConfigChanged = onConfigChanged,
+        )
+
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(4),
+        ) {
+            Text(name)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4),
+            ) {
+                Text(Text.translatable(Texts.WIDGET_DOUBLE_TRIGGER_INTERVAL))
+                IntSlider(
+                    modifier = Modifier.weight(1f),
+                    range = 1..40,
+                    value = value.interval,
+                    onValueChanged = {
+                        onConfigChanged(setValue(config, value.copy(interval = it)))
+                    }
+                )
+                var text by remember(value.interval) { mutableStateOf(value.interval.toString()) }
+                LaunchedEffect(text) {
+                    val newInterval = text.toIntOrNull() ?: return@LaunchedEffect
+                    if (newInterval == value.interval) {
+                        return@LaunchedEffect
+                    }
+                    onConfigChanged(setValue(config, value.copy(interval = newInterval)))
+                }
+                EditText(
+                    modifier = Modifier.width(48),
+                    value = text,
+                    onValueChanged = { text = it },
+                )
+            }
+            actionProperty.controller()
+        }
+    }
+}
+
+@Immutable
+class ButtonTriggerProperty<Config : ControllerWidget>(
+    private val getValue: (Config) -> ButtonTrigger,
+    private val setValue: (Config, ButtonTrigger) -> Config,
+) : ControllerWidget.Property<Config, ButtonTrigger>, KoinComponent {
+    private val textFactory: TextFactory by inject()
+
+    private fun triggerActionProperty(
+        getAction: (ButtonTrigger) -> WidgetTriggerAction?,
+        setAction: (ButtonTrigger, WidgetTriggerAction?) -> ButtonTrigger,
+        name: Text,
+    ) = TriggerActionProperty<Config>(
+        getValue = { getAction(getValue(it)) },
+        setValue = { config, value -> setValue(config, setAction(getValue(config), value)) },
+        name = name,
+    )
+
+    private fun keyBindingProperty(
+        getKeyBinding: (ButtonTrigger) -> String?,
+        setKeyBinding: (ButtonTrigger, String?) -> ButtonTrigger,
+        name: Text,
+    ) = KeyBindingProperty<Config>(
+        getValue = { getKeyBinding(getValue(it)) },
+        setValue = { config, value -> setValue(config, setKeyBinding(getValue(config), value)) },
+        name = name,
+    )
+
+    private fun doubleClickActionProperty(
+        getAction: (ButtonTrigger) -> DoubleClickTrigger,
+        setAction: (ButtonTrigger, DoubleClickTrigger) -> ButtonTrigger,
+        name: Text,
+    ) = DoubleClickTriggerProperty<Config>(
+        getValue = { getAction(getValue(it)) },
+        setValue = { config, value -> setValue(config, setAction(getValue(config), value)) },
+        name = name,
+    )
+
+    private val downTriggerActionProperty = triggerActionProperty(
+        getAction = { it.down },
+        setAction = { config, value -> config.copy(down = value) },
+        name = textFactory.of(Texts.WIDGET_TRIGGER_DOWN)
+    )
+
+    private val pressKeyBindingProperty = keyBindingProperty(
+        getKeyBinding = { it.press },
+        setKeyBinding = { config, value -> config.copy(press = value) },
+        name = textFactory.of(Texts.WIDGET_TRIGGER_PRESS)
+    )
+
+    private val releaseTriggerActionProperty = triggerActionProperty(
+        getAction = { it.release },
+        setAction = { config, value -> config.copy(release = value) },
+        name = textFactory.of(Texts.WIDGET_TRIGGER_RELEASE)
+    )
+
+    private val doubleClickTriggerActionProperty = doubleClickActionProperty(
+        getAction = { it.doubleClick },
+        setAction = { config, value -> config.copy(doubleClick = value) },
+        name = textFactory.of(Texts.WIDGET_TRIGGER_DOUBLE_CLICK)
+    )
+
+    @Composable
+    override fun controller(modifier: Modifier, config: ControllerWidget, onConfigChanged: (ControllerWidget) -> Unit) {
+        @Composable
+        fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
+            modifier = Modifier.fillMaxWidth(),
+            config = config,
+            onConfigChanged = onConfigChanged,
+        )
+
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(4),
+        ) {
+            downTriggerActionProperty.controller()
+            pressKeyBindingProperty.controller()
+            releaseTriggerActionProperty.controller()
+            doubleClickTriggerActionProperty.controller()
         }
     }
 }

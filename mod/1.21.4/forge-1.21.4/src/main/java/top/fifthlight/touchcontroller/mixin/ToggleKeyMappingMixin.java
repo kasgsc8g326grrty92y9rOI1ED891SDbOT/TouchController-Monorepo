@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.fifthlight.touchcontroller.common_1_21_x.gal.KeyBindingHandlerImpl;
+import top.fifthlight.touchcontroller.gal.KeyBindingHandlerImpl;
 
 @Mixin(ToggleKeyMapping.class)
 public abstract class ToggleKeyMappingMixin extends KeyBindingMixin {

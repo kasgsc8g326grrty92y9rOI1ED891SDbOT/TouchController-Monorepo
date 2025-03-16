@@ -99,7 +99,7 @@ fun Button(
     drawableSet: DrawableSet = LocalButtonDrawable.current,
     colorTheme: ColorTheme? = null,
     minSize: IntSize = IntSize(48, 20),
-    padding: IntPadding = IntPadding(left = 4, right = 4, top = 1),
+    padding: IntPadding = IntPadding(left = 4, right = 4),
     enabled: Boolean = true,
     onClick: () -> Unit,
     clickSound: Boolean = true,

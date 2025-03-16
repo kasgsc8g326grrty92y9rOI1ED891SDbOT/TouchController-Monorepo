@@ -96,7 +96,7 @@ object RenderEvents : KoinComponent {
 
         val player = playerHandleFactory.getPlayerHandle() ?: return
         if (player.isFlying || player.isSubmergedInWater) {
-            keyBindingHandler.getState(KeyBindingType.SNEAK).locked = false
+            keyBindingHandler.getState(DefaultKeyBindingType.SNEAK).locked = false
         }
 
         val ridingType = player.ridingEntityType
@@ -150,7 +150,7 @@ object RenderEvents : KoinComponent {
         controllerHudModel.pendingDrawQueue = drawQueue
 
         val status = controllerHudModel.status
-        val sprintState = keyBindingHandler.getState(KeyBindingType.SPRINT)
+        val sprintState = keyBindingHandler.getState(DefaultKeyBindingType.SPRINT)
         if (sprintState.locked || sprintState.clicked) {
             status.wasSprinting = true
         } else {
@@ -159,6 +159,8 @@ object RenderEvents : KoinComponent {
                 player.isSprinting = false
             }
         }
+        status.doubleClickCounter.clean(controllerHudModel.timer.tick)
+        result.pendingAction.forEach { it.trigger(player) }
         if (result.cancelFlying) {
             player.isFlying = false
         }

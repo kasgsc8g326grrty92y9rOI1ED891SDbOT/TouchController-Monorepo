@@ -6,7 +6,7 @@ import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.control.SneakButton
 import top.fifthlight.touchcontroller.common.control.SneakButtonTexture
 import top.fifthlight.touchcontroller.common.control.SneakButtonTrigger
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 import kotlin.uuid.Uuid
 
 fun Context.RawSneakButton(
@@ -15,7 +15,7 @@ fun Context.RawSneakButton(
     trigger: SneakButtonTrigger = SneakButtonTrigger.DOUBLE_CLICK_LOCK,
     texture: SneakButtonTexture = SneakButtonTexture.CLASSIC,
 ) {
-    val sneakButtonState = keyBindingHandler.getState(KeyBindingType.SNEAK)
+    val sneakButtonState = keyBindingHandler.getState(DefaultKeyBindingType.SNEAK)
     val (newPointer, clicked) = Button(id = id) { clicked ->
         val isLockTrigger =
             trigger == SneakButtonTrigger.SINGLE_CLICK_LOCK || trigger == SneakButtonTrigger.DOUBLE_CLICK_LOCK

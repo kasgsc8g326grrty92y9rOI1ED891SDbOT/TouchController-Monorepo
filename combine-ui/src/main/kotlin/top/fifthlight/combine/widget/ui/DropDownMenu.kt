@@ -1,6 +1,7 @@
 package top.fifthlight.combine.widget.ui
 
 import androidx.compose.runtime.*
+import kotlinx.collections.immutable.PersistentList
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.input.MutableInteractionSource
 import top.fifthlight.combine.layout.Layout
@@ -27,7 +28,7 @@ import kotlin.math.max
 @Composable
 fun DropdownMenuScope.DropdownItemList(
     modifier: Modifier = Modifier,
-    items: List<Pair<Text, () -> Unit>>,
+    items: PersistentList<Pair<Text, () -> Unit>>,
 ) {
     DropdownItemList(
         modifier = modifier,

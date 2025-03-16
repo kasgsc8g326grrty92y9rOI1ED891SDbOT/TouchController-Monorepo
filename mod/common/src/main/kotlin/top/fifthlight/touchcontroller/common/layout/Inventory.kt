@@ -3,7 +3,7 @@ package top.fifthlight.touchcontroller.common.layout
 import org.koin.core.component.get
 import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.common.gal.GameFeatures
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 import top.fifthlight.touchcontroller.common.gal.PlayerHandleFactory
 import top.fifthlight.touchcontroller.common.state.PointerState
 
@@ -40,7 +40,7 @@ private fun Context.InventorySlot(index: Int) {
                     if (gameFeatures.dualWield || config.regular.quickHandSwap) {
                         if (player.currentSelectedSlot == index) {
                             if (status.quickHandSwap.click(timer.tick)) {
-                                keyBindingHandler.getState(KeyBindingType.SWAP_HANDS).clicked = true
+                                keyBindingHandler.getState(DefaultKeyBindingType.SWAP_HANDS).clicked = true
                             }
                         }
                     } else {

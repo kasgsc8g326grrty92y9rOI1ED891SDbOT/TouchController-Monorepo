@@ -113,32 +113,38 @@ private fun LayoutEditorPanel(
             }
         }
     ) {
+        fun Int.safeCoerceIn(min: Int, max: Int): Int = if (min > max) {
+            min
+        } else {
+            coerceIn(min, max)
+        }
+
         fun clampOffset(align: Align, widgetSize: IntSize, widgetOffset: IntOffset) = IntOffset(
             x = when (align) {
                 Align.LEFT_TOP, Align.LEFT_CENTER, Align.LEFT_BOTTOM ->
-                    widgetOffset.x.coerceIn(0, panelSize.width - widgetSize.width)
+                    widgetOffset.x.safeCoerceIn(0, panelSize.width - widgetSize.width)
 
                 Align.CENTER_CENTER, Align.CENTER_BOTTOM, Align.CENTER_TOP ->
-                    widgetOffset.x.coerceIn(
+                    widgetOffset.x.safeCoerceIn(
                         -panelSize.width / 2 + widgetSize.width / 2,
                         panelSize.width / 2 - widgetSize.width / 2
                     )
 
                 Align.RIGHT_TOP, Align.RIGHT_CENTER, Align.RIGHT_BOTTOM ->
-                    widgetOffset.x.coerceIn(0, panelSize.width - widgetSize.width)
+                    widgetOffset.x.safeCoerceIn(0, panelSize.width - widgetSize.width)
             },
             y = when (align) {
                 Align.LEFT_TOP, Align.CENTER_TOP, Align.RIGHT_TOP ->
-                    widgetOffset.y.coerceIn(0, panelSize.height - widgetSize.height)
+                    widgetOffset.y.safeCoerceIn(0, panelSize.height - widgetSize.height)
 
                 Align.LEFT_CENTER, Align.CENTER_CENTER, Align.RIGHT_CENTER ->
-                    widgetOffset.y.coerceIn(
+                    widgetOffset.y.safeCoerceIn(
                         -panelSize.height / 2 + widgetSize.height / 2,
                         panelSize.height / 2 - widgetSize.height / 2
                     )
 
                 Align.LEFT_BOTTOM, Align.CENTER_BOTTOM, Align.RIGHT_BOTTOM ->
-                    widgetOffset.y.coerceIn(0, panelSize.height - widgetSize.height)
+                    widgetOffset.y.safeCoerceIn(0, panelSize.height - widgetSize.height)
             }
         )
 

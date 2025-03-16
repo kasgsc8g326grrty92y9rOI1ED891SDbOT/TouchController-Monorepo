@@ -39,7 +39,6 @@ val platformModule = module {
     single<GameStateProvider> { GameStateProviderImpl }
     single<WindowHandle> { WindowHandleImpl }
     single<DefaultItemListProvider> { DefaultItemListProviderImpl }
-    single<KeyBindingHandler> { KeyBindingHandlerImpl }
     single<GameDispatcher> { GameDispatcherImpl }
     single<TextMeasurer> { TextMeasurerImpl }
     single<VanillaItemListProvider> { VanillaItemListProviderImpl }

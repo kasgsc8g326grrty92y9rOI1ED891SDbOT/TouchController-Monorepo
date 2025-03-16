@@ -22,7 +22,6 @@ val platformModule = module {
     single<GameFeatures> { gameFeatures }
     single<GameStateProvider> { GameStateProviderImpl }
     single<WindowHandle> { WindowHandleImpl }
-    single<KeyBindingHandler> { KeyBindingHandlerImpl }
     single<GameDispatcher> { GameDispatcherImpl }
     single<TextMeasurer> { TextMeasurerImpl }
     factory<Canvas> { params -> CanvasImpl(params.get()) }

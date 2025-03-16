@@ -4,10 +4,10 @@ import top.fifthlight.combine.paint.Color
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.control.AttackButton
 import top.fifthlight.touchcontroller.common.control.AttackButtonTexture
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 
 fun Context.AttackButton(config: AttackButton) {
-    KeyMappingButton(id = config.id, keyType = KeyBindingType.ATTACK) { clicked ->
+    KeyMappingButton(id = config.id, keyType = DefaultKeyBindingType.ATTACK) { clicked ->
         withAlign(align = Align.CENTER_CENTER, size = size) {
             when (config.texture) {
                 AttackButtonTexture.CLASSIC -> {

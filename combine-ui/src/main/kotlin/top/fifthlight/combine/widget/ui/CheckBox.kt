@@ -6,10 +6,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import top.fifthlight.combine.input.InteractionSource
 import top.fifthlight.combine.input.MutableInteractionSource
+import top.fifthlight.combine.layout.Alignment
+import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.focus.focusable
 import top.fifthlight.combine.modifier.pointer.clickable
+import top.fifthlight.combine.modifier.pointer.toggleable
 import top.fifthlight.combine.ui.style.DrawableSet
+import top.fifthlight.combine.widget.base.layout.Row
+import top.fifthlight.combine.widget.base.layout.RowScope
 import top.fifthlight.touchcontroller.assets.Textures
 
 data class CheckBoxDrawableSet(
@@ -40,13 +45,13 @@ val LocalCheckBoxDrawableSet = staticCompositionLocalOf<CheckBoxDrawableSet> { d
 fun CheckBoxIcon(
     modifier: Modifier = Modifier,
     interactionSource: InteractionSource,
-    DrawableSet: CheckBoxDrawableSet = LocalCheckBoxDrawableSet.current,
+    drawableSet: CheckBoxDrawableSet = LocalCheckBoxDrawableSet.current,
     value: Boolean,
 ) {
     val currentDrawableSet = if (value) {
-        DrawableSet.checked
+        drawableSet.checked
     } else {
-        DrawableSet.unchecked
+        drawableSet.unchecked
     }
     val state by widgetState(interactionSource)
     val drawable = currentDrawableSet.getByState(state)
@@ -58,9 +63,33 @@ fun CheckBoxIcon(
 }
 
 @Composable
+fun CheckBoxItem(
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    value: Boolean,
+    onValueChanged: (Boolean) -> Unit,
+    content: @Composable RowScope.() -> Unit,
+) {
+    Row(
+        modifier = Modifier.toggleable(
+            interactionSource = interactionSource,
+            value = value,
+            onValueChanged = onValueChanged
+        ),
+        horizontalArrangement = Arrangement.spacedBy(4),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CheckBoxIcon(
+            interactionSource = interactionSource,
+            value = value,
+        )
+        content()
+    }
+}
+
+@Composable
 fun CheckBox(
     modifier: Modifier = Modifier,
-    DrawableSet: CheckBoxDrawableSet = LocalCheckBoxDrawableSet.current,
+    drawableSet: CheckBoxDrawableSet = LocalCheckBoxDrawableSet.current,
     value: Boolean,
     onValueChanged: ((Boolean) -> Unit)?,
 ) {
@@ -80,7 +109,7 @@ fun CheckBox(
     CheckBoxIcon(
         modifier = modifier,
         interactionSource = interactionSource,
-        DrawableSet = DrawableSet,
+        drawableSet = drawableSet,
         value = value,
     )
 }

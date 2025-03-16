@@ -18,6 +18,7 @@
     "GameOptionsScreenMixin",
     "InGameHudMixin",
     "KeyBindingMixin",
+    "KeyMappingGetterMixin",
     "KeyboardInputMixin"
   ]
 }

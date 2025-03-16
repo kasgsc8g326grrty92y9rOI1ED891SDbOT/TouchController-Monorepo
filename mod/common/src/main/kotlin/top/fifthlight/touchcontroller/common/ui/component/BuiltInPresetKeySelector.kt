@@ -3,7 +3,6 @@ package top.fifthlight.touchcontroller.common.ui.component
 import androidx.compose.runtime.*
 import top.fifthlight.combine.data.LocalTextFactory
 import top.fifthlight.combine.data.Text
-import top.fifthlight.combine.input.MutableInteractionSource
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.layout.Layout
@@ -15,10 +14,7 @@ import top.fifthlight.combine.modifier.placement.fillMaxHeight
 import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.padding
-import top.fifthlight.combine.modifier.pointer.toggleable
 import top.fifthlight.combine.modifier.scroll.verticalScroll
-import top.fifthlight.combine.ui.style.ColorTheme
-import top.fifthlight.combine.ui.style.LocalColorTheme
 import top.fifthlight.combine.widget.base.layout.*
 import top.fifthlight.combine.widget.ui.*
 import top.fifthlight.data.IntSize
@@ -31,51 +27,6 @@ import top.fifthlight.touchcontroller.common.config.LayerConditionValue
 import top.fifthlight.touchcontroller.common.config.preset.builtin.BuiltInPresetKey
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
 import kotlin.math.min
-
-
-@Composable
-private fun RadioContainer(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .padding(4)
-            .border(Textures.WIDGET_BACKGROUND_FLOAT_WINDOW)
-            .then(modifier),
-        verticalArrangement = Arrangement.spacedBy(4),
-    ) {
-        content()
-    }
-}
-
-@Composable
-private fun RadioBoxItem(
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    value: Boolean,
-    onValueChanged: (Boolean) -> Unit,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier = Modifier.toggleable(
-            interactionSource = interactionSource,
-            value = value,
-            onValueChanged = onValueChanged
-        ),
-        horizontalArrangement = Arrangement.spacedBy(4),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RadioIcon(
-            interactionSource = interactionSource,
-            value = value,
-        )
-        CompositionLocalProvider(
-            LocalColorTheme provides ColorTheme.light,
-        ) {
-            content()
-        }
-    }
-}
 
 private data class ControllerWidgetModifierNode(
     val widget: ControllerWidget,
@@ -177,7 +128,7 @@ fun BuiltInPresetKeySelector(
                     verticalArrangement = Arrangement.spacedBy(4),
                 ) {
                     Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_TEXTURE_STYLE))
-                    RadioContainer {
+                    RadioColumn {
                         for (textureSet in TextureSet.TextureSetKey.entries) {
                             RadioBoxItem(
                                 value = value.textureSet == textureSet,
@@ -237,7 +188,7 @@ fun BuiltInPresetKeySelector(
             verticalArrangement = Arrangement.spacedBy(4),
         ) {
             Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_CONTROL_STYLE))
-            RadioContainer(modifier = Modifier.fillMaxWidth()) {
+            RadioColumn(modifier = Modifier.fillMaxWidth()) {
                 RadioBoxItem(
                     value = value.controlStyle == BuiltInPresetKey.ControlStyle.TouchGesture,
                     onValueChanged = {
@@ -281,7 +232,7 @@ fun BuiltInPresetKeySelector(
             }
 
             Text(Text.translatable(Texts.SCREEN_MANAGE_CONTROL_PRESET_MOVE_METHOD))
-            RadioContainer(modifier = Modifier.fillMaxWidth()) {
+            RadioColumn(modifier = Modifier.fillMaxWidth()) {
                 RadioBoxItem(
                     value = value.moveMethod is BuiltInPresetKey.MoveMethod.Dpad,
                     onValueChanged = {

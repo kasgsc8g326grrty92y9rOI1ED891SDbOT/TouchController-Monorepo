@@ -75,7 +75,9 @@ fun EditText(
 
     fun updateInputState(block: TextInputState.() -> TextInputState) {
         textInputState = block(textInputState)
-        onValueChanged(textInputState.text)
+        if (value != textInputState.text) {
+            onValueChanged(textInputState.text)
+        }
     }
 
     val state by widgetState(interactionSource)

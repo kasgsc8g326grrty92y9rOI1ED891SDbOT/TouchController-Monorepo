@@ -7,10 +7,10 @@ import top.fifthlight.touchcontroller.common.control.SprintButtonTexture.CLASSIC
 import top.fifthlight.touchcontroller.common.control.SprintButtonTexture.NEW
 import top.fifthlight.touchcontroller.common.control.SprintButtonTrigger.HOLD
 import top.fifthlight.touchcontroller.common.control.SprintButtonTrigger.SINGLE_CLICK_LOCK
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 
 fun Context.SprintButton(config: SprintButton) {
-    val sprintButtonState = keyBindingHandler.getState(KeyBindingType.SPRINT)
+    val sprintButtonState = keyBindingHandler.getState(DefaultKeyBindingType.SPRINT)
     val (newPointer, clicked) = Button(id = config.id) { clicked ->
         val isLockTrigger = config.trigger == SINGLE_CLICK_LOCK
         val showActive = (!isLockTrigger && clicked) || (isLockTrigger && sprintButtonState.locked)

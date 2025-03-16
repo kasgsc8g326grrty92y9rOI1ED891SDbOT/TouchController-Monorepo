@@ -1,6 +1,6 @@
 package top.fifthlight.touchcontroller.common.layout
 
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 import top.fifthlight.touchcontroller.common.state.PointerState
 import kotlin.uuid.Uuid
 
@@ -53,7 +53,7 @@ fun Context.SwipeButton(
 
 fun Context.KeyMappingSwipeButton(
     id: Uuid,
-    keyType: KeyBindingType,
+    keyType: DefaultKeyBindingType,
     content: Context.(clicked: Boolean) -> Unit,
 ) {
     val (_, clicked) = SwipeButton(id, content)
@@ -107,7 +107,7 @@ fun Context.Button(
 
 fun Context.KeyMappingButton(
     id: Uuid,
-    keyType: KeyBindingType,
+    keyType: DefaultKeyBindingType,
     content: Context.(clicked: Boolean) -> Unit,
 ) {
     val (_, clicked) = Button(id, content)

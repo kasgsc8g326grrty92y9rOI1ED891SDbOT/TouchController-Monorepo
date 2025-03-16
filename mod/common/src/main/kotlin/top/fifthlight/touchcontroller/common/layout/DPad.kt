@@ -3,7 +3,7 @@ package top.fifthlight.touchcontroller.common.layout
 import top.fifthlight.combine.paint.Color
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.control.*
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 import top.fifthlight.touchcontroller.common.state.PointerState
 
 fun Context.DPad(config: DPad) {
@@ -322,7 +322,7 @@ fun Context.DPad(config: DPad) {
                         }
                     }
                 )
-                val jumpKeyBinding = keyBindingHandler.getState(KeyBindingType.JUMP)
+                val jumpKeyBinding = keyBindingHandler.getState(DefaultKeyBindingType.JUMP)
                 if (clicked) {
                     if (config.extraButton == DPadExtraButton.JUMP_WITHOUT_LOCKING || !hasPointer) {
                         jumpKeyBinding.clicked = true

@@ -19,6 +19,7 @@
     "HudRenderMixin",
     "InGameHudMixin",
     "KeyBindingMixin",
+    "KeyMappingGetterMixin",
     "KeyboardInputMixin",
     "ToggleKeyMappingMixin"
   ]

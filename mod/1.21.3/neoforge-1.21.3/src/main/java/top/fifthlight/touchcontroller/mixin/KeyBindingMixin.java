@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.fifthlight.touchcontroller.common.config.GlobalConfigHolder;
-import top.fifthlight.touchcontroller.common_1_21_x.gal.KeyBindingHandlerImpl;
 import top.fifthlight.touchcontroller.helper.ClickableKeyBinding;
+import top.fifthlight.touchcontroller.gal.KeyBindingHandlerImpl;
 
 import java.util.List;
 

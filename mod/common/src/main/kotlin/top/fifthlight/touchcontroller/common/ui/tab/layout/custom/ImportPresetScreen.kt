@@ -1,6 +1,8 @@
 package top.fifthlight.touchcontroller.common.ui.tab.layout.custom
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -43,9 +45,10 @@ class ImportPresetScreen(private val onPresetKeySelected: (BuiltInPresetKey) -> 
                 )
             },
         ) { modifier ->
+            val key by screenModel.key.collectAsState()
             BuiltInPresetKeySelector(
                 modifier = modifier,
-                value = screenModel.key.value,
+                value = key,
                 onValueChanged = screenModel::updateKey,
             )
         }

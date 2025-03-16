@@ -4,10 +4,10 @@ import top.fifthlight.combine.paint.Color
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.control.AscendButton
 import top.fifthlight.touchcontroller.common.control.AscendButtonTexture
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 
 fun Context.AscendButton(config: AscendButton) {
-    KeyMappingSwipeButton(id = config.id, keyType = KeyBindingType.JUMP) { clicked ->
+    KeyMappingSwipeButton(id = config.id, keyType = DefaultKeyBindingType.JUMP) { clicked ->
         when (Pair(config.texture, clicked)) {
             Pair(AscendButtonTexture.CLASSIC, false) -> Texture(texture = Textures.CONTROL_CLASSIC_ASCEND_ASCEND)
             Pair(AscendButtonTexture.CLASSIC, true) -> Texture(

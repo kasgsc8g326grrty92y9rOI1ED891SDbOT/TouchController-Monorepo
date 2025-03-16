@@ -20,8 +20,8 @@ fun TitleBox(
     Box(
         modifier = Modifier
             .padding(
-                top = 3,
-                bottom = 2,
+                top = 2,
+                bottom = 3,
             )
             .border(Textures.WIDGET_BACKGROUND_BACKGROUND_LIGHTGRAY_TITLE)
             .then(modifier),

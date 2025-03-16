@@ -31,6 +31,7 @@ class TouchController : ClientModInitializer, KoinComponent {
         startKoin {
             slf4jLogger()
             modules(
+                mixinModule,
                 loaderModule,
                 versionModule,
             )

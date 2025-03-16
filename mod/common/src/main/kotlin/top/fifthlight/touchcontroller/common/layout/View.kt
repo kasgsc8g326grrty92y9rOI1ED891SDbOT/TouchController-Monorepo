@@ -3,7 +3,7 @@ package top.fifthlight.touchcontroller.common.layout
 import org.koin.core.component.get
 import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.gal.CrosshairTarget
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 import top.fifthlight.touchcontroller.common.gal.PlayerHandleFactory
 import top.fifthlight.touchcontroller.common.gal.ViewActionProvider
 import top.fifthlight.touchcontroller.common.state.PointerState
@@ -16,8 +16,8 @@ fun Context.View() {
         y = y * windowSize.height / windowSize.width
     )
 
-    val attackKeyState = keyBindingHandler.getState(KeyBindingType.ATTACK)
-    val useKeyState = keyBindingHandler.getState(KeyBindingType.USE)
+    val attackKeyState = keyBindingHandler.getState(DefaultKeyBindingType.ATTACK)
+    val useKeyState = keyBindingHandler.getState(DefaultKeyBindingType.USE)
 
     var releasedView = false
     for (key in pointers.keys.toList()) {

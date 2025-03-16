@@ -4,10 +4,10 @@ import top.fifthlight.combine.paint.Color
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.control.DescendButton
 import top.fifthlight.touchcontroller.common.control.DescendButtonTexture
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 
 fun Context.DescendButton(config: DescendButton) {
-    KeyMappingSwipeButton(id = config.id, keyType = KeyBindingType.SNEAK) { clicked ->
+    KeyMappingSwipeButton(id = config.id, keyType = DefaultKeyBindingType.SNEAK) { clicked ->
         when (Pair(config.texture, clicked)) {
             Pair(DescendButtonTexture.CLASSIC, false) -> Texture(texture = Textures.CONTROL_CLASSIC_DESCEND_DESCEND)
             Pair(DescendButtonTexture.CLASSIC, true) -> Texture(

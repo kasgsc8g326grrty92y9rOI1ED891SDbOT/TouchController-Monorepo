@@ -18,6 +18,7 @@
     "KeyBindingMixin",
     "KeyboardInputMixin",
     "MultiPlayerGameModeMixin",
+    "KeyMappingGetterMixin",
     "ToggleKeyMappingMixin"
   ]
 }

@@ -29,7 +29,7 @@ data class CustomWidget(
     val centerText: String? = "",
     val textColor: Color = Colors.BLACK,
     val swipeTrigger: Boolean = false,
-    val action: ButtonTrigger = ButtonTrigger.Press(),
+    val action: ButtonTrigger = ButtonTrigger(),
     override val id: Uuid = fastRandomUuid(),
     override val name: Name = Name.Translatable(Texts.WIDGET_CUSTOM_BUTTON_NAME),
     override val align: Align = Align.RIGHT_BOTTOM,
@@ -78,7 +78,13 @@ data class CustomWidget(
                     config.copy(activeTexture = value)
                 },
                 name = textFactory.of(Texts.WIDGET_CUSTOM_BUTTON_ACTIVE_TEXTURE),
-            )
+            ),
+            ButtonTriggerProperty(
+                getValue = { it.action },
+                setValue = { config, value ->
+                    config.copy(action = value)
+                },
+            ),
         ) as PersistentList<Property<ControllerWidget, *>>
     }
 
@@ -130,10 +136,7 @@ data class CustomWidget(
 
     private fun Context.ButtonContent(clicked: Boolean) {
         var grayTexture = false
-        val active = when (action) {
-            is ButtonTrigger.Press -> clicked
-            is ButtonTrigger.Lock -> keyBindingHandler.getState(action.key).locked
-        }
+        val active = clicked // TODO handle locking
         val buttonTexture = if (active) {
             when (val activeTexture = activeTexture) {
                 ButtonActiveTexture.Same -> normalTexture
@@ -155,7 +158,7 @@ data class CustomWidget(
         when (buttonTexture) {
             is ButtonTexture.Empty -> {
                 val renderText = centerText?.takeIf { it.isNotEmpty() }
-                val (textureSize, textOffset) = buttonTexture.getSize()
+                val (_, textOffset) = buttonTexture.getSize()
                 renderText?.let { text ->
                     drawQueue.enqueue { canvas ->
                         canvas.drawText(
@@ -230,6 +233,7 @@ data class CustomWidget(
     }
 
     override fun layout(context: Context) {
+        context.status.doubleClickCounter.update(context.timer.tick, id)
         val (newPointer, clicked, release) = if (swipeTrigger) {
             context.SwipeButton(id) { clicked ->
                 ButtonContent(clicked)
@@ -239,32 +243,21 @@ data class CustomWidget(
                 ButtonContent(clicked)
             }
         }
-        when (action) {
-            is ButtonTrigger.Press -> {
-                if (newPointer) {
-                    context.pendingAction.add(action.down)
-                }
-                if (clicked) {
-                    action.press?.let { keyType ->
-                        context.keyBindingHandler.getState(keyType).clicked = true
-                    }
-                }
-                if (release) {
-                    context.pendingAction.add(action.up)
+        if (newPointer) {
+            if (action.down != null) {
+                context.result.pendingAction.add(action.down)
+            }
+            if (action.doubleClick.action != null) {
+                if (context.status.doubleClickCounter.click(context.timer.tick, id, action.doubleClick.interval)) {
+                    context.result.pendingAction.add(action.doubleClick.action)
                 }
             }
-
-            is ButtonTrigger.Lock -> {
-                when (action.method) {
-                    ButtonTrigger.Lock.LockMethod.SINGLE_CLICK -> {
-                        TODO()
-                    }
-
-                    ButtonTrigger.Lock.LockMethod.DOUBLE_CLICK -> {
-                        TODO()
-                    }
-                }
-            }
+        }
+        if (clicked && action.press != null) {
+            context.keyBindingHandler.getState(action.press)?.clicked = true
+        }
+        if (release && action.release != null) {
+            context.result.pendingAction.add(action.release)
         }
     }
 

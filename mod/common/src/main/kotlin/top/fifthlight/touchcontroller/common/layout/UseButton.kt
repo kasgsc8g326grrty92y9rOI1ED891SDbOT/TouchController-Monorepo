@@ -5,10 +5,10 @@ import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.control.UseButton
 import top.fifthlight.touchcontroller.common.control.UseButtonTexture
 import top.fifthlight.touchcontroller.common.control.UseButtonTrigger
-import top.fifthlight.touchcontroller.common.gal.KeyBindingType
+import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 
 fun Context.UseButton(config: UseButton) {
-    val useButtonState = keyBindingHandler.getState(KeyBindingType.USE)
+    val useButtonState = keyBindingHandler.getState(DefaultKeyBindingType.USE)
     val (newPointer, clicked) = Button(id = config.id) { clicked ->
         val isLockTrigger = config.trigger == UseButtonTrigger.SINGLE_CLICK_LOCK
         val locked = useButtonState.locked
