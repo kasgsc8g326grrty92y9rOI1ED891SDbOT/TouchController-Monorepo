@@ -15,6 +15,9 @@ import top.fifthlight.combine.modifier.focus.focusable
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.pointer.clickable
 import top.fifthlight.combine.modifier.pointer.toggleable
+import top.fifthlight.combine.sound.LocalSoundManager
+import top.fifthlight.combine.sound.SoundKind
+import top.fifthlight.combine.sound.SoundManager
 import top.fifthlight.combine.ui.style.ColorTheme
 import top.fifthlight.combine.ui.style.DrawableSet
 import top.fifthlight.combine.ui.style.LocalColorTheme
@@ -114,13 +117,20 @@ fun RadioBoxItem(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     value: Boolean,
     onValueChanged: (Boolean) -> Unit,
+    clickSound: Boolean = true,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val soundManager: SoundManager = LocalSoundManager.current
     Row(
         modifier = Modifier.toggleable(
             interactionSource = interactionSource,
             value = value,
-            onValueChanged = onValueChanged
+            onValueChanged = {
+                if (clickSound) {
+                    soundManager.play(SoundKind.BUTTON_PRESS, 1f)
+                }
+                onValueChanged(it)
+            },
         ),
         horizontalArrangement = Arrangement.spacedBy(4),
         verticalAlignment = Alignment.CenterVertically,

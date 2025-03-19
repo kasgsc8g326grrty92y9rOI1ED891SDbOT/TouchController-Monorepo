@@ -20,10 +20,19 @@ value class Color(val value: Int) {
     val b: Int
         get() = value and 0xFF
 
+    val aFloat: Float
+        get() = a / 255f
+    val rFloat: Float
+        get() = r / 255f
+    val gFloat: Float
+        get() = g / 255f
+    val bFloat: Float
+        get() = b / 255f
+
     fun toHsv(): HsvColor {
-        val r = r.toFloat() / 255f
-        val g = g.toFloat() / 255f
-        val b = b.toFloat() / 255f
+        val r = rFloat
+        val g = gFloat
+        val b = bFloat
 
         val max = maxOf(r, g, b)
         val min = minOf(r, g, b)
@@ -50,6 +59,13 @@ value class Color(val value: Int) {
         fun Int.toHex() = toString(16).uppercase().padStart(2, '0')
         return "#${a.toHex()}${r.toHex()}${g.toHex()}${b.toHex()}"
     }
+
+    operator fun times(other: Color) = Color(
+        a = aFloat * other.aFloat,
+        r = rFloat * other.rFloat,
+        g = gFloat * other.gFloat,
+        b = bFloat * other.bFloat,
+    )
 
     companion object {
         private val COLOR_PATTERN = Regex("^(?:0x|#)([A-Fa-f0-9]{3,8})$")
@@ -102,9 +118,10 @@ value class Color(val value: Int) {
 fun Color(value: UInt) = Color(value.toInt())
 
 fun Color(a: Int, r: Int, g: Int, b: Int) = Color(
-    (a.coerceIn(0 until 256) shl 24) or (r.coerceIn(0 until 256) shl 16) or (g.coerceIn(0 until 256) shl 8) or b.coerceIn(
-        0 until 256
-    )
+    (a.coerceIn(0 until 256) shl 24)
+            or (r.coerceIn(0 until 256) shl 16)
+            or (g.coerceIn(0 until 256) shl 8)
+            or b.coerceIn(0 until 256)
 )
 
 fun Color(r: Int, g: Int, b: Int) = Color(0xFF, r, g, b)
@@ -118,6 +135,14 @@ fun Color(r: Float, g: Float, b: Float) = Color(
 
 fun Color(a: Int, r: Float, g: Float, b: Float) = Color(
     a = a.coerceIn(0, 255),
+    r = (r.coerceIn(0f, 1f) * 255).toInt(),
+    g = (g.coerceIn(0f, 1f) * 255).toInt(),
+    b = (b.coerceIn(0f, 1f) * 255).toInt()
+)
+
+
+fun Color(a: Float, r: Float, g: Float, b: Float) = Color(
+    a = (a.coerceIn(0f, 1f) * 255).toInt(),
     r = (r.coerceIn(0f, 1f) * 255).toInt(),
     g = (g.coerceIn(0f, 1f) * 255).toInt(),
     b = (b.coerceIn(0f, 1f) * 255).toInt()

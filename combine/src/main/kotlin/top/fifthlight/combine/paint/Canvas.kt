@@ -84,7 +84,7 @@ interface Canvas {
         tint: Color = Colors.WHITE,
     )
 
-    fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float = 1f, dstRect: Rect)
+    fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float = 1f, dstRect: Rect, tint: Color = Colors.WHITE)
     fun drawItemStack(offset: IntOffset, size: IntSize = IntSize(16), stack: ItemStack)
     fun enableBlend()
     fun disableBlend()

@@ -150,13 +150,19 @@ abstract class AbstractCanvasImpl(
         tint = tint,
     )
 
-    override fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float, dstRect: Rect) = drawTexture(
+    override fun drawBackgroundTexture(
+        texture: BackgroundTexture,
+        scale: Float,
+        dstRect: Rect,
+        tint: Color,
+    ) = drawTexture(
         identifier = texture.identifier.toMinecraft(),
         dstRect = dstRect,
         uvRect = Rect(
             offset = Offset.ZERO,
             size = dstRect.size / texture.size.toSize() / scale,
         ),
+        tint = tint,
     )
 
     abstract override fun drawItemStack(offset: IntOffset, size: IntSize, stack: ItemStack)

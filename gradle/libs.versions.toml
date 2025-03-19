@@ -26,6 +26,7 @@ asm = "9.7.1"
 #noinspection GradleDependency
 lwjgl = "3.1.0"
 mod-dev-gradle = "2.0.78"
+universal-tween-engine = "6.3.3"
 
 # Android
 agp = "8.7.3"
@@ -64,6 +65,7 @@ asm = { group = "org.ow2.asm", name = "asm", version.ref = "asm" }
 asm-commons = { group = "org.ow2.asm", name = "asm-commons", version.ref = "asm" }
 lwjgl = { group = "org.lwjgl", name = "lwjgl", version.ref = "lwjgl" }
 lwjgl-glfw = { group = "org.lwjgl", name = "lwjgl-glfw", version.ref = "lwjgl" }
+universal-tween-engine = { group = "org.mini2Dx", name = "universal-tween-engine", version.ref = "universal-tween-engine" }
 
 # BELOW ARE GRADLE PLUGINS
 aboutlibraries-plugin = { group = "com.mikepenz.aboutlibraries.plugin", name = "com.mikepenz.aboutlibraries.plugin.gradle.plugin", version.ref = "aboutlibraries" }

@@ -52,19 +52,20 @@ object PropertiesTab : CustomTab() {
                         Icon(Textures.ICON_LIGHT)
                     }
 
-                    uiState.selectedWidget?.let { selectedWidget ->
-                        IconButton(
-                            onClick = {
-                                screenModel.addWidgetPreset(selectedWidget)
-                            },
-                        ) {
-                            Icon(Textures.ICON_SAVE)
-                        }
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Icon(Textures.ICON_FORMAT_PAINTER)
-                        }
+                    IconButton(
+                        enabled = uiState.selectedWidget != null,
+                        onClick = {
+                            uiState.selectedWidget?.let(screenModel::addWidgetPreset)
+                        },
+                    ) {
+                        Icon(Textures.ICON_SAVE)
+                    }
+
+                    IconButton(
+                        enabled = uiState.selectedWidget != null,
+                        onClick = {}
+                    ) {
+                        Icon(Textures.ICON_FORMAT_PAINTER)
                     }
                 }
             }

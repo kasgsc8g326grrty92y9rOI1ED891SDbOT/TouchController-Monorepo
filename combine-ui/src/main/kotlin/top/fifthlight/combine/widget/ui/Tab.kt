@@ -13,6 +13,9 @@ import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.pointer.clickable
 import top.fifthlight.combine.paint.Color
 import top.fifthlight.combine.paint.Colors
+import top.fifthlight.combine.sound.LocalSoundManager
+import top.fifthlight.combine.sound.SoundKind
+import top.fifthlight.combine.sound.SoundManager
 import top.fifthlight.combine.widget.base.layout.Box
 import top.fifthlight.combine.widget.base.layout.Row
 import top.fifthlight.combine.widget.base.layout.RowScope
@@ -36,11 +39,15 @@ fun RowScope.TabItem(
     onSelected: () -> Unit = {},
     content: @Composable (Color) -> Unit,
 ) {
+    val soundManager: SoundManager = LocalSoundManager.current
     Box(
         modifier = Modifier
             .height(24)
             .weight(1f)
-            .clickable(onClick = onSelected)
+            .clickable(onClick = {
+                soundManager.play(SoundKind.BUTTON_PRESS, 1f)
+                onSelected()
+            })
             .then(modifier),
         alignment = Alignment.BottomCenter
     ) {

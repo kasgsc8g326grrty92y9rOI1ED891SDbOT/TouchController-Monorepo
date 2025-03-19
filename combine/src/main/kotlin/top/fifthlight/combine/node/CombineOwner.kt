@@ -2,7 +2,9 @@ package top.fifthlight.combine.node
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.Snapshot
+import aurelienribon.tweenengine.TweenManager
 import kotlinx.coroutines.*
+import top.fifthlight.combine.animation.LocalTweenManager
 import top.fifthlight.combine.input.focus.FocusManager
 import top.fifthlight.combine.input.focus.LocalFocusManager
 import top.fifthlight.combine.input.input.TextInputReceiver
@@ -44,6 +46,9 @@ class CombineOwner(
             composition = Composition(UiApplier(rootNode), recomposer),
         )
     })
+
+    private val tweenManager = TweenManager()
+
     private val rootLayer
         get() = layers.first()
 
@@ -66,6 +71,7 @@ class CombineOwner(
                     LocalCombineOwner provides owner,
                     LocalTextMeasurer provides owner.textMeasurer,
                     LocalFocusManager provides focusManager,
+                    LocalTweenManager provides owner.tweenManager,
                 ) {
                     content()
                 }
@@ -143,7 +149,15 @@ class CombineOwner(
         focusedNode.onKeyEvent(event)
     }
 
+    private var lastFrameTime: Long = -1L
     fun render(size: IntSize, canvas: Canvas) {
+        val nowFrameTime = System.currentTimeMillis()
+        if (lastFrameTime != -1L) {
+            val deltaTime = nowFrameTime - lastFrameTime
+            tweenManager.update(deltaTime.toFloat() / 1000f)
+        }
+        lastFrameTime = nowFrameTime
+
         clock.sendFrame(System.nanoTime())
         for (layer in layers) {
             layer.rootNode.measure(

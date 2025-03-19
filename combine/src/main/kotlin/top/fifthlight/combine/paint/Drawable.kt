@@ -11,7 +11,7 @@ interface Drawable {
     val size: IntSize
     val padding: IntPadding
 
-    fun Canvas.draw(rect: IntRect)
+    fun Canvas.draw(rect: IntRect, tint: Color = Colors.WHITE)
 }
 
 @Immutable
@@ -44,9 +44,9 @@ data class LayeredDrawable(
         IntPadding(maxLeft, maxTop, maxRight, maxBottom)
     }
 
-    override fun Canvas.draw(rect: IntRect) {
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
         for (layer in layers) {
-            layer.run { draw(rect) }
+            layer.run { draw(rect, tint) }
         }
     }
 }
@@ -59,44 +59,41 @@ data class PaddingDrawable(
     override val size = drawable.size + extraPadding.size
     override val padding = drawable.padding + extraPadding
 
-    override fun Canvas.draw(rect: IntRect) {
-        drawable.run { draw(rect + extraPadding) }
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
+        drawable.run { draw(rect + extraPadding, tint) }
     }
 }
 
 @Immutable
-data class RawTextureDrawable(
-    val identifier: Identifier
-) : Drawable {
+data class RawTextureDrawable(val identifier: Identifier) : Drawable {
     override val size: IntSize
         get() = IntSize.ZERO
 
     override val padding: IntPadding
         get() = IntPadding.ZERO
 
-    override fun Canvas.draw(rect: IntRect) {
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
         drawTexture(
             identifier = identifier,
             dstRect = rect.toRect(),
             uvRect = Rect.ONE,
+            tint = tint,
         )
     }
 }
 
 @Immutable
-data class ColorDrawable(
-    val color: Color
-) : Drawable {
+data class ColorDrawable(val color: Color) : Drawable {
     override val size: IntSize
         get() = IntSize.ZERO
     override val padding: IntPadding
         get() = IntPadding.ZERO
 
-    override fun Canvas.draw(rect: IntRect) {
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
         fillRect(
             offset = rect.offset,
             size = rect.size,
-            color = color
+            color = color * tint,
         )
     }
 }
@@ -111,11 +108,12 @@ data class BackgroundTextureDrawable(
     override val padding: IntPadding
         get() = backgroundTexture.padding
 
-    override fun Canvas.draw(rect: IntRect) {
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
         drawBackgroundTexture(
             texture = backgroundTexture,
             scale = scale,
-            dstRect = rect.toRect()
+            dstRect = rect.toRect(),
+            tint = tint,
         )
     }
 }
@@ -133,7 +131,7 @@ data class GradientDrawable(
         require(colors.size >= 2)
     }
 
-    override fun Canvas.draw(rect: IntRect) {
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
         val segments = colors.size - 1
         val segmentWidth = rect.size.width.toFloat() / segments
 

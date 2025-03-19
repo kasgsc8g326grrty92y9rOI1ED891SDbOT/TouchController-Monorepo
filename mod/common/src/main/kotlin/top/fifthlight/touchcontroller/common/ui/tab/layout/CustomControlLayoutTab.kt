@@ -7,6 +7,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.collections.immutable.PersistentList
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
+import top.fifthlight.combine.animation.animateFloatAsState
+import top.fifthlight.combine.animation.quintInOut
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.input.focus.LocalFocusManager
 import top.fifthlight.combine.layout.Alignment
@@ -324,47 +326,62 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                         Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_NO_PRESET_SELECTED))
                     }
 
-                    if (uiState.pageState.showSideBar) {
-                        TouchControllerNavigator(allCustomTabs.first()) { navigator ->
-                            val currentScreen = navigator.lastItem
+                    TouchControllerNavigator(allCustomTabs.first()) { navigator ->
+                        val currentScreen = navigator.lastItem
 
-                            @Composable
-                            fun SideBar() = SideBar(
-                                allTabs = allCustomTabs,
-                                onTabSelected = navigator::replace,
-                                selectedTab = currentScreen as? CustomTab,
-                            )
+                        @Composable
+                        fun SideBar() = SideBar(
+                            allTabs = allCustomTabs,
+                            onTabSelected = navigator::replace,
+                            selectedTab = currentScreen as? CustomTab,
+                        )
 
-                            val sideBarAtRight by remember(uiState.selectedWidget, anchor) {
-                                derivedStateOf {
-                                    uiState.selectedWidget?.let { widget ->
-                                        val editAreaSize = anchor.size
-                                        val widgetSize = widget.size()
-                                        val offset =
-                                            widget.align.alignOffset(editAreaSize, widget.size(), widget.offset)
-                                        val centerOffset = offset + widgetSize / 2
-                                        centerOffset.left < editAreaSize.width / 2
-                                    } != false
-                                }
+                        val sideBarAtRight by remember(uiState.selectedWidget, anchor) {
+                            derivedStateOf {
+                                uiState.selectedWidget?.let { widget ->
+                                    val editAreaSize = anchor.size
+                                    val widgetSize = widget.size()
+                                    val offset =
+                                        widget.align.alignOffset(editAreaSize, widget.size(), widget.offset)
+                                    val centerOffset = offset + widgetSize / 2
+                                    centerOffset.left < editAreaSize.width / 2
+                                } != false
                             }
+                        }
 
-                            val currentCustomTabContext = CustomTabContext(
-                                screenModel = screenModel,
-                                uiState = uiState,
-                                tabsButton = @Composable { SideBar() },
-                                sideBarAtRight = sideBarAtRight,
-                            )
-
-                            val focusManager = LocalFocusManager.current
+                        val focusManager = LocalFocusManager.current
+                        val sideBarProgress by animateFloatAsState(
+                            targetValue = if (!uiState.pageState.showSideBar) {
+                                .5f
+                            } else if (sideBarAtRight) {
+                                1f
+                            } else {
+                                0f
+                            },
+                        )
+                        val currentCustomTabContext = CustomTabContext(
+                            screenModel = screenModel,
+                            uiState = uiState,
+                            tabsButton = @Composable { SideBar() },
+                            sideBarAtRight = sideBarProgress > .5f,
+                        )
+                        if (uiState.pageState.showSideBar || sideBarProgress != .5f) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(.4f)
                                     .fillMaxHeight()
                                     .alignment(
-                                        if (sideBarAtRight) {
+                                        if (sideBarProgress > .5f) {
                                             Alignment.CenterRight
                                         } else {
                                             Alignment.CenterLeft
+                                        }
+                                    )
+                                    .offset(
+                                        x = if (sideBarProgress > .5f) {
+                                            1f + (.5f - sideBarProgress) * 2f
+                                        } else {
+                                            -sideBarProgress * 2
                                         }
                                     )
                                     .consumePress { focusManager.requestBlur() },

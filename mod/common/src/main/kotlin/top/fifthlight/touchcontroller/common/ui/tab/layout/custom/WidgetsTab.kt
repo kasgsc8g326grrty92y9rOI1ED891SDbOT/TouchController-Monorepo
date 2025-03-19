@@ -383,15 +383,15 @@ object WidgetsTab : CustomTab() {
             sideBarAtRight = sideBarAtRight,
             tabsButton = tabsButton,
             actions = {
-                uiState.selectedWidget?.let { selectedWidget ->
-                    IconButton(
-                        onClick = {
-                            screenModel.addWidgetPreset(selectedWidget)
-                        },
-                    ) {
-                        Icon(Textures.ICON_SAVE)
-                    }
+                IconButton(
+                    enabled = uiState.selectedWidget != null,
+                    onClick = {
+                        uiState.selectedWidget?.let(screenModel::addWidgetPreset)
+                    },
+                ) {
+                    Icon(Textures.ICON_SAVE)
                 }
+
                 IconButton(
                     onClick = {
                         tabModel.openNewWidgetParamsDialog()

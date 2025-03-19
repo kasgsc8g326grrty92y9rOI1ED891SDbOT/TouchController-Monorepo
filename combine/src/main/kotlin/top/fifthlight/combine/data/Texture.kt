@@ -2,6 +2,7 @@ package top.fifthlight.combine.data
 
 import androidx.compose.runtime.Immutable
 import top.fifthlight.combine.paint.Canvas
+import top.fifthlight.combine.paint.Color
 import top.fifthlight.combine.paint.Drawable
 import top.fifthlight.combine.paint.drawNinePatchTexture
 import top.fifthlight.data.IntOffset
@@ -29,8 +30,8 @@ data class BackgroundTexture(
     override val padding: IntPadding
         get() = IntPadding.ZERO
 
-    override fun Canvas.draw(rect: IntRect) {
-        drawBackgroundTexture(this@BackgroundTexture, dstRect = rect.toRect())
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
+        drawBackgroundTexture(this@BackgroundTexture, dstRect = rect.toRect(), tint = tint)
     }
 }
 
@@ -41,8 +42,8 @@ private data class TextureImpl(
     override val padding
         get() = IntPadding.ZERO
 
-    override fun Canvas.draw(rect: IntRect) {
-        drawTexture(this@TextureImpl, dstRect = rect.toRect())
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
+        drawTexture(this@TextureImpl, dstRect = rect.toRect(), tint = tint)
     }
 }
 
@@ -52,8 +53,8 @@ private data class NinePatchTextureImpl(
     override val scaleArea: IntRect,
     override val padding: IntPadding,
 ) : NinePatchTexture {
-    override fun Canvas.draw(rect: IntRect) {
-        drawNinePatchTexture(this@NinePatchTextureImpl, dstRect = rect)
+    override fun Canvas.draw(rect: IntRect, tint: Color) {
+        drawNinePatchTexture(this@NinePatchTextureImpl, dstRect = rect, tint = tint)
     }
 }
 

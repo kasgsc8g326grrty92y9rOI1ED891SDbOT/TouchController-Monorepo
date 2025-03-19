@@ -11,6 +11,7 @@ dependencies {
     api(libs.kotlinx.collections.immutable)
     api(libs.compose.runtime)
     api(libs.compose.runtime.saveable)
+    api(libs.universal.tween.engine)
     api(project(":common-data"))
 }
 
