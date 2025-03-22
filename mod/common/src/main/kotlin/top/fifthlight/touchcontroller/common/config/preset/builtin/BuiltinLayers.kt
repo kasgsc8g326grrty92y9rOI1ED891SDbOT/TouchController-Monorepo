@@ -225,6 +225,7 @@ data class BuiltinLayers private constructor(
         name = "Flying",
         condition = layoutLayerConditionOf(
             LayerConditionKey.FLYING to LayerConditionValue.REQUIRE,
+            LayerConditionKey.RIDING to LayerConditionValue.NEVER,
         ),
         dpadNormal = persistentListOf(
             DPad.create(
@@ -351,7 +352,28 @@ data class BuiltinLayers private constructor(
             DPad.create(
                 align = Align.LEFT_BOTTOM,
                 offset = IntOffset(12, 16),
+                extraButton = widgets.dpadDismountButton,
+            ),
+            widgets.jumpHorse.copy(
+                align = Align.RIGHT_BOTTOM,
+                offset = IntOffset(42, 68),
+            ),
+        ),
+        dpadSwap = persistentListOf(
+            DPad.create(
+                align = Align.LEFT_BOTTOM,
+                offset = IntOffset(12, 16),
                 extraButton = widgets.dpadJumpButtonWithoutLocking,
+            ),
+            widgets.dismount.copy(
+                align = Align.RIGHT_BOTTOM,
+                offset = IntOffset(42, 68),
+            ),
+        ),
+        dpadNormalButtonInteract = persistentListOf(
+            DPad.create(
+                align = Align.LEFT_BOTTOM,
+                offset = IntOffset(12, 16),
             ),
             widgets.jumpHorse.copy(
                 align = Align.RIGHT_BOTTOM,

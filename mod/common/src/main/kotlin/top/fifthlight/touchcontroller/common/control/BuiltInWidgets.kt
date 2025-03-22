@@ -166,30 +166,41 @@ data class BuiltInWidgets private constructor(
         align = Align.RIGHT_BOTTOM,
     )
 
+    private val dismountTrigger = if (classic) {
+        ButtonTrigger(
+            doubleClick = ButtonTrigger.DoubleClickTrigger(
+                action = WidgetTriggerAction.Key.Click(
+                    keyBinding = key(DefaultKeyBindingType.SNEAK),
+                    keepInClientTick = true,
+                )
+            )
+        )
+    } else {
+        ButtonTrigger(
+            down = WidgetTriggerAction.Key.Click(
+                keyBinding = key(DefaultKeyBindingType.SNEAK),
+                keepInClientTick = true,
+            )
+        )
+    }
+
     val dismount = customWidget(
         texture = fixed(TextureSet.TextureKey.SneakHorse),
         activeTexture = fixed(TextureSet.TextureKey.SneakHorseActive),
         grayOnClassic = true,
         swipeTrigger = false,
-        action = if (classic) {
-            ButtonTrigger(
-                doubleClick = ButtonTrigger.DoubleClickTrigger(
-                    action = WidgetTriggerAction.Key.Click(
-                        keyBinding = key(DefaultKeyBindingType.SNEAK),
-                        keepInClientTick = true,
-                    )
-                )
-            )
-        } else {
-            ButtonTrigger(
-                down = WidgetTriggerAction.Key.Click(
-                    keyBinding = key(DefaultKeyBindingType.SNEAK),
-                    keepInClientTick = true,
-                )
-            )
-        },
+        action = dismountTrigger,
         name = Texts.WIDGET_SNEAK_BUTTON_NAME,
         align = Align.RIGHT_BOTTOM,
+    )
+
+    val dpadDismountButton = DPadExtraButton.Normal(
+        trigger = dismountTrigger,
+        info = dpadButtonInfo(
+            texture = coordinate(TextureSet.TextureKey.Sneak),
+            activeTexture = coordinate(TextureSet.TextureKey.SneakActive),
+            grayOnClassic = false,
+        ),
     )
 
     val ascendFlying = customWidget(
