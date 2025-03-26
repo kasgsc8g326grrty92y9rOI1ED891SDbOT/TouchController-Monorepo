@@ -3,6 +3,7 @@ package top.fifthlight.combine.platform_1_20_x
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.mojang.blaze3d.systems.RenderSystem
 import kotlinx.coroutines.CoroutineScope
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
@@ -208,7 +209,7 @@ abstract class AbstractCombineScreen(
         val canvas = CanvasImpl(drawContext)
         val size = IntSize(width, height)
         owner.render(size, canvas)
-        canvas.enableBlend()
+        RenderSystem.enableBlend()
     }
 
     override fun onClose() {

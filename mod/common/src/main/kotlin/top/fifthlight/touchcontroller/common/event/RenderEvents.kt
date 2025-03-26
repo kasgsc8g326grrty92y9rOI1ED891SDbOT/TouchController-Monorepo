@@ -142,9 +142,6 @@ object RenderEvents : KoinComponent {
             Hud(layers = preset.layout)
             result
         }
-        drawQueue.enqueue { canvas ->
-            canvas.enableBlend()
-        }
         controllerHudModel.result = result
         controllerHudModel.pendingDrawQueue = drawQueue
 

@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.common_1_21_3_1_21_4.event.gal
+package top.fifthlight.touchcontroller.common_1_21_3_1_21_5.event.gal
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTabs
-import top.fifthlight.combine.platform_1_21_3_1_21_4.toCombine
+import top.fifthlight.combine.platform_1_21_3_1_21_5.toCombine
 import top.fifthlight.combine.platform_1_21_x.TextImpl
 import top.fifthlight.touchcontroller.common.gal.PlayerHandle
 import top.fifthlight.touchcontroller.common.gal.VanillaItemListProvider
@@ -43,7 +43,7 @@ object VanillaItemListProviderImpl : VanillaItemListProvider {
     private val opBlocks = ResourceLocation.withDefaultNamespace("op_blocks")
 
     override fun getCreativeTabs(player: PlayerHandle): PersistentList<VanillaItemListProvider.CreativeTab> {
-        val player = (player as PlayerHandleImpl).inner
+        val player = (player as AbstractPlayerHandleImpl).inner
         val shouldShowOperatorTab = player.shouldShowOperatorTab
         player.refreshCreativeTabs(shouldShowOperatorTab)
         return CreativeModeTabs

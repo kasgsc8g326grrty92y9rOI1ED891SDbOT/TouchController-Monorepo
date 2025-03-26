@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.mojang.blaze3d.matrix.MatrixStack
+import com.mojang.blaze3d.systems.RenderSystem
 import kotlinx.coroutines.CoroutineScope
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screen.Screen
@@ -210,7 +211,7 @@ private class CombineScreen(
         val canvas = CanvasImpl(martices)
         val size = IntSize(width, height)
         owner.render(size, canvas)
-        canvas.enableBlend()
+        RenderSystem.enableBlend()
     }
 
     override fun onClose() {

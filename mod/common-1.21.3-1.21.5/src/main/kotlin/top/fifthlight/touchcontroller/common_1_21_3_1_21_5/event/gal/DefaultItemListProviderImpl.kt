@@ -1,12 +1,12 @@
-package top.fifthlight.touchcontroller.common_1_21_3_1_21_4.event.gal
+package top.fifthlight.touchcontroller.common_1_21_3_1_21_5.event.gal
 
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.Items
-import top.fifthlight.combine.platform_1_21_3_1_21_4.DataComponentTypeImpl
-import top.fifthlight.combine.platform_1_21_3_1_21_4.ItemFactoryImpl
-import top.fifthlight.combine.platform_1_21_3_1_21_4.ItemImpl
+import top.fifthlight.combine.platform_1_21_3_1_21_5.DataComponentTypeImpl
+import top.fifthlight.combine.platform_1_21_3_1_21_5.ItemFactoryImpl
+import top.fifthlight.combine.platform_1_21_3_1_21_5.ItemImpl
 import top.fifthlight.touchcontroller.common.config.ItemList
 import top.fifthlight.touchcontroller.common.gal.DefaultItemListProvider
 

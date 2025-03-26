@@ -212,7 +212,7 @@ private class CombineScreen(
         val size = IntSize(width, height)
         owner.render(size, canvas)
         GlStateManager.popMatrix()
-        canvas.enableBlend()
+        GlStateManager.enableBlend()
     }
 
     fun close() {

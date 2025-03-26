@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.resources.ResourceLocation
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.paint.Color
-import top.fifthlight.combine.platform_1_21_x.AbstractCanvasImpl
+import top.fifthlight.combine.platform_1_21_1_21_4.AbstractCanvasImpl
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntRect
 import top.fifthlight.data.IntSize
@@ -35,11 +35,6 @@ class CanvasImpl(drawContext: GuiGraphics) : AbstractCanvasImpl(drawContext) {
         tint: Color,
     ) {
         drawContext.flush()
-        if (blendEnabled) {
-            enableBlend()
-        } else {
-            disableBlend()
-        }
         RenderSystem.setShaderTexture(0, identifier)
         withShader({ GameRenderer.getPositionTexColorShader()!! }) {
             val matrix = drawContext.pose().last().pose()

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.jetbrains.kotlin.jvm)
     alias(libs.plugins.compose.compiler)
+    id("TouchController.toolchain-conventions")
     id("top.fifthlight.stubgen")
 }
 
@@ -17,5 +18,6 @@ dependencies {
     compileOnly(project(":mod:common"))
     compileOnly(project(":combine"))
     compileOnly(libs.joml)
+    api(project(":mod:common-1.21-1.21.4"))
     api(project(":mod:common-1.21.x"))
 }

@@ -1,6 +1,5 @@
 package top.fifthlight.combine.platform_1_20_x
 
-import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferUploader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -18,7 +17,9 @@ import top.fifthlight.combine.data.BackgroundTexture
 import top.fifthlight.combine.data.Identifier
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
-import top.fifthlight.combine.paint.*
+import top.fifthlight.combine.paint.Canvas
+import top.fifthlight.combine.paint.Color
+import top.fifthlight.combine.paint.Colors
 import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import java.util.function.Supplier
@@ -40,14 +41,9 @@ class CanvasImpl(
         private val IDENTIFIER_ATLAS = ResourceLocation("touchcontroller", "textures/gui/atlas.png")
     }
 
-    init {
-        enableBlend()
-    }
-
     private val client = Minecraft.getInstance()
     private val textRenderer = client.font
     override val textLineHeight: Int = textRenderer.lineHeight
-    override var blendEnabled = true
 
     override fun pushState() {
         drawContext.pose().pushPose()
@@ -138,11 +134,6 @@ class CanvasImpl(
         tint: Color = Colors.WHITE,
     ) {
         drawContext.flush()
-        if (blendEnabled) {
-            enableBlend()
-        } else {
-            disableBlend()
-        }
         RenderSystem.setShaderTexture(0, identifier)
         withShader({ GameRenderer.getPositionTexColorShader()!! }) {
             val matrix = drawContext.pose().last().pose()
@@ -220,57 +211,6 @@ class CanvasImpl(
         pushState()
         drawContext.renderItem(minecraftStack, offset.x, offset.y)
         popState()
-    }
-
-    override fun enableBlend() {
-        blendEnabled = true
-        RenderSystem.enableBlend()
-    }
-
-    override fun disableBlend() {
-        blendEnabled = false
-        RenderSystem.disableBlend()
-    }
-
-    override fun blendFunction(func: BlendFunction) {
-        fun BlendFactor.toSrcFactor() =
-            when (this) {
-                BlendFactor.ONE -> GlStateManager.SourceFactor.ONE
-                BlendFactor.ZERO -> GlStateManager.SourceFactor.ZERO
-                BlendFactor.SRC_COLOR -> GlStateManager.SourceFactor.SRC_COLOR
-                BlendFactor.SRC_ALPHA -> GlStateManager.SourceFactor.SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_ALPHA -> GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_COLOR -> GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR
-                BlendFactor.DST_COLOR -> GlStateManager.SourceFactor.DST_COLOR
-                BlendFactor.DST_ALPHA -> GlStateManager.SourceFactor.DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_ALPHA -> GlStateManager.SourceFactor.ONE_MINUS_DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_COLOR -> GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR
-            }
-
-        fun BlendFactor.toDstFactor() =
-            when (this) {
-                BlendFactor.ONE -> GlStateManager.DestFactor.ONE
-                BlendFactor.ZERO -> GlStateManager.DestFactor.ZERO
-                BlendFactor.SRC_COLOR -> GlStateManager.DestFactor.SRC_COLOR
-                BlendFactor.SRC_ALPHA -> GlStateManager.DestFactor.SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_ALPHA -> GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_COLOR -> GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR
-                BlendFactor.DST_COLOR -> GlStateManager.DestFactor.DST_COLOR
-                BlendFactor.DST_ALPHA -> GlStateManager.DestFactor.DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_ALPHA -> GlStateManager.DestFactor.ONE_MINUS_DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_COLOR -> GlStateManager.DestFactor.ONE_MINUS_DST_COLOR
-            }
-
-        RenderSystem.blendFuncSeparate(
-            func.srcFactor.toSrcFactor(),
-            func.dstFactor.toDstFactor(),
-            func.srcAlpha.toSrcFactor(),
-            func.dstAlpha.toDstFactor()
-        )
-    }
-
-    override fun defaultBlendFunction() {
-        RenderSystem.defaultBlendFunc()
     }
 
     override fun pushClip(absoluteArea: IntRect, relativeArea: IntRect) {

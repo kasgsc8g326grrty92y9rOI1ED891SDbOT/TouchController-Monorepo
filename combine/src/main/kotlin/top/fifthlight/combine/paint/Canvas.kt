@@ -5,53 +5,8 @@ import top.fifthlight.data.*
 import kotlin.math.max
 import kotlin.math.min
 
-enum class BlendFactor {
-    ONE,
-    ZERO,
-    SRC_COLOR,
-    SRC_ALPHA,
-    ONE_MINUS_SRC_ALPHA,
-    ONE_MINUS_SRC_COLOR,
-    DST_COLOR,
-    DST_ALPHA,
-    ONE_MINUS_DST_ALPHA,
-    ONE_MINUS_DST_COLOR,
-}
-
-data class BlendFunction(
-    val srcFactor: BlendFactor,
-    val dstFactor: BlendFactor,
-    val srcAlpha: BlendFactor,
-    val dstAlpha: BlendFactor
-)
-
-inline fun Canvas.withBlend(crossinline block: Canvas.() -> Unit) {
-    val enabled = blendEnabled
-    enableBlend()
-    try {
-        block()
-    } finally {
-        if (!enabled) {
-            disableBlend()
-        }
-    }
-}
-
-inline fun Canvas.withBlendFunction(
-    func: BlendFunction,
-    crossinline block: () -> Unit
-) {
-    blendFunction(func)
-    try {
-        block()
-    } finally {
-        defaultBlendFunction()
-    }
-}
-
 interface Canvas {
     val textLineHeight: Int
-    var blendEnabled: Boolean
 
     fun pushState()
     fun popState()
@@ -88,10 +43,6 @@ interface Canvas {
 
     fun drawBackgroundTexture(texture: BackgroundTexture, scale: Float = 1f, dstRect: Rect, tint: Color = Colors.WHITE)
     fun drawItemStack(offset: IntOffset, size: IntSize = IntSize(16), stack: ItemStack)
-    fun enableBlend()
-    fun disableBlend()
-    fun blendFunction(func: BlendFunction)
-    fun defaultBlendFunction()
     fun pushClip(absoluteArea: IntRect, relativeArea: IntRect)
     fun popClip()
 }

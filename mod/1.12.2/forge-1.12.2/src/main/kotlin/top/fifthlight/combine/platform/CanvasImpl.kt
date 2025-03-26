@@ -26,16 +26,11 @@ class CanvasImpl : Canvas, Gui() {
         private val IDENTIFIER_ATLAS = ResourceLocation("touchcontroller", "textures/gui/atlas.png")
     }
 
-    init {
-        enableBlend()
-    }
-
     private val client = Minecraft.getMinecraft()
     private val fontRenderer = client.fontRenderer
     override val textLineHeight: Int = fontRenderer.FONT_HEIGHT
     private val scaledResolution by lazy { ScaledResolution(client) }
     private val itemRenderer = client.renderItem
-    override var blendEnabled = true
     private val matrixBuffer = GLAllocation.createDirectFloatBuffer(16)
     private val matrixStack = arrayListOf<Matrix4f>(run {
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, matrixBuffer)
@@ -87,11 +82,6 @@ class CanvasImpl : Canvas, Gui() {
 
     override fun fillRect(offset: IntOffset, size: IntSize, color: Color) {
         drawRect(offset.x, offset.y, offset.x + size.width, offset.y + size.height, color.value)
-        if (blendEnabled) {
-            enableBlend()
-        } else {
-            disableBlend()
-        }
     }
 
     override fun fillGradientRect(
@@ -129,11 +119,6 @@ class CanvasImpl : Canvas, Gui() {
         tessellator.draw()
         GlStateManager.shadeModel(GL11.GL_FLAT)
         GlStateManager.enableTexture2D()
-        if (blendEnabled) {
-            enableBlend()
-        } else {
-            disableBlend()
-        }
     }
 
     override fun drawRect(offset: IntOffset, size: IntSize, color: Color) {
@@ -194,15 +179,11 @@ class CanvasImpl : Canvas, Gui() {
     }
 
     override fun drawText(offset: IntOffset, text: String, color: Color) {
-        withBlend {
-            fontRenderer.drawString(text, offset.x, offset.y, color.value)
-        }
+        fontRenderer.drawString(text, offset.x, offset.y, color.value)
     }
 
     override fun drawText(offset: IntOffset, width: Int, text: String, color: Color) {
-        withBlend {
-            fontRenderer.drawSplitString(text, offset.x, offset.y, width, color.value)
-        }
+        fontRenderer.drawSplitString(text, offset.x, offset.y, width, color.value)
     }
 
     override fun drawText(offset: IntOffset, text: CombineText, color: Color) =
@@ -293,77 +274,7 @@ class CanvasImpl : Canvas, Gui() {
         RenderHelper.disableStandardItemLighting()
         GlStateManager.disableDepth()
         GlStateManager.popMatrix()
-        if (blendEnabled) {
-            enableBlend()
-        } else {
-            disableBlend()
-        }
-    }
-
-    override fun enableBlend() {
-        blendEnabled = true
         GlStateManager.enableBlend()
-        GlStateManager.enableAlpha()
-    }
-
-    override fun disableBlend() {
-        blendEnabled = false
-        GlStateManager.disableBlend()
-        GlStateManager.disableAlpha()
-    }
-
-    override fun blendFunction(func: BlendFunction) {
-        fun BlendFactor.toSrcFactor() =
-            when (this) {
-                BlendFactor.ONE -> GlStateManager.SourceFactor.ONE
-                BlendFactor.ZERO -> GlStateManager.SourceFactor.ZERO
-                BlendFactor.SRC_COLOR -> GlStateManager.SourceFactor.SRC_COLOR
-                BlendFactor.SRC_ALPHA -> GlStateManager.SourceFactor.SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_ALPHA -> GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_COLOR -> GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR
-                BlendFactor.DST_COLOR -> GlStateManager.SourceFactor.DST_COLOR
-                BlendFactor.DST_ALPHA -> GlStateManager.SourceFactor.DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_ALPHA -> GlStateManager.SourceFactor.ONE_MINUS_DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_COLOR -> GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR
-            }
-
-        fun BlendFactor.toDstFactor() =
-            when (this) {
-                BlendFactor.ONE -> GlStateManager.DestFactor.ONE
-                BlendFactor.ZERO -> GlStateManager.DestFactor.ZERO
-                BlendFactor.SRC_COLOR -> GlStateManager.DestFactor.SRC_COLOR
-                BlendFactor.SRC_ALPHA -> GlStateManager.DestFactor.SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_ALPHA -> GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_COLOR -> GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR
-                BlendFactor.DST_COLOR -> GlStateManager.DestFactor.DST_COLOR
-                BlendFactor.DST_ALPHA -> GlStateManager.DestFactor.DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_ALPHA -> GlStateManager.DestFactor.ONE_MINUS_DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_COLOR -> GlStateManager.DestFactor.ONE_MINUS_DST_COLOR
-            }
-
-        GlStateManager.blendFunc(
-            func.srcFactor.toSrcFactor(),
-            func.dstFactor.toDstFactor(),
-        )
-        GlStateManager.tryBlendFuncSeparate(
-            func.srcFactor.toSrcFactor(),
-            func.dstFactor.toDstFactor(),
-            func.srcAlpha.toSrcFactor(),
-            func.dstAlpha.toDstFactor(),
-        )
-    }
-
-    override fun defaultBlendFunction() {
-        GlStateManager.blendFunc(
-            GlStateManager.SourceFactor.SRC_ALPHA,
-            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-        )
-        GlStateManager.tryBlendFuncSeparate(
-            GlStateManager.SourceFactor.SRC_ALPHA,
-            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-            GlStateManager.SourceFactor.ONE,
-            GlStateManager.DestFactor.ZERO
-        )
     }
 
     private val clipStack = ClipStack()

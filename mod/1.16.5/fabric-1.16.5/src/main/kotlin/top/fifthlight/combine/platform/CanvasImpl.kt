@@ -1,6 +1,5 @@
 package top.fifthlight.combine.platform
 
-import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
@@ -17,7 +16,10 @@ import org.lwjgl.opengl.GL11
 import top.fifthlight.combine.data.BackgroundTexture
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
-import top.fifthlight.combine.paint.*
+import top.fifthlight.combine.paint.Canvas
+import top.fifthlight.combine.paint.ClipStack
+import top.fifthlight.combine.paint.Color
+import top.fifthlight.combine.paint.Colors
 import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.mixin.Matrix4fAccessor
@@ -33,14 +35,9 @@ class CanvasImpl(
         private val IDENTIFIER_ATLAS = Identifier("touchcontroller", "textures/gui/atlas.png")
     }
 
-    init {
-        enableBlend()
-    }
-
     private val client = MinecraftClient.getInstance()
     private val textRenderer = client.textRenderer
     override val textLineHeight: Int = textRenderer.fontHeight
-    override var blendEnabled = true
 
     override fun pushState() {
         matrices.push()
@@ -68,11 +65,7 @@ class CanvasImpl(
 
     override fun fillRect(offset: IntOffset, size: IntSize, color: Color) {
         fill(matrices, offset.x, offset.y, offset.x + size.width, offset.y + size.height, color.value)
-        if (blendEnabled) {
-            enableBlend()
-        } else {
-            disableBlend()
-        }
+        RenderSystem.enableBlend()
     }
 
     @Suppress("DEPRECATION")
@@ -201,11 +194,6 @@ class CanvasImpl(
         uvRect: Rect,
         tint: Color = Colors.WHITE,
     ) {
-        if (blendEnabled) {
-            enableBlend()
-        } else {
-            disableBlend()
-        }
         this.client.textureManager.bindTexture(identifier)
         val matrix = matrices.peek().model
         val bufferBuilder = Tessellator.getInstance().buffer
@@ -286,62 +274,6 @@ class CanvasImpl(
             accessor.a03.toInt() + offset.left,
             accessor.a13.toInt() + offset.top
         )
-        if (blendEnabled) {
-            enableBlend()
-        } else {
-            disableBlend()
-        }
-    }
-
-    override fun enableBlend() {
-        blendEnabled = true
-        RenderSystem.enableBlend()
-    }
-
-    override fun disableBlend() {
-        blendEnabled = false
-        RenderSystem.disableBlend()
-    }
-
-    override fun blendFunction(func: BlendFunction) {
-        fun BlendFactor.toSrcFactor() =
-            when (this) {
-                BlendFactor.ONE -> GlStateManager.SrcFactor.ONE
-                BlendFactor.ZERO -> GlStateManager.SrcFactor.ZERO
-                BlendFactor.SRC_COLOR -> GlStateManager.SrcFactor.SRC_COLOR
-                BlendFactor.SRC_ALPHA -> GlStateManager.SrcFactor.SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_ALPHA -> GlStateManager.SrcFactor.ONE_MINUS_SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_COLOR -> GlStateManager.SrcFactor.ONE_MINUS_SRC_COLOR
-                BlendFactor.DST_COLOR -> GlStateManager.SrcFactor.DST_COLOR
-                BlendFactor.DST_ALPHA -> GlStateManager.SrcFactor.DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_ALPHA -> GlStateManager.SrcFactor.ONE_MINUS_DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_COLOR -> GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR
-            }
-
-        fun BlendFactor.toDstFactor() =
-            when (this) {
-                BlendFactor.ONE -> GlStateManager.DstFactor.ONE
-                BlendFactor.ZERO -> GlStateManager.DstFactor.ZERO
-                BlendFactor.SRC_COLOR -> GlStateManager.DstFactor.SRC_COLOR
-                BlendFactor.SRC_ALPHA -> GlStateManager.DstFactor.SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_ALPHA -> GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_COLOR -> GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR
-                BlendFactor.DST_COLOR -> GlStateManager.DstFactor.DST_COLOR
-                BlendFactor.DST_ALPHA -> GlStateManager.DstFactor.DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_ALPHA -> GlStateManager.DstFactor.ONE_MINUS_DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_COLOR -> GlStateManager.DstFactor.ONE_MINUS_DST_COLOR
-            }
-
-        RenderSystem.blendFuncSeparate(
-            func.srcFactor.toSrcFactor(),
-            func.dstFactor.toDstFactor(),
-            func.srcAlpha.toSrcFactor(),
-            func.dstAlpha.toDstFactor()
-        )
-    }
-
-    override fun defaultBlendFunction() {
-        RenderSystem.defaultBlendFunc()
     }
 
     private val clipStack = ClipStack()

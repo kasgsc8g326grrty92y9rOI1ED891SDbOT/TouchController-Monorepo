@@ -1,18 +1,17 @@
 package top.fifthlight.combine.platform_1_21_x
 
-import com.mojang.blaze3d.platform.GlStateManager
-import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
-import org.joml.Quaternionf
 import top.fifthlight.combine.data.BackgroundTexture
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.data.Texture
-import top.fifthlight.combine.paint.*
+import top.fifthlight.combine.paint.Canvas
+import top.fifthlight.combine.paint.Color
+import top.fifthlight.combine.paint.Colors
 import top.fifthlight.data.*
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.helper.DrawContextWithBuffer
@@ -27,14 +26,9 @@ abstract class AbstractCanvasImpl(
             ResourceLocation.fromNamespaceAndPath("touchcontroller", "textures/gui/atlas.png")
     }
 
-    init {
-        enableBlend()
-    }
-
     private val client = Minecraft.getInstance()
     protected val textRenderer = client.font
     override val textLineHeight: Int = textRenderer.lineHeight
-    override var blendEnabled = true
     private val drawContextWithBuffer = drawContext as DrawContextWithBuffer
     protected val vertexConsumers: MultiBufferSource.BufferSource =
         drawContextWithBuffer.`touchcontroller$getVertexConsumers`()
@@ -53,13 +47,6 @@ abstract class AbstractCanvasImpl(
 
     override fun translate(x: Float, y: Float) {
         drawContext.pose().translate(x.toDouble(), y.toDouble(), 0.0)
-    }
-
-    override fun rotate(degrees: Float) {
-        Quaternionf().apply {
-            rotateZ(Math.toRadians(degrees.toDouble()).toFloat())
-            drawContext.pose().mulPose(this)
-        }
     }
 
     override fun scale(x: Float, y: Float) {
@@ -166,57 +153,6 @@ abstract class AbstractCanvasImpl(
     )
 
     abstract override fun drawItemStack(offset: IntOffset, size: IntSize, stack: ItemStack)
-
-    override fun enableBlend() {
-        blendEnabled = true
-        RenderSystem.enableBlend()
-    }
-
-    override fun disableBlend() {
-        blendEnabled = false
-        RenderSystem.disableBlend()
-    }
-
-    override fun blendFunction(func: BlendFunction) {
-        fun BlendFactor.toSrcFactor() =
-            when (this) {
-                BlendFactor.ONE -> GlStateManager.SourceFactor.ONE
-                BlendFactor.ZERO -> GlStateManager.SourceFactor.ZERO
-                BlendFactor.SRC_COLOR -> GlStateManager.SourceFactor.SRC_COLOR
-                BlendFactor.SRC_ALPHA -> GlStateManager.SourceFactor.SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_ALPHA -> GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_COLOR -> GlStateManager.SourceFactor.ONE_MINUS_SRC_COLOR
-                BlendFactor.DST_COLOR -> GlStateManager.SourceFactor.DST_COLOR
-                BlendFactor.DST_ALPHA -> GlStateManager.SourceFactor.DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_ALPHA -> GlStateManager.SourceFactor.ONE_MINUS_DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_COLOR -> GlStateManager.SourceFactor.ONE_MINUS_DST_COLOR
-            }
-
-        fun BlendFactor.toDstFactor() =
-            when (this) {
-                BlendFactor.ONE -> GlStateManager.DestFactor.ONE
-                BlendFactor.ZERO -> GlStateManager.DestFactor.ZERO
-                BlendFactor.SRC_COLOR -> GlStateManager.DestFactor.SRC_COLOR
-                BlendFactor.SRC_ALPHA -> GlStateManager.DestFactor.SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_ALPHA -> GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
-                BlendFactor.ONE_MINUS_SRC_COLOR -> GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR
-                BlendFactor.DST_COLOR -> GlStateManager.DestFactor.DST_COLOR
-                BlendFactor.DST_ALPHA -> GlStateManager.DestFactor.DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_ALPHA -> GlStateManager.DestFactor.ONE_MINUS_DST_ALPHA
-                BlendFactor.ONE_MINUS_DST_COLOR -> GlStateManager.DestFactor.ONE_MINUS_DST_COLOR
-            }
-
-        RenderSystem.blendFuncSeparate(
-            func.srcFactor.toSrcFactor(),
-            func.dstFactor.toDstFactor(),
-            func.srcAlpha.toSrcFactor(),
-            func.dstAlpha.toDstFactor()
-        )
-    }
-
-    override fun defaultBlendFunction() {
-        RenderSystem.defaultBlendFunc()
-    }
 
     override fun popClip() {
         drawContext.disableScissor()

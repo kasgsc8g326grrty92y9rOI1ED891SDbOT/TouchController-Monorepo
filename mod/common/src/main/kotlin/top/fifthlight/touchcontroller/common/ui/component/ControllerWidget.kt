@@ -47,18 +47,7 @@ fun ControllerWidget(
             .then(modifier)
     ) {
         withScale(scale) {
-            withBlend {
-                withBlendFunction(
-                    BlendFunction(
-                        srcFactor = BlendFactor.SRC_ALPHA,
-                        dstFactor = BlendFactor.ONE_MINUS_SRC_ALPHA,
-                        srcAlpha = BlendFactor.ONE,
-                        dstAlpha = BlendFactor.ZERO,
-                    )
-                ) {
-                    drawQueue.execute(this)
-                }
-            }
+            drawQueue.execute(this)
         }
     }
 }
@@ -105,18 +94,7 @@ fun AutoScaleControllerWidget(
     ) {
         withTranslate(offset) {
             withScale(componentScaleFactor) {
-                withBlend {
-                    withBlendFunction(
-                        BlendFunction(
-                            srcFactor = BlendFactor.SRC_ALPHA,
-                            dstFactor = BlendFactor.ONE_MINUS_SRC_ALPHA,
-                            srcAlpha = BlendFactor.ONE,
-                            dstAlpha = BlendFactor.ZERO,
-                        )
-                    ) {
-                        drawQueue.execute(this)
-                    }
-                }
+                drawQueue.execute(this)
             }
         }
     }

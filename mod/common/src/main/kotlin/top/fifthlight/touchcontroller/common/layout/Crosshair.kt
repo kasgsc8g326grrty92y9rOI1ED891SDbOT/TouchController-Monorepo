@@ -20,24 +20,13 @@ fun Context.Crosshair() {
     val status = result.crosshairStatus ?: return
     val crosshairRenderer: CrosshairRenderer = get()
 
+    val config = config.touchRing
     drawQueue.enqueue { canvas ->
         canvas.withTranslate(status.position * windowScaledSize) {
-            withBlend {
-                withBlendFunction(
-                    func = BlendFunction(
-                        srcFactor = BlendFactor.ONE_MINUS_DST_COLOR,
-                        dstFactor = BlendFactor.ONE_MINUS_SRC_COLOR,
-                        srcAlpha = BlendFactor.ONE,
-                        dstAlpha = BlendFactor.ZERO
-                    )
-                ) {
-                    val config = config.touchRing
-                    crosshairRenderer.renderOuter(canvas, config)
-                    if (status.breakPercent > 0f) {
-                        val progress = status.breakPercent * (1f - config.initialProgress) + config.initialProgress
-                        crosshairRenderer.renderInner(canvas, config, progress)
-                    }
-                }
+            crosshairRenderer.renderOuter(canvas, config)
+            if (status.breakPercent > 0f) {
+                val progress = status.breakPercent * (1f - config.initialProgress) + config.initialProgress
+                crosshairRenderer.renderInner(canvas, config, progress)
             }
         }
     }

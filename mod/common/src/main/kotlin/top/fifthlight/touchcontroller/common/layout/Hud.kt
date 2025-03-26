@@ -1,51 +1,27 @@
 package top.fifthlight.touchcontroller.common.layout
 
-import top.fifthlight.combine.paint.BlendFactor
-import top.fifthlight.combine.paint.BlendFunction
-import top.fifthlight.combine.paint.withBlend
-import top.fifthlight.combine.paint.withBlendFunction
 import top.fifthlight.touchcontroller.common.config.LayoutLayer
 
 fun Context.Hud(layers: List<LayoutLayer>) {
-    this.transformDrawQueue(
-        drawTransform = { draw ->
-            withBlend {
-                withBlendFunction(
-                    BlendFunction(
-                        srcFactor = BlendFactor.SRC_ALPHA,
-                        dstFactor = BlendFactor.ONE_MINUS_SRC_ALPHA,
-                        srcAlpha = BlendFactor.ONE,
-                        dstAlpha = BlendFactor.ZERO,
-                    )
+    for (layer in layers) {
+        if (!layer.condition.check(input.condition)) {
+            continue
+        }
+        for (widget in layer.widgets) {
+            withOpacity(widget.opacity) {
+                withAlign(
+                    align = widget.align,
+                    offset = widget.offset,
+                    size = widget.size()
                 ) {
-                    draw()
+                    widget.layout(this)
                 }
             }
-        }
-    ) {
-        for (layer in layers) {
-            if (!layer.condition.check(input.condition)) {
-                continue
-            }
-            for (widget in layer.widgets) {
-                withOpacity(widget.opacity) {
-                    withAlign(
-                        align = widget.align,
-                        offset = widget.offset,
-                        size = widget.size()
-                    ) {
-                        widget.layout(this)
-                    }
-                }
-            }
-        }
-
-        if (!input.inGui) {
-            Inventory()
         }
     }
 
     if (!input.inGui) {
+        Inventory()
         View()
         Crosshair()
         if (config.debug.showPointers) {
