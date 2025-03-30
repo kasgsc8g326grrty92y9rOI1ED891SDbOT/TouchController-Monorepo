@@ -73,6 +73,8 @@ include("mod:1.21.4:neoforge-1.21.4")
 include("mod:common-1.21.3-1.21.5")
 include("mod:1.21.5:common-1.21.5")
 include("mod:1.21.5:fabric-1.21.5")
+include("mod:1.21.5:forge-1.21.5")
+include("mod:1.21.5:neoforge-1.21.5")
 
 include("log4j-slf4j2-impl")
 include("proxy-server")
