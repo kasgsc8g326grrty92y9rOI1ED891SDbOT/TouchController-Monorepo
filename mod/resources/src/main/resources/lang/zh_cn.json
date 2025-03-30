@@ -3,7 +3,7 @@
   "touchcontroller.warning.legacy_udp_proxy_used": "警告：检测到正在使用过时的 UDP 代理协议。你目前仍然可以使用 TouchController，但是建议更新你的启动器以获得新功能。",
   "touchcontroller.warning.take_panorama_unsupported": "当前游戏版本不支持截取全景图。",
   "touchcontroller.warning.development_version.title": "警告",
-  "touchcontroller.warning.development_version.message": "你正在使用 TouchController 的开发版，将有可能会遇到严重 bug 或者是没有完善的功能！如果遇到了问题，可以在 Github 上进行汇报。",
+  "touchcontroller.warning.development_version.message": "你正在使用 TouchController 的开发版！\n可能遇到严重的 bug 或未完善的功能，如遇问题可前往 GitHub 汇报。",
   "touchcontroller.warning.development_version.ok": "我知道了",
 
   "touchcontroller.back": "< %s",
@@ -11,7 +11,7 @@
   "touchcontroller.screen.chat.title": "聊天与命令",
   "touchcontroller.screen.chat.exit": "退出",
 
-  "touchcontroller.screen.import_builtin_preset": "导入预设预设",
+  "touchcontroller.screen.import_builtin_preset": "创建预设",
   "touchcontroller.screen.import_builtin_preset.finish": "确定",
 
   "touchcontroller.screen.texture_coordinate_select": "选择贴图",
@@ -149,8 +149,8 @@
   "touchcontroller.screen.custom_control_layout.presets.disable_touch_gestures": "禁用触摸手势",
   "touchcontroller.screen.custom_control_layout.presets.name.placeholder": "预设名称",
   "touchcontroller.screen.custom_control_layout.presets.create_preset_choose": "创建预设",
-  "touchcontroller.screen.custom_control_layout.presets.create_preset_choose.preset": "从预置预设导入",
-  "touchcontroller.screen.custom_control_layout.presets.create_preset_choose.empty": "从头开始创建",
+  "touchcontroller.screen.custom_control_layout.presets.create_preset_choose.preset": "从模板创建",
+  "touchcontroller.screen.custom_control_layout.presets.create_preset_choose.empty": "创建空预设",
   "touchcontroller.screen.custom_control_layout.presets.create_preset_choose.cancel": "取消",
   "touchcontroller.screen.custom_control_layout.presets.create_empty_preset": "创建空预设",
   "touchcontroller.screen.custom_control_layout.presets.create_empty_preset.create": "创建",
