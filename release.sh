@@ -71,6 +71,9 @@ function extract_version_id() {
 }
 
 mod_files=()
+fabric_files=()
+forge_files=()
+neoforge_files=()
 
 for module_dir in mod/*/{fabric,forge,neoforge}-*
 do
@@ -86,6 +89,21 @@ do
     mod_file="$module_dir/build/libs/$mod_name-$mod_version+$module_name.jar"
 
     mod_files+=("$mod_file")
+    case "$module_loader" in
+        "fabric")
+            fabric_files+=("$mod_file")
+            ;;
+        "forge")
+            forge_files+=("$mod_file")
+            ;;
+        "neoforge")
+            neoforge_files+=("$mod_file")
+            ;;
+        *)
+            echo "Bad loader: $module_loader"
+            return 1
+            ;;
+    esac
 
     function upload_modrinth() {
         if echo "$modrinth_versions" | grep -F "$version_id" > /dev/null
@@ -192,9 +210,11 @@ do
     # TODO: Upload CurseForge
 done
 
-bundle_file="bundle/TouchController-${mod_version}.zip"
-rm -f "${bundle_file}"
-zip -j "${bundle_file}" "${mod_files[@]}"
+rm -f "bundle/TouchController-${mod_version}.zip" "bundle/TouchController-${mod_version}-"*".zip"
+zip -j "bundle/TouchController-${mod_version}.zip" "${mod_files[@]}"
+zip -j "bundle/TouchController-${mod_version}-fabric.zip" "${fabric_files[@]}"
+zip -j "bundle/TouchController-${mod_version}-forge.zip" "${forge_files[@]}"
+zip -j "bundle/TouchController-${mod_version}-neoforge.zip" "${neoforge_files[@]}"
 
 mkdir -p "release/${mod_version}"
 for file in "${mod_files[@]}"
