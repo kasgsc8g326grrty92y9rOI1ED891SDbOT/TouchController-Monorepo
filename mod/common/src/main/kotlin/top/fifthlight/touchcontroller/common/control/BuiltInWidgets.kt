@@ -4,6 +4,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import top.fifthlight.combine.data.Identifier
 import top.fifthlight.data.IntOffset
+import top.fifthlight.data.IntPadding
+import top.fifthlight.touchcontroller.assets.EmptyTexture
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.TextureSet
 import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
@@ -14,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap
 @ConsistentCopyVisibility
 data class BuiltInWidgets private constructor(
     private val textureSet: TextureSet.TextureSetKey,
-): KoinComponent {
+) : KoinComponent {
     private val keyBindingHandler: KeyBindingHandler = get()
 
     private fun coordinate(key: TextureSet.TextureKey) = TextureCoordinate(
@@ -328,7 +330,7 @@ data class BuiltInWidgets private constructor(
         align = Align.CENTER_TOP,
     )
 
-    val hideHud= customWidget(
+    val hideHud = customWidget(
         texture = fixed(TextureSet.TextureKey.HideHud, scale = 1f),
         activeTexture = fixed(TextureSet.TextureKey.HideHudActive, scale = 1f),
         grayOnClassic = true,
@@ -376,8 +378,23 @@ data class BuiltInWidgets private constructor(
         align = Align.CENTER_TOP,
     )
 
+    val custom = customWidget(
+        texture = ButtonTexture.NinePatch(
+            texture = EmptyTexture.EMPTY_1,
+            extraPadding = IntPadding(4),
+        ),
+        activeTexture = ButtonTexture.NinePatch(
+            texture = EmptyTexture.EMPTY_1_ACTIVE,
+            extraPadding = IntPadding(4),
+        ),
+        grayOnClassic = true,
+        name = Texts.WIDGET_CUSTOM_BUTTON_NAME,
+        align = Align.CENTER_CENTER,
+    )
+
     companion object {
         private val cache = ConcurrentHashMap<TextureSet.TextureSetKey, BuiltInWidgets>()
-        operator fun get(textureSet: TextureSet.TextureSetKey): BuiltInWidgets = cache.computeIfAbsent(textureSet, ::BuiltInWidgets)
+        operator fun get(textureSet: TextureSet.TextureSetKey): BuiltInWidgets =
+            cache.computeIfAbsent(textureSet, ::BuiltInWidgets)
     }
 }

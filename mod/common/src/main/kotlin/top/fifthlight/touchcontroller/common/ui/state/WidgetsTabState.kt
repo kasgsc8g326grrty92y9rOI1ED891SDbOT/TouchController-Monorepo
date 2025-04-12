@@ -72,6 +72,7 @@ data class WidgetsTabState(
                 builtIn.switchPerspective,
                 builtIn.playerList,
                 builtIn.screenshot,
+                builtIn.custom,
             )
         }
 
