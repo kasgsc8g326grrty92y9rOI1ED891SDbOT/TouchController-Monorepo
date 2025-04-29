@@ -231,7 +231,7 @@ data class BuiltInWidgets private constructor(
 
     val ascendSwimming = customWidget(
         texture = fixed(TextureSet.TextureKey.AscendSwimming),
-        activeTexture = fixed(TextureSet.TextureKey.AscendActive),
+        activeTexture = fixed(TextureSet.TextureKey.AscendSwimmingActive),
         grayOnClassic = true,
         swipeTrigger = true,
         action = ButtonTrigger(
@@ -242,8 +242,8 @@ data class BuiltInWidgets private constructor(
     )
 
     val descendSwimming = customWidget(
-        texture = fixed(TextureSet.TextureKey.DescendSwimmingActive),
-        activeTexture = fixed(TextureSet.TextureKey.DescendActive),
+        texture = fixed(TextureSet.TextureKey.DescendSwimming),
+        activeTexture = fixed(TextureSet.TextureKey.DescendSwimmingActive),
         grayOnClassic = true,
         swipeTrigger = true,
         action = ButtonTrigger(

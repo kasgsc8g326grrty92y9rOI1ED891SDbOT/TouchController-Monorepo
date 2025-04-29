@@ -470,9 +470,9 @@ data class DPad private constructor(
                         offset = smallButtonOffset,
                     ) {
                         if (!clicked) {
-                            Texture(texture = config.textureSet.textureSet.downRight)
+                            Texture(texture = config.textureSet.textureSet.downLeft)
                         } else {
-                            Texture(texture = config.textureSet.textureSet.downRightActive)
+                            Texture(texture = config.textureSet.textureSet.downLeftActive)
                         }
                     }
                 }.clicked
