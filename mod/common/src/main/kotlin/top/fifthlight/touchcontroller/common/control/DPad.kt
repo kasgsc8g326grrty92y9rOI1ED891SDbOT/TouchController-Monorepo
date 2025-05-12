@@ -128,6 +128,7 @@ data class DPad private constructor(
     val size: Float = 2f,
     val padding: Int = 4,
     val extraButton: DPadExtraButton,
+    val showBackwardButton: Boolean = false,
     val idForward: Uuid = fastRandomUuid(),
     val idBackward: Uuid = fastRandomUuid(),
     val idLeft: Uuid = fastRandomUuid(),
@@ -155,6 +156,11 @@ data class DPad private constructor(
                 getValue = { it.textureSet },
                 setValue = { config, value -> config.copy(textureSet = value) },
                 name = textFactory.of(Texts.WIDGET_DPAD_PROPERTY_TEXTURE_SET),
+            ),
+            BooleanProperty(
+                getValue = { it.showBackwardButton },
+                setValue = { config, value -> config.copy(showBackwardButton = value) },
+                name = textFactory.of(Texts.WIDGET_DPAD_PROPERTY_SHOW_BACKWARD_BUTTON),
             ),
             FloatProperty(
                 getValue = { it.size },
@@ -264,6 +270,7 @@ data class DPad private constructor(
         size: Float = this.size,
         padding: Int = this.padding,
         extraButton: DPadExtraButton = this.extraButton,
+        showBackwardButton: Boolean = this.showBackwardButton,
         name: Name = this.name,
         align: Align = this.align,
         offset: IntOffset = this.offset,
@@ -274,6 +281,7 @@ data class DPad private constructor(
         size = size,
         padding = padding,
         extraButton = extraButton,
+        showBackwardButton = showBackwardButton,
         id = id,
         name = name,
         align = align,
@@ -393,8 +401,8 @@ data class DPad private constructor(
 
         val showLeftForward = forward || left || status.dpadLeftForwardShown
         val showRightForward = forward || right || status.dpadRightForwardShown
-        val showLeftBackward = !classicTrigger && (backward || left || status.dpadLeftBackwardShown)
-        val showRightBackward = !classicTrigger && (backward || right || status.dpadRightBackwardShown)
+        val showLeftBackward = showBackwardButton && (backward || left || status.dpadLeftBackwardShown)
+        val showRightBackward = showBackwardButton && (backward || right || status.dpadRightBackwardShown)
 
         val leftForward = if (showLeftForward) {
             withRect(
@@ -469,10 +477,15 @@ data class DPad private constructor(
                         size = smallDisplaySize,
                         offset = smallButtonOffset,
                     ) {
-                        if (!clicked) {
-                            Texture(texture = config.textureSet.textureSet.downLeft)
-                        } else {
-                            Texture(texture = config.textureSet.textureSet.downLeftActive)
+                        when (Pair(classicTrigger, clicked)) {
+                            Pair(true, false) -> Texture(texture = config.textureSet.textureSet.downLeft)
+                            Pair(true, true) -> Texture(
+                                texture = config.textureSet.textureSet.downLeft,
+                                tint = Color(0xFFAAAAAAu)
+                            )
+
+                            Pair(false, false) -> Texture(texture = config.textureSet.textureSet.downLeft)
+                            Pair(false, true) -> Texture(texture = config.textureSet.textureSet.downLeftActive)
                         }
                     }
                 }.clicked
@@ -494,10 +507,15 @@ data class DPad private constructor(
                         size = smallDisplaySize,
                         offset = smallButtonOffset,
                     ) {
-                        if (!clicked) {
-                            Texture(texture = config.textureSet.textureSet.downRight)
-                        } else {
-                            Texture(texture = config.textureSet.textureSet.downRightActive)
+                        when (Pair(classicTrigger, clicked)) {
+                            Pair(true, false) -> Texture(texture = config.textureSet.textureSet.downRight)
+                            Pair(true, true) -> Texture(
+                                texture = config.textureSet.textureSet.downRight,
+                                tint = Color(0xFFAAAAAAu)
+                            )
+
+                            Pair(false, false) -> Texture(texture = config.textureSet.textureSet.downRight)
+                            Pair(false, true) -> Texture(texture = config.textureSet.textureSet.downRightActive)
                         }
                     }
                 }.clicked
@@ -508,8 +526,8 @@ data class DPad private constructor(
 
         status.dpadLeftForwardShown = left || forward || leftForward
         status.dpadRightForwardShown = right || forward || rightForward
-        status.dpadLeftBackwardShown = !classicTrigger && (left || backward || leftBackward)
-        status.dpadRightBackwardShown = !classicTrigger && (right || backward || rightBackward)
+        status.dpadLeftBackwardShown = showBackwardButton && (left || backward || leftBackward)
+        status.dpadRightBackwardShown = showBackwardButton && (right || backward || rightBackward)
 
         when (Pair(forward || leftForward || rightForward, backward || leftBackward || rightBackward)) {
             Pair(true, false) -> result.forward = 1f

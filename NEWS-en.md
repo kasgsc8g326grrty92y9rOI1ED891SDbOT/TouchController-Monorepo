@@ -1,5 +1,9 @@
 # TouchController NEWS - User visible changes.
 
+## 0.2.1-beta06
+
+- Added options for D-Pad to show backwards-left/-right buttons
+
 ## 0.2.1-beta05
 
 - Added tip when template control is empty

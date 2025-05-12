@@ -124,11 +124,16 @@ data class BuiltInPresetKey(
                     )
                 }
 
-                is DPad -> widget.copy(
-                    size = widget.size * scale,
-                    textureSet = textureSet,
-                    padding = if (textureSet == TextureSet.TextureSetKey.CLASSIC || textureSet == TextureSet.TextureSetKey.CLASSIC_EXTENSION) 4 else -1,
-                )
+                is DPad -> run {
+                    val isClassic =
+                        textureSet == TextureSet.TextureSetKey.CLASSIC || textureSet == TextureSet.TextureSetKey.CLASSIC_EXTENSION
+                    widget.copy(
+                        size = widget.size * scale,
+                        textureSet = textureSet,
+                        padding = if (isClassic) 4 else -1,
+                        showBackwardButton = !isClassic,
+                    )
+                }
 
                 is Joystick -> widget.copy(
                     size = widget.size * scale,
