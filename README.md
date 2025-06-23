@@ -80,8 +80,8 @@ You need to build two podman images: `touchcontroller-linux` and `llvm-mingw-jdk
 run commands below:
 
 ```shell
-podman -t touchcontroller-linux proxy-linux
-podman -t llvm-mingw-jdk proxy-windows
+podman build -t touchcontroller-linux proxy-linux
+podman build -t llvm-mingw-jdk proxy-windows
 ```
 
 Finally, you can run `./gradlew build` to compile, and built file can bu found in `mod/build/libs`.
@@ -165,8 +165,8 @@ sdk.dir=<Android SDK 目录>
 你需要构建两个 podman 镜像：`touchcontroller-linux` and `llvm-mingw-jdk`。确保你已经安装了 podman，然后运行以下命令：
 
 ```shell
-podman -t touchcontroller-linux proxy-linux
-podman -t llvm-mingw-jdk proxy-windows
+podman build -t touchcontroller-linux proxy-linux
+podman build -t llvm-mingw-jdk proxy-windows
 ```
 
 最后运行 `./gradlew build` 就可以编译了，编译好的 mod 文件在 `mod/build/libs` 下。
