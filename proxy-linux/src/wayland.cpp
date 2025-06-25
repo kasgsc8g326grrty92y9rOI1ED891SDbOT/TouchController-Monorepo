@@ -225,6 +225,8 @@ class WaylandTextInputHandler {
         pending_events = PendingEvents{};
         if (enabled && status) {
             zwp_text_input_v3_enable(text_input);
+            zwp_text_input_v3_commit(text_input);
+            zwp_text_input_v3_enable(text_input);
             sync_to_composer(*status);
             zwp_text_input_v3_commit(text_input);
         }
@@ -454,6 +456,8 @@ class WaylandTextInputHandler {
 
     void handle_input_status(const TextInputStatus &status) {
         if (!enabled) {
+            zwp_text_input_v3_enable(text_input);
+            zwp_text_input_v3_commit(text_input);
             zwp_text_input_v3_enable(text_input);
             enabled = true;
         }
