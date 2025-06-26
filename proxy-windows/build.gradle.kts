@@ -52,6 +52,7 @@ val compileNativeTasks = targets.mapValues { (arch, target) ->
             dir("src")
         }
         outputs.file("build/cmake/$arch/libproxy_windows.dll")
+        outputs.file("build/cmake/$arch/libproxy_windows_legacy.dll")
     }
 }
 

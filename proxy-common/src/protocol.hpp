@@ -11,7 +11,7 @@
 #include <arpa/inet.h>
 #endif
 
-#if defined(__MINGW32__) || not(defined(WIN32))
+#if defined(__MINGW32__) || not(defined(WIN32)) || (defined(WINVER) && WINVER < 0x0602)
 static uint32_t htonf(float value) {
     uint32_t int_value = *(uint32_t*)(&value);
     return htonl(int_value);

@@ -129,10 +129,18 @@ class PlatformProvider : KoinComponent {
                     logger.warn("Unsupported Windows arch: $systemArch")
                     return null
                 }
-                logger.info("Target arch: $targetTriple")
+                val systemVersion = System.getProperty("os.version")
+                val majorVersion = systemVersion.substringBefore(".").toIntOrNull()
+                val isLegacy = majorVersion == null || majorVersion < 10
+                logger.info("Target arch: $targetTriple, legacy: $isLegacy")
+                val libraryName = if (isLegacy) {
+                    "libproxy_windows_legacy"
+                } else {
+                    "libproxy_windows"
+                }
 
                 return NativeLibraryInfo(
-                    modContainerPath = "$targetTriple/libproxy_windows.dll",
+                    modContainerPath = "$targetTriple/$libraryName.dll",
                     debugPath = Paths.get(
                         "..",
                         "..",
@@ -142,9 +150,9 @@ class PlatformProvider : KoinComponent {
                         "build",
                         "cmake",
                         target,
-                        "libproxy_windows.dll"
+                        "$libraryName.dll"
                     ),
-                    extractPrefix = "libproxy_windows",
+                    extractPrefix = libraryName,
                     extractSuffix = ".dll",
                     readOnlySetter = ::windowsReadOnlySetter,
                     removeAfterLoaded = false,

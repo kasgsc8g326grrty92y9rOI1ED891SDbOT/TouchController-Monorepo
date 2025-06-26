@@ -12,12 +12,14 @@ std::mutex g_event_queue_mutex;
 std::deque<ProxyMessage> g_event_queue;
 
 namespace {
+#if WINVER >= 0x0602
 void disable_feedback(HWND handle, FEEDBACK_TYPE feedback) {
     BOOL enabled = FALSE;
     if (!SetWindowFeedbackSetting(handle, feedback, 0, sizeof(BOOL), &enabled)) {
         throw InitializeError("SetWindowFeedbackSetting failed");
     }
 }
+#endif
 
 struct PointerData {
     uint32_t pointer_id;
@@ -126,6 +128,7 @@ void init(HWND handle) {
         throw InitializeError("RegisterTouchWindow failed");
     }
 
+#if WINVER >= 0x0602
     const FEEDBACK_TYPE feedbacks[] = {FEEDBACK_TOUCH_CONTACTVISUALIZATION,
                                        FEEDBACK_TOUCH_TAP,
                                        FEEDBACK_TOUCH_DOUBLETAP,
@@ -136,6 +139,7 @@ void init(HWND handle) {
     for (auto feedback : feedbacks) {
         disable_feedback(handle, feedback);
     }
+#endif
 
     DWORD thread_id = GetCurrentThreadId();
     if (!SetWindowsHookEx(WH_CALLWNDPROC, event_hook, nullptr, thread_id)) {
