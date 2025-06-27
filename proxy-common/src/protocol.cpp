@@ -17,8 +17,18 @@ bool deserialize_event(ProxyMessage& message, const std::vector<uint8_t> data) {
     ProxyMessage::Type type = static_cast<ProxyMessage::Type>(ntohl(raw_type));
 
     switch (type) {
+        case ProxyMessage::Initialize: {
+            message.type = type;
+            return true;
+        }
         case ProxyMessage::Vibrate: {
             message.type = type;
+            if (end - ptr < sizeof(uint32_t)) {
+                std::cerr << "Not enough data to read vibrate kind" << std::endl;
+                return false;
+            }
+            uint32_t vibrate_kind = ntohl(*reinterpret_cast<const uint32_t*>(ptr));
+            message.vibrate.kind = static_cast<VibrateKind>(static_cast<int32_t>(vibrate_kind));
             return true;
         }
         case ProxyMessage::InputStatus: {
@@ -95,6 +105,29 @@ bool deserialize_event(ProxyMessage& message, const std::vector<uint8_t> data) {
                 message.input_cursor.width = ntohf(*reinterpret_cast<const uint32_t*>(ptr));
                 ptr += sizeof(uint32_t);
                 message.input_cursor.height = ntohf(*reinterpret_cast<const uint32_t*>(ptr));
+                ptr += sizeof(uint32_t);
+            }
+            return true;
+        }
+        case ProxyMessage::InputArea: {
+            message.type = type;
+            if (end - ptr < sizeof(uint8_t)) {
+                std::cerr << "Not enough data to read has area rect flag" << std::endl;
+                return false;
+            }
+            message.input_area.has_area_rect = *ptr++ != 0;
+            if (message.input_area.has_area_rect) {
+                if (end - ptr < sizeof(uint32_t) * 4) {
+                    std::cerr << "Not enough data to read area rect" << std::endl;
+                    return false;
+                }
+                message.input_area.left = ntohf(*reinterpret_cast<const uint32_t*>(ptr));
+                ptr += sizeof(uint32_t);
+                message.input_area.top = ntohf(*reinterpret_cast<const uint32_t*>(ptr));
+                ptr += sizeof(uint32_t);
+                message.input_area.width = ntohf(*reinterpret_cast<const uint32_t*>(ptr));
+                ptr += sizeof(uint32_t);
+                message.input_area.height = ntohf(*reinterpret_cast<const uint32_t*>(ptr));
                 ptr += sizeof(uint32_t);
             }
             return true;

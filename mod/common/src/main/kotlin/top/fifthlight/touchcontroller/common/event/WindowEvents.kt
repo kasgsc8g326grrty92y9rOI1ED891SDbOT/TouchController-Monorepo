@@ -5,6 +5,7 @@ import org.koin.core.component.inject
 import org.slf4j.LoggerFactory
 import top.fifthlight.touchcontroller.common.gal.PlatformWindowProvider
 import top.fifthlight.touchcontroller.common.platform.PlatformProvider
+import top.fifthlight.touchcontroller.proxy.message.InitializeMessage
 
 object WindowEvents : KoinComponent {
     private val logger = LoggerFactory.getLogger(WindowEvents::class.java)
@@ -18,6 +19,7 @@ object WindowEvents : KoinComponent {
     fun onWindowCreated(windowProvider: PlatformWindowProvider) {
         this.windowProvider = windowProvider
         platformProvider.load(windowProvider)
+        platformProvider.platform?.sendEvent(InitializeMessage)
         logger.info("Loaded platform")
     }
 }

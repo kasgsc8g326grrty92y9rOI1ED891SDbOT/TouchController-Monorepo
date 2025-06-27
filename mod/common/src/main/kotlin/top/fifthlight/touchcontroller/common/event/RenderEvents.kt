@@ -20,7 +20,9 @@ import top.fifthlight.touchcontroller.common.layout.Hud
 import top.fifthlight.touchcontroller.common.model.ControllerHudModel
 import top.fifthlight.touchcontroller.common.model.TouchStateModel
 import top.fifthlight.touchcontroller.common.platform.PlatformProvider
+import top.fifthlight.touchcontroller.proxy.client.PlatformCapability
 import top.fifthlight.touchcontroller.proxy.message.*
+import java.util.Collections
 
 object RenderEvents : KoinComponent {
     private val logger = LoggerFactory.getLogger(RenderEvents::class.java)
@@ -36,11 +38,8 @@ object RenderEvents : KoinComponent {
     private var prevWidth = 0
     private var prevHeight = 0
 
-    data class PlatformCapabilities(
-        var textStatus: Boolean = false,
-        var keyboardShow: Boolean = false,
-    )
-    val platformCapabilities = PlatformCapabilities()
+    private val _platformCapabilities = mutableSetOf<PlatformCapability>()
+    val platformCapabilities: Set<PlatformCapability> = Collections.unmodifiableSet(_platformCapabilities)
 
     @JvmStatic
     fun onRenderStart() {
@@ -82,10 +81,15 @@ object RenderEvents : KoinComponent {
                     ClearPointerMessage -> touchStateModel.clearPointer()
 
                     is CapabilityMessage -> {
-                        when (message.capability) {
-                            "text_status" -> platformCapabilities.textStatus = true
-                            "keyboard_show" -> platformCapabilities.keyboardShow = true
-                            else -> logger.warn("Unknown capability: ${message.capability}")
+                        PlatformCapability.entries.firstOrNull { it.id == message.capability }?.let {
+                            logger.info("TouchController capability ${message.capability} set to ${message.enabled}")
+                            if (message.enabled) {
+                                _platformCapabilities += it
+                            } else {
+                                _platformCapabilities -= it
+                            }
+                        } ?: run {
+                            logger.warn("Unknown capability: ${message.capability}, maybe you should update TouchController?")
                         }
                     }
 

@@ -55,7 +55,7 @@ class LauncherProxyMessageClient(private val transport: MessageTransport) : Auto
                                 sendBuffer.clear()
                                 val wrappedMessage = LargeMessage(
                                     payload = payload,
-                                    end = encodeBuffer.hasRemaining(),
+                                    end = !encodeBuffer.hasRemaining(),
                                 )
                                 wrappedMessage.encode(sendBuffer)
                                 sendBuffer.flip()
@@ -94,8 +94,11 @@ class LauncherProxyMessageClient(private val transport: MessageTransport) : Auto
                         if (message.end) {
                             decodeBuffer.flip()
                             try {
-                                val wrappedMessage = ProxyMessage.decode(type, decodeBuffer)
-                                receiveQueue.offer(MessageItem.Message(wrappedMessage))
+                                if (decodeBuffer.remaining() >= 4) {
+                                    val wrappedType = decodeBuffer.getInt()
+                                    val wrappedMessage = ProxyMessage.decode(wrappedType, decodeBuffer)
+                                    receiveQueue.offer(MessageItem.Message(wrappedMessage))
+                                }
                             } catch (ex: MessageDecodeException) {
                                 // Ignore bad message
                                 null

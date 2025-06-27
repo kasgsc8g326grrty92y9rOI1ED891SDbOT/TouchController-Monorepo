@@ -14,6 +14,9 @@ import top.fifthlight.touchcontroller.common.event.RenderEvents
 import top.fifthlight.touchcontroller.common.gal.GameDispatcher
 import top.fifthlight.touchcontroller.common.gal.WindowHandle
 import top.fifthlight.touchcontroller.common.platform.PlatformProvider
+import top.fifthlight.touchcontroller.proxy.client.PlatformCapability
+import top.fifthlight.touchcontroller.proxy.message.FloatRect
+import top.fifthlight.touchcontroller.proxy.message.InputAreaMessage
 import top.fifthlight.touchcontroller.proxy.message.InputCursorMessage
 import top.fifthlight.touchcontroller.proxy.message.InputStatusMessage
 import top.fifthlight.touchcontroller.proxy.message.KeyboardShowMessage
@@ -24,6 +27,7 @@ object InputManager : KoinComponent, InputHandler {
     private val platformProvider: PlatformProvider by inject()
     private var inputState: TextInputState? = null
     private var cursorRect: IntRect? = null
+    private var areaRect: IntRect? = null
     private val windowHandle: WindowHandle by inject()
     private val _events = MutableSharedFlow<TextInputState>()
     override val events = _events.asSharedFlow()
@@ -37,46 +41,58 @@ object InputManager : KoinComponent, InputHandler {
         }
     }
 
-    override fun updateInputState(textInputState: TextInputState?, cursorRect: IntRect?) {
+    override fun updateInputState(textInputState: TextInputState?, cursorRect: IntRect?, areaRect: IntRect?) {
         val inputStateUpdated = inputState != textInputState
         val cursorRectUpdated = cursorRect != this.cursorRect
+        val areaRectUpdated = areaRect != this.areaRect
         this.inputState = textInputState
         this.cursorRect = cursorRect
-        if (RenderEvents.platformCapabilities.textStatus) {
+        this.areaRect = areaRect
+        if (PlatformCapability.TEXT_STATUS in RenderEvents.platformCapabilities) {
             platformProvider.platform?.let { platform ->
                 if (inputStateUpdated) {
-                    if (RenderEvents.platformCapabilities.textStatus) {
-                        platform.sendEvent(InputStatusMessage(textInputState?.let {
-                            ProxyTextInputState(
-                                text = textInputState.text,
-                                composition = ProxyTextRange(
-                                    start = textInputState.composition.start,
-                                    length = textInputState.composition.length,
-                                ),
-                                selection = ProxyTextRange(
-                                    start = textInputState.selection.start,
-                                    length = textInputState.selection.length,
-                                ),
-                                selectionLeft = textInputState.selectionLeft,
-                            )
-                        }))
-                    }
+                    platform.sendEvent(InputStatusMessage(textInputState?.let {
+                        ProxyTextInputState(
+                            text = textInputState.text,
+                            composition = ProxyTextRange(
+                                start = textInputState.composition.start,
+                                length = textInputState.composition.length,
+                            ),
+                            selection = ProxyTextRange(
+                                start = textInputState.selection.start,
+                                length = textInputState.selection.length,
+                            ),
+                            selectionLeft = textInputState.selectionLeft,
+                        )
+                    }))
                 }
                 if (cursorRectUpdated) {
-                    cursorRect?.let { rect ->
-                        platform.sendEvent(
-                            InputCursorMessage(
-                                InputCursorMessage.CursorRect(
+                    platform.sendEvent(
+                        InputCursorMessage(
+                            cursorRect?.let { rect ->
+                                FloatRect(
                                     left = rect.offset.left.toFloat() / windowHandle.scaledSize.width.toFloat(),
                                     top = rect.offset.top.toFloat() / windowHandle.scaledSize.height.toFloat(),
                                     width = rect.size.width.toFloat() / windowHandle.scaledSize.width.toFloat(),
                                     height = rect.size.height.toFloat() / windowHandle.scaledSize.height.toFloat(),
                                 )
-                            )
+                            }
                         )
-                    } ?: {
-                        platform.sendEvent(InputCursorMessage(null))
-                    }
+                    )
+                }
+                if (areaRectUpdated) {
+                    platform.sendEvent(
+                        InputAreaMessage(
+                            areaRect?.let { rect ->
+                                FloatRect(
+                                    left = rect.offset.left.toFloat() / windowHandle.scaledSize.width.toFloat(),
+                                    top = rect.offset.top.toFloat() / windowHandle.scaledSize.height.toFloat(),
+                                    width = rect.size.width.toFloat() / windowHandle.scaledSize.width.toFloat(),
+                                    height = rect.size.height.toFloat() / windowHandle.scaledSize.height.toFloat(),
+                                )
+                            }
+                        )
+                    )
                 }
             }
         }
@@ -84,7 +100,7 @@ object InputManager : KoinComponent, InputHandler {
 
     override fun tryShowKeyboard() {
         platformProvider.platform?.let { platform ->
-            if (RenderEvents.platformCapabilities.keyboardShow) {
+            if (PlatformCapability.KEYBOARD_SHOW in RenderEvents.platformCapabilities) {
                 platform.sendEvent(KeyboardShowMessage(true))
             }
         }
@@ -92,7 +108,7 @@ object InputManager : KoinComponent, InputHandler {
 
     override fun tryHideKeyboard() {
         platformProvider.platform?.let { platform ->
-            if (RenderEvents.platformCapabilities.keyboardShow) {
+            if (PlatformCapability.KEYBOARD_SHOW in RenderEvents.platformCapabilities) {
                 platform.sendEvent(KeyboardShowMessage(false))
             }
         }

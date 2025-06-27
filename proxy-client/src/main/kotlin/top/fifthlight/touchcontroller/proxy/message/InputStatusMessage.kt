@@ -75,16 +75,16 @@ data class InputStatusMessage(
 
     object Decoder : ProxyMessageDecoder<InputStatusMessage>() {
         override fun decode(payload: ByteBuffer): InputStatusMessage {
-            if (payload.remaining() < 22) {
-                throw BadMessageLengthException(
-                    expected = 22,
-                    actual = payload.remaining()
-                )
-            }
-
             val hasData = payload.get() != 0.toByte()
             if (!hasData) {
                 return InputStatusMessage(null)
+            }
+
+            if (payload.remaining() < 20) {
+                throw BadMessageLengthException(
+                    expected = 20,
+                    actual = payload.remaining()
+                )
             }
 
             val textLength = payload.getInt()

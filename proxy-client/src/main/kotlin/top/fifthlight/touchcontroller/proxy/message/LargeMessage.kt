@@ -19,6 +19,7 @@ data class LargeMessage(
         get() = TYPE
 
     override fun encode(buffer: ByteBuffer) {
+        super.encode(buffer)
         buffer.put(payload.size.toByte())
         if (end) {
             buffer.put(1)

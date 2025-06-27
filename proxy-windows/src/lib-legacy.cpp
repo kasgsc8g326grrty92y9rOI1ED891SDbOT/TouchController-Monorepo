@@ -149,6 +149,11 @@ Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_pushEvent(
                 }
                 break;
             }
+            case ProxyMessage::Initialize: {
+                touchcontroller::event::push_event(ProxyMessage{
+                    ProxyMessage::Capability, {.capability = {"keyboard_show", true}}});
+                break;
+            }
             default:
                 break;
         }

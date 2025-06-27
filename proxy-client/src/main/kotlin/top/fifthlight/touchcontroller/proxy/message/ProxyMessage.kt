@@ -22,6 +22,8 @@ sealed class ProxyMessage {
             7 -> InputStatusMessage.Decoder
             8 -> KeyboardShowMessage.Decoder
             9 -> InputCursorMessage.Decoder
+            10 -> InitializeMessage.Decoder
+            11 -> InputAreaMessage.Decoder
             else -> throw BadMessageTypeException(type)
         }.decode(payload)
     }

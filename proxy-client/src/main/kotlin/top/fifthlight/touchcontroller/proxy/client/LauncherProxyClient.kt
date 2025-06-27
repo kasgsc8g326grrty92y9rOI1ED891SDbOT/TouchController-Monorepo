@@ -1,9 +1,17 @@
 package top.fifthlight.touchcontroller.proxy.client
 
 import top.fifthlight.touchcontroller.proxy.message.AddPointerMessage
+import top.fifthlight.touchcontroller.proxy.message.CapabilityMessage
 import top.fifthlight.touchcontroller.proxy.message.ClearPointerMessage
+import top.fifthlight.touchcontroller.proxy.message.FloatRect
+import top.fifthlight.touchcontroller.proxy.message.InitializeMessage
+import top.fifthlight.touchcontroller.proxy.message.InputAreaMessage
+import top.fifthlight.touchcontroller.proxy.message.InputCursorMessage
+import top.fifthlight.touchcontroller.proxy.message.InputStatusMessage
+import top.fifthlight.touchcontroller.proxy.message.KeyboardShowMessage
 import top.fifthlight.touchcontroller.proxy.message.RemovePointerMessage
 import top.fifthlight.touchcontroller.proxy.message.VibrateMessage
+import top.fifthlight.touchcontroller.proxy.message.input.TextInputState
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -13,11 +21,13 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * @param transport 使用到的消息运输层
  */
-class LauncherProxyClient(
-    transport: MessageTransport
+class LauncherProxyClient @JvmOverloads constructor(
+    transport: MessageTransport,
+    capabilities: Set<PlatformCapability> = setOf(),
 ) : AutoCloseable {
     private val running = AtomicBoolean(false)
     private val messageClient = LauncherProxyMessageClient(transport)
+    private var capabilities = HashSet(capabilities)
 
     /**
      * 处理震动事件的处理器。
@@ -37,6 +47,33 @@ class LauncherProxyClient(
     var vibrationHandler: VibrationHandler? = null
 
     /**
+     * 处理输入事件的处理器。
+     */
+    interface InputHandler {
+        fun updateState(textInputState: TextInputState?)
+        fun updateCursor(cursorRect: FloatRect?)
+        fun updateArea(inputAreaRect: FloatRect?)
+    }
+
+    /**
+     * 处理输入事件的处理器。声明 TEXT_STATUS 能力时必须提供，否则会忽略输入事件。
+     */
+    var inputHandler: InputHandler? = null
+
+    /**
+     * 处理键盘显示事件的处理器。
+     */
+    interface KeyboardShowHandler {
+        fun showKeyboard()
+        fun hideKeyboard()
+    }
+
+    /**
+     * 处理键盘显示事件的处理器，声明 KEYBOARD_SHOW 能力时必须提供，否则会忽略键盘显示事件。
+     */
+    var keyboardShowHandler: KeyboardShowHandler? = null
+
+    /**
      * 开始处理消息，会新建线程用于处理，不会阻塞当前线程。
      */
     fun run() {
@@ -47,6 +84,23 @@ class LauncherProxyClient(
                     val message = messageClient.receive() ?: break
                     when (message) {
                         is VibrateMessage -> vibrationHandler?.vibrate(message.kind)
+                        is InitializeMessage -> sendCapabilities()
+                        is InputStatusMessage -> {
+                            inputHandler?.updateState(message.status)
+                        }
+                        is InputCursorMessage -> {
+                            inputHandler?.updateCursor(message.cursorRect)
+                        }
+                        is InputAreaMessage -> {
+                            inputHandler?.updateArea(message.inputAreaRect)
+                        }
+                        is KeyboardShowMessage -> {
+                            if (message.show) {
+                                keyboardShowHandler?.showKeyboard()
+                            } else {
+                                keyboardShowHandler?.hideKeyboard()
+                            }
+                        }
                         else -> {
                             // Ignore
                         }
@@ -81,6 +135,38 @@ class LauncherProxyClient(
      */
     fun clearPointer() {
         messageClient.send(ClearPointerMessage)
+    }
+
+    private fun sendCapabilities() {
+        for (capability in capabilities) {
+            messageClient.send(CapabilityMessage(capability.id, true))
+        }
+    }
+
+    private fun updateCapabilities(newCapabilities: Set<PlatformCapability>) {
+        for (item in capabilities) {
+            if (item !in newCapabilities) {
+                messageClient.send(CapabilityMessage(item.id, false))
+            }
+        }
+        for (item in newCapabilities) {
+            if (item !in capabilities) {
+                messageClient.send(CapabilityMessage(item.id, true))
+            }
+        }
+        capabilities = HashSet(newCapabilities)
+    }
+
+    /**
+     * 更新输入状态到游戏内。
+     *
+     * @param newState 新的输入状态。
+     */
+    fun updateTextInputState(newState: TextInputState) {
+        if (PlatformCapability.TEXT_STATUS !in capabilities) {
+            return
+        }
+        messageClient.send(InputStatusMessage(newState))
     }
 
     override fun close() {

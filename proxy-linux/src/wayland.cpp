@@ -225,8 +225,6 @@ class WaylandTextInputHandler {
         pending_events = PendingEvents{};
         if (enabled && status) {
             zwp_text_input_v3_enable(text_input);
-            zwp_text_input_v3_commit(text_input);
-            zwp_text_input_v3_enable(text_input);
             sync_to_composer(*status);
             zwp_text_input_v3_commit(text_input);
         }
@@ -457,8 +455,6 @@ class WaylandTextInputHandler {
     void handle_input_status(const TextInputStatus &status) {
         if (!enabled) {
             zwp_text_input_v3_enable(text_input);
-            zwp_text_input_v3_commit(text_input);
-            zwp_text_input_v3_enable(text_input);
             enabled = true;
         }
         this->status = std::make_unique<TextInputStatus>(status);
@@ -473,6 +469,14 @@ class WaylandTextInputHandler {
         zwp_text_input_v3_set_cursor_rectangle(
             text_input, left * surface_width, top * surface_height,
             width * surface_width, height * surface_height);
+        zwp_text_input_v3_commit(text_input);
+    }
+
+    void show_soft_keyboard() {
+        if (!enabled) {
+            return;
+        }
+        zwp_text_input_v3_enable(text_input);
         zwp_text_input_v3_commit(text_input);
     }
 
@@ -561,6 +565,10 @@ class WaylandSeatHandler {
 
     void handle_input_cursor(float left, float top, float width, float height) {
         this->text_input->handle_input_cursor(left, top, width, height);
+    }
+
+    void show_soft_keyboard() {
+        this->text_input->show_soft_keyboard();
     }
 
     void clear_input_status() { this->text_input->clear_input_status(); }
@@ -657,6 +665,12 @@ class WaylandRegistryHandler {
         }
     }
 
+    void show_soft_keyboard() {
+        for (const auto &entry : this->seat_handlers) {
+            entry.second->show_soft_keyboard();
+        }
+    }
+
     void clear_input_status() {
         for (const auto &entry : this->seat_handlers) {
             entry.second->clear_input_status();
@@ -671,8 +685,6 @@ void init(wl_display *display, wl_surface *surface) {
         return;
     }
     registry_handler = new WaylandRegistryHandler(display, surface);
-    touchcontroller::event::push_event(ProxyMessage{
-        ProxyMessage::Capability, {.capability = {"text_status"}}});
     return;
 }
 }  // namespace
@@ -729,6 +741,12 @@ Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_pushEvent(
             case ProxyMessage::Vibrate: {
                 break;
             }
+            case ProxyMessage::KeyboardShow: {
+                if (message.keyboard_show.show) {
+                    registry_handler->show_soft_keyboard();
+                }
+                break;
+            }
             case ProxyMessage::InputStatus: {
                 if (message.input_status.has_status) {
                     const TextInputStatus status = message.input_status;
@@ -750,6 +768,13 @@ Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_pushEvent(
                         message.input_cursor.width,
                         message.input_cursor.height);
                 }
+                break;
+            }
+            case ProxyMessage::Initialize: {
+                touchcontroller::event::push_event(ProxyMessage{
+                    ProxyMessage::Capability, {.capability = {"text_status", true}}});
+                touchcontroller::event::push_event(ProxyMessage{
+                    ProxyMessage::Capability, {.capability = {"keyboard_show", true}}});
                 break;
             }
             default:

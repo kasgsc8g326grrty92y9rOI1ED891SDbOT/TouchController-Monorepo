@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.maven.publish)
 }
 
-version = "0.0.2"
+version = "0.0.3"
 
 tasks.withType<Sign>().configureEach {
     onlyIf("have publish task") {

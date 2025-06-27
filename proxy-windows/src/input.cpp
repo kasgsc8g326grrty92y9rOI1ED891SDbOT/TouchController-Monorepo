@@ -145,7 +145,4 @@ void init(HWND handle) {
     if (!SetWindowsHookEx(WH_CALLWNDPROC, event_hook, nullptr, thread_id)) {
         throw InitializeError("SetWindowsHookEx failed");
     }
-
-    touchcontroller::event::push_event(ProxyMessage{
-        ProxyMessage::Type::Capability, {.capability = {"keyboard_show"}}});
 }

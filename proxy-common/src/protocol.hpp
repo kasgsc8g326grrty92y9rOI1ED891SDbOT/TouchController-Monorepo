@@ -32,6 +32,11 @@ struct InputStatusData {
     bool selection_left;
 };
 
+enum VibrateKind {
+    UNKNOWN = -1,
+    BLOCK_BROKEN = 0,
+};
+
 struct ProxyMessage {
     enum Type : uint32_t {
         Add = 1,
@@ -43,6 +48,8 @@ struct ProxyMessage {
         InputStatus = 7,
         KeyboardShow = 8,
         InputCursor = 9,
+        Initialize = 10,
+        InputArea = 11,
     };
 
     Type type;
@@ -59,7 +66,12 @@ struct ProxyMessage {
         } remove;
 
         struct {
+            VibrateKind kind;
+        } vibrate;
+
+        struct {
             char name[256];
+            bool enabled;
         } capability;
 
         struct {
@@ -81,6 +93,14 @@ struct ProxyMessage {
             float width;
             float height;
         } input_cursor;
+
+        struct {
+            bool has_area_rect;
+            float left;
+            float top;
+            float width;
+            float height;
+        } input_area;
     };
 
     void serialize(std::vector<uint8_t>& buffer) const {
@@ -103,8 +123,13 @@ struct ProxyMessage {
                 break;
             }
             case Clear:
-            case Vibrate:
+            case Initialize:
                 break;
+            case Vibrate: {
+                uint32_t kind = htonl(static_cast<uint32_t>(static_cast<int32_t>(vibrate.kind)));
+                append(buffer, kind);
+                break;
+            }
             case Large: {
                 append(buffer, large.length);
                 buffer.insert(buffer.end(), large.payload,
@@ -117,6 +142,7 @@ struct ProxyMessage {
                     static_cast<uint8_t>(strlen(capability.name));
                 buffer.push_back(str_length);
                 buffer.insert(buffer.end(), capability.name, capability.name + str_length);
+                buffer.push_back(capability.enabled ? 1 : 0);
                 break;
             }
             case InputStatus: {
@@ -137,9 +163,10 @@ struct ProxyMessage {
                 }
                 break;
             }
-            case KeyboardShow:
+            case KeyboardShow: {
                 append(buffer, keyboard_show.show ? 1 : 0);
                 break;
+            }
             case InputCursor: {
                 buffer.push_back(input_cursor.has_cursor_rect ? 1 : 0);
                 if (input_cursor.has_cursor_rect) {
@@ -147,6 +174,16 @@ struct ProxyMessage {
                     append(buffer, htonf(input_cursor.top));
                     append(buffer, htonf(input_cursor.width));
                     append(buffer, htonf(input_cursor.height));
+                }
+                break;
+            }
+            case InputArea: {
+                buffer.push_back(input_area.has_area_rect ? 1 : 0);
+                if (input_area.has_area_rect) {
+                    append(buffer, htonf(input_area.left));
+                    append(buffer, htonf(input_area.top));
+                    append(buffer, htonf(input_area.width));
+                    append(buffer, htonf(input_area.height));
                 }
                 break;
             }

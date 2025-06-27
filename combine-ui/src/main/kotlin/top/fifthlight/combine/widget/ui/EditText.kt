@@ -19,6 +19,7 @@ import top.fifthlight.combine.modifier.input.textInput
 import top.fifthlight.combine.modifier.key.onKeyEvent
 import top.fifthlight.combine.modifier.placement.anchor
 import top.fifthlight.combine.modifier.placement.minHeight
+import top.fifthlight.combine.modifier.placement.onPlaced
 import top.fifthlight.combine.modifier.pointer.clickable
 import top.fifthlight.combine.node.LocalInputHandler
 import top.fifthlight.combine.node.LocalTextMeasurer
@@ -67,7 +68,8 @@ fun EditText(
 
     var focused by remember { mutableStateOf(false) }
     var cursorShow by remember { mutableStateOf(false) }
-    var cursorRect by remember { mutableStateOf(IntRect.ZERO) }
+    var cursorRect by remember { mutableStateOf<IntRect?>(null) }
+    var areaRect by remember { mutableStateOf<IntRect?>(null) }
     LaunchedEffect(interactionSource) {
         try {
             interactionSource.interactions.collect {
@@ -88,9 +90,9 @@ fun EditText(
             inputManager.tryHideKeyboard()
         }
     }
-    LaunchedEffect(textInputState, focused, cursorRect) {
+    LaunchedEffect(textInputState, focused, cursorRect, areaRect) {
         if (focused) {
-            inputManager.updateInputState(textInputState, cursorRect)
+            inputManager.updateInputState(textInputState, cursorRect, areaRect)
         } else {
             inputManager.updateInputState(null)
         }
@@ -126,9 +128,14 @@ fun EditText(
         modifier = Modifier
             .minHeight(9)
             .border(drawable)
-            .clickable(interactionSource) {}
+            .clickable(interactionSource) {
+                inputManager.tryShowKeyboard()
+            }
             .focusable(interactionSource)
             .textInput { updateInputState { commitText(it) } }
+            .onPlaced { placeable ->
+                areaRect = IntRect(offset = placeable.absolutePosition, size = placeable.size)
+            }
             .onKeyEvent { event ->
                 if (!event.pressed) {
                     return@onKeyEvent

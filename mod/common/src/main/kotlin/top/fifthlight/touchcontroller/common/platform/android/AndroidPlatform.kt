@@ -1,17 +1,18 @@
 package top.fifthlight.touchcontroller.common.platform.android
 
 import org.slf4j.LoggerFactory
+import top.fifthlight.touchcontroller.common.platform.LargeMessageWrappedPlatform
 import top.fifthlight.touchcontroller.common.platform.Platform
 import top.fifthlight.touchcontroller.proxy.message.MessageDecodeException
 import top.fifthlight.touchcontroller.proxy.message.ProxyMessage
 import java.nio.ByteBuffer
 
-class AndroidPlatform(name: String) : Platform {
+class AndroidPlatform(name: String) : LargeMessageWrappedPlatform() {
     private val logger = LoggerFactory.getLogger(AndroidPlatform::class.java)
     private val handle = Transport.new(name)
     private val readBuffer = ByteArray(128)
 
-    override fun pollEvent(): ProxyMessage? {
+    override fun pollSmallEvent(): ProxyMessage? {
         val receivedLength = Transport.receive(handle, readBuffer)
         val length = receivedLength.takeIf { it > 0 } ?: return null
         val buffer = ByteBuffer.wrap(readBuffer)
@@ -28,7 +29,7 @@ class AndroidPlatform(name: String) : Platform {
         }
     }
 
-    override fun sendEvent(message: ProxyMessage) {
+    override fun sendSmallEvent(message: ProxyMessage) {
         val buffer = ByteBuffer.allocate(256)
         message.encode(buffer)
         buffer.flip()

@@ -2,26 +2,26 @@ package top.fifthlight.touchcontroller.proxy.message
 
 import java.nio.ByteBuffer
 
-data class InputCursorMessage(
-    val cursorRect: FloatRect? = null,
+data class InputAreaMessage(
+    val inputAreaRect: FloatRect? = null,
 ): ProxyMessage() {
-    override val type: Int = 9
+    override val type: Int = 11
 
     override fun encode(buffer: ByteBuffer) {
         super.encode(buffer)
-        if (cursorRect != null) {
+        if (inputAreaRect != null) {
             buffer.put(1)
-            buffer.putFloat(cursorRect.left)
-            buffer.putFloat(cursorRect.top)
-            buffer.putFloat(cursorRect.width)
-            buffer.putFloat(cursorRect.height)
+            buffer.putFloat(inputAreaRect.left)
+            buffer.putFloat(inputAreaRect.top)
+            buffer.putFloat(inputAreaRect.width)
+            buffer.putFloat(inputAreaRect.height)
         } else {
             buffer.put(0)
         }
     }
 
-    object Decoder : ProxyMessageDecoder<InputCursorMessage>() {
-        override fun decode(payload: ByteBuffer): InputCursorMessage {
+    object Decoder : ProxyMessageDecoder<InputAreaMessage>() {
+        override fun decode(payload: ByteBuffer): InputAreaMessage {
             if (payload.remaining() < 1) {
                 throw BadMessageLengthException(
                     expected = 1,
@@ -30,7 +30,7 @@ data class InputCursorMessage(
             }
             val hasData = payload.get() != 0.toByte()
             if (!hasData) {
-                return InputCursorMessage(null)
+                return InputAreaMessage(null)
             }
 
             if (payload.remaining() != 16) {
@@ -39,7 +39,7 @@ data class InputCursorMessage(
                     actual = payload.remaining()
                 )
             }
-            return InputCursorMessage(
+            return InputAreaMessage(
                 FloatRect(
                     left = payload.getFloat(),
                     top = payload.getFloat(),
@@ -50,3 +50,4 @@ data class InputCursorMessage(
         }
     }
 }
+
