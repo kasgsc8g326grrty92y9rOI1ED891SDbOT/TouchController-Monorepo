@@ -1,7 +1,12 @@
-# TouchController
+<h1 align="center">TouchController</h1>
+<img src="static/logo.png" width="96" height="96" align="left" alt="TouchController icon" vspace="16" hspace="16" />
 
-A mod bringing controlling style of bedrock version to Java version. Currently in early development, report for bugs or
-other problems are welcome if you found!
+A mod bringing controlling style of bedrock version to Java version.
+
+Currently in early development, welcome to report for bugs or other problems you found is welcome!
+
+[简体中文](#chinese) | [启动器适配文档 (How to add launcher support)](#launcher-support)
+<br clear="left">
 
 ## Download and install
 
@@ -90,9 +95,13 @@ Finally, you can run `./gradlew build` to compile, and built file can bu found i
 
 ---
 
-# TouchController
+<h1 id="chinese" align="center">TouchController</h1>
+<img src="static/logo.png" width="96" height="96" align="left" alt="TouchController 图标" vspace="16" hspace="16" />
 
-一个为 Minecraft Java 版添加触控支持的 Mod。目前处于早期开发中，如果遇到 Bug 或者其他问题，欢迎积极报告！
+一个为 Minecraft Java 版添加触控支持的 Mod。
+
+目前处于早期开发中，如果遇到 Bug 或者其他问题，欢迎积极报告！
+<br clear="left">
 
 ## 下载与安装
 
@@ -177,7 +186,9 @@ podman build -t llvm-mingw-jdk proxy-windows
 
 ---
 
-## 添加新的启动器支持
+<h2 id="launcher-support">添加新的启动器支持</h2>
+
+If you can't read Chinese, feel free to use a translator.
 
 欢迎添加其他启动器的支持！为其他启动器添加支持的步骤有：
 
