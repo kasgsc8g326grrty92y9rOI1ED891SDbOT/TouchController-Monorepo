@@ -13,6 +13,7 @@ import top.fifthlight.touchcontroller.common.config.preset.PresetManager
 import top.fifthlight.touchcontroller.common.config.preset.builtin.BuiltInPresetKey
 import top.fifthlight.touchcontroller.common.config.widget.WidgetPresetManager
 import top.fifthlight.touchcontroller.common.ext.combineStates
+import top.fifthlight.touchcontroller.common.ext.mapState
 import top.fifthlight.touchcontroller.common.gal.DefaultItemListProvider
 import java.io.IOException
 import kotlin.io.path.*
@@ -37,6 +38,7 @@ class GlobalConfigHolder : KoinComponent {
             is PresetConfig.Custom -> presets[preset.uuid] ?: BuiltInPresetKey.Companion.DEFAULT.preset
         }
     }
+    val currentPresetUuid = config.mapState { (it.preset as? PresetConfig.Custom)?.uuid }
 
     fun load() {
         try {

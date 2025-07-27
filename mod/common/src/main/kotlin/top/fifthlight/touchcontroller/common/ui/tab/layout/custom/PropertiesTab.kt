@@ -110,6 +110,7 @@ object PropertiesTab : CustomTab() {
                             property.controller(
                                 modifier = Modifier.fillMaxWidth(),
                                 config = uiState.selectedWidget,
+                                currentPreset = uiState.selectedPreset,
                                 onConfigChanged = { screenModel.editWidget(uiState.pageState.selectedWidgetIndex, it) }
                             )
                         }

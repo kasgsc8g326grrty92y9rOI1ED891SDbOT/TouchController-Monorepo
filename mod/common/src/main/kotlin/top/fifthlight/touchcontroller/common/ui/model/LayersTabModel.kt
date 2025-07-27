@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import top.fifthlight.touchcontroller.common.config.ControllerLayout
 import top.fifthlight.touchcontroller.common.config.LayoutLayer
+import top.fifthlight.touchcontroller.common.ui.state.CustomControlLayoutTabState
 import top.fifthlight.touchcontroller.common.ui.state.LayersTabState
 
 class LayersTabModel(
@@ -72,6 +73,57 @@ class LayersTabModel(
             val newIndex = (index + offset).coerceIn(layout.layers.indices)
             val newLayers = layout.layers.removeAt(index).add(newIndex, layer)
             copy(layout = ControllerLayout(newLayers))
+        }
+    }
+
+    fun openCustomConditionDialog() {
+        val currentScreenModel = screenModel.uiState.value as? CustomControlLayoutTabState.Enabled ?: return
+        val currentPreset = currentScreenModel.selectedPreset ?: return
+        _uiState.getAndUpdate {
+            if (it is LayersTabState.Edit) {
+                it.copy(
+                    customConditionState = LayersTabState.Edit.CustomConditionState(
+                        conditions = currentPreset.controlInfo.customConditions,
+                    ),
+                )
+            } else {
+                it
+            }
+        }
+    }
+
+    fun updateCustomConditionState(state: LayersTabState.Edit.CustomConditionState) {
+        _uiState.getAndUpdate {
+            if (it is LayersTabState.Edit) {
+                it.copy(
+                    customConditionState = state,
+                )
+            } else {
+                it
+            }
+        }
+    }
+
+    fun applyCustomConditionState(state: LayersTabState.Edit.CustomConditionState) {
+        screenModel.editPreset {
+            copy(controlInfo = controlInfo.copy(customConditions = state.conditions))
+        }
+        _uiState.getAndUpdate {
+            if (it is LayersTabState.Edit) {
+                it.copy(customConditionState = null)
+            } else {
+                it
+            }
+        }
+    }
+
+    fun clearCustomConditionDialog() {
+        _uiState.getAndUpdate {
+            if (it is LayersTabState.Edit) {
+                it.copy(customConditionState = null)
+            } else {
+                it
+            }
         }
     }
 }

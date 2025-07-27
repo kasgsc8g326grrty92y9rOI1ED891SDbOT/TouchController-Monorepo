@@ -1,7 +1,9 @@
 package top.fifthlight.touchcontroller.common.layout
 
 import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.persistentSetOf
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import top.fifthlight.combine.paint.Canvas
@@ -117,6 +119,7 @@ data class InventoryResult(
 data class ContextInput(
     val inGui: Boolean = false,
     val condition: PersistentMap<LayerConditionKey, Boolean> = persistentMapOf(),
+    val customCondition: PersistentSet<Uuid> = persistentSetOf(),
     val perspective: CameraPerspective = CameraPerspective.FIRST_PERSON,
 )
 
@@ -153,6 +156,8 @@ data class ContextStatus(
     val quickHandSwap: DoubleClickState = DoubleClickState(7),
     var lastDpadDirection: DPadDirection? = null,
     val doubleClickCounter: DoubleClickCounter = DoubleClickCounter(),
+    var previousPresetUuid: Uuid? = null,
+    val enabledCustomConditions: MutableSet<Uuid> = mutableSetOf(),
 )
 
 class ContextTimer {

@@ -1,6 +1,7 @@
 package top.fifthlight.touchcontroller.common.event
 
 import kotlinx.collections.immutable.toPersistentMap
+import kotlinx.collections.immutable.toPersistentSet
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.slf4j.LoggerFactory
@@ -22,7 +23,7 @@ import top.fifthlight.touchcontroller.common.model.TouchStateModel
 import top.fifthlight.touchcontroller.common.platform.PlatformProvider
 import top.fifthlight.touchcontroller.proxy.client.PlatformCapability
 import top.fifthlight.touchcontroller.proxy.message.*
-import java.util.Collections
+import java.util.*
 
 object RenderEvents : KoinComponent {
     private val logger = LoggerFactory.getLogger(RenderEvents::class.java)
@@ -105,6 +106,7 @@ object RenderEvents : KoinComponent {
                             )
                         }
                     }
+
                     else -> {}
                 }
             }
@@ -131,6 +133,12 @@ object RenderEvents : KoinComponent {
             keyBindingHandler.getState(DefaultKeyBindingType.SNEAK).clearLock()
         }
 
+        val preset = configHolder.currentPreset.value
+        val currentPresetUuid = configHolder.currentPresetUuid.value
+        if (controllerHudModel.status.previousPresetUuid != currentPresetUuid) {
+            controllerHudModel.status.previousPresetUuid = currentPresetUuid
+            controllerHudModel.status.enabledCustomConditions.clear()
+        }
         val ridingType = player.ridingEntityType
         val condition = buildMap {
             put(LayerConditionKey.FLYING, player.isFlying)
@@ -152,7 +160,6 @@ object RenderEvents : KoinComponent {
             put(LayerConditionKey.ON_LLAMA, ridingType == RidingEntityType.LLAMA)
             put(LayerConditionKey.ON_STRIDER, ridingType == RidingEntityType.STRIDER)
         }.toPersistentMap()
-        val preset = configHolder.currentPreset.value
 
         val drawQueue = DrawQueue()
         val result = Context(
@@ -165,6 +172,7 @@ object RenderEvents : KoinComponent {
             input = ContextInput(
                 inGui = gameState.inGui,
                 condition = condition,
+                customCondition = controllerHudModel.status.enabledCustomConditions.toPersistentSet(),
                 perspective = gameState.perspective,
             ),
             status = controllerHudModel.status,

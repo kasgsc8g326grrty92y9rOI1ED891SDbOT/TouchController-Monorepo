@@ -16,6 +16,7 @@ import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.common.config.preset.LayoutPreset
 import top.fifthlight.touchcontroller.common.ext.fastRandomUuid
 import top.fifthlight.touchcontroller.common.layout.Align
 import top.fifthlight.touchcontroller.common.layout.Context
@@ -65,7 +66,8 @@ sealed class ControllerWidget {
         abstract fun controller(
             modifier: Modifier,
             config: ControllerWidget,
-            onConfigChanged: (ControllerWidget) -> Unit
+            currentPreset: LayoutPreset?,
+            onConfigChanged: (ControllerWidget) -> Unit,
         )
     }
 

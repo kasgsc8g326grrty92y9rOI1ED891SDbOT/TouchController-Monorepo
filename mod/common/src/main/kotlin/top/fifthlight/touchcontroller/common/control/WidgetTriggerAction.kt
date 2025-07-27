@@ -10,6 +10,7 @@ import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.common.gal.GameAction
 import top.fifthlight.touchcontroller.common.gal.KeyBindingHandler
 import top.fifthlight.touchcontroller.common.gal.PlayerHandle
+import top.fifthlight.touchcontroller.common.model.ControllerHudModel
 import top.fifthlight.touchcontroller.common.ui.screen.openChatScreen
 import kotlin.uuid.Uuid
 
@@ -25,6 +26,7 @@ sealed class WidgetTriggerAction {
         KEY(Texts.WIDGET_TRIGGER_KEY),
         GAME(Texts.WIDGET_TRIGGER_GAME_ACTION),
         PLAYER(Texts.WIDGET_TRIGGER_PLAYER_ACTION),
+        LAYER_CONDITION(Texts.WIDGET_TRIGGER_LAYER_CONDITION),
     }
 
     @Serializable
@@ -115,7 +117,6 @@ sealed class WidgetTriggerAction {
         override val actionType
             get() = Type.GAME
 
-        private val gameAction: GameAction by inject()
         final override fun trigger(uuid: Uuid, tick: Int, player: PlayerHandle) = trigger(gameAction)
         abstract fun trigger(gameAction: GameAction)
 
@@ -198,7 +199,9 @@ sealed class WidgetTriggerAction {
             }
         }
 
-        companion object {
+        companion object : KoinComponent {
+            private val gameAction: GameAction by inject()
+
             val all by lazy {
                 persistentListOf(
                     VanillaChatScreen,
@@ -265,6 +268,75 @@ sealed class WidgetTriggerAction {
                     StopSprint,
                 )
             }
+        }
+    }
+
+    @Serializable
+    @SerialName("layer_condition")
+    sealed class LayerCondition : WidgetTriggerAction() {
+        override val actionType: Type
+            get() = Type.LAYER_CONDITION
+
+        abstract val conditionUuid: Uuid?
+
+        abstract val nameId: Identifier
+
+        abstract fun transform(original: Boolean): Boolean
+
+        private companion object : KoinComponent {
+            private val controllerHudModel: ControllerHudModel by inject()
+        }
+
+        override fun trigger(
+            uuid: Uuid,
+            tick: Int,
+            player: PlayerHandle,
+        ) {
+            val conditionUuid = conditionUuid ?: return
+            val original = conditionUuid in controllerHudModel.status.enabledCustomConditions
+            if (transform(original)) {
+                controllerHudModel.status.enabledCustomConditions += conditionUuid
+            } else {
+                controllerHudModel.status.enabledCustomConditions -= conditionUuid
+            }
+        }
+
+        abstract fun clone(conditionUuid: Uuid?): LayerCondition
+
+        @Serializable
+        @SerialName("layer_toggle")
+        data class Toggle(
+            override val conditionUuid: Uuid? = null,
+        ) : LayerCondition() {
+            override val nameId
+                get() = Texts.WIDGET_TRIGGER_LAYER_CONDITION_TOGGLE
+
+            override fun transform(original: Boolean) = !original
+            override fun clone(conditionUuid: Uuid?) = copy(conditionUuid = conditionUuid)
+        }
+
+        @Serializable
+        @SerialName("layer_enable")
+        data class Enable(
+            override val conditionUuid: Uuid? = null,
+        ) : LayerCondition() {
+            override val nameId
+                get() = Texts.WIDGET_TRIGGER_LAYER_CONDITION_ENABLE
+
+            override fun transform(original: Boolean) = true
+            override fun clone(conditionUuid: Uuid?) = copy(conditionUuid = conditionUuid)
+        }
+
+        @Serializable
+        @SerialName("layer_disable")
+        data class Disable(
+            override val conditionUuid: Uuid? = null,
+        ) : LayerCondition() {
+            override val nameId
+                get() = Texts.WIDGET_TRIGGER_LAYER_CONDITION_DISABLE
+
+            override fun transform(original: Boolean) = false
+            override fun clone(conditionUuid: Uuid?) = copy(conditionUuid = conditionUuid)
         }
     }
 }

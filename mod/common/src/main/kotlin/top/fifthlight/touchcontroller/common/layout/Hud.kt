@@ -7,6 +7,9 @@ fun Context.Hud(layers: List<LayoutLayer>) {
         if (!layer.condition.check(input.condition)) {
             continue
         }
+        if (!layer.customConditions.check(input.customCondition)) {
+            continue
+        }
         for (widget in layer.widgets) {
             withOpacity(widget.opacity) {
                 withAlign(

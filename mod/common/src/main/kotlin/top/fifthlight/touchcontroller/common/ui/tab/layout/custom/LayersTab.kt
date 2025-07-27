@@ -2,16 +2,18 @@ package top.fifthlight.touchcontroller.common.ui.tab.layout.custom
 
 import androidx.compose.runtime.*
 import cafe.adriel.voyager.koin.koinScreenModel
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.plus
 import org.koin.core.parameter.parametersOf
 import top.fifthlight.combine.data.LocalTextFactory
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
-import top.fifthlight.combine.modifier.placement.fillMaxHeight
-import top.fifthlight.combine.modifier.placement.fillMaxSize
-import top.fifthlight.combine.modifier.placement.fillMaxWidth
+import top.fifthlight.combine.modifier.drawing.border
+import top.fifthlight.combine.modifier.placement.*
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.base.layout.*
 import top.fifthlight.combine.widget.ui.*
@@ -19,16 +21,25 @@ import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.config.LayerConditionKey
 import top.fifthlight.touchcontroller.common.config.LayerConditionValue
+import top.fifthlight.touchcontroller.common.config.preset.CustomCondition
+import top.fifthlight.touchcontroller.common.config.preset.CustomConditions
 import top.fifthlight.touchcontroller.common.config.text
 import top.fifthlight.touchcontroller.common.ui.component.ListButton
 import top.fifthlight.touchcontroller.common.ui.model.LayersTabModel
 import top.fifthlight.touchcontroller.common.ui.state.LayersTabState
+import kotlin.uuid.Uuid
+
+private data class LayerCondition(
+    val preset: PersistentMap<LayerConditionKey, LayerConditionValue>,
+    val custom: PersistentMap<Uuid, LayerConditionValue>,
+)
 
 @Composable
 private fun LayerConditionPanel(
     modifier: Modifier = Modifier,
-    value: PersistentMap<LayerConditionKey, LayerConditionValue>,
-    onValueChanged: (PersistentMap<LayerConditionKey, LayerConditionValue>) -> Unit = {},
+    value: LayerCondition,
+    customConditions: PersistentList<CustomCondition>,
+    onValueChanged: (LayerCondition) -> Unit = {},
 ) {
     FlowRow(
         modifier = modifier,
@@ -36,21 +47,27 @@ private fun LayerConditionPanel(
         horizontalSpacing = 4,
         expandColumnWidth = true,
     ) {
-        for (key in LayerConditionKey.entries) {
+        val (preset, custom) = value
+        @Composable
+        fun Item(
+            label: Text,
+            value: LayerConditionValue?,
+            onValueChanged: (LayerConditionValue?) -> Unit,
+        ) {
             var expanded by remember { mutableStateOf(false) }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = Text.translatable(key.text),
+                    text = label,
                 )
                 Select(
                     modifier = Modifier.weight(1f),
                     expanded = expanded,
                     onExpandedChanged = { expanded = it },
                     dropDownContent = {
-                        val selectedIndex = LayerConditionValue.allValues.indexOf(value[key])
+                        val selectedIndex = LayerConditionValue.allValues.indexOf(value)
                         val textFactory = LocalTextFactory.current
                         DropdownItemList(
                             modifier = Modifier.verticalScroll(),
@@ -59,21 +76,201 @@ private fun LayerConditionPanel(
                             selectedIndex = selectedIndex,
                             onItemSelected = { index ->
                                 expanded = false
-                                onValueChanged(
-                                    when (val conditionValue = LayerConditionValue.allValues[index]) {
-                                        null -> value.remove(key)
-                                        else -> value.put(key, conditionValue)
-                                    }
-                                )
+                                onValueChanged(LayerConditionValue.allValues[index])
                             }
                         )
                     }
                 ) {
-                    Text(Text.translatable(value[key].text()))
+                    Text(Text.translatable(value.text()))
                     Spacer(Modifier.weight(1f))
                     SelectIcon(expanded = expanded)
                 }
             }
+        }
+        for (key in LayerConditionKey.entries) {
+            Item(
+                label = Text.translatable(key.text),
+                value = preset[key],
+                onValueChanged = {
+                    onValueChanged(
+                        value.copy(
+                            preset = when (val conditionValue = it) {
+                                null -> preset.remove(key)
+                                else -> preset.put(key, conditionValue)
+                            }
+                        )
+                    )
+                }
+            )
+        }
+        for (condition in customConditions) {
+            Item(
+                label = condition.name?.let { Text.literal(it) }
+                    ?: Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_UNNAMED),
+                value = custom[condition.uuid],
+                onValueChanged = {
+                    onValueChanged(
+                        value.copy(
+                            custom = when (val conditionValue = it) {
+                                null -> custom.remove(condition.uuid)
+                                else -> custom.put(condition.uuid, conditionValue)
+                            }
+                        )
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun CustomConditionDialog(
+    state: LayersTabState.Edit.CustomConditionState?,
+    onUpdate: (LayersTabState.Edit.CustomConditionState) -> Unit,
+    onFinish: (LayersTabState.Edit.CustomConditionState) -> Unit,
+    onCancel: () -> Unit,
+) {
+    AlertDialog(
+        value = state,
+        valueTransformer = { it },
+        modifier = Modifier
+            .fillMaxWidth(.5f)
+            .fillMaxHeight(.7f),
+        title = {
+            Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION))
+        },
+        action = {
+            Button(
+                onClick = {
+                    val state = state ?: return@Button
+                    onUpdate(
+                        state.copy(
+                            conditions = CustomConditions(
+                                state.conditions.conditions + CustomCondition()
+                            )
+                        )
+                    )
+                },
+            ) {
+                Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_ADD))
+            }
+            Spacer(Modifier.weight(1f))
+            GuideButton(
+                onClick = {
+                    val state = state ?: return@GuideButton
+                    onFinish(state)
+                },
+            ) {
+                Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_OK))
+            }
+            Button(
+                onClick = {
+                    onCancel()
+                },
+            ) {
+                Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_CANCEL))
+            }
+        },
+    ) { state ->
+        Column(
+            modifier = Modifier
+                .verticalScroll()
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            for ((index, condition) in state.conditions.conditions.withIndex()) {
+                Row(Modifier.fillMaxWidth()) {
+                    Box(
+                        modifier = Modifier
+                            .border(Textures.WIDGET_LIST_LIST)
+                            .weight(1f)
+                            .minHeight(22),
+                        alignment = Alignment.CenterLeft,
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(top = 1, left = 2),
+                            text = condition.name?.let { Text.literal(it) }
+                                ?: Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_UNNAMED),
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            onUpdate(
+                                state.copy(
+                                    editData = LayersTabState.Edit.CustomConditionState.EditData(
+                                        index = index,
+                                        condition = condition,
+                                    )
+                                )
+                            )
+                        }
+                    ) {
+                        Icon(Textures.ICON_EDIT)
+                    }
+                    IconButton(
+                        onClick = {
+                            onUpdate(
+                                state.copy(
+                                    conditions = CustomConditions(
+                                        state.conditions.conditions.removeAt(index)
+                                    ),
+                                )
+                            )
+                        }
+                    ) {
+                        Icon(Textures.ICON_DELETE)
+                    }
+                }
+            }
+        }
+        AlertDialog(
+            value = state.editData,
+            valueTransformer = { it },
+            title = {
+                Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_EDIT))
+            },
+            action = { editState ->
+                GuideButton(
+                    onClick = {
+                        onUpdate(
+                            state.copy(
+                                conditions = CustomConditions(
+                                    state.conditions.conditions.set(editState.index, editState.condition)
+                                ),
+                                editData = null,
+                            )
+                        )
+                    },
+                ) {
+                    Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_EDIT_OK))
+                }
+                Button(
+                    onClick = {
+                        onUpdate(state.copy(editData = null))
+                    },
+                ) {
+                    Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_EDIT_CANCEL))
+                }
+            }
+        ) { editData ->
+            val condition = editData.condition
+            val defaultString =
+                Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_UNNAMED).string
+            EditText(
+                modifier = Modifier.fillMaxWidth(.4f),
+                value = condition.name ?: defaultString,
+                onValueChanged = {
+                    onUpdate(
+                        state.copy(
+                            editData = editData.copy(
+                                condition = condition.copy(name = it)
+                            )
+                        )
+                    )
+                },
+                placeholder = Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_EDIT_NAME_PLACEHOLDER),
+            )
         }
     }
 }
@@ -89,6 +286,7 @@ object LayersTab : CustomTab() {
         val (screenModel, uiState, tabsButton, sideBarAtRight) = LocalCustomTabContext.current
         val tabModel: LayersTabModel = koinScreenModel { parametersOf(screenModel) }
         val tabState by tabModel.uiState.collectAsState()
+        val customConditions = uiState.selectedPreset?.controlInfo?.customConditions?.conditions ?: persistentListOf()
         AlertDialog(
             value = tabState,
             valueTransformer = { tabState as? LayersTabState.Create },
@@ -132,10 +330,19 @@ object LayersTab : CustomTab() {
                         .verticalScroll()
                         .weight(1f)
                         .fillMaxWidth(),
-                    value = state.condition,
+                    value = LayerCondition(
+                        preset = state.condition,
+                        custom = state.customConditions,
+                    ),
+                    customConditions = customConditions,
                     onValueChanged = {
-                        tabModel.updateCreateLayerState { copy(condition = it) }
-                    }
+                        tabModel.updateCreateLayerState {
+                            copy(
+                                condition = it.preset,
+                                customConditions = it.custom,
+                            )
+                        }
+                    },
                 )
             }
         }
@@ -183,9 +390,40 @@ object LayersTab : CustomTab() {
                         .verticalScroll()
                         .weight(1f)
                         .fillMaxWidth(),
-                    value = state.condition,
+                    value = LayerCondition(
+                        preset = state.condition,
+                        custom = state.customConditions,
+                    ),
+                    customConditions = customConditions,
                     onValueChanged = {
-                        tabModel.updateEditLayerState { copy(condition = it) }
+                        tabModel.updateEditLayerState {
+                            copy(
+                                condition = it.preset,
+                                customConditions = it.custom,
+                            )
+                        }
+                    },
+                )
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        tabModel.openCustomConditionDialog()
+                    }
+                ) {
+                    Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_EDIT_LAYER_CUSTOM_CONDITION))
+                }
+
+                CustomConditionDialog(
+                    state = state.customConditionState,
+                    onUpdate = {
+                        tabModel.updateCustomConditionState(it)
+                    },
+                    onFinish = {
+                        tabModel.applyCustomConditionState(it)
+                    },
+                    onCancel = {
+                        tabModel.clearCustomConditionDialog()
                     }
                 )
             }
