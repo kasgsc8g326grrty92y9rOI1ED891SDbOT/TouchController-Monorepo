@@ -42,6 +42,7 @@ data class BuiltInWidgets private constructor(
         grayOnClassic: Boolean,
         swipeTrigger: Boolean = false,
         grabTrigger: Boolean = false,
+        moveView: Boolean = false,
         action: ButtonTrigger = ButtonTrigger(),
         name: Identifier,
         align: Align,
@@ -55,6 +56,7 @@ data class BuiltInWidgets private constructor(
         },
         swipeTrigger = swipeTrigger,
         grabTrigger = grabTrigger,
+        moveView = moveView,
         action = action,
         name = ControllerWidget.Name.Translatable(name),
         align = align,
@@ -274,6 +276,7 @@ data class BuiltInWidgets private constructor(
         grayOnClassic = true,
         swipeTrigger = false,
         grabTrigger = true,
+        moveView = true,
         action = ButtonTrigger(
             press = key(DefaultKeyBindingType.ATTACK),
         ),
@@ -287,6 +290,7 @@ data class BuiltInWidgets private constructor(
         grayOnClassic = true,
         swipeTrigger = false,
         grabTrigger = true,
+        moveView = true,
         action = ButtonTrigger(
             press = key(DefaultKeyBindingType.USE),
         ),

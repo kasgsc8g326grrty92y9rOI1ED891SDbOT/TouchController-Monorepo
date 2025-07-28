@@ -1,6 +1,7 @@
 package top.fifthlight.touchcontroller.common.layout
 
 import org.koin.core.component.get
+import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.ext.fastRandomUuid
 import top.fifthlight.touchcontroller.common.gal.CrosshairTarget
 import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
@@ -90,7 +91,7 @@ fun Context.View() {
         }
 
         val movement = (pointer.position - state.lastPosition).fixAspectRadio(windowSize)
-        result.lookDirection = movement * config.control.viewMovementSensitivity
+        result.lookDirection = (result.lookDirection ?: Offset.ZERO) + movement * config.control.viewMovementSensitivity
 
         val playerHandleFactory: PlayerHandleFactory = get()
         val player = playerHandleFactory.getPlayerHandle()

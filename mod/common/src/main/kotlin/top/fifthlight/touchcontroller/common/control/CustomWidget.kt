@@ -19,7 +19,10 @@ import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.common.ext.fastRandomUuid
 import top.fifthlight.touchcontroller.common.helper.ColorHelper
-import top.fifthlight.touchcontroller.common.layout.*
+import top.fifthlight.touchcontroller.common.layout.Align
+import top.fifthlight.touchcontroller.common.layout.Button
+import top.fifthlight.touchcontroller.common.layout.Context
+import top.fifthlight.touchcontroller.common.layout.Texture
 import kotlin.uuid.Uuid
 
 @Serializable
@@ -31,6 +34,7 @@ data class CustomWidget(
     val textColor: Color = Colors.BLACK,
     val swipeTrigger: Boolean = false,
     val grabTrigger: Boolean = false,
+    val moveView: Boolean = false,
     val action: ButtonTrigger = ButtonTrigger(),
     override val id: Uuid = fastRandomUuid(),
     override val name: Name = Name.Translatable(Texts.WIDGET_CUSTOM_BUTTON_NAME),
@@ -59,6 +63,13 @@ data class CustomWidget(
                     config.copy(grabTrigger = value)
                 },
                 name = textFactory.of(Texts.WIDGET_CUSTOM_BUTTON_GRAB_TRIGGER),
+            ),
+            BooleanProperty(
+                getValue = { it.moveView },
+                setValue = { config, value ->
+                    config.copy(moveView = value)
+                },
+                name = textFactory.of(Texts.WIDGET_CUSTOM_BUTTON_MOVE_VIEW),
             ),
             StringProperty(
                 getValue = { it.centerText ?: "" },
@@ -243,17 +254,13 @@ data class CustomWidget(
 
     override fun layout(context: Context) {
         context.status.doubleClickCounter.update(context.timer.renderTick, id)
-        val buttonResult = if (swipeTrigger) {
-            context.SwipeButton(id) { clicked ->
-                ButtonContent(clicked)
-            }
-        } else {
-            context.Button(
-                id = id,
-                grabTrigger = grabTrigger,
-            ) { clicked ->
-                ButtonContent(clicked)
-            }
+        val buttonResult = context.Button(
+            id = id,
+            swipe = swipeTrigger,
+            grabTrigger = grabTrigger,
+            moveView = moveView,
+        ) { clicked ->
+            ButtonContent(clicked)
         }
         action.refresh(context, id)
         action.trigger(context, buttonResult, id)

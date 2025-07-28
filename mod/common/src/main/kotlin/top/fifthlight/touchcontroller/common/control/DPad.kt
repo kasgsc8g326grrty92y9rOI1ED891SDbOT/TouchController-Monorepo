@@ -674,7 +674,7 @@ data class DPad private constructor(
         ) {
             var hasPointer = false
             for (pointer in getPointersInRect(size)) {
-                val state = (pointer.state as? PointerState.SwipeButton) ?: continue
+                val state = (pointer.state as? PointerState.Button) ?: continue
                 if (state.id == config.idForward || state.id == config.idBackward || state.id == config.idLeft || state.id == config.idRight) {
                     hasPointer = true
                 }

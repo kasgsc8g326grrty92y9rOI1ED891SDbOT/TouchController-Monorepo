@@ -34,9 +34,13 @@ sealed class PointerState {
         }
     }
 
-    data class Button(val id: Uuid) : PointerState()
-
-    data class SwipeButton(val id: Uuid) : PointerState()
+    data class Button(
+        val id: Uuid,
+        val initialPosition: Offset,
+        val lastPosition: Offset,
+        val moving: Boolean,
+        val swipe: Boolean,
+    ) : PointerState()
 
     data class InventorySlot(val index: Int, val startTick: Int) : PointerState()
 }
