@@ -90,7 +90,9 @@
   "touchcontroller.screen.custom_control_layout.switch.goto_preset": "Go to preset mode",
   "touchcontroller.screen.custom_control_layout.show_side_bar": "Show side bar",
   "touchcontroller.screen.custom_control_layout.no_layer_selected": "Select a layer to edit",
+  "touchcontroller.screen.custom_control_layout.edit_layers": "Edit layers",
   "touchcontroller.screen.custom_control_layout.no_preset_selected": "Select a preset to edit",
+  "touchcontroller.screen.custom_control_layout.edit_presets": "Edit presets",
   "touchcontroller.screen.custom_control_layout.delete_widget": "Delete widget",
   "touchcontroller.screen.custom_control_layout.paste_widget": "Paste widget",
   

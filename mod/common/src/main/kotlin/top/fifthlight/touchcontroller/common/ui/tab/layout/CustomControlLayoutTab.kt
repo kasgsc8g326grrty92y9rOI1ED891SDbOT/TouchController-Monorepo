@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.collections.immutable.PersistentList
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
@@ -42,10 +43,7 @@ import top.fifthlight.touchcontroller.common.ui.state.CustomControlLayoutTabStat
 import top.fifthlight.touchcontroller.common.ui.tab.Tab
 import top.fifthlight.touchcontroller.common.ui.tab.TabGroup
 import top.fifthlight.touchcontroller.common.ui.tab.TabOptions
-import top.fifthlight.touchcontroller.common.ui.tab.layout.custom.CustomTab
-import top.fifthlight.touchcontroller.common.ui.tab.layout.custom.CustomTabContext
-import top.fifthlight.touchcontroller.common.ui.tab.layout.custom.LocalCustomTabContext
-import top.fifthlight.touchcontroller.common.ui.tab.layout.custom.allCustomTabs
+import top.fifthlight.touchcontroller.common.ui.tab.layout.custom.*
 
 private data class ControllerWidgetParentData(
     val align: Align,
@@ -309,6 +307,8 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                         .then(modifier),
                     alignment = Alignment.Center,
                 ) {
+                    var sideBarNavigator by mutableStateOf<Navigator?>(null)
+
                     if (uiState.selectedLayer != null) {
                         LayoutEditorPanel(
                             modifier = Modifier.fillMaxSize(),
@@ -338,11 +338,36 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                         )
                     } else if (uiState.selectedPreset != null) {
                         Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_NO_LAYER_SELECTED))
+                        Button(
+                            modifier = Modifier
+                                .padding(bottom = 16)
+                                .alignment(Alignment.BottomCenter),
+                            onClick = {
+                                screenModel.setShowSideBar(true)
+                                sideBarNavigator?.replace(LayersTab)
+                            },
+                        ) {
+                            Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_EDIT_LAYERS))
+                        }
                     } else {
                         Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_NO_PRESET_SELECTED))
+                        Button(
+                            modifier = Modifier
+                                .padding(bottom = 16)
+                                .alignment(Alignment.BottomCenter),
+                            onClick = {
+                                screenModel.setShowSideBar(true)
+                                sideBarNavigator?.replace(PresetsTab)
+                            },
+                        ) {
+                            Text(Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_EDIT_PRESETS))
+                        }
                     }
 
                     TouchControllerNavigator(allCustomTabs.first()) { navigator ->
+                        SideEffect {
+                            sideBarNavigator = navigator
+                        }
                         val currentScreen = navigator.lastItem
 
                         @Composable
