@@ -1,5 +1,24 @@
 # TouchController NEWS - User visible changes.
 
+## 0.2.1-beta12
+
+- Added Handsoneprin as a contributor
+- Updated text from APX201
+- Fixed transparency not working in some parts of custom widgets
+- Added custom layer condition feature
+- Changed the condition for displaying block borders to split control
+- Added capture trigger for use button in presets
+- Added head-turning API for launcher
+- Added preset path display feature
+- Added compatibility for Ixeris
+- Added view movement feature for custom widget
+- Moved the crosshair disabling option to presets
+- Fixed the issue where touch was still possible within the GUI
+- Updated textures
+- Added assistance when there are no layers and presets
+- Optimized the enabling logic for custom layouts
+- Removed the unfinished GUI button interface
+
 ## 0.2.1-beta11
 
 - Fixed letter case of GitHub
