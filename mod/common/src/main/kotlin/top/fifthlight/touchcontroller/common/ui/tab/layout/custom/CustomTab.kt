@@ -3,6 +3,7 @@ package top.fifthlight.touchcontroller.common.ui.tab.layout.custom
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.Navigator
 import kotlinx.collections.immutable.persistentListOf
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
@@ -19,6 +20,7 @@ data class CustomTabContext(
     val uiState: CustomControlLayoutTabState.Enabled,
     val tabsButton: @Composable () -> Unit,
     val sideBarAtRight: Boolean,
+    val parentNavigator: Navigator?,
 )
 
 val LocalCustomTabContext = compositionLocalOf<CustomTabContext> { error("No CustomTabContext") }

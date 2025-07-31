@@ -10,7 +10,6 @@ import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
-import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.widget.base.layout.Box
@@ -18,7 +17,6 @@ import top.fifthlight.combine.widget.base.layout.Column
 import top.fifthlight.combine.widget.ui.Button
 import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.gal.PlayerHandleFactory
 import top.fifthlight.touchcontroller.common.gal.VanillaItemListProvider
 
@@ -29,9 +27,7 @@ class ItemListChooseScreen(
     override fun Content() {
         val navigator = LocalNavigator.current
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .border(Textures.WIDGET_BACKGROUND_BACKGROUND_DARK),
+            modifier = Modifier.fillMaxSize(),
             alignment = Alignment.Center,
         ) {
             Column(

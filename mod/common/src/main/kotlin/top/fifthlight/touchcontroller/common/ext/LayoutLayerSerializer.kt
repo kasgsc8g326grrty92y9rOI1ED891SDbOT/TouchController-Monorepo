@@ -12,8 +12,7 @@ import kotlinx.serialization.encoding.*
 import kotlinx.serialization.serializer
 import top.fifthlight.touchcontroller.common.config.LayoutLayer
 import top.fifthlight.touchcontroller.common.config.LayoutLayer.Companion.DEFAULT_LAYER_NAME
-import top.fifthlight.touchcontroller.common.config.LayoutLayerCondition
-import top.fifthlight.touchcontroller.common.config.LayoutLayerCustomCondition
+import top.fifthlight.touchcontroller.common.config.condition.LayerConditions
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
 
 class LayoutLayerSerializer : KSerializer<LayoutLayer> {
@@ -24,31 +23,27 @@ class LayoutLayerSerializer : KSerializer<LayoutLayer> {
         buildClassSerialDescriptor("top.fifthlight.touchcontroller.config.LayoutLayer") {
             element<String>("name")
             element<List<ControllerWidget>>("widgets")
-            element<LayoutLayerCondition>("condition")
-            element<LayoutLayerCustomCondition>("customConditions")
+            element<LayerConditions>("conditions")
         }
 
     override fun serialize(encoder: Encoder, value: LayoutLayer) {
         encoder.encodeStructure(descriptor) {
             encodeStringElement(descriptor, 0, value.name)
             encodeSerializableElement(descriptor, 1, widgetListSerializer, value.widgets)
-            encodeSerializableElement(descriptor, 2, serializer(), value.condition)
-            encodeSerializableElement(descriptor, 3, serializer(), value.customConditions)
+            encodeSerializableElement(descriptor, 2, serializer(), value.conditions)
         }
     }
 
     override fun deserialize(decoder: Decoder): LayoutLayer {
         var name: String? = null
         var widgets: PersistentList<ControllerWidget> = persistentListOf()
-        var condition = LayoutLayerCondition()
-        var customConditions = LayoutLayerCustomCondition()
+        var conditions = LayerConditions()
         return decoder.decodeStructure(descriptor) {
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
                     0 -> name = decodeStringElement(descriptor, 0)
                     1 -> widgets = decodeSerializableElement(descriptor, 1, widgetListSerializer).toPersistentList()
-                    2 -> condition = decodeSerializableElement(descriptor, 2, serializer())
-                    3 -> customConditions = decodeSerializableElement(descriptor, 3, serializer())
+                    2 -> conditions = decodeSerializableElement(descriptor, 2, serializer())
                     CompositeDecoder.DECODE_DONE -> break
                     else -> error("Unexpected index: $index")
                 }
@@ -56,8 +51,7 @@ class LayoutLayerSerializer : KSerializer<LayoutLayer> {
             LayoutLayer(
                 name = name ?: DEFAULT_LAYER_NAME,
                 widgets = widgets,
-                condition = condition,
-                customConditions = customConditions,
+                conditions = conditions,
             )
         }
     }

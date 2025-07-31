@@ -12,6 +12,7 @@ import net.minecraft.world.entity.monster.Strider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.vehicle.AbstractBoat
 import net.minecraft.world.entity.vehicle.AbstractMinecart
+import top.fifthlight.combine.data.Item
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.platform_1_21_6_1_21_8.ItemStackImpl
 import top.fifthlight.combine.platform_1_21_6_1_21_8.toCombine
@@ -33,6 +34,10 @@ class PlayerHandleImpl(
 
     override fun hasItemsOnHand(list: ItemList): Boolean = InteractionHand.entries.any { hand ->
         inner.getItemInHand(hand).toCombine().item in list
+    }
+
+    override fun matchesItemOnHand(item: Item): Boolean = InteractionHand.entries.any { hand ->
+        item.matches(inner.getItemInHand(hand).toCombine().item)
     }
 
     override fun getInventory() = PlayerInventory(

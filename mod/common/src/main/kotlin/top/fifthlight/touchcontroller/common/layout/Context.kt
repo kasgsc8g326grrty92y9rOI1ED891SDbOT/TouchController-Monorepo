@@ -1,8 +1,6 @@
 package top.fifthlight.touchcontroller.common.layout
 
-import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.PersistentSet
-import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -14,9 +12,10 @@ import top.fifthlight.data.IntRect
 import top.fifthlight.data.IntSize
 import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.config.GlobalConfig
-import top.fifthlight.touchcontroller.common.config.LayerConditionKey
+import top.fifthlight.touchcontroller.common.config.condition.BuiltinLayerConditionKey
 import top.fifthlight.touchcontroller.common.config.preset.PresetControlInfo
 import top.fifthlight.touchcontroller.common.gal.CameraPerspective
+import top.fifthlight.touchcontroller.common.gal.CrosshairTarget
 import top.fifthlight.touchcontroller.common.gal.KeyBindingHandler
 import top.fifthlight.touchcontroller.common.gal.PlayerHandle
 import top.fifthlight.touchcontroller.common.state.Pointer
@@ -118,10 +117,16 @@ data class InventoryResult(
 
 data class ContextInput(
     val inGui: Boolean = false,
-    val condition: PersistentMap<LayerConditionKey, Boolean> = persistentMapOf(),
+    val builtInCondition: PersistentSet<BuiltinLayerConditionKey.Key> = persistentSetOf(),
     val customCondition: PersistentSet<Uuid> = persistentSetOf(),
+    val playerHandle: PlayerHandle? = null,
+    val crosshairTarget: CrosshairTarget? = null,
     val perspective: CameraPerspective = CameraPerspective.FIRST_PERSON,
-)
+) {
+    companion object {
+        val EMPTY = ContextInput()
+    }
+}
 
 data class ContextResult(
     var forward: Float = 0f,

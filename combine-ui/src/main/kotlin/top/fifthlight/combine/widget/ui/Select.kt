@@ -3,6 +3,7 @@ package top.fifthlight.combine.widget.ui
 import androidx.compose.runtime.*
 import top.fifthlight.combine.data.NinePatchTexture
 import top.fifthlight.combine.input.MutableInteractionSource
+import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.focus.focusable
@@ -79,7 +80,7 @@ fun Select(
     val state by widgetState(interactionSource)
     val menuTexture = drawableSet.menuBox.getByState(state)
 
-    var anchor by remember { mutableStateOf<IntRect>(IntRect.ZERO) }
+    var anchor by remember { mutableStateOf(IntRect.ZERO) }
     val colorTheme = colorTheme ?: ColorTheme.light
 
     Row(
@@ -89,6 +90,7 @@ fun Select(
             .focusable(interactionSource)
             .then(modifier)
             .anchor { anchor = it },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         CompositionLocalProvider(
             LocalColorTheme provides colorTheme,

@@ -10,24 +10,24 @@ import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.serializer
-import top.fifthlight.touchcontroller.common.config.preset.CustomCondition
-import top.fifthlight.touchcontroller.common.config.preset.CustomConditions
+import top.fifthlight.touchcontroller.common.config.condition.LayerConditions
 
-class CustomConditionsSerializer : KSerializer<CustomConditions> {
+class LayerConditionsSerializer : KSerializer<LayerConditions> {
     @OptIn(SealedSerializationApi::class)
-    private class PersistentListDescriptor : SerialDescriptor by serialDescriptor<List<CustomCondition>>() {
-        @OptIn(ExperimentalSerializationApi::class)
-        override val serialName: String = "top.fifthlight.touchcontroller.common.config.preset.CustomConditions"
+    private class PersistentMapDescriptor :
+        SerialDescriptor by serialDescriptor<Map<LayerConditions.Key, LayerConditions.Value>>() {
+        @ExperimentalSerializationApi
+        override val serialName: String = "top.fifthlight.touchcontroller.common.config.condition.LayerConditions"
     }
 
-    private val itemSerializer = serializer<CustomCondition>()
+    private val itemSerializer = serializer<LayerConditions.Item>()
     private val delegatedSerializer = ListSerializer(itemSerializer)
 
-    override val descriptor: SerialDescriptor = PersistentListDescriptor()
+    override val descriptor: SerialDescriptor = PersistentMapDescriptor()
 
-    override fun serialize(encoder: Encoder, value: CustomConditions) =
+    override fun serialize(encoder: Encoder, value: LayerConditions) =
         delegatedSerializer.serialize(encoder, value.conditions)
 
     override fun deserialize(decoder: Decoder) =
-        CustomConditions(delegatedSerializer.deserialize(decoder).toPersistentList())
+        LayerConditions(delegatedSerializer.deserialize(decoder).toPersistentList())
 }

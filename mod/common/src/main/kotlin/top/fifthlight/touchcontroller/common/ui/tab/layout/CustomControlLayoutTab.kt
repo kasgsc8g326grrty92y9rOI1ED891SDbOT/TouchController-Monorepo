@@ -364,16 +364,16 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                         }
                     }
 
-                    TouchControllerNavigator(allCustomTabs.first()) { navigator ->
+                    TouchControllerNavigator(allCustomTabs.first()) { innerNavigator ->
                         SideEffect {
-                            sideBarNavigator = navigator
+                            sideBarNavigator = innerNavigator
                         }
-                        val currentScreen = navigator.lastItem
+                        val currentScreen = innerNavigator.lastItem
 
                         @Composable
                         fun SideBar() = SideBar(
                             allTabs = allCustomTabs,
-                            onTabSelected = navigator::replace,
+                            onTabSelected = innerNavigator::replace,
                             selectedTab = currentScreen as? CustomTab,
                         )
 
@@ -404,6 +404,7 @@ object CustomControlLayoutTab : Tab(), KoinComponent {
                             uiState = uiState,
                             tabsButton = @Composable { SideBar() },
                             sideBarAtRight = sideBarProgress > .5f,
+                            parentNavigator = navigator,
                         )
                         if (uiState.pageState.showSideBar || sideBarProgress != .5f) {
                             Box(

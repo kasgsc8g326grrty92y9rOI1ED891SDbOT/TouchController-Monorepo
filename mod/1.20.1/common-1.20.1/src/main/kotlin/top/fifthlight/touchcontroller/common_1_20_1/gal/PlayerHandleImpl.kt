@@ -10,6 +10,7 @@ import net.minecraft.world.entity.animal.horse.*
 import net.minecraft.world.entity.monster.Strider
 import net.minecraft.world.entity.vehicle.Boat
 import net.minecraft.world.entity.vehicle.Minecart
+import top.fifthlight.combine.data.Item
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.platform_1_20_1.ItemStackImpl
 import top.fifthlight.combine.platform_1_20_1.toCombine
@@ -23,6 +24,10 @@ import top.fifthlight.touchcontroller.common_1_20_x.gal.AbstractPlayerHandleImpl
 class PlayerHandleImpl(inner: LocalPlayer) : AbstractPlayerHandleImpl(inner) {
     override fun hasItemsOnHand(list: ItemList): Boolean = InteractionHand.entries.any { hand ->
         inner.getItemInHand(hand).toCombine().item in list
+    }
+
+    override fun matchesItemOnHand(item: Item): Boolean = InteractionHand.entries.any { hand ->
+        item.matches(inner.getItemInHand(hand).toCombine().item)
     }
 
     override fun getInventorySlot(index: Int): ItemStack = ItemStackImpl(inner.inventory.getItem(index))

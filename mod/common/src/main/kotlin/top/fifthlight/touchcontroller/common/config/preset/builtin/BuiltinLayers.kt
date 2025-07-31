@@ -6,7 +6,10 @@ import kotlinx.collections.immutable.toPersistentList
 import org.koin.core.component.KoinComponent
 import top.fifthlight.data.IntOffset
 import top.fifthlight.touchcontroller.assets.TextureSet
-import top.fifthlight.touchcontroller.common.config.*
+import top.fifthlight.touchcontroller.common.config.LayoutLayer
+import top.fifthlight.touchcontroller.common.config.condition.BuiltinLayerConditionKey
+import top.fifthlight.touchcontroller.common.config.condition.LayerConditions
+import top.fifthlight.touchcontroller.common.config.condition.layerConditionsOf
 import top.fifthlight.touchcontroller.common.control.*
 import top.fifthlight.touchcontroller.common.layout.Align
 import java.util.concurrent.ConcurrentHashMap
@@ -14,10 +17,10 @@ import java.util.concurrent.ConcurrentHashMap
 @ConsistentCopyVisibility
 data class BuiltinLayers private constructor(
     private val textureSet: TextureSet.TextureSetKey,
-): KoinComponent {
+) : KoinComponent {
     data class Layers(
         val name: String,
-        val condition: LayoutLayerCondition,
+        val conditions: LayerConditions,
         val dpadNormal: PersistentList<ControllerWidget>,
         val dpadSwap: PersistentList<ControllerWidget> = dpadNormal,
         val dpadNormalButtonInteract: PersistentList<ControllerWidget> = dpadNormal,
@@ -26,7 +29,7 @@ data class BuiltinLayers private constructor(
     ) {
         fun getByKey(key: BuiltInPresetKey) = LayoutLayer(
             name = name,
-            condition = condition,
+            conditions = conditions,
             widgets = when (val moveMethod = key.moveMethod) {
                 is BuiltInPresetKey.MoveMethod.Dpad -> if (key.controlStyle is BuiltInPresetKey.ControlStyle.SplitControls && key.controlStyle.buttonInteraction) {
                     if (moveMethod.swapJumpAndSneak) {
@@ -57,7 +60,7 @@ data class BuiltinLayers private constructor(
 
     val controlLayer = LayoutLayer(
         name = "Control",
-        condition = layoutLayerConditionOf(),
+        conditions = layerConditionsOf(),
         widgets = persistentListOf(
             widgets.pause.copy(
                 align = Align.CENTER_TOP,
@@ -73,7 +76,7 @@ data class BuiltinLayers private constructor(
 
     val vanillaChatControlLayer = LayoutLayer(
         name = "Control",
-        condition = layoutLayerConditionOf(),
+        conditions = layerConditionsOf(),
         widgets = persistentListOf(
             widgets.pause.copy(
                 align = Align.CENTER_TOP,
@@ -89,7 +92,7 @@ data class BuiltinLayers private constructor(
 
     val interactionLayer = LayoutLayer(
         name = "Interaction",
-        condition = layoutLayerConditionOf(),
+        conditions = LayerConditions(),
         widgets = persistentListOf(
             widgets.attack.copy(
                 align = Align.RIGHT_BOTTOM,
@@ -114,10 +117,10 @@ data class BuiltinLayers private constructor(
 
     val normalLayer = Layers(
         name = "Normal",
-        condition = layoutLayerConditionOf(
-            LayerConditionKey.SWIMMING to LayerConditionValue.NEVER,
-            LayerConditionKey.FLYING to LayerConditionValue.NEVER,
-            LayerConditionKey.RIDING to LayerConditionValue.NEVER,
+        conditions = layerConditionsOf(
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.SWIMMING) to LayerConditions.Value.NEVER,
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.FLYING) to LayerConditions.Value.NEVER,
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.RIDING) to LayerConditions.Value.NEVER,
         ),
         dpadNormal = persistentListOf(
             DPad.create(
@@ -187,11 +190,11 @@ data class BuiltinLayers private constructor(
 
     val swimmingLayer = Layers(
         name = "Swimming",
-        condition = layoutLayerConditionOf(
-            LayerConditionKey.RIDING to LayerConditionValue.NEVER,
-            LayerConditionKey.FLYING to LayerConditionValue.NEVER,
-            LayerConditionKey.SWIMMING to LayerConditionValue.WANT,
-            LayerConditionKey.UNDERWATER to LayerConditionValue.WANT,
+        conditions = layerConditionsOf(
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.RIDING) to LayerConditions.Value.NEVER,
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.FLYING) to LayerConditions.Value.NEVER,
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.SWIMMING) to LayerConditions.Value.WANT,
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.UNDERWATER) to LayerConditions.Value.WANT,
         ),
         dpadNormal = persistentListOf(
             DPad.create(
@@ -239,9 +242,9 @@ data class BuiltinLayers private constructor(
 
     val flyingLayer = Layers(
         name = "Flying",
-        condition = layoutLayerConditionOf(
-            LayerConditionKey.FLYING to LayerConditionValue.REQUIRE,
-            LayerConditionKey.RIDING to LayerConditionValue.NEVER,
+        conditions = layerConditionsOf(
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.FLYING) to LayerConditions.Value.REQUIRE,
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.RIDING) to LayerConditions.Value.NEVER,
         ),
         dpadNormal = persistentListOf(
             DPad.create(
@@ -289,8 +292,8 @@ data class BuiltinLayers private constructor(
 
     val onMinecartLayer = Layers(
         name = "On minecart",
-        condition = layoutLayerConditionOf(
-            LayerConditionKey.ON_MINECART to LayerConditionValue.REQUIRE,
+        conditions = layerConditionsOf(
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.ON_MINECART) to LayerConditions.Value.REQUIRE,
         ),
         dpadNormal = persistentListOf(
             widgets.forward.copy(
@@ -326,8 +329,8 @@ data class BuiltinLayers private constructor(
 
     val onBoatLayer = Layers(
         name = "On boat",
-        condition = layoutLayerConditionOf(
-            LayerConditionKey.ON_BOAT to LayerConditionValue.REQUIRE,
+        conditions = layerConditionsOf(
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.ON_BOAT) to LayerConditions.Value.REQUIRE,
         ),
         dpadNormal = persistentListOf(
             BoatButton(
@@ -359,10 +362,10 @@ data class BuiltinLayers private constructor(
 
     val ridingOnEntityLayer = Layers(
         name = "Riding on entity",
-        condition = layoutLayerConditionOf(
-            LayerConditionKey.RIDING to LayerConditionValue.REQUIRE,
-            LayerConditionKey.ON_BOAT to LayerConditionValue.NEVER,
-            LayerConditionKey.ON_MINECART to LayerConditionValue.NEVER,
+        conditions = layerConditionsOf(
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.RIDING) to LayerConditions.Value.REQUIRE,
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.ON_BOAT) to LayerConditions.Value.NEVER,
+            BuiltinLayerConditionKey(BuiltinLayerConditionKey.Key.ON_MINECART) to LayerConditions.Value.NEVER,
         ),
         dpadNormal = persistentListOf(
             DPad.create(
@@ -418,6 +421,7 @@ data class BuiltinLayers private constructor(
 
     companion object {
         private val cache = ConcurrentHashMap<TextureSet.TextureSetKey, BuiltinLayers>()
-        operator fun get(textureSet: TextureSet.TextureSetKey): BuiltinLayers = cache.computeIfAbsent(textureSet, ::BuiltinLayers)
+        operator fun get(textureSet: TextureSet.TextureSetKey): BuiltinLayers =
+            cache.computeIfAbsent(textureSet, ::BuiltinLayers)
     }
 }

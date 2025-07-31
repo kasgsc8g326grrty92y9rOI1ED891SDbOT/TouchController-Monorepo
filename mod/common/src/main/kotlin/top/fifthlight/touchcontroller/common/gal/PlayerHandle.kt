@@ -1,6 +1,7 @@
 package top.fifthlight.touchcontroller.common.gal
 
 import kotlinx.collections.immutable.PersistentList
+import top.fifthlight.combine.data.Item
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.touchcontroller.common.config.ItemList
 
@@ -22,6 +23,7 @@ data class PlayerInventory(
 )
 
 interface PlayerHandle {
+    fun matchesItemOnHand(item: Item): Boolean
     fun hasItemsOnHand(list: ItemList): Boolean
     fun changeLookDirection(deltaYaw: Double, deltaPitch: Double)
     var currentSelectedSlot: Int

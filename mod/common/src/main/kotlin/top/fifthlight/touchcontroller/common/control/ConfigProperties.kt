@@ -1427,7 +1427,7 @@ class TriggerActionProperty<Config : ControllerWidget>(
                     ) {
                         Text(
                             modifier = Modifier.weight(1f),
-                            text = Text.translatable(Texts.WIDGET_TRIGGER_PLAYER_ACTION_TYPE),
+                            text = Text.translatable(Texts.WIDGET_TRIGGER_LAYER_CONDITION_TYPE),
                         )
                         var expanded by remember { mutableStateOf(false) }
                         Select(
@@ -1492,7 +1492,7 @@ class TriggerActionProperty<Config : ControllerWidget>(
                                         onItemSelected = { expanded = false },
                                         items = currentPreset.controlInfo.customConditions.conditions.map { condition ->
                                             val name = condition.name?.let { textFactory.literal(it) }
-                                                ?: textFactory.of(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_UNNAMED)
+                                                ?: textFactory.of(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNNAMED)
                                             Pair(name) {
                                                 onConfigChanged(
                                                     setValue(
@@ -1504,14 +1504,19 @@ class TriggerActionProperty<Config : ControllerWidget>(
                                     )
                                 }
                             ) {
-                                val condition =
-                                    currentPreset.controlInfo.customConditions.conditions.firstOrNull { it.uuid == value.conditionUuid }
-                                val name = if (condition == null) {
+                                val name = if (value.conditionUuid == null) {
                                     Text.translatable(Texts.WIDGET_TRIGGER_LAYER_CONDITION_CONDITION_EMPTY)
                                 } else {
-                                    condition.name?.let { Text.literal(it) }
-                                        ?: Text.translatable(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CUSTOM_CONDITION_UNNAMED)
+                                    val condition =
+                                        currentPreset.controlInfo.customConditions.conditions.firstOrNull { it.uuid == value.conditionUuid }
+                                    if (condition == null) {
+                                        Text.translatable(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNKNOWN)
+                                    } else {
+                                        condition.name?.let { Text.literal(it) }
+                                            ?: Text.translatable(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNNAMED)
+                                    }
                                 }
+
                                 Text(name)
                                 SelectIcon(expanded = expanded)
                             }

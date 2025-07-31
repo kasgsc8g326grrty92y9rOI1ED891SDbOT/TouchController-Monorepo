@@ -25,9 +25,9 @@ import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.TextureSet
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.config.ControllerLayout
-import top.fifthlight.touchcontroller.common.config.LayerConditionValue
 import top.fifthlight.touchcontroller.common.config.preset.builtin.BuiltInPresetKey
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
+import top.fifthlight.touchcontroller.common.layout.ContextInput
 import kotlin.math.min
 
 private data class ControllerWidgetModifierNode(
@@ -77,7 +77,7 @@ private fun PresetPreview(
             return@Layout
         }
         for (layer in preset.layers) {
-            if (layer.condition.values.any { it != LayerConditionValue.NEVER }) {
+            if (!layer.conditions.check(ContextInput.EMPTY)) {
                 continue
             }
             for (widget in layer.widgets) {

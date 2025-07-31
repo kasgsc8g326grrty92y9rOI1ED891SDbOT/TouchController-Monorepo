@@ -1,6 +1,5 @@
 package top.fifthlight.touchcontroller.common.event
 
-import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.collections.immutable.toPersistentSet
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -11,7 +10,7 @@ import top.fifthlight.combine.paint.Canvas
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.config.GlobalConfigHolder
-import top.fifthlight.touchcontroller.common.config.LayerConditionKey
+import top.fifthlight.touchcontroller.common.config.condition.BuiltinLayerConditionKey
 import top.fifthlight.touchcontroller.common.gal.*
 import top.fifthlight.touchcontroller.common.helper.fixAspectRadio
 import top.fifthlight.touchcontroller.common.input.InputManager
@@ -163,26 +162,34 @@ object RenderEvents : KoinComponent {
             controllerHudModel.status.enabledCustomConditions.clear()
         }
         val ridingType = player.ridingEntityType
-        val condition = buildMap {
-            put(LayerConditionKey.FLYING, player.isFlying)
-            put(LayerConditionKey.CAN_FLY, player.canFly)
-            put(LayerConditionKey.SWIMMING, player.isTouchingWater)
-            put(LayerConditionKey.UNDERWATER, player.isSubmergedInWater)
-            put(LayerConditionKey.SPRINTING, player.isSprinting)
-            put(LayerConditionKey.SNEAKING, player.isSneaking)
-            put(LayerConditionKey.ON_GROUND, player.onGround)
-            put(LayerConditionKey.NOT_ON_GROUND, !player.onGround)
-            put(LayerConditionKey.USING_ITEM, player.isUsingItem)
-            put(LayerConditionKey.RIDING, ridingType != null)
-            put(LayerConditionKey.BLOCK_SELECTED, viewActionProvider.getCrosshairTarget() == CrosshairTarget.BLOCK)
-            put(LayerConditionKey.ON_MINECART, ridingType == RidingEntityType.MINECART)
-            put(LayerConditionKey.ON_BOAT, ridingType == RidingEntityType.BOAT)
-            put(LayerConditionKey.ON_PIG, ridingType == RidingEntityType.PIG)
-            put(LayerConditionKey.ON_HORSE, ridingType == RidingEntityType.HORSE)
-            put(LayerConditionKey.ON_CAMEL, ridingType == RidingEntityType.CAMEL)
-            put(LayerConditionKey.ON_LLAMA, ridingType == RidingEntityType.LLAMA)
-            put(LayerConditionKey.ON_STRIDER, ridingType == RidingEntityType.STRIDER)
-        }.toPersistentMap()
+        val condition = buildSet {
+            fun put(key: BuiltinLayerConditionKey.Key, condition: Boolean) {
+                if (condition) {
+                    add(key)
+                }
+            }
+            put(BuiltinLayerConditionKey.Key.FLYING, player.isFlying)
+            put(BuiltinLayerConditionKey.Key.CAN_FLY, player.canFly)
+            put(BuiltinLayerConditionKey.Key.SWIMMING, player.isTouchingWater)
+            put(BuiltinLayerConditionKey.Key.UNDERWATER, player.isSubmergedInWater)
+            put(BuiltinLayerConditionKey.Key.SPRINTING, player.isSprinting)
+            put(BuiltinLayerConditionKey.Key.SNEAKING, player.isSneaking)
+            put(BuiltinLayerConditionKey.Key.ON_GROUND, player.onGround)
+            put(BuiltinLayerConditionKey.Key.NOT_ON_GROUND, !player.onGround)
+            put(BuiltinLayerConditionKey.Key.USING_ITEM, player.isUsingItem)
+            put(BuiltinLayerConditionKey.Key.RIDING, ridingType != null)
+            put(
+                BuiltinLayerConditionKey.Key.BLOCK_SELECTED,
+                viewActionProvider.getCrosshairTarget() == CrosshairTarget.BLOCK
+            )
+            put(BuiltinLayerConditionKey.Key.ON_MINECART, ridingType == RidingEntityType.MINECART)
+            put(BuiltinLayerConditionKey.Key.ON_BOAT, ridingType == RidingEntityType.BOAT)
+            put(BuiltinLayerConditionKey.Key.ON_PIG, ridingType == RidingEntityType.PIG)
+            put(BuiltinLayerConditionKey.Key.ON_HORSE, ridingType == RidingEntityType.HORSE)
+            put(BuiltinLayerConditionKey.Key.ON_CAMEL, ridingType == RidingEntityType.CAMEL)
+            put(BuiltinLayerConditionKey.Key.ON_LLAMA, ridingType == RidingEntityType.LLAMA)
+            put(BuiltinLayerConditionKey.Key.ON_STRIDER, ridingType == RidingEntityType.STRIDER)
+        }.toPersistentSet()
 
         val drawQueue = DrawQueue()
         val result = Context(
@@ -194,9 +201,10 @@ object RenderEvents : KoinComponent {
             pointers = touchStateModel.pointers,
             input = ContextInput(
                 inGui = gameState.inGui,
-                condition = condition,
+                builtInCondition = condition,
                 customCondition = controllerHudModel.status.enabledCustomConditions.toPersistentSet(),
                 perspective = gameState.perspective,
+                playerHandle = playerHandle,
             ),
             status = controllerHudModel.status,
             timer = controllerHudModel.timer,

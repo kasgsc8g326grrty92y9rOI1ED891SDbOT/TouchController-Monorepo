@@ -8,6 +8,7 @@ import net.minecraft.world.entity.animal.horse.*
 import net.minecraft.world.entity.monster.Strider
 import net.minecraft.world.entity.vehicle.AbstractBoat
 import net.minecraft.world.entity.vehicle.AbstractMinecart
+import top.fifthlight.combine.data.Item
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.platform_1_21_3_1_21_5.ItemStackImpl
 import top.fifthlight.combine.platform_1_21_3_1_21_5.toCombine
@@ -20,6 +21,10 @@ abstract class AbstractPlayerHandleImpl(
 ) : UpperAbstractPlayerHandleImpl(inner) {
     override fun hasItemsOnHand(list: ItemList): Boolean = InteractionHand.entries.any { hand ->
         inner.getItemInHand(hand).toCombine().item in list
+    }
+
+    override fun matchesItemOnHand(item: Item): Boolean = InteractionHand.entries.any { hand ->
+        item.matches(inner.getItemInHand(hand).toCombine().item)
     }
 
     override fun getInventorySlot(index: Int): ItemStack = ItemStackImpl(inner.inventory.getItem(index))

@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 import top.fifthlight.touchcontroller.common.config.ControllerLayout
 import top.fifthlight.touchcontroller.common.config.LayoutLayer
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
-import top.fifthlight.touchcontroller.common.ext.CustomConditionsSerializer
+import top.fifthlight.touchcontroller.common.ext.LayerCustomConditionsSerializer
 import top.fifthlight.touchcontroller.common.ext.LayoutPresetsSerializer
 
 @Immutable
@@ -34,8 +34,8 @@ data class LayoutPreset(
 }
 
 @JvmInline
-@Serializable(with = CustomConditionsSerializer::class)
-value class CustomConditions(
+@Serializable(with = LayerCustomConditionsSerializer::class)
+value class LayerCustomConditions(
     val conditions: PersistentList<CustomCondition> = persistentListOf(),
 )
 
@@ -45,7 +45,7 @@ data class PresetControlInfo(
     val splitControls: Boolean = false,
     val disableTouchGesture: Boolean = false,
     val disableCrosshair: Boolean = true,
-    val customConditions: CustomConditions = CustomConditions(),
+    val customConditions: LayerCustomConditions = LayerCustomConditions(),
 )
 
 @JvmInline

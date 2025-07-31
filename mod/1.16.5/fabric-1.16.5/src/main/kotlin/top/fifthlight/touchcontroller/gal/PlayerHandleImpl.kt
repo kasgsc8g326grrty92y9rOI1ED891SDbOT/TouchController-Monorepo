@@ -9,6 +9,7 @@ import net.minecraft.entity.passive.*
 import net.minecraft.entity.vehicle.BoatEntity
 import net.minecraft.entity.vehicle.MinecartEntity
 import net.minecraft.util.Hand
+import top.fifthlight.combine.data.Item
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.platform.ItemStackImpl
 import top.fifthlight.combine.platform.toCombine
@@ -26,6 +27,10 @@ value class PlayerHandleImpl(val inner: ClientPlayerEntity) : PlayerHandle {
 
     override fun hasItemsOnHand(list: ItemList): Boolean = Hand.entries.any { hand ->
         inner.getStackInHand(hand).toCombine().item in list
+    }
+
+    override fun matchesItemOnHand(item: Item): Boolean = Hand.entries.any { hand ->
+        item.matches(inner.getStackInHand(hand).toCombine().item)
     }
 
     override fun changeLookDirection(deltaYaw: Double, deltaPitch: Double) {

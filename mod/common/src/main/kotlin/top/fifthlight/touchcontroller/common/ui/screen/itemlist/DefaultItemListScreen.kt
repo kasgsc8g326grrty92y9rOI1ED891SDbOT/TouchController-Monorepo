@@ -8,14 +8,12 @@ import top.fifthlight.combine.data.LocalItemFactory
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
-import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.widget.base.layout.Column
 import top.fifthlight.combine.widget.ui.EditText
 import top.fifthlight.combine.widget.ui.ItemGrid
 import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.assets.Textures
 
 class DefaultItemListScreen(
     val onItemSelected: (Item) -> Unit,
@@ -39,9 +37,7 @@ class DefaultItemListScreen(
             }
         }
         Column(
-            modifier = Modifier
-                .padding(8)
-                .border(Textures.WIDGET_BACKGROUND_BACKGROUND_DARK),
+            modifier = Modifier.padding(4),
             verticalArrangement = Arrangement.spacedBy(8),
         ) {
             EditText(

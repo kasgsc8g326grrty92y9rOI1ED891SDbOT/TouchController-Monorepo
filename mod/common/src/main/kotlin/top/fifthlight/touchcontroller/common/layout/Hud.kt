@@ -4,10 +4,7 @@ import top.fifthlight.touchcontroller.common.config.LayoutLayer
 
 fun Context.Hud(layers: List<LayoutLayer>) {
     for (layer in layers) {
-        if (!layer.condition.check(input.condition)) {
-            continue
-        }
-        if (!layer.customConditions.check(input.customCondition)) {
+        if (!layer.conditions.check(input)) {
             continue
         }
         for (widget in layer.widgets) {

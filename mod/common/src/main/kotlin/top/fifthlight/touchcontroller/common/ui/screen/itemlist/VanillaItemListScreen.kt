@@ -46,7 +46,6 @@ class VanillaItemListScreen(
                     modifier = Modifier
                         .padding(4)
                         .weight(1f)
-                        .border(Textures.WIDGET_BACKGROUND_BACKGROUND_DARK)
                         .fillMaxHeight(),
                     verticalArrangement = Arrangement.spacedBy(4),
                 ) {

@@ -8,6 +8,7 @@ import net.minecraft.entity.item.EntityMinecart
 import net.minecraft.entity.passive.*
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.EnumHand
+import top.fifthlight.combine.data.Item
 import top.fifthlight.combine.data.ItemStack
 import top.fifthlight.combine.platform.ItemStackImpl
 import top.fifthlight.combine.platform.toCombine
@@ -24,6 +25,10 @@ value class PlayerHandleImpl(val inner: EntityPlayer) : PlayerHandle {
 
     override fun hasItemsOnHand(list: ItemList): Boolean = EnumHand.entries.any { hand ->
         inner.getHeldItem(hand).toCombine().item in list
+    }
+
+    override fun matchesItemOnHand(item: Item): Boolean = EnumHand.entries.any { hand ->
+        item.matches(inner.getHeldItem(hand).toCombine().item)
     }
 
     override fun changeLookDirection(deltaYaw: Double, deltaPitch: Double) {

@@ -5,6 +5,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.plus
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.serialization.Serializable
+import top.fifthlight.touchcontroller.common.config.condition.LayerConditions
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
 import top.fifthlight.touchcontroller.common.ext.ControllerLayoutSerializer
 import top.fifthlight.touchcontroller.common.ext.LayoutLayerSerializer
@@ -14,8 +15,7 @@ import top.fifthlight.touchcontroller.common.ext.LayoutLayerSerializer
 data class LayoutLayer(
     val name: String = DEFAULT_LAYER_NAME,
     val widgets: PersistentList<ControllerWidget> = persistentListOf(),
-    val condition: LayoutLayerCondition = LayoutLayerCondition(),
-    val customConditions: LayoutLayerCustomCondition = LayoutLayerCustomCondition(),
+    val conditions: LayerConditions = LayerConditions(),
 ) {
     companion object {
         const val DEFAULT_LAYER_NAME = "Unnamed layer"
