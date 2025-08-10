@@ -327,7 +327,7 @@ object PresetsTab : CustomTab() {
                     Switch(
                         value = state.controlInfo.disableCrosshair,
                         onValueChanged = {
-                            tabModel.updateCreatePresetState {
+                            tabModel.updateEditPresetState {
                                 copy(controlInfo = controlInfo.copy(disableCrosshair = it))
                             }
                         }
