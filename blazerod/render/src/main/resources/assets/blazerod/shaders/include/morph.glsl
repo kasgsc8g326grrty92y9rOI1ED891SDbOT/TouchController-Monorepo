@@ -73,7 +73,7 @@ uniform isamplerBuffer MorphTargetIndices;
 #endif// INSTANCED
 
 #ifdef COMPUTE_SHADER
-#define MORPH_VERTEX_ID gl_GlobalInvocationID.x
+#define MORPH_VERTEX_ID int(gl_GlobalInvocationID.x)
 #else
 #define MORPH_VERTEX_ID gl_VertexID
 #endif

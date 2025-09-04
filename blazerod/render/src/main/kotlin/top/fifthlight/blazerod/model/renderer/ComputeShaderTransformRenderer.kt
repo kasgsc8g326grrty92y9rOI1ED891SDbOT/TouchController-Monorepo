@@ -200,9 +200,9 @@ class ComputeShaderTransformRenderer private constructor() :
         try {
             targetVertexData = vertexDataPool.allocate(targetVertexFormat.vertexSize * primitive.vertices)
             computeDataUniformBufferSlice = ComputeDataUniformBuffer.write {
-                totalVertices = primitive.vertices
-                uv1 = OverlayTexture.DEFAULT_UV
-                uv2 = task.light
+                totalVertices = primitive.vertices.toUInt()
+                uv1 = OverlayTexture.DEFAULT_UV.toUInt()
+                uv2 = task.light.toUInt()
             }
             skinBuffer?.let { skinBuffer ->
                 skinModelIndicesBufferSlice = SkinModelIndicesUniformBuffer.write {
