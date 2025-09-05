@@ -117,7 +117,7 @@ class ComputeShaderTransformRenderer private constructor() :
     companion object Type : Renderer.Type<ComputeShaderTransformRenderer, Type>() {
         override val isAvailable: Boolean by lazy {
             val device = RenderSystem.getDevice()
-            device.supportSsbo && device.supportComputeShader && device.supportMemoryBarrier
+            device.supportSsbo && device.supportComputeShader && device.supportMemoryBarrier && device.supportShaderPacking
         }
 
         override val supportScheduling: Boolean
