@@ -26,7 +26,7 @@ object AnimationLoader {
         fun mapAnimationChannel(channel: AnimationChannel<*, *>): AnimationChannelItem<*, *>? {
             return when (channel.type) {
                 AnimationChannel.Type.Translation -> {
-                    val data = channel.data as AnimationChannel.Type.TransformData
+                    val data = channel.typeData as AnimationChannel.Type.TransformData
                     TranslationItem(
                         index = data.node.findTargetTransformIndex() ?: return null,
                         transformId = data.transformId,
@@ -35,7 +35,7 @@ object AnimationLoader {
                 }
 
                 AnimationChannel.Type.Scale -> {
-                    val data = channel.data as AnimationChannel.Type.TransformData
+                    val data = channel.typeData as AnimationChannel.Type.TransformData
                     ScaleItem(
                         index = data.node.findTargetTransformIndex() ?: return null,
                         transformId = data.transformId,
@@ -44,7 +44,7 @@ object AnimationLoader {
                 }
 
                 AnimationChannel.Type.Rotation -> {
-                    val data = channel.data as AnimationChannel.Type.TransformData
+                    val data = channel.typeData as AnimationChannel.Type.TransformData
                     RotationItem(
                         index = data.node.findTargetTransformIndex() ?: return null,
                         transformId = data.transformId,
@@ -53,7 +53,7 @@ object AnimationLoader {
                 }
 
                 AnimationChannel.Type.Morph -> {
-                    val data = channel.data as AnimationChannel.Type.MorphData
+                    val data = channel.typeData as AnimationChannel.Type.MorphData
                     MorphItem(
                         primitiveIndex = data.nodeData.findTargetTransformIndex() ?: return null,
                         targetGroupIndex = data.targetMorphGroupIndex,
@@ -64,7 +64,7 @@ object AnimationLoader {
                 AnimationChannel.Type.Expression -> {
                     val channel =
                         channel as AnimationChannel<MutableFloat, AnimationChannel.Type.ExpressionData>
-                    val data = channel.data
+                    val data = channel.typeData
                     scene.expressions.firstOrNull { (it.name != null && it.name == data.name) || (it.tag != null && it.tag == data.tag) }
                         ?.let { ExpressionItem(it, channel) }
                         ?: scene.expressionGroups.firstOrNull { (it.name != null && it.name == data.name) || (it.tag != null && it.tag == data.tag) }
@@ -72,7 +72,7 @@ object AnimationLoader {
                 }
 
                 AnimationChannel.Type.CameraFov -> {
-                    val data = channel.data as AnimationChannel.Type.CameraData
+                    val data = channel.typeData as AnimationChannel.Type.CameraData
                     val cameraIndex =
                         scene.cameras.indexOfFirst { it.camera.name == data.cameraName }.takeIf { it >= 0 }
                             ?: return null
@@ -83,7 +83,7 @@ object AnimationLoader {
                 }
 
                 AnimationChannel.Type.MMDCameraDistance -> {
-                    val data = channel.data as AnimationChannel.Type.CameraData
+                    val data = channel.typeData as AnimationChannel.Type.CameraData
                     val cameraIndex =
                         scene.cameras.indexOfFirst { it.camera.name == data.cameraName }.takeIf { it >= 0 }
                             ?: return null
@@ -94,7 +94,7 @@ object AnimationLoader {
                 }
 
                 AnimationChannel.Type.MMDCameraRotation -> {
-                    val data = channel.data as AnimationChannel.Type.CameraData
+                    val data = channel.typeData as AnimationChannel.Type.CameraData
                     val cameraIndex =
                         scene.cameras.indexOfFirst { it.camera.name == data.cameraName }.takeIf { it >= 0 }
                             ?: return null
@@ -105,7 +105,7 @@ object AnimationLoader {
                 }
 
                 AnimationChannel.Type.MMDCameraTarget -> {
-                    val data = channel.data as AnimationChannel.Type.CameraData
+                    val data = channel.typeData as AnimationChannel.Type.CameraData
                     val cameraIndex =
                         scene.cameras.indexOfFirst { it.camera.name == data.cameraName }.takeIf { it >= 0 }
                             ?: return null
@@ -119,6 +119,7 @@ object AnimationLoader {
 
         return AnimationItem(
             name = animation.name,
+            animation = animation,
             channels = animation.channels.mapNotNull(::mapAnimationChannel)
         )
     }

@@ -15,8 +15,10 @@ import top.fifthlight.armorstand.state.ModelInstanceManager
 import top.fifthlight.armorstand.ui.state.AnimationScreenState
 import top.fifthlight.blazerod.animation.AnimationItem
 import top.fifthlight.blazerod.animation.AnimationLoader
+import top.fifthlight.blazerod.animation.context.BaseAnimationContext
 import top.fifthlight.blazerod.model.ModelFileLoaders
 import top.fifthlight.blazerod.model.ModelInstance
+import top.fifthlight.blazerod.model.animation.SimpleAnimationState
 import java.lang.ref.WeakReference
 
 class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
@@ -25,7 +27,6 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(AnimationViewModel::class.java)
-        var playSpeed = MutableStateFlow(1.0)
     }
 
     init {
@@ -54,26 +55,23 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
 
     fun togglePlay() {
         val instanceItem = getInstanceItem() ?: return
-        val controller = (instanceItem.controller as? ModelController.Predefined) ?: return
-        val timeline = controller.timeline
-        if (timeline.isPlaying) {
-            timeline.pause(System.nanoTime())
-        } else {
-            timeline.play(System.nanoTime())
-        }
+        val controller = (instanceItem.controller as? ModelController.AnimatedModelController) ?: return
+        val animationState = (controller.animationState as? SimpleAnimationState) ?: return
+        animationState.paused = !animationState.paused
     }
 
-    fun updatePlaySpeed(speed: Double) {
-        playSpeed.value = speed
+    fun updatePlaySpeed(speed: Float) {
         val instanceItem = getInstanceItem() ?: return
-        val controller = (instanceItem.controller as? ModelController.Predefined) ?: return
-        controller.timeline.setSpeed(System.nanoTime(), speed)
+        val controller = (instanceItem.controller as? ModelController.AnimatedModelController) ?: return
+        val animationState = (controller.animationState as? SimpleAnimationState) ?: return
+        animationState.speed = speed
     }
 
-    fun updateProgress(progress: Double) {
+    fun updateProgress(progress: Float) {
         val instanceItem = getInstanceItem() ?: return
-        val controller = (instanceItem.controller as? ModelController.Predefined) ?: return
-        controller.timeline.seek(System.nanoTime(), progress)
+        val controller = (instanceItem.controller as? ModelController.AnimatedModelController) ?: return
+        val animationState = (controller.animationState as? SimpleAnimationState) ?: return
+        animationState.seek(progress)
     }
 
     private var prevAnimations = WeakReference<List<AnimationItem>>(null)
@@ -94,7 +92,7 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
                 state.copy(embedAnimations = animations.mapIndexed { index, animation ->
                     AnimationScreenState.AnimationItem(
                         name = animation.name,
-                        duration = animation.duration.toDouble(),
+                        duration = animation.duration,
                         source = AnimationScreenState.AnimationItem.Source.Embed(index),
                     )
                 })
@@ -114,18 +112,20 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
             }
         }
         when (val controller = instanceItem.controller) {
-            is ModelController.Predefined -> {
-                val timeline = controller.timeline
-                val progress = timeline.getCurrentTime(System.nanoTime())
-                val playState = if (timeline.isPlaying) {
-                    AnimationScreenState.PlayState.Playing(
-                        progress = progress,
-                        length = timeline.duration,
-                    )
-                } else {
+            is ModelController.AnimatedModelController -> {
+                val animationState = (controller.animationState as? SimpleAnimationState) ?: return
+                val progress = animationState.getTime()
+                val playState = if (animationState.paused) {
                     AnimationScreenState.PlayState.Paused(
                         progress = progress,
-                        length = timeline.duration,
+                        length = animationState.duration,
+                        speed = animationState.speed,
+                    )
+                } else {
+                    AnimationScreenState.PlayState.Playing(
+                        progress = progress,
+                        length = animationState.duration,
+                        speed = animationState.speed,
                     )
                 }
                 _uiState.getAndUpdate {
@@ -148,7 +148,7 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
                 val index = source.index
                 val animation = instanceItem.animations[index]
                 instanceItem.instance.clearTransform()
-                instanceItem.controller = ModelController.Predefined(animation)
+                instanceItem.controller = ModelController.Predefined(BaseAnimationContext.instance, animation)
             }
 
             is AnimationScreenState.AnimationItem.Source.External -> {
@@ -160,7 +160,7 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
                         val animation = result?.animations?.firstOrNull() ?: error("No animation in file")
                         val animationItem = AnimationLoader.load(instanceItem.instance.scene, animation)
                         instanceItem.instance.clearTransform()
-                        instanceItem.controller = ModelController.Predefined(animationItem)
+                        instanceItem.controller = ModelController.Predefined(BaseAnimationContext.instance, animationItem)
                     } catch (ex: Throwable) {
                         logger.warn("Failed to load animation", ex)
                     }

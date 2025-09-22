@@ -156,7 +156,7 @@ class VmdLoader : ModelFileLoader {
         }
     }
 
-    private fun loadBone(buffer: ByteBuffer): List<AnimationChannel<*, *>> {
+    private fun loadBone(buffer: ByteBuffer): List<KeyFrameAnimationChannel<*, *>> {
         val channels = mutableMapOf<String, BoneChannel>()
         val boneKeyframeCount = buffer.getInt()
 
@@ -190,9 +190,9 @@ class VmdLoader : ModelFileLoader {
         return channels.flatMap { (name, channel) ->
             val channelData = channel.toData()
             listOf(
-                SimpleAnimationChannel(
+                KeyFrameAnimationChannel(
                     type = AnimationChannel.Type.Translation,
-                    data = AnimationChannel.Type.TransformData(
+                    typeData = AnimationChannel.Type.TransformData(
                         node = AnimationChannel.Type.NodeData(
                             targetNode = null,
                             targetNodeName = name,
@@ -207,9 +207,9 @@ class VmdLoader : ModelFileLoader {
                     components = listOf(channelData.translationCurve),
                     defaultValue = ::Vector3f,
                 ),
-                SimpleAnimationChannel(
+                KeyFrameAnimationChannel(
                     type = AnimationChannel.Type.Rotation,
-                    data = AnimationChannel.Type.TransformData(
+                    typeData = AnimationChannel.Type.TransformData(
                         node = AnimationChannel.Type.NodeData(
                             targetNode = null,
                             targetNodeName = name,
@@ -252,7 +252,7 @@ class VmdLoader : ModelFileLoader {
         }
     }
 
-    private fun loadFace(buffer: ByteBuffer): List<AnimationChannel<*, *>> {
+    private fun loadFace(buffer: ByteBuffer): List<KeyFrameAnimationChannel<*, *>> {
         val channels = mutableMapOf<String, WeightChannel>()
         val faceKeyframeCount = buffer.getInt()
         repeat(faceKeyframeCount) {
@@ -269,7 +269,7 @@ class VmdLoader : ModelFileLoader {
         return channels.flatMap { (name, channel) ->
             val (indexer, data) = channel.toData()
             listOf(
-                SimpleAnimationChannel(
+                KeyFrameAnimationChannel(
                     type = AnimationChannel.Type.Expression,
                     data = AnimationChannel.Type.ExpressionData(name = name),
                     indexer = indexer,
@@ -280,7 +280,7 @@ class VmdLoader : ModelFileLoader {
         }
     }
 
-    private fun loadCamera(buffer: ByteBuffer): List<AnimationChannel<*, *>> {
+    private fun loadCamera(buffer: ByteBuffer): List<KeyFrameAnimationChannel<*, *>> {
         val cameraKeyframeCount = buffer.getInt().takeIf { it > 0 } ?: return emptyList()
         val frameList = IntArrayList()
         val distanceList = FloatArrayList()
@@ -364,9 +364,9 @@ class VmdLoader : ModelFileLoader {
         }
 
         return listOf(
-            SimpleAnimationChannel(
+            KeyFrameAnimationChannel(
                 type = AnimationChannel.Type.MMDCameraDistance,
-                data = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
+                typeData = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
                 indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
                 keyframeData = AnimationKeyFrameData.ofFloat(sortedDistanceList, 1),
                 components = listOf(
@@ -381,9 +381,9 @@ class VmdLoader : ModelFileLoader {
                 interpolator = VmdBezierFloatInterpolator(),
                 defaultValue = ::MutableFloat,
             ),
-            SimpleAnimationChannel(
+            KeyFrameAnimationChannel(
                 type = AnimationChannel.Type.MMDCameraTarget,
-                data = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
+                typeData = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
                 indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
                 keyframeData = AnimationKeyFrameData.ofVector3f(sortedPositionList, 1),
                 components = listOf(
@@ -398,9 +398,9 @@ class VmdLoader : ModelFileLoader {
                 interpolator = VmdBezierVector3fInterpolator(),
                 defaultValue = ::Vector3f,
             ),
-            SimpleAnimationChannel(
+            KeyFrameAnimationChannel(
                 type = AnimationChannel.Type.MMDCameraRotation,
-                data = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
+                typeData = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
                 indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
                 keyframeData = AnimationKeyFrameData.ofVector3f(sortedRotationList, 1),
                 components = listOf(
@@ -415,9 +415,9 @@ class VmdLoader : ModelFileLoader {
                 interpolator = VmdBezierSimpleVector3fInterpolator(),
                 defaultValue = ::Vector3f,
             ),
-            SimpleAnimationChannel(
+            KeyFrameAnimationChannel(
                 type = AnimationChannel.Type.CameraFov,
-                data = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
+                typeData = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
                 indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
                 keyframeData = AnimationKeyFrameData.ofFloat(sortedFovList, 1),
                 components = listOf(
@@ -452,7 +452,7 @@ class VmdLoader : ModelFileLoader {
         return ModelFileLoader.LoadResult(
             metadata = null,
             model = null,
-            animations = listOf(Animation(channels = boneChannels + faceChannels + cameraChannels)),
+            animations = listOf(SimpleAnimation(channels = boneChannels + faceChannels + cameraChannels)),
         )
     }
 

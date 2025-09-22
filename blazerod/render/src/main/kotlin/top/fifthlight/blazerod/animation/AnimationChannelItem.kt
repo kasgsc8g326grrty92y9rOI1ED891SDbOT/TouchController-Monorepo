@@ -5,6 +5,8 @@ import org.joml.Vector3f
 import top.fifthlight.blazerod.model.ModelInstance
 import top.fifthlight.blazerod.model.TransformId
 import top.fifthlight.blazerod.model.animation.AnimationChannel
+import top.fifthlight.blazerod.model.animation.AnimationContext
+import top.fifthlight.blazerod.model.animation.AnimationState
 import top.fifthlight.blazerod.model.resource.CameraTransform
 import top.fifthlight.blazerod.model.resource.RenderExpression
 import top.fifthlight.blazerod.model.resource.RenderExpressionGroup
@@ -13,7 +15,7 @@ import top.fifthlight.blazerod.model.util.MutableFloat
 sealed class AnimationChannelItem<T : Any, D>(
     val channel: AnimationChannel<T, D>
 ) {
-    abstract fun apply(instance: ModelInstance, time: Float)
+    abstract fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState)
 
     class TranslationItem(
         private val index: Int,
@@ -24,9 +26,9 @@ sealed class AnimationChannelItem<T : Any, D>(
             require(channel.type == AnimationChannel.Type.Translation) { "Unmatched animation channel: want translation, but got ${channel.type}" }
         }
 
-        override fun apply(instance: ModelInstance, time: Float) {
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
             instance.setTransformDecomposed(index, transformId) {
-                channel.getKeyFrameData(time, translation)
+                channel.getData(context, state, translation)
             }
         }
     }
@@ -40,9 +42,9 @@ sealed class AnimationChannelItem<T : Any, D>(
             require(channel.type == AnimationChannel.Type.Scale) { "Unmatched animation channel: want scale, but got ${channel.type}" }
         }
 
-        override fun apply(instance: ModelInstance, time: Float) {
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
             instance.setTransformDecomposed(index, transformId) {
-                channel.getKeyFrameData(time, scale)
+                channel.getData(context, state, scale)
             }
         }
     }
@@ -56,9 +58,9 @@ sealed class AnimationChannelItem<T : Any, D>(
             require(channel.type == AnimationChannel.Type.Rotation) { "Unmatched animation channel: want rotation, but got ${channel.type}" }
         }
 
-        override fun apply(instance: ModelInstance, time: Float) {
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
             instance.setTransformDecomposed(index, transformId) {
-                channel.getKeyFrameData(time, rotation)
+                channel.getData(context, state, rotation)
                 rotation.normalize()
             }
         }
@@ -71,8 +73,8 @@ sealed class AnimationChannelItem<T : Any, D>(
     ) : AnimationChannelItem<MutableFloat, AnimationChannel.Type.MorphData>(channel) {
         private val data = MutableFloat()
 
-        override fun apply(instance: ModelInstance, time: Float) {
-            channel.getKeyFrameData(time, data)
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
+            channel.getData(context, state, data)
             instance.setGroupWeight(primitiveIndex, targetGroupIndex, data.value)
         }
     }
@@ -91,8 +93,8 @@ sealed class AnimationChannelItem<T : Any, D>(
     ) : AnimationChannelItem<MutableFloat, AnimationChannel.Type.ExpressionData>(channel) {
         private val data = MutableFloat()
 
-        override fun apply(instance: ModelInstance, time: Float) {
-            channel.getKeyFrameData(time, data)
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
+            channel.getData(context, state, data)
             expression.apply(instance, data.value)
         }
     }
@@ -103,8 +105,8 @@ sealed class AnimationChannelItem<T : Any, D>(
     ) : AnimationChannelItem<MutableFloat, AnimationChannel.Type.ExpressionData>(channel) {
         private val data = MutableFloat()
 
-        override fun apply(instance: ModelInstance, time: Float) {
-            channel.getKeyFrameData(time, data)
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
+            channel.getData(context, state, data)
             for (item in group.items) {
                 val expression = instance.scene.expressions[item.expressionIndex]
                 expression.apply(instance, data.value * item.influence)
@@ -118,10 +120,9 @@ sealed class AnimationChannelItem<T : Any, D>(
     ) : AnimationChannelItem<MutableFloat, AnimationChannel.Type.CameraData>(channel) {
         private val data = MutableFloat()
 
-        override fun apply(instance: ModelInstance, time: Float) {
-            channel.getKeyFrameData(time, data)
-            val camera = instance.modelData.cameraTransforms[cameraIndex]
-            when (camera) {
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
+            channel.getData(context, state, data)
+            when (val camera = instance.modelData.cameraTransforms[cameraIndex]) {
                 is CameraTransform.MMD -> camera.fov = data.value
                 is CameraTransform.Perspective -> camera.yfov = data.value
                 else -> Unit
@@ -135,8 +136,8 @@ sealed class AnimationChannelItem<T : Any, D>(
     ) : AnimationChannelItem<MutableFloat, AnimationChannel.Type.CameraData>(channel) {
         private val data = MutableFloat()
 
-        override fun apply(instance: ModelInstance, time: Float) {
-            channel.getKeyFrameData(time, data)
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
+            channel.getData(context, state, data)
             val camera = instance.modelData.cameraTransforms[cameraIndex] as? CameraTransform.MMD ?: return
             camera.distance = data.value
         }
@@ -146,9 +147,9 @@ sealed class AnimationChannelItem<T : Any, D>(
         val cameraIndex: Int,
         channel: AnimationChannel<Vector3f, AnimationChannel.Type.CameraData>,
     ) : AnimationChannelItem<Vector3f, AnimationChannel.Type.CameraData>(channel) {
-        override fun apply(instance: ModelInstance, time: Float) {
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
             val camera = instance.modelData.cameraTransforms[cameraIndex] as? CameraTransform.MMD ?: return
-            channel.getKeyFrameData(time, camera.targetPosition)
+            channel.getData(context, state, camera.targetPosition)
         }
     }
 
@@ -156,9 +157,9 @@ sealed class AnimationChannelItem<T : Any, D>(
         val cameraIndex: Int,
         channel: AnimationChannel<Vector3f, AnimationChannel.Type.CameraData>,
     ) : AnimationChannelItem<Vector3f, AnimationChannel.Type.CameraData>(channel) {
-        override fun apply(instance: ModelInstance, time: Float) {
+        override fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) {
             val camera = instance.modelData.cameraTransforms[cameraIndex] as? CameraTransform.MMD ?: return
-            channel.getKeyFrameData(time, camera.rotationEulerAngles)
+            channel.getData(context, state, camera.rotationEulerAngles)
         }
     }
 }

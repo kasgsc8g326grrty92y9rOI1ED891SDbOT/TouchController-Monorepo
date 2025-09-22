@@ -6,21 +6,21 @@ import net.minecraft.entity.EntityType
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 import top.fifthlight.armorstand.extension.internal.PlayerEntityRenderStateExtInternal
-import top.fifthlight.armorstand.ui.model.AnimationViewModel
 import top.fifthlight.armorstand.util.toRadian
 import top.fifthlight.armorstand.vmc.VmcMarionetteManager
 import top.fifthlight.blazerod.animation.AnimationItem
-import top.fifthlight.blazerod.animation.Timeline
 import top.fifthlight.blazerod.model.*
+import top.fifthlight.blazerod.model.animation.AnimationContext
+import top.fifthlight.blazerod.model.animation.AnimationState
 import top.fifthlight.blazerod.model.resource.RenderExpression
 import top.fifthlight.blazerod.model.resource.RenderExpressionGroup
 import java.util.*
 import kotlin.math.PI
 import kotlin.math.sin
 
-sealed class ModelController {
-    open fun update(uuid: UUID, vanillaState: PlayerEntityRenderState) = Unit
-    abstract fun apply(instance: ModelInstance)
+sealed interface ModelController {
+    fun update(uuid: UUID, vanillaState: PlayerEntityRenderState, context: AnimationContext) = Unit
+    fun apply(context: AnimationContext, instance: ModelInstance)
 
     private class JointItem(
         private val nodeIndex: Int,
@@ -109,19 +109,21 @@ sealed class ModelController {
         private val center: JointItem?,
         private val head: JointItem?,
         private val blinkExpression: ExpressionItem?,
-    ) : ModelController() {
+    ) : ModelController {
         private var bodyYaw: Float = 0f
         private var headYaw: Float = 0f
         private var headPitch: Float = 0f
         private var blinkProgress: Float = 0f
 
-        constructor(scene: RenderScene) : this(
+        constructor(
+            scene: RenderScene,
+        ) : this(
             center = scene.getBone(HumanoidTag.HIPS),
             head = scene.getBone(HumanoidTag.HEAD),
             blinkExpression = scene.getExpression(Expression.Tag.BLINK),
         )
 
-        override fun update(uuid: UUID, vanillaState: PlayerEntityRenderState) {
+        override fun update(uuid: UUID, vanillaState: PlayerEntityRenderState, context: AnimationContext) {
             bodyYaw = MathHelper.PI - vanillaState.bodyYaw.toRadian()
             headYaw = -vanillaState.relativeHeadYaw.toRadian()
             headPitch = -vanillaState.pitch.toRadian()
@@ -133,7 +135,7 @@ sealed class ModelController {
             )
         }
 
-        override fun apply(instance: ModelInstance) {
+        override fun apply(context: AnimationContext, instance: ModelInstance) {
             center?.update(instance) {
                 rotation.rotationY(bodyYaw)
             }
@@ -144,87 +146,89 @@ sealed class ModelController {
         }
     }
 
-    class Predefined(
-        private val animation: AnimationItem,
-    ) : ModelController() {
-        val timeline: Timeline = Timeline(
-            duration = animation.duration.toDouble(),
-            speed = AnimationViewModel.playSpeed.value,
-            loop = true,
-        ).also { timeline ->
-            timeline.play(System.nanoTime())
-        }
+    interface AnimatedModelController : ModelController {
+        val animationState: AnimationState
+    }
 
-        override fun apply(instance: ModelInstance) {
-            val time = timeline.getCurrentTime(System.nanoTime())
-            animation.apply(instance, time.toFloat())
+    class Predefined(
+        context: AnimationContext,
+        private val animation: AnimationItem,
+    ) : AnimatedModelController {
+        override val animationState: AnimationState = animation.createState(context)
+
+        override fun apply(context: AnimationContext, instance: ModelInstance) {
+            animationState.updateTime(context)
+            animation.apply(instance, context, animationState)
         }
     }
 
     class LiveSwitched private constructor(
+        context: AnimationContext,
         private val animationSet: FullAnimationSet,
         private val head: JointItem?,
         private val blinkExpression: ExpressionItem?,
-    ) : ModelController() {
+    ) : AnimatedModelController {
         constructor(
+            context: AnimationContext,
             scene: RenderScene,
             animationSet: FullAnimationSet,
         ) : this(
+            context = context,
             animationSet = animationSet,
             head = scene.getBone(HumanoidTag.HEAD),
             blinkExpression = scene.getExpression(Expression.Tag.BLINK),
         )
 
-        sealed class State {
+        sealed class PlayState {
             abstract fun getItem(set: FullAnimationSet): AnimationItem
             open val loop: Boolean = true
 
-            data object Idle : State() {
+            data object Idle : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.idle
             }
 
-            data object Walking : State() {
+            data object Walking : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.walk
             }
 
-            data object ElytraFly : State() {
+            data object ElytraFly : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.elytraFly
             }
 
-            data object Swimming : State() {
+            data object Swimming : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.swim
             }
 
-            data object Sleeping : State() {
+            data object Sleeping : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.sleep
             }
 
-            data object Riding : State() {
+            data object Riding : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.ride
             }
 
-            data object OnHorse : State() {
+            data object OnHorse : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.onHorse
             }
 
-            data object Dying : State() {
+            data object Dying : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.die
                 override val loop: Boolean
                     get() = false
             }
 
-            data object Sprinting : State() {
+            data object Sprinting : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.sprint
             }
 
-            data object Sneaking : State() {
+            data object Sneaking : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.sneak
             }
         }
 
-        private var state: State = State.Idle
+        private var playState: PlayState = PlayState.Idle
+        override var animationState: AnimationState = playState.getItem(animationSet).createState(context)
         private var item: AnimationItem? = null
-        private var timeline: Timeline? = null
         private var reset = false
         private var bodyYaw: Float = 0f
         private var headYaw: Float = 0f
@@ -250,25 +254,29 @@ sealed class ModelController {
             )
         }
 
-        private fun getState(vanillaState: PlayerEntityRenderState): State = when {
-            vanillaState.vehicleType in horseEntityTypes -> State.OnHorse
-            vanillaState.vehicleType != null -> State.Riding
-            vanillaState.isDead -> State.Dying
-            vanillaState.pose == EntityPose.CROUCHING -> State.Sneaking
-            vanillaState.pose == EntityPose.GLIDING -> State.ElytraFly
-            vanillaState.pose == EntityPose.SLEEPING -> State.Sleeping
-            vanillaState.pose == EntityPose.SWIMMING -> State.Swimming
+        private fun getState(vanillaState: PlayerEntityRenderState): PlayState = when {
+            vanillaState.vehicleType in horseEntityTypes -> PlayState.OnHorse
+            vanillaState.vehicleType != null -> PlayState.Riding
+            vanillaState.isDead -> PlayState.Dying
+            vanillaState.pose == EntityPose.CROUCHING -> PlayState.Sneaking
+            vanillaState.pose == EntityPose.GLIDING -> PlayState.ElytraFly
+            vanillaState.pose == EntityPose.SLEEPING -> PlayState.Sleeping
+            vanillaState.pose == EntityPose.SWIMMING -> PlayState.Swimming
 
             else -> if (vanillaState.isSprinting) {
-                State.Sprinting
+                PlayState.Sprinting
             } else if (vanillaState.limbSwingSpeed > .4f) {
-                State.Walking
+                PlayState.Walking
             } else {
-                State.Idle
+                PlayState.Idle
             }
         }
 
-        override fun update(uuid: UUID, vanillaState: PlayerEntityRenderState) {
+        override fun update(
+            uuid: UUID,
+            vanillaState: PlayerEntityRenderState,
+            context: AnimationContext,
+        ) {
             val sleepingDirection = vanillaState.sleepingDirection
             bodyYaw = if (vanillaState.isInPose(EntityPose.SLEEPING) && sleepingDirection != null) {
                 when (sleepingDirection) {
@@ -290,33 +298,25 @@ sealed class ModelController {
                 currentTime = System.nanoTime(),
             )
             val newState = getState(vanillaState)
-            if (newState != state) {
-                this.state = newState
+            if (newState != playState) {
+                this.playState = newState
             }
             val newItem = newState.getItem(animationSet)
-            if (newItem != item || timeline == null) {
-                timeline = Timeline(
-                    duration = newItem.duration.toDouble(),
-                    speed = AnimationViewModel.playSpeed.value,
-                    loop = true,
-                ).apply {
-                    setLoop(newState.loop)
-                    play(System.nanoTime())
-                }
+            if (newItem != item) {
+                animationState = newItem.createState(context)
                 item = newItem
                 reset = true
             }
+            animationState.updateTime(context)
         }
 
-        override fun apply(instance: ModelInstance) {
-            val timeline = timeline ?: return
+        override fun apply(context: AnimationContext, instance: ModelInstance) {
             val item = item ?: return
             if (reset) {
                 instance.clearTransform()
                 reset = false
             }
-            val time = timeline.getCurrentTime(System.nanoTime())
-            item.apply(instance, time.toFloat())
+            item.apply(instance, context, animationState)
             instance.setTransformDecomposed(instance.scene.rootNode.nodeIndex, TransformId.RELATIVE_ANIMATION) {
                 rotation.rotationY(bodyYaw)
             }
@@ -329,11 +329,11 @@ sealed class ModelController {
 
     class Vmc(
         private val scene: RenderScene,
-    ) : ModelController() {
+    ) : ModelController {
         private val bones = mutableMapOf<HumanoidTag, Optional<JointItem>>()
         private val expressions = mutableMapOf<Expression.Tag, Optional<ExpressionItem>>()
 
-        override fun apply(instance: ModelInstance) {
+        override fun apply(context: AnimationContext, instance: ModelInstance) {
             val state = VmcMarionetteManager.getState() ?: return
             state.rootTransform?.let {
                 instance.setTransformDecomposed(scene.rootNode.nodeIndex, TransformId.ABSOLUTE) {

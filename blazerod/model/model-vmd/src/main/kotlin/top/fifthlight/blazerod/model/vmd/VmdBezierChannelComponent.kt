@@ -3,6 +3,7 @@ package top.fifthlight.blazerod.model.vmd
 import it.unimi.dsi.fastutil.bytes.ByteList
 import top.fifthlight.blazerod.model.animation.AnimationChannel
 import top.fifthlight.blazerod.model.animation.AnimationChannelComponent
+import top.fifthlight.blazerod.model.animation.KeyFrameAnimationChannel
 import kotlin.math.abs
 
 private object VmdBezierResolver {
@@ -79,6 +80,7 @@ class VmdBezierChannelComponent(
         get() = VmdBezierChannelComponentType
 
     override fun onAttachToChannel(channel: AnimationChannel<*, *>) {
+        val channel = (channel as? KeyFrameAnimationChannel) ?: error("VMD bezier channel must be attached to a keyframe animation channel")
         val interpolator = channel.interpolator
         if (interpolator is VmdBezierInterpolator) {
             interpolator.attachComponent(this)

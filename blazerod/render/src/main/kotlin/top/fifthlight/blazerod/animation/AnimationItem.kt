@@ -1,15 +1,21 @@
 package top.fifthlight.blazerod.animation
 
 import top.fifthlight.blazerod.model.ModelInstance
-import kotlin.math.min
+import top.fifthlight.blazerod.model.animation.Animation
+import top.fifthlight.blazerod.model.animation.AnimationContext
+import top.fifthlight.blazerod.model.animation.AnimationState
 
 data class AnimationItem(
     val name: String? = null,
+    val animation: Animation,
     val channels: List<AnimationChannelItem<*, *>>,
 ) {
-    val duration: Float = channels.takeIf { it.isNotEmpty() }?.maxOf { it.channel.duration } ?: 0f
+    val duration
+        get() = animation.duration
 
-    fun apply(instance: ModelInstance, time: Float) = channels.forEach {
-        it.apply(instance, min(time, duration))
+    fun createState(context: AnimationContext) = animation.createState(context)
+
+    fun apply(instance: ModelInstance, context: AnimationContext, state: AnimationState) = channels.forEach {
+        it.apply(instance, context, state)
     }
 }

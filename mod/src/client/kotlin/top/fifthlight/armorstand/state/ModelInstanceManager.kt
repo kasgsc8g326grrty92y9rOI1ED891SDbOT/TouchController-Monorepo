@@ -10,6 +10,7 @@ import top.fifthlight.armorstand.manage.ModelManagerHolder
 import top.fifthlight.armorstand.vmc.VmcMarionetteManager
 import top.fifthlight.blazerod.animation.AnimationItem
 import top.fifthlight.blazerod.animation.AnimationLoader
+import top.fifthlight.blazerod.animation.context.BaseAnimationContext
 import top.fifthlight.blazerod.model.Metadata
 import top.fifthlight.blazerod.model.ModelFileLoaders
 import top.fifthlight.blazerod.model.ModelInstance
@@ -190,8 +191,8 @@ object ModelInstanceManager {
                         val animation = cache.animations.firstOrNull()
                         when {
                             isSelf && vmcRunning -> ModelController.Vmc(scene)
-                            animationSet != null -> ModelController.LiveSwitched(scene, animationSet)
-                            animation != null -> ModelController.Predefined(animation)
+                            animationSet != null -> ModelController.LiveSwitched(BaseAnimationContext.instance, scene, animationSet)
+                            animation != null -> ModelController.Predefined(BaseAnimationContext.instance, animation)
                             else -> ModelController.LiveUpdated(scene)
                         }
                     },

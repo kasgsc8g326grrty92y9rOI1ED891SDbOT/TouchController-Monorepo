@@ -15,7 +15,7 @@ data class AnimationScreenState(
 
     data class AnimationItem(
         val name: String? = null,
-        val duration: Double? = null,
+        val duration: Float? = null,
         val source: Source,
     ) {
         sealed class Source {
@@ -28,13 +28,15 @@ data class AnimationScreenState(
         data object None : PlayState()
 
         data class Paused(
-            val progress: Double,
-            val length: Double,
+            val progress: Float,
+            val length: Float,
+            val speed: Float,
         ) : PlayState()
 
         data class Playing(
-            val progress: Double,
-            val length: Double,
+            val progress: Float,
+            val length: Float,
+            val speed: Float,
         ) : PlayState()
     }
 }

@@ -429,7 +429,7 @@ internal class GltfLoader(
 
     private fun loadAnimations() {
         animations = gltf.animations?.map { animation ->
-            Animation(
+            SimpleAnimation(
                 name = animation.name,
                 channels = animation.channels.mapNotNull { channel ->
                     val targetNodeId = channel.target.node ?: return@mapNotNull null
@@ -445,7 +445,7 @@ internal class GltfLoader(
                         ?: throw GltfLoadException("Bad animation sampler: unknown output accessor ${sampler.output}")
                     channel.target.path.check(outputAccessor)
                     when (channel.target.path) {
-                        GltfAnimationTarget.Path.TRANSLATION -> SimpleAnimationChannel(
+                        GltfAnimationTarget.Path.TRANSLATION -> KeyFrameAnimationChannel(
                             type = AnimationChannel.Type.Translation,
                             data = AnimationChannel.Type.TransformData(
                                 node = AnimationChannel.Type.NodeData(
@@ -464,7 +464,7 @@ internal class GltfLoader(
                             interpolation = sampler.interpolation,
                         )
 
-                        GltfAnimationTarget.Path.SCALE -> SimpleAnimationChannel(
+                        GltfAnimationTarget.Path.SCALE -> KeyFrameAnimationChannel(
                             type = AnimationChannel.Type.Scale,
                             data = AnimationChannel.Type.TransformData(
                                 node = AnimationChannel.Type.NodeData(
@@ -483,7 +483,7 @@ internal class GltfLoader(
                             interpolation = sampler.interpolation,
                         )
 
-                        GltfAnimationTarget.Path.ROTATION -> SimpleAnimationChannel(
+                        GltfAnimationTarget.Path.ROTATION -> KeyFrameAnimationChannel(
                             type = AnimationChannel.Type.Rotation,
                             data = AnimationChannel.Type.TransformData(
                                 node = AnimationChannel.Type.NodeData(

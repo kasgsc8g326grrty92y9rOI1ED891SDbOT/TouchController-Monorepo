@@ -11,6 +11,7 @@ import org.joml.Matrix4f
 import top.fifthlight.armorstand.config.ConfigHolder
 import top.fifthlight.armorstand.state.ModelInstanceManager
 import top.fifthlight.armorstand.util.RendererManager
+import top.fifthlight.blazerod.animation.context.BaseAnimationContext
 import top.fifthlight.blazerod.model.renderer.ScheduledRenderer
 import top.fifthlight.blazerod.model.resource.CameraTransform
 import top.fifthlight.blazerod.model.resource.RenderCamera
@@ -42,7 +43,7 @@ object PlayerRenderer {
         }
         val selectedIndex = selectedCameraIndex.value ?: return null
         val instance = entry.instance
-        entry.controller.apply(instance)
+        entry.controller.apply(BaseAnimationContext.instance, instance)
         instance.updateCamera()
 
         return instance.modelData.cameraTransforms.getOrNull(selectedIndex).also {
@@ -76,8 +77,8 @@ object PlayerRenderer {
         val controller = entry.controller
         val instance = entry.instance
 
-        controller.update(uuid, vanillaState)
-        controller.apply(instance)
+        controller.update(uuid, vanillaState, BaseAnimationContext.instance)
+        controller.apply(BaseAnimationContext.instance, instance)
         instance.updateRenderData()
 
         val backupItem = matrixStack.peek().copy()
