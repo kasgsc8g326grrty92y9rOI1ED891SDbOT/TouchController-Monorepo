@@ -61,6 +61,12 @@ Apache 2.0 许可证授权。
 
 捆绑了 [JavaOSC](https://github.com/hoijui/JavaOSC)（BSD-3-Clause）以提供 OSC/VMC 支持，在此感谢。
 
+感谢 [GeckoLib](https://github.com/bernie-g/geckolib)（MIT）提供了基岩版模型渲染逻辑的参考。
+
+捆绑了 [mocha](https://github.com/unnamed/mocha)（MIT）项目作为 molang 执行引擎，在此感谢。
+
+捆绑了 [Javassist](https://github.com/jboss-javassist/javassist)（MPL 1.1 或 LGPL 2.1-or-later 或 Apache 2.0）作为 mocha 的代码生成引擎，在此感谢。
+
 ## 许可证
 
 本 mod 以 LGPL 3.0 及以上版本授权，在发布和修改时请遵守许可证要求。
@@ -82,23 +88,32 @@ Currently, the mod is in early development, and supports the following features:
 - Support multiplayer (can synchronize model display, but won't support synchronizing model files)
 - Shader support (Change renderer in mod config to use shader)
 
-If you encounter any problems or have any ideas, please feel free to open an issue or discussion in the [issue area](https://github.com/fifth-light/ArmorStand/issues) and [discussion area](https://github.com/fifth-light/ArmorStand/discussions).
+If you encounter any problems or have any ideas, please feel free to open an issue or discussion in the
+[issue area](https://github.com/fifth-light/ArmorStand/issues) and
+[discussion area](https://github.com/fifth-light/ArmorStand/discussions).
 
 ## Usage
 
-First, you need to prepare a model. Before using any model, please check the copyright of the model to avoid copyright issues. Once you have prepared the model file, place it in the `models` directory to load it.
+First, you need to prepare a model. Before using any model, please check the copyright of the model to avoid copyright
+issues. Once you have prepared the model file, place it in the `models` directory to load it.
 
 In game, press `I` to open the mod settings, and choose the model you prepared.
 
-In game, press `K` to open the animation control interface, where you can load animation files (you also need to place them in the `models` directory), and control the animation speed and playback progress.
+In game, press `K` to open the animation control interface, where you can load animation files (you also need to place
+them in the `models` directory), and control the animation speed and playback progress.
 
 ## Multiplayer
 
-The mod supports multiplayer model synchronization. Before using it, please ensure that your server also has the mod installed (if the server does not have the mod, other players will not be able to see your model, but your own model can still be displayed).
+The mod supports multiplayer model synchronization. Before using it, please ensure that your server also has the mod
+installed (if the server does not have the mod, other players will not be able to see your model, but your own model can
+still be displayed).
 
-Considering distributing models causes copyright issues, the mod can not and will not support synchronizing model files. You need to ensure that other players will also place your model in the `models` directory, so that they can see your model.
+Considering distributing models causes copyright issues, the mod can not and will not support synchronizing model files.
+You need to ensure that other players will also place your model in the `models` directory, so that they can see your
+model.
 
-The mod uses the model's hash value to synchronize models, so you can rename the model, even put it in a subdirectory. As long as the model content does not change, you can see other players' models.
+The mod uses the model's hash value to synchronize models, so you can rename the model, even put it in a subdirectory.
+As long as the model content does not change, you can see other players' models.
 
 ## BlazeRod
 
@@ -121,19 +136,31 @@ which adds a ball-shaped block, as an example for model rendering of BlazeRod. D
 
 ## Acknowledgments
 
-Bundled [H2 database](https://www.h2database.com/)(MPL 2.0 or EPL 1.0), as model management feature's storage backend, thanks to them.
+Bundled [H2 database](https://www.h2database.com/)(MPL 2.0 or EPL 1.0), as model management feature's storage backend,
+thanks to them.
 
-Thanks for [Saba](https://github.com/benikabocha/saba)(MIT) project for providing reference for MMD (PMX/PMD/VMD format).
+Thanks for [Saba](https://github.com/benikabocha/saba)(MIT) project for providing reference of MMD (PMX/PMD/VMD format).
 
-Bundled animations from [KaiMyEntity-C](https://github.com/Gengorou-C/KAIMyEntity-C)(Author declared it don't need credits, allow to modify and
-to redistribute) as default animation, thanks to them.
+Bundled animations from [KaiMyEntity-C](https://github.com/Gengorou-C/KAIMyEntity-C)(Author declared it don't require
+credits, allow to modify and to redistribute) as default animation, thanks to them.
 
-The favorite icon is from [Cherished Worlds](https://github.com/illusivesoulworks/cherishedworlds)(LGPL 3.0 or later), thanks to them.
+The favorite icon is from [Cherished Worlds](https://github.com/illusivesoulworks/cherishedworlds)(LGPL 3.0 or later),
+thanks to them.
 
 Bundled [JavaOSC](https://github.com/hoijui/JavaOSC)(BSD-3-Clause) for providing OSC/VMC support, thanks to them.
 
+Thanks for [GeckoLib](https://github.com/bernie-g/geckolib)(MIT) project for providing reference of bedrock model
+rendering.
+
+Bundled [mocha](https://github.com/unnamed/mocha)(MIT) project as executing engine of molang, thanks to them.
+
+Bundled [Javassist](https://github.com/jboss-javassist/javassist)(MPL 1.1, LGPL 2.1-or-later or Apache 2.0) as code
+generation engine of mocha, thanks to them.
+
 ## License
 
-The mod is licensed under the LGPL 3.0 or later. Please comply with the license requirements when distributing and modifying.
+The mod is licensed under the LGPL 3.0 or later. Please comply with the license requirements when distributing and
+modifying.
 
-Although it is not required, if your work (such as videos, etc.) uses the mod, please declare that you are using the mod, and if possible, also include a link to the mod.
+Although it is not required, if your work (such as videos, etc.) uses the mod, please declare that you are using the
+mod, and if possible, also include a link to the mod.
