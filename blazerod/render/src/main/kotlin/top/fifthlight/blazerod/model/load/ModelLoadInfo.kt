@@ -73,6 +73,23 @@ sealed class MaterialLoadInfo {
         override val skinned: Boolean,
         override val morphed: Boolean,
     ) : MaterialLoadInfo()
+
+    data class Vanilla(
+        override val name: String?,
+        override val baseColor: RgbaColor,
+        override val baseColorTexture: TextureInfo?,
+        override val alphaMode: Material.AlphaMode,
+        override val alphaCutoff: Float,
+        override val doubleSided: Boolean,
+        override val skinned: Boolean,
+        override val morphed: Boolean,
+    ) : MaterialLoadInfo() {
+        override fun getVertexFormat(skinned: Boolean): VertexFormat = if (skinned) {
+            BlazerodVertexFormats.POSITION_COLOR_TEXTURE_NORMAL_JOINT_WEIGHT
+        } else {
+            BlazerodVertexFormats.POSITION_COLOR_TEXTURE_NORMAL
+        }
+    }
 }
 
 data class MorphTargetsLoadData<Info : Any>(
@@ -149,6 +166,7 @@ data class ModelLoadInfo<Texture : Any?, Index : Any, Vertex : Any, Morph : Any>
     val skins: List<RenderSkin>,
     val expressions: List<RenderExpression>,
     val expressionGroups: List<RenderExpressionGroup>,
+    val renderTransform: NodeTransform?,
 )
 
 typealias PreProcessModelLoadInfo = ModelLoadInfo<TextureLoadData?, IndexBufferLoadData, ByteBuffer, MorphTargetsLoadData<MorphTargetsLoadData.TargetInfo>>

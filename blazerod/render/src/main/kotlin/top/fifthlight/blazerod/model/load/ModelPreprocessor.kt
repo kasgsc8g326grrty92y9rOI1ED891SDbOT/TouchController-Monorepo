@@ -44,7 +44,7 @@ class ModelPreprocessor private constructor(
                     SkinJointData(
                         skinIndex = index,
                         jointIndex = jointIndex,
-                        humanoidTag = skin.jointHumanoidTags[jointIndex],
+                        humanoidTag = skin.jointHumanoidTags?.getOrNull(jointIndex),
                     )
                 )
             }
@@ -103,6 +103,17 @@ class ModelPreprocessor private constructor(
         )
 
         is Material.Unlit -> MaterialLoadInfo.Unlit(
+            name = material.name,
+            baseColor = material.baseColor,
+            baseColorTexture = loadTextureInfo(material.baseColorTexture),
+            alphaMode = material.alphaMode,
+            alphaCutoff = material.alphaCutoff,
+            doubleSided = material.doubleSided,
+            skinned = skinned,
+            morphed = morphed,
+        )
+
+        is Material.Vanilla -> MaterialLoadInfo.Vanilla(
             name = material.name,
             baseColor = material.baseColor,
             baseColorTexture = loadTextureInfo(material.baseColorTexture),
@@ -219,6 +230,19 @@ class ModelPreprocessor private constructor(
                         )
                     }
 
+                    VertexFormatElement.NORMAL -> {
+                        val srcAttribute = attributes.normal ?: continue
+                        VertexLoadUtil.copyAttributeData(
+                            vertices = vertices,
+                            stride = stride,
+                            element = element,
+                            normalized = true,
+                            srcAttribute = srcAttribute,
+                            dstBuffer = buffer,
+                            dstOffset = dstOffset,
+                        )
+                    }
+
                     VertexFormatElement.COLOR -> {
                         val srcAttribute = attributes.colors.firstOrNull()
                         if (srcAttribute != null) {
@@ -297,8 +321,7 @@ class ModelPreprocessor private constructor(
         }
 
         fun toLoadData(): MorphTargetsLoadData.TargetInfo {
-            buffer.position(buffer.capacity())
-            buffer.flip()
+            buffer.position(0)
             return MorphTargetsLoadData.TargetInfo(
                 buffer = buffer,
                 itemStride = itemStride,
@@ -413,6 +436,9 @@ class ModelPreprocessor private constructor(
         val skinned =
             skinIndex != null && primitive.attributes.joints.isNotEmpty() && primitive.attributes.weights.isNotEmpty()
         val morphed = primitive.targets.isNotEmpty()
+        if (primitive.material?.baseColor?.a == 0f) {
+            return null
+        }
         val material = primitive.material?.let {
             loadMaterial(
                 material = it,
@@ -482,7 +508,8 @@ class ModelPreprocessor private constructor(
                 node.components.forEach { component ->
                     when (component) {
                         is NodeComponent.MeshComponent -> {
-                            val skinIndex = model.skins.indexOf(node.skinComponent?.skin).takeIf { it >= 0 }
+                            val skin = node.meshIdToSkinMap[component.mesh.id]
+                            val skinIndex = skin?.skin?.let { skin -> model.skins.indexOf(skin) }?.takeIf { it >= 0 }
                             addAll(
                                 loadMesh(
                                     node = node,
@@ -597,7 +624,7 @@ class ModelPreprocessor private constructor(
             nodeId = null,
             nodeName = "Root node",
             humanoidTags = listOf(),
-            transform = scene.initialTransform,
+            transform = null,
             components = listOf(),
             childrenIndices = scene.nodes.map { loadNode(it) },
         )
@@ -615,6 +642,7 @@ class ModelPreprocessor private constructor(
             morphTargetInfos = morphTargetInfos,
             expressions = expressions,
             expressionGroups = expressionGroups,
+            renderTransform = scene.transform,
         )
     }
 

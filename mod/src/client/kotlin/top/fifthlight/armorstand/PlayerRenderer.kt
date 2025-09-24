@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.network.AbstractClientPlayerEntity
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState
 import net.minecraft.client.util.math.MatrixStack
@@ -11,7 +12,7 @@ import org.joml.Matrix4f
 import top.fifthlight.armorstand.config.ConfigHolder
 import top.fifthlight.armorstand.state.ModelInstanceManager
 import top.fifthlight.armorstand.util.RendererManager
-import top.fifthlight.blazerod.model.renderer.InstancedRenderer
+import top.fifthlight.blazerod.model.renderer.ScheduledRenderer
 import top.fifthlight.blazerod.model.resource.CameraTransform
 import top.fifthlight.blazerod.model.resource.RenderCamera
 import java.lang.ref.WeakReference
@@ -40,9 +41,9 @@ object PlayerRenderer {
             }
             return null
         }
+
         val selectedIndex = selectedCameraIndex.value ?: return null
         val instance = entry.instance
-        entry.controller.apply(instance)
         instance.updateCamera()
 
         return instance.modelData.cameraTransforms.getOrNull(selectedIndex).also {
@@ -60,12 +61,28 @@ object PlayerRenderer {
     private val matrix = Matrix4f()
 
     @JvmStatic
+    fun updatePlayer(
+        player: AbstractClientPlayerEntity,
+        state: PlayerEntityRenderState,
+    ) {
+        val uuid = player.uuid
+        val entry = ModelInstanceManager.get(uuid, System.nanoTime())
+        if (entry !is ModelInstanceManager.ModelInstanceItem.Model) {
+            return
+        }
+
+        val controller = entry.controller
+        controller.update(uuid, player, state)
+    }
+
+    @JvmStatic
     fun appendPlayer(
         uuid: UUID,
         vanillaState: PlayerEntityRenderState,
         matrixStack: MatrixStack,
         consumers: VertexConsumerProvider,
         light: Int,
+        overlay: Int,
     ): Boolean {
         val entry = ModelInstanceManager.get(uuid, System.nanoTime())
         if (entry !is ModelInstanceManager.ModelInstanceItem.Model) {
@@ -75,8 +92,7 @@ object PlayerRenderer {
         val controller = entry.controller
         val instance = entry.instance
 
-        controller.update(uuid, vanillaState)
-        controller.apply(instance)
+        controller.apply(uuid, instance, vanillaState)
         instance.updateRenderData()
 
         val backupItem = matrixStack.peek().copy()
@@ -88,10 +104,9 @@ object PlayerRenderer {
         } else {
             matrix.set(matrixStack.peek().positionMatrix)
             matrix.scale(ConfigHolder.config.value.modelScale)
-            matrix.mulLocal(RenderSystem.getModelViewStack())
             val currentRenderer = RendererManager.currentRenderer
-            val task = instance.createRenderTask(matrix, light)
-            if (currentRenderer is InstancedRenderer<*, *> && renderingWorld) {
+            val task = instance.createRenderTask(matrix, light, overlay)
+            if (currentRenderer is ScheduledRenderer<*, *> && renderingWorld) {
                 currentRenderer.schedule(task)
             } else {
                 val mainTarget = MinecraftClient.getInstance().framebuffer
@@ -119,7 +134,7 @@ object PlayerRenderer {
     fun executeDraw() {
         renderingWorld = false
         val mainTarget = MinecraftClient.getInstance().framebuffer
-        RendererManager.currentRendererInstanced?.let { renderer ->
+        RendererManager.currentRendererScheduled?.let { renderer ->
             val colorFrameBuffer = RenderSystem.outputColorTextureOverride ?: mainTarget.colorAttachmentView!!
             val depthFrameBuffer = RenderSystem.outputDepthTextureOverride ?: mainTarget.depthAttachmentView
             renderer.executeTasks(colorFrameBuffer, depthFrameBuffer)

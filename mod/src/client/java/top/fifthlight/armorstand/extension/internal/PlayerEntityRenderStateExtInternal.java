@@ -1,7 +1,7 @@
 package top.fifthlight.armorstand.extension.internal;
 
-import net.minecraft.entity.EntityType;
 import org.jetbrains.annotations.Nullable;
+import top.fifthlight.blazerod.animation.AnimationItemPendingValues;
 
 import java.util.UUID;
 
@@ -10,20 +10,8 @@ public interface PlayerEntityRenderStateExtInternal {
 
     UUID armorstand$getUuid();
 
-    void armorstand$setRidingEntityType(@Nullable EntityType<?> ridingEntityType);
+    void armorstand$setAnimationPendingValues(AnimationItemPendingValues pendingValues);
 
     @Nullable
-    EntityType<?> armorstand$getRidingEntityType();
-
-    void armorstand$setSprinting(boolean sprinting);
-
-    boolean armorstand$isSprinting();
-
-    void armorstand$setLimbSwingSpeed(float limbSwingSpeed);
-
-    float armorstand$getLimbSwingSpeed();
-
-    void armorstand$setDead(boolean dead);
-
-    boolean armorstand$isDead();
+    AnimationItemPendingValues armorstand$getAnimationPendingValues();
 }

@@ -1,7 +1,6 @@
 package top.fifthlight.blazerod.model.vmd
 
 import it.unimi.dsi.fastutil.bytes.ByteList
-import top.fifthlight.blazerod.model.animation.AnimationChannel
 import top.fifthlight.blazerod.model.animation.AnimationChannelComponent
 import kotlin.math.abs
 
@@ -64,28 +63,19 @@ class VmdBezierChannelComponent(
     // Normal motion order: x0, x1, y0, y1
     // Camera order: x0, y0, x1, y1
     val cameraOrder: Boolean,
-) : AnimationChannelComponent<VmdBezierChannelComponent, VmdBezierChannelComponent.VmdBezierChannelComponentType> {
+) : AnimationChannelComponent<VmdBezierChannelComponent, VmdBezierChannelComponent.Type> {
     init {
         require(values.size == frames * 4 * channels) { "Invalid VMD bezier value size: expect ${frames * 4 * channels} bytes, but got ${values.size} bytes" }
     }
 
-    object VmdBezierChannelComponentType :
-        AnimationChannelComponent.Type<VmdBezierChannelComponent, VmdBezierChannelComponentType> {
+    object Type :
+        AnimationChannelComponent.Type<VmdBezierChannelComponent, Type> {
         override val name: String
             get() = "vmd_bezier_channel"
     }
 
-    override val type: VmdBezierChannelComponentType
-        get() = VmdBezierChannelComponentType
-
-    override fun onAttachToChannel(channel: AnimationChannel<*, *>) {
-        val interpolator = channel.interpolator
-        if (interpolator is VmdBezierInterpolator) {
-            interpolator.attachComponent(this)
-        } else {
-            error("VMD bezier channel must use VMD bezier interpolation")
-        }
-    }
+    override val type: Type
+        get() = Type
 
     fun getDelta(frame: Int, channel: Int, delta: Float): Float {
         require(frame in 0 until frames) { "Invalid frame index" }

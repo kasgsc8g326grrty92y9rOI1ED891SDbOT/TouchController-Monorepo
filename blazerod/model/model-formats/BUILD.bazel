@@ -8,6 +8,8 @@ formats = [
     "pmx",
     "pmd",
     "vmd",
+    "assimp",
+    "bedrock",
 ]
 
 format_targets = ["//blazerod/model/model-" + format for format in formats]
@@ -29,6 +31,6 @@ kt_jvm_library(
         "//blazerod:icon",
     ],
     visibility = ["//visibility:public"],
-    exports = ["//blazerod/model/model-base"],
-    deps = format_targets,
+    deps = ["//blazerod/model/model-base"],
+    runtime_deps = format_targets,
 )

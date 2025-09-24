@@ -14,6 +14,7 @@ import net.minecraft.client.gl.UniformType
 import net.minecraft.client.render.OverlayTexture
 import net.minecraft.util.Identifier
 import org.joml.Matrix4f
+import org.joml.Matrix4fc
 import org.joml.Vector4f
 import top.fifthlight.blazerod.BlazeRod
 import top.fifthlight.blazerod.extension.*
@@ -21,6 +22,7 @@ import top.fifthlight.blazerod.model.RenderScene
 import top.fifthlight.blazerod.model.RenderTask
 import top.fifthlight.blazerod.model.data.MorphTargetBuffer
 import top.fifthlight.blazerod.model.data.RenderSkinBuffer
+import top.fifthlight.blazerod.model.node.component.Primitive
 import top.fifthlight.blazerod.model.resource.RenderMaterial
 import top.fifthlight.blazerod.model.resource.RenderPrimitive
 import top.fifthlight.blazerod.model.toVector4f
@@ -34,6 +36,7 @@ import top.fifthlight.blazerod.systems.ComputePass
 import top.fifthlight.blazerod.util.BitmapItem
 import top.fifthlight.blazerod.util.GpuShaderDataPool
 import top.fifthlight.blazerod.util.IrisApiWrapper
+import top.fifthlight.blazerod.util.ObjectPool
 import top.fifthlight.blazerod.util.ceilDiv
 import top.fifthlight.blazerod.util.ofSsbo
 import top.fifthlight.blazerod.util.upload
@@ -41,7 +44,7 @@ import java.util.*
 import kotlin.collections.getOrPut
 
 class ComputeShaderTransformRenderer private constructor() :
-    Renderer<ComputeShaderTransformRenderer, ComputeShaderTransformRenderer.Type>() {
+    ScheduledRenderer<ComputeShaderTransformRenderer, ComputeShaderTransformRenderer.Type>() {
 
     @Suppress("NOTHING_TO_INLINE")
     @JvmInline
@@ -115,11 +118,11 @@ class ComputeShaderTransformRenderer private constructor() :
     companion object Type : Renderer.Type<ComputeShaderTransformRenderer, Type>() {
         override val isAvailable: Boolean by lazy {
             val device = RenderSystem.getDevice()
-            device.supportSsbo && device.supportComputeShader && device.supportMemoryBarrier
+            device.supportSsbo && device.supportComputeShader && device.supportMemoryBarrier && device.supportShaderPacking
         }
 
-        override val supportInstancing: Boolean
-            get() = false
+        override val supportScheduling: Boolean
+            get() = true
 
         override fun create() = ComputeShaderTransformRenderer()
 
@@ -184,6 +187,7 @@ class ComputeShaderTransformRenderer private constructor() :
         targetBuffer: MorphTargetBuffer?,
         targetVertexFormat: VertexFormat,
         irisVertexFormat: Boolean,
+        modelNormalMatrix: Matrix4fc,
     ): GpuBufferSlice {
         val device = RenderSystem.getDevice()
         val commandEncoder = device.createCommandEncoder()
@@ -200,9 +204,10 @@ class ComputeShaderTransformRenderer private constructor() :
         try {
             targetVertexData = vertexDataPool.allocate(targetVertexFormat.vertexSize * primitive.vertices)
             computeDataUniformBufferSlice = ComputeDataUniformBuffer.write {
-                totalVertices = primitive.vertices
-                uv1 = OverlayTexture.DEFAULT_UV
-                uv2 = task.light
+                this.modelNormalMatrix = modelNormalMatrix
+                totalVertices = primitive.vertices.toUInt()
+                uv1 = OverlayTexture.DEFAULT_UV.toUInt()
+                uv2 = task.light.toUInt()
             }
             skinBuffer?.let { skinBuffer ->
                 skinModelIndicesBufferSlice = SkinModelIndicesUniformBuffer.write {
@@ -285,8 +290,192 @@ class ComputeShaderTransformRenderer private constructor() :
         return targetVertexData
     }
 
+    private class ComputeItem private constructor() {
+        private var released = true
+        private var _primitiveComponent: Primitive? = null
+        private var _renderTask: RenderTask? = null
+        private var _vertexFormat: VertexFormat? = null
+        private var _vertexBuffer: GpuBufferSlice? = null
+
+        val primitiveComponent
+            get() = _primitiveComponent!!
+        val renderTask
+            get() = _renderTask!!
+        val vertexFormat
+            get() = _vertexFormat!!
+        val vertexBuffer
+            get() = _vertexBuffer!!
+
+        fun release() {
+            if (released) {
+                return
+            }
+            POOL.release(this)
+        }
+
+        companion object {
+            private val POOL = ObjectPool(
+                identifier = Identifier.of("blazerod", "compute_item"),
+                create = ::ComputeItem,
+                onAcquired = {
+                    released = false
+                },
+                onReleased = {
+                    released = true
+                    _primitiveComponent = null
+                    _renderTask = null
+                    _vertexFormat = null
+                    _vertexBuffer = null
+                },
+                onClosed = {},
+            )
+
+            fun acquire(
+                primitiveComponent: Primitive,
+                renderTask: RenderTask,
+                vertexFormat: VertexFormat,
+                vertexBuffer: GpuBufferSlice,
+            ) = POOL.acquire().apply {
+                _primitiveComponent = primitiveComponent
+                _renderTask = renderTask
+                _vertexFormat = vertexFormat
+                _vertexBuffer = vertexBuffer
+            }
+        }
+    }
+
     private val modelMatrix = Matrix4f()
+    private val modelNormalMatrix = Matrix4f()
+    private val renderTasks = mutableListOf<RenderTask>()
+    private val computeItems = mutableListOf<ComputeItem>()
+
+    override fun schedule(task: RenderTask) {
+        val instance = task.instance
+        val scene = instance.scene
+        renderTasks.add(task)
+        for (primitiveComponent in scene.primitiveComponents) {
+            val primitive = primitiveComponent.primitive
+
+            if (!primitive.gpuComplete) {
+                return
+            }
+
+            task.localMatricesBuffer.content.getPositionMatrix(
+                primitiveComponent.primitiveIndex,
+                modelMatrix,
+            )
+            modelMatrix.mulLocal(task.modelMatrix)
+            modelMatrix.normal(modelNormalMatrix)
+
+            val irisVertexFormat = IrisApiWrapper.shaderPackInUse
+            val targetVertexFormat = if (irisVertexFormat) {
+                BlazerodVertexFormats.IRIS_ENTITY_PADDED
+            } else {
+                BlazerodVertexFormats.ENTITY_PADDED
+            }
+            val vertexBuffer = dispatchCompute(
+                primitive = primitive,
+                task = task,
+                skinBuffer = primitiveComponent.skinIndex?.let { task.skinBuffer[it] }?.content,
+                targetBuffer = primitiveComponent.morphedPrimitiveIndex?.let { task.morphTargetBuffer[it] }?.content,
+                targetVertexFormat = targetVertexFormat,
+                irisVertexFormat = irisVertexFormat,
+                modelNormalMatrix = modelNormalMatrix,
+            )
+
+            val item = ComputeItem.acquire(
+                primitiveComponent = primitiveComponent,
+                renderTask = task,
+                vertexFormat = targetVertexFormat,
+                vertexBuffer = vertexBuffer,
+            )
+
+            computeItems.add(item)
+        }
+    }
+
     private val baseColor = Vector4f()
+    override fun executeTasks(
+        colorFrameBuffer: GpuTextureView,
+        depthFrameBuffer: GpuTextureView?,
+    ) {
+        if (computeItems.isEmpty()) {
+            return
+        }
+
+        val device = RenderSystem.getDevice()
+        val commandEncoder = device.createCommandEncoder()
+        commandEncoder.memoryBarrier(CommandEncoderExt.BARRIER_STORAGE_BUFFER_BIT or CommandEncoderExt.BARRIER_VERTEX_BUFFER_BIT)
+
+        for (item in computeItems) {
+            val task = item.renderTask
+            val primitiveComponent = item.primitiveComponent
+            val primitive = primitiveComponent.primitive
+            val material = primitive.material
+
+            task.localMatricesBuffer.content.getPositionMatrix(
+                primitiveComponent.primitiveIndex,
+                modelMatrix,
+            )
+            modelMatrix.mulLocal(task.modelMatrix)
+            modelMatrix.mulLocal(RenderSystem.getModelViewStack())
+
+            val dynamicUniforms = RenderSystem.getDynamicUniforms().write(
+                modelMatrix,
+                material.baseColor.toVector4f(baseColor),
+                RenderSystem.getModelOffset(),
+                RenderSystem.getTextureMatrix(),
+                RenderSystem.getShaderLineWidth()
+            )
+
+            commandEncoder.createRenderPass(
+                { "BlazeRod render pass" },
+                colorFrameBuffer,
+                OptionalInt.empty(),
+                depthFrameBuffer,
+                OptionalDouble.empty()
+            ).use {
+                with(it) {
+                    setPipeline(RenderPipelines.ENTITY_TRANSLUCENT)
+                    RenderSystem.bindDefaultUniforms(this)
+                    setUniform("DynamicTransforms", dynamicUniforms)
+                    bindSampler(
+                        "Sampler2",
+                        MinecraftClient.getInstance().gameRenderer.lightmapTextureManager.glTextureView
+                    )
+                    bindSampler(
+                        "Sampler1",
+                        MinecraftClient.getInstance().gameRenderer.overlayTexture.texture.glTextureView
+                    )
+                    when (material) {
+                        is RenderMaterial.Pbr -> {}
+                        is RenderMaterial.Unlit -> {
+                            bindSampler("Sampler0", material.baseColorTexture.view)
+                        }
+
+                        is RenderMaterial.Vanilla -> {
+                            bindSampler("Sampler0", material.baseColorTexture.view)
+                        }
+                    }
+
+                    setVertexFormat(item.vertexFormat)
+                    setVertexFormatMode(primitive.vertexFormatMode)
+                    setVertexBuffer(0, item.vertexBuffer.buffer())
+                    primitive.indexBuffer?.let { indices ->
+                        setIndexBuffer(indices)
+                        drawIndexed(0, 0, indices.length, 1)
+                    } ?: run {
+                        draw(0, primitive.vertices)
+                    }
+                }
+            }
+            item.release()
+        }
+        computeItems.clear()
+        renderTasks.forEach { it.release() }
+        renderTasks.clear()
+    }
+
     override fun render(
         colorFrameBuffer: GpuTextureView,
         depthFrameBuffer: GpuTextureView?,
@@ -303,8 +492,12 @@ class ComputeShaderTransformRenderer private constructor() :
 
         val device = RenderSystem.getDevice()
         val commandEncoder = device.createCommandEncoder()
-        val instance = task.instance
         val material = primitive.material
+
+        task.localMatricesBuffer.content.getPositionMatrix(primitiveIndex, modelMatrix)
+        modelMatrix.mulLocal(task.modelMatrix)
+        modelMatrix.normal(modelNormalMatrix)
+        modelMatrix.mulLocal(RenderSystem.getModelViewStack())
 
         val irisVertexFormat = IrisApiWrapper.shaderPackInUse
         val targetVertexFormat = if (irisVertexFormat) {
@@ -319,12 +512,11 @@ class ComputeShaderTransformRenderer private constructor() :
             targetBuffer = targetBuffer,
             targetVertexFormat = targetVertexFormat,
             irisVertexFormat = irisVertexFormat,
+            modelNormalMatrix = modelNormalMatrix,
         )
 
         commandEncoder.memoryBarrier(CommandEncoderExt.BARRIER_STORAGE_BUFFER_BIT or CommandEncoderExt.BARRIER_VERTEX_BUFFER_BIT)
 
-        instance.modelData.modelMatricesBuffer.content.getMatrix(primitiveIndex, modelMatrix)
-        modelMatrix.mulLocal(task.modelViewMatrix)
         val dynamicUniforms = RenderSystem.getDynamicUniforms().write(
             modelMatrix,
             material.baseColor.toVector4f(baseColor),
@@ -346,8 +538,15 @@ class ComputeShaderTransformRenderer private constructor() :
                 setUniform("DynamicTransforms", dynamicUniforms)
                 bindSampler("Sampler2", MinecraftClient.getInstance().gameRenderer.lightmapTextureManager.glTextureView)
                 bindSampler("Sampler1", MinecraftClient.getInstance().gameRenderer.overlayTexture.texture.glTextureView)
-                (material as? RenderMaterial.Unlit)?.let { material ->
-                    bindSampler("Sampler0", material.baseColorTexture.view)
+                when (material) {
+                    is RenderMaterial.Pbr -> {}
+                    is RenderMaterial.Unlit -> {
+                        bindSampler("Sampler0", material.baseColorTexture.view)
+                    }
+
+                    is RenderMaterial.Vanilla -> {
+                        bindSampler("Sampler0", material.baseColorTexture.view)
+                    }
                 }
 
                 setVertexFormat(targetVertexFormat)
@@ -364,11 +563,19 @@ class ComputeShaderTransformRenderer private constructor() :
     }
 
     override fun rotate() {
+        computeItems.forEach { it.release() }
+        computeItems.clear()
+        renderTasks.forEach { it.release() }
+        renderTasks.clear()
         dataPool.rotate()
         vertexDataPool.rotate()
     }
 
     override fun close() {
+        computeItems.forEach { it.release() }
+        computeItems.clear()
+        renderTasks.forEach { it.release() }
+        renderTasks.clear()
         dataPool.close()
         vertexDataPool.close()
     }

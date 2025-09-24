@@ -1,6 +1,7 @@
 #blazerod_version version(<4.3) ? 150 : 430
 #blazerod_extension version(<4.3); GL_ARB_shader_storage_buffer_object : require
 #blazerod_extension version(<4.3); GL_ARB_compute_shader: require
+#blazerod_extension version(<4.3); GL_ARB_shading_language_packing: require
 
 #moj_import <blazerod:joint.glsl>
 #moj_import <blazerod:morph.glsl>
@@ -27,6 +28,25 @@ struct SourceVertex {
 #endif
 #elif INPUT_MATERIAL == 1
 #error PBR material is not supported
+#elif INPUT_MATERIAL == 2
+#define WITH_NORMAL
+#ifdef SKINNED
+struct SourceVertex {
+    vec3 position;
+    uint color;// vec4 of ubyte
+    vec2 uv0;
+    uint normal;// vec3 of byte, plus 1 byte of padding
+    uvec2 joint;// vec4 of ushort
+    vec4 weight;
+};
+#else// SKINNED
+struct SourceVertex {
+    vec3 position;
+    uint color;// vec4 of ubyte
+    vec2 uv0;
+    uint normal;// vec3 of byte, plus 1 byte of padding
+};
+#endif
 #else// INPUT_MATERIAL
 #error Unknown material or undefined INPUT_MATERIAL
 #endif// INPUT_MATERIAL
@@ -63,9 +83,10 @@ layout(std430) buffer TargetVertexData {
 };
 
 layout(std140) uniform ComputeData {
-    int TotalVerticesCount;
-    int UV1;
-    int UV2;
+    mat4 ModelNormalMatrix;
+    uint TotalVerticesCount;
+    uint UV1;
+    uint UV2;
 };
 
 layout(local_size_x = COMPUTE_LOCAL_SIZE, local_size_y = 1, local_size_z = 1) in;
@@ -79,11 +100,16 @@ void main() {
     SourceVertex sourceVertex = SourceVertices[vertexId];
     vec3 finalPosition = sourceVertex.position;
     vec4 finalColor = unpackUnorm4x8(uint(sourceVertex.color));
+    #ifdef WITH_NORMAL
+    vec3 finalNormal = normalize(unpackSnorm4x8(uint(sourceVertex.normal)).xyz);
+    #else
+    vec3 finalNormal = vec3(0, 1, 0);
+    #endif
+
     vec2 finalTexCoord = sourceVertex.uv0;
 
     finalPosition = GET_MORPHED_VERTEX_POSITION(finalPosition);
     finalColor = GET_MORPHED_VERTEX_COLOR(finalColor);
-    finalTexCoord = GET_MORPHED_VERTEX_TEX_COORD(finalTexCoord);
 
     #ifdef SKINNED
     ivec4 jointIndices = ivec4(
@@ -92,8 +118,18 @@ void main() {
     sourceVertex.joint.y & 0xFFFFu,
     (sourceVertex.joint.y >> 16) & 0xFFFFu
     );
-    finalPosition = skinTransform(vec4(finalPosition, 1.0), sourceVertex.weight, jointIndices).xyz;
+    finalPosition = skinPositionTransform(vec4(finalPosition, 1.0), sourceVertex.weight, jointIndices).xyz;
+
+    #ifdef WITH_NORMAL
+    finalNormal = skinNormalTransform(finalNormal, sourceVertex.weight, jointIndices);
+    #endif// WITH_NORMAL
     #endif// SKINNED
+
+    #ifdef WITH_NORMAL
+    finalNormal = normalize(mat3(ModelNormalMatrix) * finalNormal);
+    #endif// WITH_NORMAL
+
+    finalTexCoord = GET_MORPHED_VERTEX_TEX_COORD(finalTexCoord);
 
     TargetVertex targetVertex;
     targetVertex.position = finalPosition;
@@ -101,10 +137,10 @@ void main() {
     targetVertex.uv0 = finalTexCoord;
     targetVertex.uv1 = UV1;
     targetVertex.uv2 = UV2;
-    targetVertex.normal = packSnorm4x8(vec4(0, 1, 0, 0));
+    targetVertex.normal = packSnorm4x8(vec4(finalNormal, 0));
 
     #ifdef IRIS_VERTEX_FORMAT
-    targetVertex.iris_Entity = ivec2(0);
+    targetVertex.iris_Entity = uvec2(0);
     targetVertex.mc_midTexCoord = vec2(0.0);
     targetVertex.at_tangent = 0;
     #endif// IRIS_VERTEX_FORMAT

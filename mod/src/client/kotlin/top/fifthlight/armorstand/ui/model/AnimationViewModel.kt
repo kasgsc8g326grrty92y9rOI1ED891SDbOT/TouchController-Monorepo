@@ -9,14 +9,17 @@ import kotlinx.coroutines.launch
 import net.minecraft.client.MinecraftClient
 import org.slf4j.LoggerFactory
 import top.fifthlight.armorstand.PlayerRenderer
-import top.fifthlight.armorstand.manage.ModelManager
+import top.fifthlight.armorstand.manage.ModelManagerHolder
 import top.fifthlight.armorstand.state.ModelController
 import top.fifthlight.armorstand.state.ModelInstanceManager
 import top.fifthlight.armorstand.ui.state.AnimationScreenState
 import top.fifthlight.blazerod.animation.AnimationItem
+import top.fifthlight.blazerod.animation.AnimationItemInstance
 import top.fifthlight.blazerod.animation.AnimationLoader
+import top.fifthlight.blazerod.animation.context.BaseAnimationContext
 import top.fifthlight.blazerod.model.ModelFileLoaders
 import top.fifthlight.blazerod.model.ModelInstance
+import top.fifthlight.blazerod.model.animation.SimpleAnimationState
 import java.lang.ref.WeakReference
 
 class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
@@ -25,15 +28,14 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(AnimationViewModel::class.java)
-        var playSpeed = MutableStateFlow(1.0)
     }
 
     init {
         scope.launch {
-            ModelManager.lastScanTime.collectLatest {
+            ModelManagerHolder.instance.lastUpdateTime.collectLatest {
                 _uiState.getAndUpdate {
                     it.copy(
-                        externalAnimations = ModelManager.getAnimations().map { item ->
+                        externalAnimations = ModelManagerHolder.instance.getAnimations().map { item ->
                             AnimationScreenState.AnimationItem(
                                 name = item.name,
                                 source = AnimationScreenState.AnimationItem.Source.External(item.path),
@@ -54,26 +56,23 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
 
     fun togglePlay() {
         val instanceItem = getInstanceItem() ?: return
-        val controller = (instanceItem.controller as? ModelController.Predefined) ?: return
-        val timeline = controller.timeline
-        if (timeline.isPlaying) {
-            timeline.pause(System.nanoTime())
-        } else {
-            timeline.play(System.nanoTime())
-        }
+        val controller = (instanceItem.controller as? ModelController.AnimatedModelController) ?: return
+        val animationState = (controller.animationState as? SimpleAnimationState) ?: return
+        animationState.paused = !animationState.paused
     }
 
-    fun updatePlaySpeed(speed: Double) {
-        playSpeed.value = speed
+    fun updatePlaySpeed(speed: Float) {
         val instanceItem = getInstanceItem() ?: return
-        val controller = (instanceItem.controller as? ModelController.Predefined) ?: return
-        controller.timeline.setSpeed(System.nanoTime(), speed)
+        val controller = (instanceItem.controller as? ModelController.AnimatedModelController) ?: return
+        val animationState = (controller.animationState as? SimpleAnimationState) ?: return
+        animationState.speed = speed
     }
 
-    fun updateProgress(progress: Double) {
+    fun updateProgress(progress: Float) {
         val instanceItem = getInstanceItem() ?: return
-        val controller = (instanceItem.controller as? ModelController.Predefined) ?: return
-        controller.timeline.seek(System.nanoTime(), progress)
+        val controller = (instanceItem.controller as? ModelController.AnimatedModelController) ?: return
+        val animationState = (controller.animationState as? SimpleAnimationState) ?: return
+        animationState.seek(progress)
     }
 
     private var prevAnimations = WeakReference<List<AnimationItem>>(null)
@@ -94,7 +93,7 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
                 state.copy(embedAnimations = animations.mapIndexed { index, animation ->
                     AnimationScreenState.AnimationItem(
                         name = animation.name,
-                        duration = animation.duration.toDouble(),
+                        duration = animation.duration,
                         source = AnimationScreenState.AnimationItem.Source.Embed(index),
                     )
                 })
@@ -114,19 +113,47 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
             }
         }
         when (val controller = instanceItem.controller) {
-            is ModelController.Predefined -> {
-                val timeline = controller.timeline
-                val progress = timeline.getCurrentTime(System.nanoTime())
-                val playState = if (timeline.isPlaying) {
-                    AnimationScreenState.PlayState.Playing(
-                        progress = progress,
-                        length = timeline.duration,
-                    )
-                } else {
-                    AnimationScreenState.PlayState.Paused(
-                        progress = progress,
-                        length = timeline.duration,
-                    )
+            is ModelController.AnimatedModelController -> {
+                val playState = when (val animationState = controller.animationState) {
+                    is SimpleAnimationState -> {
+                        val duration = animationState.duration
+                        val progress = animationState.getTime()
+                        if (animationState.playing) {
+                            AnimationScreenState.PlayState.Playing(
+                                progress = progress,
+                                length = duration,
+                                speed = animationState.speed,
+                                readonly = false,
+                            )
+                        } else {
+                            AnimationScreenState.PlayState.Paused(
+                                progress = progress,
+                                length = duration,
+                                speed = animationState.speed,
+                                readonly = false,
+                            )
+                        }
+                    }
+
+                    else -> {
+                        val duration = animationState.duration
+                        val progress = animationState.getTime()
+                        if (animationState.playing) {
+                            AnimationScreenState.PlayState.Playing(
+                                progress = progress,
+                                length = duration ?: 1f,
+                                speed = 1f,
+                                readonly = true,
+                            )
+                        } else {
+                            AnimationScreenState.PlayState.Paused(
+                                progress = progress,
+                                length = duration ?: 1f,
+                                speed = 1f,
+                                readonly = true,
+                            )
+                        }
+                    }
                 }
                 _uiState.getAndUpdate {
                     it.copy(playState = playState)
@@ -148,19 +175,25 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
                 val index = source.index
                 val animation = instanceItem.animations[index]
                 instanceItem.instance.clearTransform()
-                instanceItem.controller = ModelController.Predefined(animation)
+                instanceItem.controller = ModelController.Predefined(
+                    BaseAnimationContext.instance,
+                    AnimationItemInstance(animation),
+                )
             }
 
             is AnimationScreenState.AnimationItem.Source.External -> {
                 instanceItem.controller = ModelController.LiveUpdated(instanceItem.instance.scene)
                 scope.launch {
                     try {
-                        val path = ModelManager.modelDir.resolve(source.path)
+                        val path = ModelManagerHolder.modelDir.resolve(source.path)
                         val result = ModelFileLoaders.probeAndLoad(path)
                         val animation = result?.animations?.firstOrNull() ?: error("No animation in file")
                         val animationItem = AnimationLoader.load(instanceItem.instance.scene, animation)
                         instanceItem.instance.clearTransform()
-                        instanceItem.controller = ModelController.Predefined(animationItem)
+                        instanceItem.controller = ModelController.Predefined(
+                            BaseAnimationContext.instance,
+                            AnimationItemInstance(animationItem),
+                        )
                     } catch (ex: Throwable) {
                         logger.warn("Failed to load animation", ex)
                     }
@@ -171,7 +204,7 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
 
     fun refreshAnimations() {
         scope.launch {
-            ModelManager.scheduleScan()
+            ModelManagerHolder.instance.scheduleScan()
         }
     }
 

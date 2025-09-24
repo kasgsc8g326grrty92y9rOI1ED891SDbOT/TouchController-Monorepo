@@ -4,6 +4,7 @@ import net.minecraft.util.Identifier
 import org.slf4j.LoggerFactory
 import top.fifthlight.armorstand.util.ModelLoaders
 import top.fifthlight.blazerod.animation.AnimationItem
+import top.fifthlight.blazerod.animation.AnimationItemInstance
 import top.fifthlight.blazerod.animation.AnimationLoader
 import top.fifthlight.blazerod.model.ModelFileLoaders
 import top.fifthlight.blazerod.model.RenderScene
@@ -18,6 +19,7 @@ data class AnimationSet(
     val walk: AnimationItem? = null,
     val sprint: AnimationItem? = null,
     val sneak: AnimationItem? = null,
+    val sneakIdle: AnimationItem? = null,
     val swingRight: AnimationItem? = null,
     val swingLeft: AnimationItem? = null,
     val elytraFly: AnimationItem? = null,
@@ -29,7 +31,10 @@ data class AnimationSet(
     val ride: AnimationItem? = null,
     val die: AnimationItem? = null,
     val onHorse: AnimationItem? = null,
+    val onPig: AnimationItem? = null,
+    val onBoat: AnimationItem? = null,
     val crawl: AnimationItem? = null,
+    val crawlIdle: AnimationItem? = null,
     val lieDown: AnimationItem? = null,
     val custom: Map<String, AnimationItem> = emptyMap(),
     val itemActive: Map<ItemActiveKey, AnimationItem> = emptyMap(),
@@ -78,53 +83,58 @@ data class AnimationSet(
 }
 
 data class FullAnimationSet(
-    val idle: AnimationItem,
-    val walk: AnimationItem,
-    val sprint: AnimationItem,
-    val sneak: AnimationItem,
-    val swingRight: AnimationItem,
-    val swingLeft: AnimationItem,
-    val elytraFly: AnimationItem,
-    val swim: AnimationItem,
-    val onClimbable: AnimationItem,
-    val onClimbableUp: AnimationItem,
-    val onClimbableDown: AnimationItem,
-    val sleep: AnimationItem,
-    val ride: AnimationItem,
-    val die: AnimationItem,
-    val onHorse: AnimationItem,
-    val crawl: AnimationItem,
-    val lieDown: AnimationItem,
-    val custom: Map<String, AnimationItem> = emptyMap(),
-    val itemActive: Map<AnimationSet.ItemActiveKey, AnimationItem> = emptyMap(),
+    val idle: AnimationItemInstance,
+    val walk: AnimationItemInstance,
+    val sprint: AnimationItemInstance,
+    val sneak: AnimationItemInstance,
+    val sneakIdle: AnimationItemInstance,
+    val swingRight: AnimationItemInstance,
+    val swingLeft: AnimationItemInstance,
+    val elytraFly: AnimationItemInstance,
+    val swim: AnimationItemInstance,
+    val onClimbable: AnimationItemInstance,
+    val onClimbableUp: AnimationItemInstance,
+    val onClimbableDown: AnimationItemInstance,
+    val sleep: AnimationItemInstance,
+    val ride: AnimationItemInstance,
+    val die: AnimationItemInstance,
+    val onHorse: AnimationItemInstance,
+    val onPig: AnimationItemInstance,
+    val onBoat: AnimationItemInstance,
+    val crawl: AnimationItemInstance,
+    val crawlIdle: AnimationItemInstance,
+    val custom: Map<String, AnimationItemInstance> = emptyMap(),
+    val itemActive: Map<AnimationSet.ItemActiveKey, AnimationItemInstance> = emptyMap(),
 ) {
     companion object {
         fun from(animationSet: AnimationSet): FullAnimationSet? {
             return animationSet.idle?.let { idle ->
+                // @formatter:off
                 FullAnimationSet(
-                    idle = idle,
-                    walk = animationSet.walk ?: idle,
-                    sprint = animationSet.sprint ?: animationSet.walk ?: idle,
-                    sneak = animationSet.sneak ?: idle,
-                    swingRight = animationSet.swingRight ?: animationSet.swingLeft ?: idle,
-                    swingLeft = animationSet.swingLeft ?: animationSet.swingRight ?: idle,
-                    elytraFly = animationSet.elytraFly ?: animationSet.swim ?: animationSet.walk ?: idle,
-                    swim = animationSet.swim ?: animationSet.walk ?: idle,
-                    onClimbable = animationSet.onClimbable ?: animationSet.onClimbableUp ?: animationSet.onClimbableDown
-                    ?: idle,
-                    onClimbableUp = animationSet.onClimbableUp ?: animationSet.onClimbableDown
-                    ?: animationSet.onClimbable ?: idle,
-                    onClimbableDown = animationSet.onClimbableDown ?: animationSet.onClimbableUp
-                    ?: animationSet.onClimbable ?: idle,
-                    sleep = animationSet.sleep ?: animationSet.lieDown ?: idle,
-                    ride = animationSet.ride ?: animationSet.onHorse ?: idle,
-                    die = animationSet.die ?: animationSet.lieDown ?: animationSet.sleep ?: idle,
-                    onHorse = animationSet.onHorse ?: animationSet.ride ?: idle,
-                    crawl = animationSet.crawl ?: animationSet.sneak ?: idle,
-                    lieDown = animationSet.lieDown ?: animationSet.sleep ?: idle,
-                    custom = animationSet.custom,
-                    itemActive = animationSet.itemActive
+                    idle = AnimationItemInstance(idle),
+                    walk = AnimationItemInstance(animationSet.walk ?: idle),
+                    sprint = AnimationItemInstance(animationSet.sprint ?: animationSet.walk ?: idle),
+                    sneak = AnimationItemInstance(animationSet.sneak ?: animationSet.walk ?: idle),
+                    sneakIdle = AnimationItemInstance(animationSet.sneakIdle ?: idle),
+                    swingRight = AnimationItemInstance(animationSet.swingRight ?: animationSet.swingLeft ?: idle),
+                    swingLeft = AnimationItemInstance(animationSet.swingLeft ?: animationSet.swingRight ?: idle),
+                    elytraFly = AnimationItemInstance(animationSet.elytraFly ?: animationSet.swim ?: animationSet.walk ?: idle),
+                    swim = AnimationItemInstance(animationSet.swim ?: animationSet.walk ?: idle),
+                    onClimbable = AnimationItemInstance(animationSet.onClimbable ?: animationSet.onClimbableUp ?: animationSet.onClimbableDown ?: idle),
+                    onClimbableUp = AnimationItemInstance(animationSet.onClimbableUp ?: animationSet.onClimbableDown ?: animationSet.onClimbable ?: idle),
+                    onClimbableDown = AnimationItemInstance(animationSet.onClimbableDown ?: animationSet.onClimbableUp ?: animationSet.onClimbable ?: idle),
+                    sleep = AnimationItemInstance(animationSet.sleep ?: animationSet.lieDown ?: idle),
+                    ride = AnimationItemInstance(animationSet.ride ?: animationSet.onHorse ?: idle),
+                    die = AnimationItemInstance(animationSet.die ?: animationSet.lieDown ?: animationSet.sleep ?: idle),
+                    onHorse = AnimationItemInstance(animationSet.onHorse ?: animationSet.ride ?: idle),
+                    onPig = AnimationItemInstance(animationSet.onPig ?: animationSet.ride ?: idle),
+                    onBoat = AnimationItemInstance(animationSet.onBoat ?: animationSet.ride ?: idle),
+                    crawl = AnimationItemInstance(animationSet.crawl ?: animationSet.sneak ?: idle),
+                    crawlIdle = AnimationItemInstance(animationSet.crawlIdle ?: animationSet.crawl ?: animationSet.sleep ?: animationSet.sneak ?: idle),
+                    custom = animationSet.custom.mapValues { (_, value) -> AnimationItemInstance(value) },
+                    itemActive = animationSet.itemActive.mapValues { (_, value) -> AnimationItemInstance(value) },
                 )
+                // @formatter:on
             }
         }
     }
@@ -133,21 +143,16 @@ data class FullAnimationSet(
 data object AnimationSetLoader {
     private val logger = LoggerFactory.getLogger(AnimationSetLoader::class.java)
 
-    fun load(scene: RenderScene, directory: Path): AnimationSet {
-        val files = try {
-            if (!directory.isDirectory()) {
-                return AnimationSet.EMPTY
-            }
-            directory.listDirectoryEntries()
-        } catch (ex: Exception) {
-            logger.warn("Failed to list animation directory: $directory", ex)
-            return AnimationSet.EMPTY
-        }
-
+    fun load(
+        scene: RenderScene,
+        animations: List<AnimationItem>?,
+        directory: Path,
+    ): AnimationSet {
         var idle: AnimationItem? = null
         var walk: AnimationItem? = null
         var sprint: AnimationItem? = null
         var sneak: AnimationItem? = null
+        var sneakIdle: AnimationItem? = null
         var swingRight: AnimationItem? = null
         var swingLeft: AnimationItem? = null
         var elytraFly: AnimationItem? = null
@@ -159,77 +164,127 @@ data object AnimationSetLoader {
         var ride: AnimationItem? = null
         var die: AnimationItem? = null
         var onHorse: AnimationItem? = null
+        var onPig: AnimationItem? = null
+        var onBoat: AnimationItem? = null
         var crawl: AnimationItem? = null
-        var lieDown: AnimationItem? = null
+        var crawlIdle: AnimationItem? = null
         val custom: MutableMap<String, AnimationItem> = mutableMapOf()
         val itemActive: MutableMap<AnimationSet.ItemActiveKey, AnimationItem> = mutableMapOf()
 
-        for (file in files) {
-            val name = file.nameWithoutExtension
-            val extension = file.extension
-            if (extension !in ModelLoaders.animationExtensions) {
-                continue
-            }
-
-            fun load() = try {
-                val result = ModelFileLoaders.probeAndLoad(file, directory)
-                val animation = result?.animations?.firstOrNull() ?: return null
-                AnimationLoader.load(scene, animation)
-            } catch (ex: Exception) {
-                logger.warn("Failed to load animation file: $file", ex)
+        val files = try {
+            if (directory.isDirectory()) {
+                directory.listDirectoryEntries()
+            } else {
                 null
             }
+        } catch (ex: Exception) {
+            logger.warn("Failed to list animation directory: $directory", ex)
+            null
+        }
 
-            when (name.lowercase()) {
-                "idle" -> load()?.let { idle = it }
-                "walk" -> load()?.let { walk = it }
-                "sprint" -> load()?.let { sprint = it }
-                "sneak" -> load()?.let { sneak = it }
-                "swingright" -> load()?.let { swingRight = it }
-                "swingleft" -> load()?.let { swingLeft = it }
-                "elytraFly" -> load()?.let { elytraFly = it }
-                "swim" -> load()?.let { swim = it }
-                "onclimbable" -> load()?.let { onClimbable = it }
-                "onclimbableup" -> load()?.let { onClimbableUp = it }
-                "onclimbabledown" -> load()?.let { onClimbableDown = it }
-                "sleep" -> load()?.let { sleep = it }
-                "ride" -> load()?.let { ride = it }
-                "die" -> load()?.let { die = it }
-                "onhorse" -> load()?.let { onHorse = it }
-                "crawl" -> load()?.let { crawl = it }
-                "liedown" -> load()?.let { lieDown = it }
-                else -> when {
-                    name.startsWith("custom") -> {
-                        val name = name.substringAfter("custom")
-                        load()?.let { custom[name] = it }
-                    }
+        // Try external file
+        if (files != null) {
+            for (file in files) {
+                val name = file.nameWithoutExtension
+                val extension = file.extension
+                if (extension !in ModelLoaders.animationExtensions) {
+                    continue
+                }
 
-                    name.startsWith("itemActive") -> {
-                        val name = name.substringAfter("itemActive")
-                        val parts = name.split("_")
-                        if (parts.size != 3) {
-                            continue
+                fun load() = try {
+                    val result = ModelFileLoaders.probeAndLoad(file, directory)
+                    val animation = result?.animations?.firstOrNull() ?: return null
+                    AnimationLoader.load(scene, animation)
+                } catch (ex: Exception) {
+                    logger.warn("Failed to load animation file: $file", ex)
+                    null
+                }
+
+                when (name.lowercase()) {
+                    "idle" -> load()?.let { idle = it }
+                    "walk" -> load()?.let { walk = it }
+                    "sprint" -> load()?.let { sprint = it }
+                    "sneak" -> load()?.let { sneak = it }
+                    "sneakidle" -> load()?.let { sneakIdle = it }
+                    "swingright" -> load()?.let { swingRight = it }
+                    "swingleft" -> load()?.let { swingLeft = it }
+                    "elytraFly" -> load()?.let { elytraFly = it }
+                    "swim" -> load()?.let { swim = it }
+                    "onclimbable" -> load()?.let { onClimbable = it }
+                    "onclimbableup" -> load()?.let { onClimbableUp = it }
+                    "onclimbabledown" -> load()?.let { onClimbableDown = it }
+                    "sleep" -> load()?.let { sleep = it }
+                    "ride" -> load()?.let { ride = it }
+                    "die" -> load()?.let { die = it }
+                    "onhorse" -> load()?.let { onHorse = it }
+                    "onpig" -> load()?.let { onPig = it }
+                    "onboat" -> load()?.let { onBoat = it }
+                    "crawl" -> load()?.let { crawl = it }
+                    "crawlidle", "liedown" -> load()?.let { crawlIdle = it }
+                    else -> when {
+                        name.startsWith("custom") -> {
+                            val name = name.substringAfter("custom")
+                            load()?.let { custom[name] = it }
                         }
-                        val (itemName, hand, action) = parts
-                        val item = try {
-                            Identifier.of(itemName.lowercase())
-                        } catch (ex: Exception) {
-                            logger.warn("Bad item name: $itemName", ex)
-                            continue
+
+                        name.startsWith("itemActive") -> {
+                            val name = name.substringAfter("itemActive")
+                            val parts = name.split("_")
+                            if (parts.size != 3) {
+                                continue
+                            }
+                            val (itemName, hand, action) = parts
+                            val item = try {
+                                Identifier.of(itemName.lowercase())
+                            } catch (ex: Exception) {
+                                logger.warn("Bad item name: $itemName", ex)
+                                continue
+                            }
+                            val handSide = when (hand.lowercase()) {
+                                "left" -> AnimationSet.ItemActiveKey.HandSide.LEFT
+                                "right" -> AnimationSet.ItemActiveKey.HandSide.RIGHT
+                                else -> continue
+                            }
+                            val actionType = when (action.lowercase()) {
+                                "using" -> AnimationSet.ItemActiveKey.ActionType.USING
+                                "swinging" -> AnimationSet.ItemActiveKey.ActionType.SWINGING
+                                else -> continue
+                            }
+                            val animation = load() ?: continue
+                            itemActive[AnimationSet.ItemActiveKey(item, handSide, actionType)] = animation
                         }
-                        val handSide = when (hand.lowercase()) {
-                            "left" -> AnimationSet.ItemActiveKey.HandSide.LEFT
-                            "right" -> AnimationSet.ItemActiveKey.HandSide.RIGHT
-                            else -> continue
-                        }
-                        val actionType = when (action.lowercase()) {
-                            "using" -> AnimationSet.ItemActiveKey.ActionType.USING
-                            "swinging" -> AnimationSet.ItemActiveKey.ActionType.SWINGING
-                            else -> continue
-                        }
-                        val animation = load() ?: continue
-                        itemActive[AnimationSet.ItemActiveKey(item, handSide, actionType)] = animation
                     }
+                }
+            }
+        }
+
+        if (idle == null) {
+            return AnimationSet.EMPTY
+        }
+
+        // Try embed
+        if (animations != null) {
+            for (animation in animations) {
+                when (animation.name?.lowercase()) {
+                    "idle" -> idle = animation
+                    "walk" -> walk = animation
+                    "run", "sprint" -> sprint = animation
+                    "sneak" -> sneak = animation
+                    "sneaking" -> sneakIdle = animation
+                    "use_mainhand", "swingright" -> swingRight = animation
+                    "use_offhand", "swingleft" -> swingLeft = animation
+                    "elytra_fly", "elytrafly" -> elytraFly = animation
+                    "swim" -> swim = animation
+                    "ladder_stillness", "onclimbable" -> onClimbable = animation
+                    "ladder_up", "onclimbableup" -> onClimbableUp = animation
+                    "ladder_down", "onclimbabledown" -> onClimbableDown = animation
+                    "sleep" -> sleep = animation
+                    "ride" -> ride = animation
+                    "ride_pig", "onpig" -> onPig = animation
+                    "boat", "onboat" -> onBoat = animation
+                    "climb", "crawl" -> crawl = animation
+                    "climbing", "crawlidle", "lieDown" -> crawlIdle = animation
+                    "death", "die", "dead" -> die = animation
                 }
             }
         }
@@ -239,6 +294,7 @@ data object AnimationSetLoader {
             walk = walk,
             sprint = sprint,
             sneak = sneak,
+            sneakIdle = sneakIdle,
             swingRight = swingRight,
             swingLeft = swingLeft,
             elytraFly = elytraFly,
@@ -250,8 +306,10 @@ data object AnimationSetLoader {
             ride = ride,
             die = die,
             onHorse = onHorse,
+            onPig = onPig,
+            onBoat = onBoat,
             crawl = crawl,
-            lieDown = lieDown,
+            crawlIdle = crawlIdle,
         )
     }
 }

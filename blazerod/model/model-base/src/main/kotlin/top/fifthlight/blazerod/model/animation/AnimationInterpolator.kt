@@ -1,6 +1,7 @@
 package top.fifthlight.blazerod.model.animation
 
 import org.joml.*
+import top.fifthlight.blazerod.model.util.FloatWrapper
 import top.fifthlight.blazerod.model.util.MutableFloat
 
 abstract class AnimationInterpolation(val elements: Int) {
@@ -9,6 +10,8 @@ abstract class AnimationInterpolation(val elements: Int) {
     }
 
     abstract fun interpolateVector3f(
+        context: AnimationContext,
+        state: AnimationState,
         delta: Float,
         startFrame: Int,
         endFrame: Int,
@@ -18,6 +21,8 @@ abstract class AnimationInterpolation(val elements: Int) {
     )
 
     abstract fun interpolateQuaternionf(
+        context: AnimationContext,
+        state: AnimationState,
         delta: Float,
         startFrame: Int,
         endFrame: Int,
@@ -27,11 +32,13 @@ abstract class AnimationInterpolation(val elements: Int) {
     )
 
     abstract fun interpolateFloat(
+        context: AnimationContext,
+        state: AnimationState,
         delta: Float,
         startFrame: Int,
         endFrame: Int,
-        startValue: List<MutableFloat>,
-        endValue: List<MutableFloat>,
+        startValue: List<FloatWrapper>,
+        endValue: List<FloatWrapper>,
         result: MutableFloat,
     )
 
@@ -40,6 +47,8 @@ abstract class AnimationInterpolation(val elements: Int) {
 
         val linear = object : AnimationInterpolation(1) {
             override fun interpolateVector3f(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
@@ -51,6 +60,8 @@ abstract class AnimationInterpolation(val elements: Int) {
             }
 
             override fun interpolateQuaternionf(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
@@ -62,11 +73,13 @@ abstract class AnimationInterpolation(val elements: Int) {
             }
 
             override fun interpolateFloat(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
-                startValue: List<MutableFloat>,
-                endValue: List<MutableFloat>,
+                startValue: List<FloatWrapper>,
+                endValue: List<FloatWrapper>,
                 result: MutableFloat,
             ) {
                 result.value = Math.lerp(startValue[0].value, endValue[0].value, delta)
@@ -75,6 +88,8 @@ abstract class AnimationInterpolation(val elements: Int) {
 
         val step = object : AnimationInterpolation(1) {
             override fun interpolateVector3f(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
@@ -86,6 +101,8 @@ abstract class AnimationInterpolation(val elements: Int) {
             }
 
             override fun interpolateQuaternionf(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
@@ -97,11 +114,13 @@ abstract class AnimationInterpolation(val elements: Int) {
             }
 
             override fun interpolateFloat(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
-                startValue: List<MutableFloat>,
-                endValue: List<MutableFloat>,
+                startValue: List<FloatWrapper>,
+                endValue: List<FloatWrapper>,
                 result: MutableFloat,
             ) {
                 result.value = startValue[0].value
@@ -110,6 +129,8 @@ abstract class AnimationInterpolation(val elements: Int) {
 
         val cubicSpline = object : AnimationInterpolation(3) {
             override fun interpolateVector3f(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
@@ -135,6 +156,8 @@ abstract class AnimationInterpolation(val elements: Int) {
 
             private val tempQuaternion = Quaternionf()
             override fun interpolateQuaternionf(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
@@ -162,14 +185,15 @@ abstract class AnimationInterpolation(val elements: Int) {
             }
 
             override fun interpolateFloat(
+                context: AnimationContext,
+                state: AnimationState,
                 delta: Float,
                 startFrame: Int,
                 endFrame: Int,
-                startValue: List<MutableFloat>,
-                endValue: List<MutableFloat>,
+                startValue: List<FloatWrapper>,
+                endValue: List<FloatWrapper>,
                 result: MutableFloat,
             ) {
-
                 val t = delta
                 val t2 = t * t
                 val t3 = t2 * t
@@ -180,44 +204,43 @@ abstract class AnimationInterpolation(val elements: Int) {
                 val h3 = -2f * t3 + 3f * t2
                 val h4 = t3 - t2
 
-                result.value = Math.fma(
-                    h1,
-                    startValue[1].value,
-                    Math.fma(h2, startValue[2].value, Math.fma(h3, endValue[1].value, h4 * endValue[0].value))
-                )
+                val p0 = startValue[1].value
+                val m0 = startValue[2].value
+                val p1 = endValue[1].value
+                val m1 = endValue[0].value
+
+                result.value = Math.fma(h1, p0, Math.fma(h2, m0, Math.fma(h3, p1, h4 * m1)))
             }
         }
     }
 }
 
 interface AnimationInterpolator<T> {
-    fun set(value: List<T>, result: T)
-
     fun interpolate(
+        context: AnimationContext,
+        state: AnimationState,
         delta: Float,
         startFrame: Int,
         endFrame: Int,
-        type: AnimationInterpolation,
         startValue: List<T>,
         endValue: List<T>,
         result: T,
     )
 }
 
-object Vector3AnimationInterpolator : AnimationInterpolator<Vector3f> {
-    override fun set(value: List<Vector3f>, result: Vector3f) {
-        result.set(value[0])
-    }
-
+class Vector3AnimationInterpolator(val type: AnimationInterpolation) : AnimationInterpolator<Vector3f> {
     override fun interpolate(
+        context: AnimationContext,
+        state: AnimationState,
         delta: Float,
         startFrame: Int,
         endFrame: Int,
-        type: AnimationInterpolation,
         startValue: List<Vector3f>,
         endValue: List<Vector3f>,
         result: Vector3f,
     ) = type.interpolateVector3f(
+        context = context,
+        state = state,
         delta = delta,
         startFrame = startFrame,
         endFrame = endFrame,
@@ -227,20 +250,19 @@ object Vector3AnimationInterpolator : AnimationInterpolator<Vector3f> {
     )
 }
 
-object QuaternionAnimationInterpolator : AnimationInterpolator<Quaternionf> {
-    override fun set(value: List<Quaternionf>, result: Quaternionf) {
-        result.set(value[0])
-    }
-
+class QuaternionAnimationInterpolator(val type: AnimationInterpolation) : AnimationInterpolator<Quaternionf> {
     override fun interpolate(
+        context: AnimationContext,
+        state: AnimationState,
         delta: Float,
         startFrame: Int,
         endFrame: Int,
-        type: AnimationInterpolation,
         startValue: List<Quaternionf>,
         endValue: List<Quaternionf>,
         result: Quaternionf,
     ) = type.interpolateQuaternionf(
+        context = context,
+        state = state,
         delta = delta,
         startFrame = startFrame,
         endFrame = endFrame,
@@ -250,24 +272,20 @@ object QuaternionAnimationInterpolator : AnimationInterpolator<Quaternionf> {
     )
 }
 
-object FloatAnimationInterpolator : AnimationInterpolator<MutableFloat> {
-    override fun set(
-        value: List<MutableFloat>,
-        result: MutableFloat,
-    ) {
-        result.value = value[0].value
-    }
-
+class FloatAnimationInterpolator(val type: AnimationInterpolation) : AnimationInterpolator<MutableFloat> {
     override fun interpolate(
+        context: AnimationContext,
+        state: AnimationState,
         delta: Float,
         startFrame: Int,
         endFrame: Int,
-        type: AnimationInterpolation,
         startValue: List<MutableFloat>,
         endValue: List<MutableFloat>,
         result: MutableFloat,
     ) {
         type.interpolateFloat(
+            context = context,
+            state = state,
             delta = delta,
             startFrame = startFrame,
             endFrame = endFrame,

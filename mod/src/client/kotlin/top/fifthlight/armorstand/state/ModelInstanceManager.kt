@@ -3,13 +3,15 @@ package top.fifthlight.armorstand.state
 import com.mojang.logging.LogUtils
 import kotlinx.coroutines.*
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
-import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import top.fifthlight.armorstand.ArmorStand
 import top.fifthlight.armorstand.config.ConfigHolder
+import top.fifthlight.armorstand.manage.ModelManagerHolder
 import top.fifthlight.armorstand.vmc.VmcMarionetteManager
 import top.fifthlight.blazerod.animation.AnimationItem
+import top.fifthlight.blazerod.animation.AnimationItemInstance
 import top.fifthlight.blazerod.animation.AnimationLoader
+import top.fifthlight.blazerod.animation.context.BaseAnimationContext
 import top.fifthlight.blazerod.model.Metadata
 import top.fifthlight.blazerod.model.ModelFileLoaders
 import top.fifthlight.blazerod.model.ModelInstance
@@ -28,11 +30,10 @@ object ModelInstanceManager {
     private val client = MinecraftClient.getInstance()
     private val selfUuid: UUID?
         get() = client.player?.uuid
-    val modelDir: Path = System.getProperty("armorstand.modelDir")?.let {
-        Path.of(it).toAbsolutePath()
-    } ?: FabricLoader.getInstance().gameDir.resolve("models")
     val modelCaches = mutableMapOf<Path, Deferred<ModelCache>>()
     val modelInstanceItems = mutableMapOf<UUID, ModelInstanceItem>()
+    private val modelDir
+        get() = ModelManagerHolder.modelDir
     val defaultAnimationDir: Path = modelDir.resolve("animations")
     private val scope
         get() = ArmorStand.instance.scope
@@ -102,7 +103,7 @@ object ModelInstanceManager {
             }
             val animations = result.animations?.map { AnimationLoader.load(scene, it) } ?: listOf()
 
-            val defaultAnimationSet = AnimationSetLoader.load(scene, defaultAnimationDir)
+            val defaultAnimationSet = AnimationSetLoader.load(scene, animations, defaultAnimationDir)
             val modelAnimation = modelPath.parent?.let { parentPath ->
                 listOf(
                     modelPath.nameWithoutExtension,
@@ -110,7 +111,7 @@ object ModelInstanceManager {
                 ).asSequence().map {
                     parentPath.resolve("$it.animations")
                 }.fold(defaultAnimationSet) { acc, path ->
-                    acc + AnimationSetLoader.load(scene, path)
+                    acc + AnimationSetLoader.load(scene, animations, path)
                 }
             } ?: defaultAnimationSet
 
@@ -138,7 +139,7 @@ object ModelInstanceManager {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun get(uuid: UUID, time: Long?, load: Boolean = true): ModelInstanceItem? {
         val isSelf = uuid == selfUuid
-        if (isSelf && !ConfigHolder.config.value.showOtherPlayerModel) {
+        if (!isSelf && !ConfigHolder.config.value.showOtherPlayerModel) {
             return null
         }
 
@@ -191,8 +192,18 @@ object ModelInstanceManager {
                         val animation = cache.animations.firstOrNull()
                         when {
                             isSelf && vmcRunning -> ModelController.Vmc(scene)
-                            animationSet != null -> ModelController.LiveSwitched(scene, animationSet)
-                            animation != null -> ModelController.Predefined(animation)
+
+                            animationSet != null -> ModelController.LiveSwitched(
+                                BaseAnimationContext.instance,
+                                scene,
+                                animationSet,
+                            )
+
+                            animation != null -> ModelController.Predefined(
+                                BaseAnimationContext.instance,
+                                AnimationItemInstance(animation),
+                            )
+
                             else -> ModelController.LiveUpdated(scene)
                         }
                     },
@@ -217,7 +228,7 @@ object ModelInstanceManager {
         modelCaches.values.forEach { item ->
             if (item.isCompleted) {
                 val item = item.getCompleted() as? ModelCache.Loaded
-                item?.scene?.decreaseReferenceCount()
+                item?.decreaseReferenceCount()
             } else {
                 item.cancel()
             }
@@ -270,7 +281,7 @@ object ModelInstanceManager {
             val remove = path !in usedPaths
             if (remove && item.isCompleted) {
                 val item = item.getCompleted() as? ModelCache.Loaded
-                item?.scene?.decreaseReferenceCount()
+                item?.decreaseReferenceCount()
             }
             remove
         }

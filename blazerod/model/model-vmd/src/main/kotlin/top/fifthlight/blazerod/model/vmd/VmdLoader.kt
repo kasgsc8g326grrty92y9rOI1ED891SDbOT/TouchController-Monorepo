@@ -156,7 +156,7 @@ class VmdLoader : ModelFileLoader {
         }
     }
 
-    private fun loadBone(buffer: ByteBuffer): List<AnimationChannel<*, *>> {
+    private fun loadBone(buffer: ByteBuffer): List<KeyFrameAnimationChannel<*, *>> {
         val channels = mutableMapOf<String, BoneChannel>()
         val boneKeyframeCount = buffer.getInt()
 
@@ -166,14 +166,14 @@ class VmdLoader : ModelFileLoader {
 
             val frameNumber = buffer.getInt()
             channel.frameList.add(frameNumber)
-            // translation, invert Z axis
-            channel.translationData.add(buffer.getFloat())
-            channel.translationData.add(buffer.getFloat())
-            channel.translationData.add(-buffer.getFloat())
-            // rotation, invert X and Y
-            channel.rotationData.add(-buffer.getFloat())
-            channel.rotationData.add(-buffer.getFloat())
+            // translation, invert X axis
+            channel.translationData.add(buffer.getFloat() * -MMD_SCALE)
+            channel.translationData.add(buffer.getFloat() * MMD_SCALE)
+            channel.translationData.add(buffer.getFloat() * MMD_SCALE)
+            // rotation, invert Y and Z
             channel.rotationData.add(buffer.getFloat())
+            channel.rotationData.add(-buffer.getFloat())
+            channel.rotationData.add(-buffer.getFloat())
             channel.rotationData.add(buffer.getFloat())
 
             // translation curve data
@@ -190,40 +190,40 @@ class VmdLoader : ModelFileLoader {
         return channels.flatMap { (name, channel) ->
             val channelData = channel.toData()
             listOf(
-                SimpleAnimationChannel(
-                    type = AnimationChannel.Type.Translation,
-                    data = AnimationChannel.Type.TransformData(
-                        node = AnimationChannel.Type.NodeData(
-                            targetNode = null,
-                            targetNodeName = name,
-                            targetHumanoidTag = HumanoidTag.fromPmxJapanese(name),
+                VmdBezierVector3fInterpolation().let { interpolation ->
+                    KeyFrameAnimationChannel(
+                        type = AnimationChannel.Type.Translation,
+                        typeData = AnimationChannel.Type.TransformData(
+                            node = AnimationChannel.Type.NodeData(
+                                targetNode = null,
+                                targetNodeName = name,
+                                targetHumanoidTag = HumanoidTag.fromPmxJapanese(name),
+                            ),
+                            transformId = TransformId.RELATIVE_ANIMATION,
                         ),
-                        transformId = TransformId.RELATIVE_ANIMATION,
-                    ),
-                    indexer = channelData.frameIndexer,
-                    keyframeData = channelData.translation,
-                    interpolation = VmdBezierInterpolation,
-                    interpolator = VmdBezierVector3fInterpolator(),
-                    components = listOf(channelData.translationCurve),
-                    defaultValue = ::Vector3f,
-                ),
-                SimpleAnimationChannel(
-                    type = AnimationChannel.Type.Rotation,
-                    data = AnimationChannel.Type.TransformData(
-                        node = AnimationChannel.Type.NodeData(
-                            targetNode = null,
-                            targetNodeName = name,
-                            targetHumanoidTag = HumanoidTag.fromPmxJapanese(name),
+                        components = listOf(channelData.translationCurve, interpolation),
+                        indexer = channelData.frameIndexer,
+                        keyframeData = channelData.translation,
+                        interpolation = interpolation,
+                    )
+                },
+                VmdBezierQuaternionfInterpolation().let { interpolation ->
+                    KeyFrameAnimationChannel(
+                        type = AnimationChannel.Type.Rotation,
+                        typeData = AnimationChannel.Type.TransformData(
+                            node = AnimationChannel.Type.NodeData(
+                                targetNode = null,
+                                targetNodeName = name,
+                                targetHumanoidTag = HumanoidTag.fromPmxJapanese(name),
+                            ),
+                            transformId = TransformId.RELATIVE_ANIMATION,
                         ),
-                        transformId = TransformId.RELATIVE_ANIMATION,
-                    ),
-                    indexer = channelData.frameIndexer,
-                    keyframeData = channelData.rotation,
-                    interpolation = VmdBezierInterpolation,
-                    interpolator = VmdBezierQuaternionfInterpolator(),
-                    components = listOf(channelData.rotationCurve),
-                    defaultValue = ::Quaternionf,
-                ),
+                        components = listOf(channelData.rotationCurve, interpolation),
+                        indexer = channelData.frameIndexer,
+                        keyframeData = channelData.rotation,
+                        interpolation = interpolation,
+                    )
+                },
             )
         }
     }
@@ -252,7 +252,7 @@ class VmdLoader : ModelFileLoader {
         }
     }
 
-    private fun loadFace(buffer: ByteBuffer): List<AnimationChannel<*, *>> {
+    private fun loadFace(buffer: ByteBuffer): List<KeyFrameAnimationChannel<*, *>> {
         val channels = mutableMapOf<String, WeightChannel>()
         val faceKeyframeCount = buffer.getInt()
         repeat(faceKeyframeCount) {
@@ -269,9 +269,9 @@ class VmdLoader : ModelFileLoader {
         return channels.flatMap { (name, channel) ->
             val (indexer, data) = channel.toData()
             listOf(
-                SimpleAnimationChannel(
+                KeyFrameAnimationChannel(
                     type = AnimationChannel.Type.Expression,
-                    data = AnimationChannel.Type.ExpressionData(name = name),
+                    typeData = AnimationChannel.Type.ExpressionData(name = name),
                     indexer = indexer,
                     keyframeData = data,
                     interpolation = AnimationInterpolation.linear,
@@ -280,7 +280,7 @@ class VmdLoader : ModelFileLoader {
         }
     }
 
-    private fun loadCamera(buffer: ByteBuffer): List<AnimationChannel<*, *>> {
+    private fun loadCamera(buffer: ByteBuffer): List<KeyFrameAnimationChannel<*, *>> {
         val cameraKeyframeCount = buffer.getInt().takeIf { it > 0 } ?: return emptyList()
         val frameList = IntArrayList()
         val distanceList = FloatArrayList()
@@ -296,10 +296,10 @@ class VmdLoader : ModelFileLoader {
             frameList.add(buffer.getInt())
             distanceList.add(buffer.getFloat() * MMD_SCALE)
 
-            // XYZ, invert X and Z
+            // XYZ, invert X
             positionList.add(-buffer.getFloat() * MMD_SCALE)
             positionList.add(buffer.getFloat() * MMD_SCALE)
-            positionList.add(-buffer.getFloat() * MMD_SCALE)
+            positionList.add(buffer.getFloat() * MMD_SCALE)
 
             // Invert Y
             rotationList.add(buffer.getFloat())
@@ -364,74 +364,78 @@ class VmdLoader : ModelFileLoader {
         }
 
         return listOf(
-            SimpleAnimationChannel(
-                type = AnimationChannel.Type.MMDCameraDistance,
-                data = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
-                indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
-                keyframeData = AnimationKeyFrameData.ofFloat(sortedDistanceList, 1),
-                components = listOf(
-                    VmdBezierChannelComponent(
-                        values = sortedDistanceCurveData,
-                        frames = sortedTimeList.size,
-                        channels = 1,
-                        cameraOrder = true,
+            VmdBezierFloatInterpolation().let { interpolation ->
+                KeyFrameAnimationChannel(
+                    type = AnimationChannel.Type.MMDCameraDistance,
+                    typeData = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
+                    components = listOf(
+                        VmdBezierChannelComponent(
+                            values = sortedDistanceCurveData,
+                            frames = sortedTimeList.size,
+                            channels = 1,
+                            cameraOrder = true,
+                        ),
+                        interpolation,
                     ),
-                ),
-                interpolation = VmdBezierInterpolation,
-                interpolator = VmdBezierFloatInterpolator(),
-                defaultValue = ::MutableFloat,
-            ),
-            SimpleAnimationChannel(
-                type = AnimationChannel.Type.MMDCameraTarget,
-                data = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
-                indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
-                keyframeData = AnimationKeyFrameData.ofVector3f(sortedPositionList, 1),
-                components = listOf(
-                    VmdBezierChannelComponent(
-                        values = sortedPositionCurveData,
-                        frames = sortedTimeList.size,
-                        channels = 3,
-                        cameraOrder = true,
+                    indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
+                    keyframeData = AnimationKeyFrameData.ofFloat(sortedDistanceList, 1),
+                    interpolation = interpolation,
+                )
+            },
+            VmdBezierVector3fInterpolation().let { interpolation ->
+                KeyFrameAnimationChannel(
+                    type = AnimationChannel.Type.MMDCameraTarget,
+                    typeData = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
+                    components = listOf(
+                        VmdBezierChannelComponent(
+                            values = sortedPositionCurveData,
+                            frames = sortedTimeList.size,
+                            channels = 3,
+                            cameraOrder = true,
+                        ),
+                        interpolation,
                     ),
-                ),
-                interpolation = VmdBezierInterpolation,
-                interpolator = VmdBezierVector3fInterpolator(),
-                defaultValue = ::Vector3f,
-            ),
-            SimpleAnimationChannel(
-                type = AnimationChannel.Type.MMDCameraRotation,
-                data = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
-                indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
-                keyframeData = AnimationKeyFrameData.ofVector3f(sortedRotationList, 1),
-                components = listOf(
-                    VmdBezierChannelComponent(
-                        values = sortedRotationCurveData,
-                        frames = sortedTimeList.size,
-                        channels = 1,
-                        cameraOrder = true,
+                    indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
+                    keyframeData = AnimationKeyFrameData.ofVector3f(sortedPositionList, 1),
+                    interpolation = interpolation,
+                )
+            },
+            VmdBezierSimpleVector3fInterpolation().let { interpolation ->
+                KeyFrameAnimationChannel(
+                    type = AnimationChannel.Type.MMDCameraRotation,
+                    typeData = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
+                    components = listOf(
+                        VmdBezierChannelComponent(
+                            values = sortedRotationCurveData,
+                            frames = sortedTimeList.size,
+                            channels = 1,
+                            cameraOrder = true,
+                        ),
+                        interpolation,
                     ),
-                ),
-                interpolation = VmdBezierInterpolation,
-                interpolator = VmdBezierSimpleVector3fInterpolator(),
-                defaultValue = ::Vector3f,
-            ),
-            SimpleAnimationChannel(
-                type = AnimationChannel.Type.CameraFov,
-                data = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
-                indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
-                keyframeData = AnimationKeyFrameData.ofFloat(sortedFovList, 1),
-                components = listOf(
-                    VmdBezierChannelComponent(
-                        values = sortedFovCurveData,
-                        frames = sortedTimeList.size,
-                        channels = 1,
-                        cameraOrder = true,
+                    indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
+                    keyframeData = AnimationKeyFrameData.ofVector3f(sortedRotationList, 1),
+                    interpolation = interpolation,
+                )
+            },
+            VmdBezierFloatInterpolation().let { interpolation ->
+                KeyFrameAnimationChannel(
+                    type = AnimationChannel.Type.CameraFov,
+                    typeData = AnimationChannel.Type.CameraData(cameraName = "MMD Camera"),
+                    components = listOf(
+                        VmdBezierChannelComponent(
+                            values = sortedFovCurveData,
+                            frames = sortedTimeList.size,
+                            channels = 1,
+                            cameraOrder = true,
+                        ),
+                        interpolation,
                     ),
-                ),
-                interpolation = VmdBezierInterpolation,
-                interpolator = VmdBezierFloatInterpolator(),
-                defaultValue = ::MutableFloat,
-            ),
+                    indexer = ListAnimationKeyFrameIndexer(sortedTimeList),
+                    keyframeData = AnimationKeyFrameData.ofFloat(sortedFovList, 1),
+                    interpolation = interpolation,
+                )
+            },
         )
     }
 
@@ -452,7 +456,7 @@ class VmdLoader : ModelFileLoader {
         return ModelFileLoader.LoadResult(
             metadata = null,
             model = null,
-            animations = listOf(Animation(channels = boneChannels + faceChannels + cameraChannels)),
+            animations = listOf(SimpleAnimation(channels = boneChannels + faceChannels + cameraChannels)),
         )
     }
 

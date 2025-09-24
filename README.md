@@ -10,6 +10,7 @@
 目前 mod 在早期开发中，支持下列功能：
 
 - 渲染 glTF、VRM、PMX、PMD 格式的模型
+- 渲染基岩版实体模型（兼容 YSM 的无加密且未打包的模型）
 - 导入 VMD 格式的动画文件
 - 支持实例化渲染，从而提升多个模型渲染时的性能
 - 支持多人游戏（可以同步显示模型，但是不能也不会支持同步模型文件）
@@ -37,7 +38,7 @@ mod 采取同步模型哈希值的方式，因此你可以重命名模型，甚�
 
 烈焰棒是提供盔甲架底层渲染功能的基础库，支持的功能有：
 
-- glTF、VRM、PMX、PMD 模型加载
+- glTF、VRM、PMX、PMD、基岩版模型加载
 - 游戏内模型渲染
 - glTF 和 VMD 动画支持
 
@@ -51,11 +52,21 @@ Apache 2.0 许可证授权。
 
 ## 鸣谢
 
-感谢 [Saba](https://github.com/benikabocha/saba) 项目为 MMD（PMX/PMD/VMD 格式）的逻辑提供了参考。
+捆绑了 [H2 数据库](https://www.h2database.com/)（MPL 2.0 或 EPL 1.0），作为模型管理功能的存储后端，在此感谢。
 
-项目使用了 [KaiMyEntity-C](https://github.com/Gengorou-C/KAIMyEntity-C) 项目的动画作为默认动画，在此感谢。
+感谢 [Saba](https://github.com/benikabocha/saba)（MIT） 项目为 MMD（PMX/PMD/VMD 格式）的逻辑提供了参考。
 
-使用了来自 [Cherished Worlds](https://github.com/illusivesoulworks/cherishedworlds) 的贴图作为收藏图标，在此感谢。
+捆绑了 [KaiMyEntity-C](https://github.com/Gengorou-C/KAIMyEntity-C) 项目的动画（作者已经在 README 声明不需要署名、可修改、可再分发）作为默认动画，在此感谢。
+
+使用了来自 [Cherished Worlds](https://github.com/illusivesoulworks/cherishedworlds)（LGPL 3.0 及以上版本） 的贴图作为收藏图标，在此感谢。
+
+捆绑了 [JavaOSC](https://github.com/hoijui/JavaOSC)（BSD-3-Clause）以提供 OSC/VMC 支持，在此感谢。
+
+感谢 [GeckoLib](https://github.com/bernie-g/geckolib)（MIT）提供了基岩版模型渲染逻辑的参考。
+
+捆绑了 [mocha](https://github.com/unnamed/mocha)（MIT）项目作为 molang 执行引擎，在此感谢。
+
+捆绑了 [Javassist](https://github.com/jboss-javassist/javassist)（MPL 1.1 或 LGPL 2.1-or-later 或 Apache 2.0）作为 mocha 的代码生成引擎，在此感谢。
 
 ## 许可证
 
@@ -73,34 +84,44 @@ model.
 Currently, the mod is in early development, and supports the following features:
 
 - Render glTF, VRM, PMX, PMD models
+- Render bedrock version entity models (compatible with unencrypted and non-zipped models of YSM)
 - Import VMD format animation files
 - Support instance rendering, improving performance when rendering multiple models
 - Support multiplayer (can synchronize model display, but won't support synchronizing model files)
 - Shader support (Change renderer in mod config to use shader)
 
-If you encounter any problems or have any ideas, please feel free to open an issue or discussion in the [issue area](https://github.com/fifth-light/ArmorStand/issues) and [discussion area](https://github.com/fifth-light/ArmorStand/discussions).
+If you encounter any problems or have any ideas, please feel free to open an issue or discussion in the
+[issue area](https://github.com/fifth-light/ArmorStand/issues) and
+[discussion area](https://github.com/fifth-light/ArmorStand/discussions).
 
 ## Usage
 
-First, you need to prepare a model. Before using any model, please check the copyright of the model to avoid copyright issues. Once you have prepared the model file, place it in the `models` directory to load it.
+First, you need to prepare a model. Before using any model, please check the copyright of the model to avoid copyright
+issues. Once you have prepared the model file, place it in the `models` directory to load it.
 
 In game, press `I` to open the mod settings, and choose the model you prepared.
 
-In game, press `K` to open the animation control interface, where you can load animation files (you also need to place them in the `models` directory), and control the animation speed and playback progress.
+In game, press `K` to open the animation control interface, where you can load animation files (you also need to place
+them in the `models` directory), and control the animation speed and playback progress.
 
 ## Multiplayer
 
-The mod supports multiplayer model synchronization. Before using it, please ensure that your server also has the mod installed (if the server does not have the mod, other players will not be able to see your model, but your own model can still be displayed).
+The mod supports multiplayer model synchronization. Before using it, please ensure that your server also has the mod
+installed (if the server does not have the mod, other players will not be able to see your model, but your own model can
+still be displayed).
 
-Considering distributing models causes copyright issues, the mod can not and will not support synchronizing model files. You need to ensure that other players will also place your model in the `models` directory, so that they can see your model.
+Considering distributing models causes copyright issues, the mod can not and will not support synchronizing model files.
+You need to ensure that other players will also place your model in the `models` directory, so that they can see your
+model.
 
-The mod uses the model's hash value to synchronize models, so you can rename the model, even put it in a subdirectory. As long as the model content does not change, you can see other players' models.
+The mod uses the model's hash value to synchronize models, so you can rename the model, even put it in a subdirectory.
+As long as the model content does not change, you can see other players' models.
 
 ## BlazeRod
 
 BlazeRod is the library providing underlying render abilities for ArmorStand, and it supports:
 
-- glTF, VRM, PMX, PMD model loading
+- glTF, VRM, PMX, PMD and bedrock version model loading
 - In-game model rendering
 - glTF and VMD animation support
 
@@ -117,15 +138,31 @@ which adds a ball-shaped block, as an example for model rendering of BlazeRod. D
 
 ## Acknowledgments
 
-Thanks for [Saba](https://github.com/benikabocha/saba) project for providing reference for MMD (PMX/PMD/VMD format).
-
-This project used animations from [KaiMyEntity-C](https://github.com/Gengorou-C/KAIMyEntity-C) as default animation,
+Bundled [H2 database](https://www.h2database.com/)(MPL 2.0 or EPL 1.0), as model management feature's storage backend,
 thanks to them.
 
-The favorite icon is from [Cherished Worlds](https://github.com/illusivesoulworks/cherishedworlds), thanks to them.
+Thanks for [Saba](https://github.com/benikabocha/saba)(MIT) project for providing reference of MMD (PMX/PMD/VMD format).
+
+Bundled animations from [KaiMyEntity-C](https://github.com/Gengorou-C/KAIMyEntity-C)(Author declared it don't require
+credits, allow to modify and to redistribute) as default animation, thanks to them.
+
+The favorite icon is from [Cherished Worlds](https://github.com/illusivesoulworks/cherishedworlds)(LGPL 3.0 or later),
+thanks to them.
+
+Bundled [JavaOSC](https://github.com/hoijui/JavaOSC)(BSD-3-Clause) for providing OSC/VMC support, thanks to them.
+
+Thanks for [GeckoLib](https://github.com/bernie-g/geckolib)(MIT) project for providing reference of bedrock model
+rendering.
+
+Bundled [mocha](https://github.com/unnamed/mocha)(MIT) project as executing engine of molang, thanks to them.
+
+Bundled [Javassist](https://github.com/jboss-javassist/javassist)(MPL 1.1, LGPL 2.1-or-later or Apache 2.0) as code
+generation engine of mocha, thanks to them.
 
 ## License
 
-The mod is licensed under the LGPL 3.0 or later. Please comply with the license requirements when distributing and modifying.
+The mod is licensed under the LGPL 3.0 or later. Please comply with the license requirements when distributing and
+modifying.
 
-Although it is not required, if your work (such as videos, etc.) uses the mod, please declare that you are using the mod, and if possible, also include a link to the mod.
+Although it is not required, if your work (such as videos, etc.) uses the mod, please declare that you are using the
+mod, and if possible, also include a link to the mod.

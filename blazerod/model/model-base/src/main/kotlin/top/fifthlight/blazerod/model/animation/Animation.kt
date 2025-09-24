@@ -1,6 +1,11 @@
 package top.fifthlight.blazerod.model.animation
 
-data class Animation(
-    val name: String? = null,
-    val channels: List<AnimationChannel<*, *>>,
-)
+interface Animation {
+    val name: String?
+    val channels: List<AnimationChannel<*, *>>
+
+    val duration: Float?
+        get() = null
+
+    fun createState(context: AnimationContext): AnimationState
+}

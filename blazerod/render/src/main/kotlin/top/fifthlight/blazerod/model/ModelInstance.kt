@@ -4,7 +4,7 @@ import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.util.Identifier
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
-import top.fifthlight.blazerod.model.data.ModelMatricesBuffer
+import top.fifthlight.blazerod.model.data.LocalMatricesBuffer
 import top.fifthlight.blazerod.model.data.MorphTargetBuffer
 import top.fifthlight.blazerod.model.data.RenderSkinBuffer
 import top.fifthlight.blazerod.model.node.RenderNode
@@ -43,8 +43,8 @@ class ModelInstance(val scene: RenderScene) : AbstractRefCount() {
 
         val worldTransforms = Array(scene.nodes.size) { Matrix4f() }
 
-        val modelMatricesBuffer = run {
-            val buffer = ModelMatricesBuffer(scene)
+        val localMatricesBuffer = run {
+            val buffer = LocalMatricesBuffer(scene)
             buffer.clear()
             CowBuffer.acquire(buffer).also { it.increaseReferenceCount() }
         }
@@ -76,7 +76,7 @@ class ModelInstance(val scene: RenderScene) : AbstractRefCount() {
         val ikEnabled = Array(scene.ikTargetComponents.size) { true }
 
         override fun close() {
-            modelMatricesBuffer.decreaseReferenceCount()
+            localMatricesBuffer.decreaseReferenceCount()
             skinBuffers.forEach { it.decreaseReferenceCount() }
             targetBuffers.forEach { it.decreaseReferenceCount() }
         }
@@ -109,6 +109,12 @@ class ModelInstance(val scene: RenderScene) : AbstractRefCount() {
         markNodeTransformDirty(scene.nodes[nodeIndex])
         val transform = modelData.transformMaps[nodeIndex]
         transform.updateDecomposed(transformId, updater)
+    }
+
+    fun setTransformBedrock(nodeIndex: Int, transformId: TransformId, updater: NodeTransform.Bedrock.() -> Unit) {
+        markNodeTransformDirty(scene.nodes[nodeIndex])
+        val transform = modelData.transformMaps[nodeIndex]
+        transform.updateBedrock(transformId, updater)
     }
 
     fun setIkEnabled(index: Int, enabled: Boolean) {
@@ -165,15 +171,18 @@ class ModelInstance(val scene: RenderScene) : AbstractRefCount() {
         }
     }
 
+    @JvmOverloads
     fun createRenderTask(
-        modelViewMatrix: Matrix4fc,
+        modelMatrix: Matrix4fc,
         light: Int,
+        overlay: Int = 0,
     ): RenderTask {
         return RenderTask.acquire(
             instance = this,
-            modelViewMatrix = modelViewMatrix,
+            modelMatrix = modelMatrix,
             light = light,
-            modelMatricesBuffer = modelData.modelMatricesBuffer.copy(),
+            overlay = overlay,
+            localMatricesBuffer = modelData.localMatricesBuffer.copy(),
             skinBuffer = modelData.skinBuffers.copy(),
             morphTargetBuffer = modelData.targetBuffers.copy().also { buffer ->
                 // Upload indices don't change the actual data
@@ -181,7 +190,11 @@ class ModelInstance(val scene: RenderScene) : AbstractRefCount() {
                     it.content.uploadIndices()
                 }
             },
-        )
+        ).apply {
+            scene.renderTransform?.matrix?.let {
+                this.modelMatrix.mul(it)
+            }
+        }
     }
 
     override fun onClosed() {

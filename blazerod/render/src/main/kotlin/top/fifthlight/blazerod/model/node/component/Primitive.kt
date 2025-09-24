@@ -41,7 +41,7 @@ class Primitive(
             if (skinIndex != null) {
                 return
             }
-            instance.modelData.modelMatricesBuffer.edit {
+            instance.modelData.localMatricesBuffer.edit {
                 setMatrix(primitiveIndex, instance.getWorldTransform(node))
             }
         }
