@@ -4,6 +4,8 @@ import net.minecraft.client.network.AbstractClientPlayerEntity
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState
 import net.minecraft.entity.EntityPose
 import net.minecraft.entity.EntityType
+import net.minecraft.registry.tag.EntityTypeTags
+import net.minecraft.util.Arm
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 import top.fifthlight.armorstand.extension.internal.PlayerEntityRenderStateExtInternal
@@ -247,6 +249,14 @@ sealed interface ModelController {
                 override fun getItem(set: FullAnimationSet) = set.onHorse
             }
 
+            data object OnPig : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.onPig
+            }
+
+            data object OnBoat : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.onBoat
+            }
+
             data object Dying : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.die
                 override val loop: Boolean
@@ -259,6 +269,38 @@ sealed interface ModelController {
 
             data object Sneaking : PlayState() {
                 override fun getItem(set: FullAnimationSet) = set.sneak
+            }
+
+            data object SneakIdle : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.sneakIdle
+            }
+
+            data object Crawling : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.crawl
+            }
+
+            data object CrawlIdle : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.crawlIdle
+            }
+
+            data object OnClimbable : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.onClimbable
+            }
+
+            data object OnClimbableUp : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.onClimbableUp
+            }
+
+            data object OnClimbableDown : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.onClimbableDown
+            }
+
+            data object LeftArmSwinging : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.swingLeft
+            }
+
+            data object RightArmSwinging : PlayState() {
+                override fun getItem(set: FullAnimationSet) = set.swingRight
             }
         }
 
@@ -284,21 +326,45 @@ sealed interface ModelController {
         ): PlayState {
             val vehicleType = player.vehicle?.type
             return when {
-                vehicleType in horseEntityTypes -> PlayState.OnHorse
-                vehicleType != null -> PlayState.Riding
                 player.isDead -> PlayState.Dying
-                renderState.pose == EntityPose.CROUCHING -> PlayState.Sneaking
-                renderState.pose == EntityPose.GLIDING -> PlayState.ElytraFly
-                renderState.pose == EntityPose.SLEEPING -> PlayState.Sleeping
-                renderState.pose == EntityPose.SWIMMING -> PlayState.Swimming
 
-                else -> if (player.isSprinting) {
-                    PlayState.Sprinting
-                } else if (player.limbAnimator.speed > .4f) {
-                    PlayState.Walking
+                vehicleType in horseEntityTypes -> PlayState.OnHorse
+                vehicleType == EntityType.PIG -> PlayState.OnPig
+                vehicleType?.isIn(EntityTypeTags.BOAT) == true -> PlayState.OnBoat
+                vehicleType != null -> PlayState.Riding
+
+                renderState.pose == EntityPose.SLEEPING -> PlayState.Sleeping
+                renderState.pose == EntityPose.GLIDING -> PlayState.ElytraFly
+                player.isSwimming -> PlayState.Swimming
+                renderState.pose == EntityPose.SWIMMING -> if (player.movement.horizontalLength() > .01) {
+                    PlayState.Crawling
                 } else {
-                    PlayState.Idle
+                    PlayState.CrawlIdle
                 }
+
+                player.isClimbing -> when {
+                    player.movement.y > 0.1 -> PlayState.OnClimbableUp
+                    player.movement.y < -0.1 -> PlayState.OnClimbableDown
+                    player.isSneaking -> PlayState.OnClimbable
+                    else -> PlayState.Idle
+                }
+
+                renderState.pose == EntityPose.CROUCHING -> if (player.movement.horizontalLength() > .01) {
+                    PlayState.Sneaking
+                } else {
+                    PlayState.SneakIdle
+                }
+
+                player.isSprinting -> PlayState.Sprinting
+
+                player.movement.horizontalLength() > .05 -> PlayState.Walking
+
+                renderState.handSwinging -> when (renderState.preferredArm) {
+                    Arm.LEFT -> PlayState.LeftArmSwinging
+                    Arm.RIGHT -> PlayState.RightArmSwinging
+                }
+
+                else -> PlayState.Idle
             }
         }
 

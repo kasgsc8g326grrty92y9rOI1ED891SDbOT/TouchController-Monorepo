@@ -3,7 +3,6 @@ package top.fifthlight.blazerod.animation.context
 import net.minecraft.entity.Entity
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Direction
-import org.joml.Math.sqrt
 import top.fifthlight.blazerod.model.animation.AnimationContext
 import top.fifthlight.blazerod.model.animation.AnimationContext.Property.*
 import top.fifthlight.blazerod.model.animation.AnimationContext.RenderingTargetType
@@ -79,7 +78,7 @@ open class EntityAnimationContext protected constructor() : BaseAnimationContext
         }.let { intBuffer.apply { value = it } }
 
         EntityGroundSpeed -> doubleBuffer.apply {
-            value = sqrt(entity.movement.x * entity.movement.x + entity.movement.z * entity.movement.z)
+            value = entity.movement.horizontalLength()
         }
 
         EntityVerticalSpeed -> doubleBuffer.apply { value = entity.movement.y }

@@ -103,7 +103,6 @@ data class FullAnimationSet(
     val onBoat: AnimationItemInstance,
     val crawl: AnimationItemInstance,
     val crawlIdle: AnimationItemInstance,
-    val lieDown: AnimationItemInstance,
     val custom: Map<String, AnimationItemInstance> = emptyMap(),
     val itemActive: Map<AnimationSet.ItemActiveKey, AnimationItemInstance> = emptyMap(),
 ) {
@@ -131,8 +130,7 @@ data class FullAnimationSet(
                     onPig = AnimationItemInstance(animationSet.onPig ?: animationSet.ride ?: idle),
                     onBoat = AnimationItemInstance(animationSet.onBoat ?: animationSet.ride ?: idle),
                     crawl = AnimationItemInstance(animationSet.crawl ?: animationSet.sneak ?: idle),
-                    crawlIdle = AnimationItemInstance(animationSet.crawlIdle ?: animationSet.crawl ?: animationSet.sneak ?: idle),
-                    lieDown = AnimationItemInstance(animationSet.lieDown ?: animationSet.sleep ?: idle),
+                    crawlIdle = AnimationItemInstance(animationSet.crawlIdle ?: animationSet.crawl ?: animationSet.sleep ?: animationSet.sneak ?: idle),
                     custom = animationSet.custom.mapValues { (_, value) -> AnimationItemInstance(value) },
                     itemActive = animationSet.itemActive.mapValues { (_, value) -> AnimationItemInstance(value) },
                 )
@@ -170,7 +168,6 @@ data object AnimationSetLoader {
         var onBoat: AnimationItem? = null
         var crawl: AnimationItem? = null
         var crawlIdle: AnimationItem? = null
-        var lieDown: AnimationItem? = null
         val custom: MutableMap<String, AnimationItem> = mutableMapOf()
         val itemActive: MutableMap<AnimationSet.ItemActiveKey, AnimationItem> = mutableMapOf()
 
@@ -223,8 +220,7 @@ data object AnimationSetLoader {
                     "onpig" -> load()?.let { onPig = it }
                     "onboat" -> load()?.let { onBoat = it }
                     "crawl" -> load()?.let { crawl = it }
-                    "crawlidle" -> load()?.let { crawlIdle = it }
-                    "liedown" -> load()?.let { lieDown = it }
+                    "crawlidle", "liedown" -> load()?.let { crawlIdle = it }
                     else -> when {
                         name.startsWith("custom") -> {
                             val name = name.substringAfter("custom")
@@ -287,8 +283,8 @@ data object AnimationSetLoader {
                     "ride_pig", "onpig" -> onPig = animation
                     "boat", "onboat" -> onBoat = animation
                     "climb", "crawl" -> crawl = animation
-                    "climbing", "crawlidle" -> crawlIdle = animation
-                    "death", "lieDown" -> lieDown = animation
+                    "climbing", "crawlidle", "lieDown" -> crawlIdle = animation
+                    "death", "die", "dead" -> die = animation
                 }
             }
         }
@@ -314,7 +310,6 @@ data object AnimationSetLoader {
             onBoat = onBoat,
             crawl = crawl,
             crawlIdle = crawlIdle,
-            lieDown = lieDown,
         )
     }
 }
