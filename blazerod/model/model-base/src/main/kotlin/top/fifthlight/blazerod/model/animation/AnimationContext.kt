@@ -57,6 +57,7 @@ interface AnimationContext {
         object PlayerIsJumping : Property<BooleanWrapper>
         object PlayerIsSleeping : Property<BooleanWrapper>
         object PlayerLevel : Property<IntWrapper>
+        object PlayerFoodLevel : Property<IntWrapper>
 
         // World
         object WorldMoonPhase : Property<IntWrapper>

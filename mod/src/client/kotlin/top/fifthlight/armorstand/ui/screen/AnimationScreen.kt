@@ -31,19 +31,19 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
     }.also {
         scope.launch {
             viewModel.uiState.collect { state ->
-                when (state.playState) {
+                when (val state = state.playState) {
                     is AnimationScreenState.PlayState.None -> {
                         it.active = false
                         it.playing = false
                     }
 
                     is AnimationScreenState.PlayState.Paused -> {
-                        it.active = true
+                        it.active = !state.readonly
                         it.playing = false
                     }
 
                     is AnimationScreenState.PlayState.Playing -> {
-                        it.active = true
+                        it.active = !state.readonly
                         it.playing = true
                     }
                 }
@@ -72,7 +72,25 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
                 viewModel.updatePlaySpeed(value.toFloat())
             }
         },
-    )
+    ).also {
+        scope.launch {
+            viewModel.uiState.collect { state ->
+                when (val playState = state.playState) {
+                    is AnimationScreenState.PlayState.None -> {
+                        it.active = false
+                    }
+
+                    is AnimationScreenState.PlayState.Paused -> {
+                        it.active = !playState.readonly
+                    }
+
+                    is AnimationScreenState.PlayState.Playing -> {
+                        it.active = !playState.readonly
+                    }
+                }
+            }
+        }
+    }
 
     private val progressSlider = slider(
         textFactory = { slider, text ->
@@ -114,12 +132,12 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
                     }
 
                     is AnimationScreenState.PlayState.Paused -> {
-                        it.active = true
+                        it.active = !playState.readonly
                         it.updateRange(0.0, playState.length.toDouble())
                     }
 
                     is AnimationScreenState.PlayState.Playing -> {
-                        it.active = true
+                        it.active = !playState.readonly
                         it.updateRange(0.0, playState.length.toDouble())
                     }
                 }

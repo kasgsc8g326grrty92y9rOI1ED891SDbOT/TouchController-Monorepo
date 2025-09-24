@@ -114,20 +114,46 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
         }
         when (val controller = instanceItem.controller) {
             is ModelController.AnimatedModelController -> {
-                val animationState = (controller.animationState as? SimpleAnimationState) ?: return
-                val progress = animationState.getTime()
-                val playState = if (animationState.paused) {
-                    AnimationScreenState.PlayState.Paused(
-                        progress = progress,
-                        length = animationState.duration,
-                        speed = animationState.speed,
-                    )
-                } else {
-                    AnimationScreenState.PlayState.Playing(
-                        progress = progress,
-                        length = animationState.duration,
-                        speed = animationState.speed,
-                    )
+                val playState = when (val animationState = controller.animationState) {
+                    is SimpleAnimationState -> {
+                        val duration = animationState.duration
+                        val progress = animationState.getTime()
+                        if (animationState.playing) {
+                            AnimationScreenState.PlayState.Playing(
+                                progress = progress,
+                                length = duration,
+                                speed = animationState.speed,
+                                readonly = false,
+                            )
+                        } else {
+                            AnimationScreenState.PlayState.Paused(
+                                progress = progress,
+                                length = duration,
+                                speed = animationState.speed,
+                                readonly = false,
+                            )
+                        }
+                    }
+
+                    else -> {
+                        val duration = animationState.duration
+                        val progress = animationState.getTime()
+                        if (animationState.playing) {
+                            AnimationScreenState.PlayState.Playing(
+                                progress = progress,
+                                length = duration ?: 1f,
+                                speed = 1f,
+                                readonly = true,
+                            )
+                        } else {
+                            AnimationScreenState.PlayState.Paused(
+                                progress = progress,
+                                length = duration ?: 1f,
+                                speed = 1f,
+                                readonly = true,
+                            )
+                        }
+                    }
                 }
                 _uiState.getAndUpdate {
                     it.copy(playState = playState)

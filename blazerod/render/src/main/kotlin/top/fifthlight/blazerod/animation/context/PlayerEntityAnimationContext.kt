@@ -115,11 +115,15 @@ open class PlayerEntityAnimationContext protected constructor() : LivingEntityAn
 
         PlayerIsUsingItem -> booleanBuffer.apply { value = entity.isUsingItem }
 
-        PlayerLevel -> intBuffer.apply { value = entity.experienceLevel }
-
         PlayerIsJumping -> booleanBuffer.apply { value = entity.isJumping }
 
         PlayerIsSleeping -> booleanBuffer.apply { value = entity.isSleeping }
+
+        PlayerLevel -> intBuffer.apply { value = entity.experienceLevel }
+
+        PlayerFoodLevel -> intBuffer.apply {
+            value = entity.hungerManager.foodLevel
+        }
 
         else -> super.getProperty(type)
     } as T?

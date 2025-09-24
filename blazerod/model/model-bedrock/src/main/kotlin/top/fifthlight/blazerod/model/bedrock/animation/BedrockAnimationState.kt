@@ -14,7 +14,7 @@ import top.fifthlight.blazerod.model.bedrock.molang.value.MolangValue
 
 class BedrockAnimationState(
     val context: AnimationContext,
-    val duration: Float,
+    override val duration: Float,
     val startDelay: MolangValue,
     val loopDelay: MolangValue,
     val loopMode: AnimationLoopMode,
@@ -154,7 +154,7 @@ class BedrockAnimationState(
                 if (deltaTime < loopDelay) {
                     return this
                 }
-                val (newGameTick, newDeltaTick) = addDeltaTime(state.duration)
+                val (newGameTick, newDeltaTick) = addDeltaTime(loopDelay)
                 return when (state.loopMode) {
                     AnimationLoopMode.NO_LOOP -> EndOnTime(
                         startGameTick = newGameTick,
@@ -162,10 +162,18 @@ class BedrockAnimationState(
                         time = 0f,
                     )
 
-                    AnimationLoopMode.LOOP -> Playing(
-                        newGameTick,
-                        newDeltaTick,
-                    )
+                    AnimationLoopMode.LOOP -> if (state.duration < 1e-2) {
+                        EndOnTime(
+                            newGameTick,
+                            newDeltaTick,
+                            time = state.duration,
+                        )
+                    } else {
+                        Playing(
+                            newGameTick,
+                            newDeltaTick,
+                        )
+                    }
 
                     AnimationLoopMode.HOLD_ON_LAST_FRAME -> EndOnTime(
                         newGameTick,
@@ -203,6 +211,9 @@ class BedrockAnimationState(
         startDeltaTick = context.getDeltaTick(),
         startDelay = evalValue(context, startDelay),
     )
+
+    override val playing: Boolean
+        get() = state is State.Playing
 
     private var time = 0f
     override fun updateTime(context: AnimationContext) {

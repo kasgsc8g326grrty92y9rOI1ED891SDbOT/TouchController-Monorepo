@@ -3,7 +3,7 @@ package top.fifthlight.blazerod.model.animation
 class SimpleAnimationState(
     initGameTick: Long,
     initDeltaTick: Float,
-    val duration: Float,
+    override val duration: Float,
     loop: Boolean = true,
 ): AnimationState {
     constructor(
@@ -94,4 +94,7 @@ class SimpleAnimationState(
             }
             field = value
         }
+
+    override val playing: Boolean
+        get() = !paused
 }

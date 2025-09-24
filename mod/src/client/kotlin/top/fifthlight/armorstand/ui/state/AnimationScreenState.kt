@@ -31,12 +31,14 @@ data class AnimationScreenState(
             val progress: Float,
             val length: Float,
             val speed: Float,
+            val readonly: Boolean,
         ) : PlayState()
 
         data class Playing(
             val progress: Float,
             val length: Float,
             val speed: Float,
+            val readonly: Boolean,
         ) : PlayState()
     }
 }

@@ -21,6 +21,7 @@ object YsmContext : ObjectValue {
         entries["is_passenger"] = booleanProperty(AnimationContext.Property.EntityIsRiding)
         entries["is_sleep"] = booleanProperty(AnimationContext.Property.PlayerIsSleeping)
         entries["is_sneak"] = booleanProperty(AnimationContext.Property.PlayerIsSneaking)
+        entries["food_level"] = intProperty(AnimationContext.Property.PlayerFoodLevel)
 
         // World
         entries["dimension_name"] = stringProperty(AnimationContext.Property.WorldDimension)
