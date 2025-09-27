@@ -35,3 +35,9 @@ modId="kotlinforforge"
 type="required"
 ordering="NONE"
 side="CLIENT"
+
+[[dependencies.blazerod_render]]
+modId="blazerod_model_base"
+type="required"
+ordering="NONE"
+side="CLIENT"

@@ -256,6 +256,7 @@ public class ExpectActualMerger {
 
                         var classData = classWriter.toByteArray();
                         outputStream.write(classData);
+                        outputStream.closeEntry();
                     }
                     case MergeEntry.JarItem jarItem -> {
                         var outputEntry = new JarEntry(entry.getKey());
@@ -264,6 +265,7 @@ public class ExpectActualMerger {
                         try (var inputStream = jarItem.jarFile().getInputStream(jarItem.entry())) {
                             inputStream.transferTo(outputStream);
                         }
+                        outputStream.closeEntry();
                     }
                     case MergeEntry.ResourceFile resourceFile -> {
                         var outputEntry = new JarEntry(entry.getKey());
@@ -272,6 +274,7 @@ public class ExpectActualMerger {
                         try (var inputStream = Files.newInputStream(resourceFile.path())) {
                             inputStream.transferTo(outputStream);
                         }
+                        outputStream.closeEntry();
                     }
                 }
             }

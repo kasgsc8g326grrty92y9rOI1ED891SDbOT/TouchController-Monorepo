@@ -258,10 +258,6 @@ data object AnimationSetLoader {
             }
         }
 
-        if (idle == null) {
-            return AnimationSet.EMPTY
-        }
-
         // Try embed
         if (animations != null) {
             for (animation in animations) {
@@ -287,6 +283,10 @@ data object AnimationSetLoader {
                     "death", "die", "dead" -> die = animation
                 }
             }
+        }
+
+        if (idle == null) {
+            return AnimationSet.EMPTY
         }
 
         return AnimationSet(

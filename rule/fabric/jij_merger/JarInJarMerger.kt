@@ -1,10 +1,8 @@
 package top.fifthlight.fabazel.jijmerger
 
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import java.io.ByteArrayOutputStream
 import java.nio.file.Path
-import java.nio.file.attribute.FileTime
 import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
 import java.util.jar.JarOutputStream
@@ -12,9 +10,7 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.outputStream
 
 private fun JarEntry.clearTime() {
-    setCreationTime(FileTime.fromMillis(0))
-    setLastAccessTime(FileTime.fromMillis(0))
-    setLastModifiedTime(FileTime.fromMillis(0))
+    time = 0L
 }
 
 fun main(args: Array<String>) {

@@ -172,8 +172,7 @@ public class TinyRemapperWorker extends Worker implements AutoCloseable {
             }
 
             try (var outputJarStream = new JarOutputStream(Files.newOutputStream(Paths.get(outputJar)));
-                 var outputFilePaths = Files.walk(outputTempRoot);
-                 outputTempFs) {
+                 var outputFilePaths = Files.walk(outputTempRoot)) {
                 outputFilePaths
                         .sorted()
                         .filter(Files::isRegularFile)
@@ -187,6 +186,8 @@ public class TinyRemapperWorker extends Worker implements AutoCloseable {
                                 throw new RuntimeException(ex);
                             }
                         });
+            } finally {
+                outputTempFs.close();
             }
 
             return 0;

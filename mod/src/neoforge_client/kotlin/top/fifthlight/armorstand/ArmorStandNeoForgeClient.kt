@@ -73,10 +73,6 @@ object ArmorStandNeoForgeClient : ArmorStandNeoForge(), ArmorStandClient {
             }
         }
 
-        ModelFileLoaders.initialize()
-
-        ConfigHolder.read()
-
         NeoForge.EVENT_BUS.register(object {
             @SubscribeEvent
             fun onBeforeEntityRender(event: RenderLevelStageEvent.AfterOpaqueBlocks) {
@@ -128,10 +124,6 @@ object ArmorStandNeoForgeClient : ArmorStandNeoForge(), ArmorStandClient {
             }
         })
 
-        RenderEvents.FLIP_FRAME.register {
-            RendererManager.rotate()
-        }
-
         ScreenEvents.UNLOCK_CURSOR.register { screen ->
             when (screen) {
                 is ModelSwitchScreen -> false
@@ -149,6 +141,14 @@ object ArmorStandNeoForgeClient : ArmorStandNeoForge(), ArmorStandClient {
             val client = MinecraftClient.getInstance()
             mainDispatcher = ThreadExecutorDispatcher(client)
             scope = CoroutineScope(SupervisorJob() + mainDispatcher)
+
+            RenderEvents.FLIP_FRAME.register {
+                RendererManager.rotate()
+            }
+
+            ModelFileLoaders.initialize()
+            ConfigHolder.read()
+
             runBlocking {
                 ModelManagerHolder.initialize()
                 NetworkModelSyncer.initialize()

@@ -3,6 +3,7 @@ package top.fifthlight.blazerod.render
 import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.irisshaders.iris.api.v0.IrisApi
 import net.irisshaders.iris.vertices.IrisVertexFormats
+import net.neoforged.fml.ModList
 import top.fifthlight.mergetools.api.ActualConstructor
 import top.fifthlight.mergetools.api.ActualImpl
 
@@ -15,8 +16,7 @@ class IrisApiWrapperImpl @ActualConstructor("create") constructor() : IrisApiWra
     override val TANGENT_ELEMENT: VertexFormatElement
         get() = IrisVertexFormats.TANGENT_ELEMENT
 
-    // TODO
-    private val irisApi = if (true) {
+    private val irisApi = if (ModList.get().isLoaded("iris")) {
         IrisApi.getInstance()
     } else {
         null

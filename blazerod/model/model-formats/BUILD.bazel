@@ -24,7 +24,10 @@ model_info_jar(
 
 kt_jvm_library(
     name = "model-formats",
-    srcs = glob(["src/main/kotlin/**/*.kt"]),
+    srcs = glob([
+        "src/main/java/**/*.java",
+        "src/main/kotlin/**/*.kt",
+    ], allow_empty = True),
     resource_jars = [
         ":mod_info_json",
         "//blazerod:icon",

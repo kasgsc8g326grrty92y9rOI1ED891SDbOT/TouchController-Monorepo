@@ -25,9 +25,14 @@ abstract class ArmorStandNeoForge : ArmorStand {
         instance = this
 
         ServerModelPathManager.onUpdateListener = { uuid, hash ->
-            server?.let {
+            server?.let { server ->
                 val payload = PlayerModelUpdateS2CPayload(uuid, hash)
-                PacketDistributor.sendToAllPlayers(payload)
+                server.playerManager.playerList.forEach { player ->
+                    if (player.uuid == uuid) {
+                        return@let
+                    }
+                    PacketDistributor.sendToPlayer(player, payload)
+                }
             }
         }
 
@@ -71,6 +76,7 @@ abstract class ArmorStandNeoForge : ArmorStand {
         event.registrar("armorstand")
             .versioned(ModInfo.MOD_VERSION)
             .optional()
+            .playToClient(PlayerModelUpdateS2CPayload.ID, PlayerModelUpdateS2CPayload.CODEC)
             .playToServer(ModelUpdateC2SPayload.ID, ModelUpdateC2SPayload.CODEC) { payload, context ->
                 ServerModelPathManager.update(context.player().uuid, payload.modelHash)
             }

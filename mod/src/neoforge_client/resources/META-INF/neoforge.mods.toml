@@ -35,3 +35,15 @@ modId="kotlinforforge"
 type="required"
 ordering="NONE"
 side="CLIENT"
+
+[[dependencies.armorstand]]
+modId="blazerod_model_base"
+type="required"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.armorstand]]
+modId="blazerod_model_formats"
+type="required"
+ordering="NONE"
+side="CLIENT"
