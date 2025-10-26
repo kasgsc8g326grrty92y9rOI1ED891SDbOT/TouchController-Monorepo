@@ -16,6 +16,8 @@ local.properties
 *.iml
 *.ipr
 *.iws
+.clwb/
+.ijwb/
 
 # vscode
 
