@@ -11,6 +11,8 @@ bazel_dep(name = "rules_jvm_external", version = "6.8")
 bazel_dep(name = "bazel_skylib", version = "1.8.2")
 bazel_dep(name = "bazel_lib", version = "3.0.0-rc.0")
 bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "rules_rust", version = "0.67.0")
+bazel_dep(name = "rules_rust_mdbook", version = "0.67.0")
 
 game_versions = [
     "1.21.9",

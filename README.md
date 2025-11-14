@@ -13,6 +13,7 @@
 
 - Combine：迁移中
 - TouchController：暂未迁移
+- TouchControllerWiki：迁移完毕
 - BlazeRod：暂未迁移
 - ArmorStand：暂未迁移
 
@@ -33,5 +34,6 @@ Projects are gradually being migrated from their respective repositories to here
 
 - Combine: Migrating
 - TouchController: Not yet migrated
+- TouchControllerWiki：Migrated
 - BlazeRod: Not yet migrated
 - ArmorStand: Not yet migrated

@@ -1,0 +1,7 @@
+[book]
+authors = ["WhiteElephant-abc", "fifth_light", "fengzhou0w0"]
+title = "TouchControllerWiki"
+language = "cmn-hans-cn"
+
+[output.html]
+git-repository-url = "https://github.com/TouchController/TouchController-Monorepo/tree/master/touchcontroller/wiki"
