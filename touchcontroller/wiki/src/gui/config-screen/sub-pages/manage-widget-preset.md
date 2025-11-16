@@ -1,10 +1,8 @@
 # 子页面：管理预设
 
-## 说明
-
-- 此页面只拥有[返回按钮](../../interface-frame.md#返回)
+- 此页面只拥有[返回按钮](../config-screen.md#返回)
 - 这个页面可以用来配置由开发团队提供的控件预设。
-- 参见：[管理预设的特性](../../../../feature/manage-widget-preset)
+- 参见：[管理预设的特性](../../../feature/manage-widget-preset.md)
 
 ## 选项
 
@@ -18,7 +16,7 @@
   - 旧版图标和新版控件背景
   - 新版贴图
   - 新版图标和旧版控件背景
-- 参见[控件样式](../../../../widget/widget-style.md)
+- 参见[控件样式](../../../widget/widget-style.md)
 
 #### 不透明度
 
@@ -84,4 +82,6 @@
 
 - 类型：选项
 - 默认值：禁用
-- 控制聊天按钮是否打开 TouchController 的[聊天界面](../../../../gui/chat-screen.md)
+- 控制聊天按钮是否打开 TouchController 的[聊天界面](../../chat-screen.md)
+
+![](assets/manage-widget-preset/file-20251116212455725.png)

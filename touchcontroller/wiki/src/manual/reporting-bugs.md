@@ -16,5 +16,5 @@
 
 - 您可以尝试移除 TouchController。如果移除后仍出现异常，那么可能不是 TouchController 导致的 bug。
 - 在整合包中使用 TouchController **极易**导致 bug。
-- 如果整合包中 mod 较少，您可以依照上面一条的步骤测试 mod 冲突。
-- 如果 mod 过多无法测试，您可以依照上面一条的步骤直接反馈 bug。
+- 如果整合包中 mod 较少，您可以依照上方步骤测试 mod 冲突。
+- 如果 mod 过多无法测试，您可以[点击这里](https://github.com/TouchController/TouchController/issues/new?template=bug_report_zh_cn.yml)反馈一个 bug。请注意，反馈 bug 需要详细地说明情况，需要提供日志以及复现流程。

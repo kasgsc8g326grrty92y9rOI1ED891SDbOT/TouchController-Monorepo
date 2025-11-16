@@ -1,18 +1,18 @@
 # 子页面：自定义布局
 
-## 说明
-
-- 相关页面：[图层系统](../../../../mechanism/custom-layout/layer-system.md)、[预设系统](../../../../mechanism/custom-layout/preset-system.md)
+- 相关页面：[图层系统](../../../mechanism/custom-layout/layer-system.md)、[预设系统](../../../mechanism/custom-layout/preset-system.md)
 - 这个页面可以自定义控件的布局
-- 参见：[自定义布局的特性](../../../../feature/custom-layout)
+- 参见：[自定义布局的特性](../../../feature/custom-layout.md)
 
-## 框架
+![](assets/custom-widget-layout/file-20251116213404378.png)
+
+## 页面结构
 
 ### 顶栏
 
 #### 返回按钮
 
-- 参见：[返回](../../interface-frame.md#返回)
+- 参见：[返回](../config-screen.md#返回)
 
 #### 粘贴控件
 
@@ -49,15 +49,17 @@
 
 - 名称：一个文本框，可以进行重命名。
 - 移动锁定：可以锁定当前控件。
-- 锚点：参见[锚点机制](../../../../mechanism/anchor-mechanism.md)
+- 锚点：参见[锚点机制](../../../mechanism/anchor-mechanism.md)
 - 不透明度：一个滑杆
 - 滑动触发：按下一个启用了滑动触发的控件，手指滑动到另一个启用了滑动触发控件即可触发此控件。
 - 捕获触发：按下后，手指移开仍继续触发。
 - 视角跟随：按下后手指可以移动视角。
 
-这些选项的下方为[自定义控件](../../../../mechanism/custom-widget.md)的相关设置。
+这些选项的下方为[自定义控件](../../../mechanism/custom-layout/custom-widget.md)的相关设置。
 
 此标签页的底部有两个按钮，分别为复制控件和剪切控件。
+
+![](assets/custom-widget-layout/file-20251116212930741.png)
 
 #### 控件
 
@@ -71,17 +73,21 @@
 - 内置控件：TouchController 预置的控件，可以直接使用（在内置控件的最后，有一个作为模板的空白自定义控件）。
 - 模板控件：通过上述的保存按钮储存的控件，用于复用自定义后的控件。
 
+![](assets/custom-widget-layout/file-20251116213114187.png)
+
 #### 图层
 
 此标签页的工具栏按钮为：
 
-- 添加图层：点击后跳转到[图层编辑](../../../../mechanism/custom-layout/layer-system#图层编辑)页面，可以编辑图层条件、名称并添加一个空图层。
+- 添加图层：点击后跳转到[图层编辑](../../../mechanism/custom-layout/layer-system.md#图层编辑)页面，可以编辑图层条件、名称并添加一个空图层。
 
 此标签页的主体为从上至下排列的一系列图层，下方有上移和下移按钮，用于排序图层。
 
-点击图层右边的三个点，可以删除、复制、编辑图层，点击编辑按钮后会跳转到[图层编辑](../../../../mechanism/custom-layout/layer-system#图层编辑)页面。
+点击图层右边的三个点，可以删除、复制、编辑图层，点击编辑按钮后会跳转到[图层编辑](../../../mechanism/custom-layout/layer-system.md#图层编辑)页面。
 
-关于图层的详细机制，请查看[图层系统](../../../../mechanism/custom-layout/layer-system.md)。
+关于图层的详细机制，请查看[图层系统](../../../mechanism/custom-layout/layer-system.md)。
+
+![](assets/custom-widget-layout/file-20251116213144436.png)
 
 #### 预设
 
@@ -93,4 +99,6 @@
 
 点击预设右边的三个点，可以删除、复制、编辑预设，可以查看预设文件路径，可以在此调整预设设置。
 
-关于预设的详细机制，请查看[预设系统](../../../../mechanism/custom-layout/preset-system.md)。
+关于预设的详细机制，请查看[预设系统](../../../mechanism/custom-layout/preset-system.md)。
+
+![](assets/custom-widget-layout/file-20251116213208430.png)

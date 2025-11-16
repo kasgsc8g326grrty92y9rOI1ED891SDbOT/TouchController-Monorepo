@@ -8,7 +8,7 @@
 
 - 每个图层都可以配置显示条件，如果多个图层同时满足条件会叠加图层。
 - TouchController 的控件必须在图层中创建。
-- 参见：[自定义图层条件](../custom-conditions)
+- 参见：[自定义图层条件](custom-conditions.md)
 
 ### 图层编辑
 
@@ -16,7 +16,7 @@
 
 - 预置条件：TouchController v0.2.1-beta11 及以前所可用的全部条件，详细说明见下方。
 - 手持物品：类似[物品列表](../../gui/config-screen/sub-pages/item-list)的默认物品表，点击一个物品可以添加手持此物品的条件。
-- 自定义条件：参见[自定义图层条件](../custom-conditions)
+- 自定义条件：参见[自定义图层条件](custom-conditions.md)
 
 ### 条件状态
 
