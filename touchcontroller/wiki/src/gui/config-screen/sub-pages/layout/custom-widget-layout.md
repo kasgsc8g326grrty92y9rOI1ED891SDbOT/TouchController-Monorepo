@@ -1,7 +1,5 @@
 # 子页面：自定义布局
 
-## 说明
-
 - 相关页面：[图层系统](../../../../mechanism/custom-layout/layer-system.md)、[预设系统](../../../../mechanism/custom-layout/preset-system.md)
 - 这个页面可以自定义控件的布局
 - 参见：[自定义布局的特性](../../../../feature/custom-layout)

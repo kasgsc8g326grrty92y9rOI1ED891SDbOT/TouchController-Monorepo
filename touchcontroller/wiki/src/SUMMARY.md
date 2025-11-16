@@ -36,7 +36,7 @@
         - [触控圈](./gui/config-screen/tab/touch-ring.md)
         - [调试](./gui/config-screen/tab/debug.md)
         - [物品](gui/config-screen/tab/item.md)
-    - [子页面]()
+    - [子页面](./gui/config-screen/sub-pages/sub-pages.md)
         - [布局]()
             - [管理控件预设](./gui/config-screen/sub-pages/layout/manage-widget-preset.md)
             - [自定义控件布局](./gui/config-screen/sub-pages/layout/custom-widget-layout.md)
