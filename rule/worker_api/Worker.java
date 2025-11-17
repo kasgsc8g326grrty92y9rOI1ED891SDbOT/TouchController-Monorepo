@@ -12,8 +12,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class Worker {
     public void run(String... args) throws Exception {
-        var isPersistentWorker = Arrays.asList(args).contains("--persistent_worker");
-
         try (var executor = Executors.newFixedThreadPool(4)) {
             var mapper = new ObjectMapper().configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
             var reader = new BufferedReader(new InputStreamReader(System.in));
@@ -69,9 +67,6 @@ public abstract class Worker {
                         outputLock.unlock();
                         System.out.flush();
                     }
-                }
-                if (!isPersistentWorker) {
-                    break;
                 }
             }
             System.gc();

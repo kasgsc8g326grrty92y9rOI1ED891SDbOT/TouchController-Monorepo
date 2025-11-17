@@ -36,8 +36,17 @@ def _bytes_to_base64(bytes):
     return "".join(result)
 
 def hex_sha1_to_sri(hex_str):
+    "Convert a SHA-1 hex string to SRI"
     bytes = _hex_to_bytes(hex_str)
     if len(bytes) != 20:
         fail("SHA1 must be 20 bytes (40 hex chars)")
     base64_str = _bytes_to_base64(bytes)
     return "sha1-" + base64_str
+
+def hex_sha512_to_sri(hex_str):
+    "Convert a SHA-512 hex string to SRI"
+    bytes = _hex_to_bytes(hex_str)
+    if len(bytes) != 64:
+        fail("SHA512 must be 64 bytes (128 hex chars)")
+    base64_str = _bytes_to_base64(bytes)
+    return "sha512-" + base64_str

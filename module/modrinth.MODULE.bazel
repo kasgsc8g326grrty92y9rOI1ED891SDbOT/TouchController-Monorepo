@@ -1,0 +1,5 @@
+"""MODULE.bazel Modrinth part"""
+
+modrinth = use_extension("//repo:modrinth.bzl", "modrinth")
+modrinth.pin(pin_file = "//:modrinth_lock.json")
+use_repo(modrinth, "modrinth_pin")

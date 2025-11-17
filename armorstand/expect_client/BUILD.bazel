@@ -2,7 +2,6 @@ load("//rule:merge_library.bzl", "kt_merge_library")
 
 kt_merge_library(
     name = "expect_client",
-    visibility = ["//mod:__subpackages__"],
     srcs = glob(
         include = [
             "kotlin/**/*.kt",
@@ -11,7 +10,8 @@ kt_merge_library(
         allow_empty = True,
     ),
     expect = True,
+    visibility = ["//armorstand:__subpackages__"],
     deps = [
-        "//mod/src/game:remapped_client_access_widened_named",
+        "//armorstand/game:remapped_client_access_widened_named",
     ],
 )

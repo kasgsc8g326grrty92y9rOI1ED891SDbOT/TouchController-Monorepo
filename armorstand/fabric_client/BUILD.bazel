@@ -1,4 +1,4 @@
-load("//:properties.bzl", "blazerod_version", "home_page", "issue_tracker", "license", "sources_page")
+load("//armorstand:properties.bzl", "armorstand_version", "home_page", "issue_tracker", "license", "sources_page")
 load("//rule:merge_library.bzl", "kt_merge_library", "merge_library_jar")
 load("//rule:remap_jar.bzl", "remap_jar")
 load("//rule/fabric:mod_json_jar.bzl", "fabric_mod_json_jar")
@@ -8,24 +8,24 @@ remap_jar(
     classpath = ["//game/1.21.8:game_client_intermediary"],
     from_namespace = "intermediary",
     inputs = [
-        "@maven//:net_fabricmc_fabric_api_fabric_api",
-        "@maven//:com_terraformersmc_modmenu",
-        "@maven//:eu_pb4_placeholder_api",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_api_fabric_api",
+        "@maven_fabric_1_21_8//:com_terraformersmc_modmenu",
+        "@maven_fabric_1_21_8//:eu_pb4_placeholder_api",
     ],
     mapping = "//game/1.21.8:game_merged_mapping",
     mixin = True,
     remap_transitive_deps = True,
     remove_jar_in_jar = True,
     to_namespace = "named",
-    visibility = ["//mod:__subpackages__"],
+    visibility = ["//armorstand:__subpackages__"],
 )
 
 fabric_mod_json_jar(
     name = "fabric_mod_json",
     src = "resources/fabric.mod.json",
-    resource_strip_prefix = "mod/src/fabric_client",
+    resource_strip_prefix = "armorstand/fabric_client",
     substitutions = {
-        "${version}": blazerod_version,
+        "${version}": armorstand_version,
         "${license}": license,
         "${home_page}": home_page,
         "${sources_page}": sources_page,
@@ -44,40 +44,40 @@ kt_merge_library(
     ),
     actual = True,
     associates = [
-        "//mod/src/main",
+        "//armorstand/main",
     ],
     merge_deps = [
-        "//mod/src/client",
-        "//mod/src/fabric_main:fabric_main_unmapped",
+        "//armorstand/client",
+        "//armorstand/fabric_main:fabric_main_unmapped",
     ],
     resource_jars = [
         ":fabric_mod_json",
-        "//mod/src/game:access_widener",
-        "//mod/src/main:main_resources",
-        "//mod/src/client:client_resources",
+        "//armorstand/game:access_widener",
+        "//armorstand/main:main_resources",
+        "//armorstand/client:client_resources",
     ],
-    resource_strip_prefix = "mod/src/fabric/resources",
+    resource_strip_prefix = "armorstand/fabric/resources",
     resources = glob(
         include = ["resources/**"],
         allow_empty = True,
         exclude = ["resources/fabric.mod.json"],
     ),
-    visibility = ["//mod:__subpackages__"],
+    visibility = ["//armorstand:__subpackages__"],
     deps = [
         ":remapped_deps",
+        "//armorstand/game:remapped_client_access_widened_named",
         "//blazerod/model/model-formats",
         "//blazerod/render/api/event",
-        "//game/1.21.8:iris_fabric",
-        "//game/1.21.8:sodium_fabric",
-        "//mod/src/game:remapped_client_access_widened_named",
+        "//game/1.21.8:game_iris_named",
+        "//game/1.21.8:game_sodium_named",
         "@maven//:net_fabricmc_fabric_loader",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
-        "@minecraft//:1.21.8_client_libraries",
+        "@minecraft//1.21.8:client_libraries",
     ],
 )
 
 merge_library_jar(
     name = "fabric_unmapped_merged",
-    visibility = ["//mod:__subpackages__"],
+    visibility = ["//armorstand:__subpackages__"],
     deps = [":fabric_unmapped"],
 )

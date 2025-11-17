@@ -4,8 +4,8 @@ game_version(
     name = "game",
     client = "@minecraft//1.21.10:client",
     client_mappings = "@minecraft//1.21.10:client_mappings",
-    intermediary = "@maven_fabric_1.21.10//:net_fabricmc_intermediary_v2",
-    neoforge = "@neoforge_1_21_10//:compiled_with_neoforge",
+    intermediary = "@maven_fabric_1_21_10//:net_fabricmc_intermediary_v2",
     server = "@minecraft//1.21.10:server",
     version = "1.21.10",
+    visibility = ["//visibility:public"],
 )

@@ -1,25 +1,23 @@
 "MODULE.bazel Sodium part"
 
+modrinth = use_extension("//repo:modrinth.bzl", "modrinth")
+
 sodium_versions = {
-    "1.21.6": {
-        "version": "0.6.13",
-        "modrinth": {
-            "fabric": "ND4ROcMQ",
-            "neoforge": "ihzX2Dvy",
-        },
-    },
+    "fabric_1_21": "u1OEbNKx",
+    "neoforge_1_21": "Pb3OXVqC",
+    "fabric_1_21_6": "ND4ROcMQ",
+    "neoforge_1_21_6": "ihzX2Dvy",
+    "fabric_1_21_9": "sFfidWgd",
+    "neoforge_1_21_9": "PdQpfqPZ",
 }
 
-http_jar = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
-http_jar(
-    name = "sodium_fabric_1_21_6",
-    url = "https://cdn.modrinth.com/data/AANobbMI/versions/ND4ROcMQ/sodium-fabric-0.6.13%2Bmc1.21.6.jar",
-    sha256 = "2e67812980688bf33447052c9ddfb820d07967bb3a3443f7865687fa0869118d",
-    downloaded_file_name = "sodium.jar",
-)
-http_jar(
-    name = "sodium_neoforge_1_21_6",
-    url = "https://cdn.modrinth.com/data/AANobbMI/versions/ihzX2Dvy/sodium-neoforge-0.6.13%2Bmc1.21.6.jar",
-    sha256 = "595453c1202dc9c037ae8acef73aa4972a826fc3f607dcbf20d1c8ebb99ca646",
-    downloaded_file_name = "sodium.jar",
-)
+[
+    (
+        modrinth.version(
+            name = "sodium_" + version_name,
+            version_id = version_id,
+        ),
+        use_repo(modrinth, "sodium_" + version_name),
+    )
+    for version_name, version_id in sodium_versions.items()
+]

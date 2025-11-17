@@ -14,11 +14,21 @@ bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "rules_rust", version = "0.67.0")
 bazel_dep(name = "rules_rust_mdbook", version = "0.67.0")
 
+include("//module:rust.MODULE.bazel")
+include("//module:mdbook.MODULE.bazel")
+
 include("//module:minecraft.MODULE.bazel")
+include("//module:rules.MODULE.bazel")
+
 include("//module:neoforge.MODULE.bazel")
 include("//module:fabric.MODULE.bazel")
-include("//module:rules.MODULE.bazel")
+
+include("//module:sodium.MODULE.bazel")
+include("//module:iris.MODULE.bazel")
+include("//module:modrinth.MODULE.bazel")
+
 include("//module:blazerod.MODULE.bazel")
+include("//module:armorstand.MODULE.bazel")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
@@ -37,15 +47,18 @@ maven.install(
 
         # Graphics
         "org.joml:joml:1.10.5",
+        "it.unimi.dsi:fastutil:8.5.15",
 
         # Swing
         "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1",
 
-        # Build dependencies
-        "com.fasterxml.jackson.core:jackson-core:2.9.6",
-        "com.fasterxml.jackson.core:jackson-annotations:2.9.6",
-        "com.fasterxml.jackson.core:jackson-databind:2.9.6",
-        "com.squareup:kotlinpoet:2.2.0",
+        # Testing
+        "org.jetbrains.kotlin:kotlin-test-junit5:2.1.10",
+        "org.junit.jupiter:junit-jupiter-api:5.12.2",
+        "org.junit.jupiter:junit-jupiter-engine:5.12.2",
+        "org.junit.platform:junit-platform-suite-api:1.12.2",
+        "org.junit.platform:junit-platform-suite-engine:1.12.2",
+        "org.junit.platform:junit-platform-console:1.12.2",
     ],
     fetch_sources = True,
     lock_file = "//:maven_install.json",

@@ -1,15 +1,15 @@
 load("@bazel_skylib//rules:expand_template.bzl", "expand_template")
-load("//:properties.bzl", "license", "mod_version")
+load("//armorstand:properties.bzl", "armorstand_version", "license")
 load("//rule:merge_library.bzl", "kt_merge_library")
 
 java_library(
     name = "main_resources",
-    resource_strip_prefix = "mod/src/main/resources",
+    resource_strip_prefix = "armorstand/main/resources",
     resources = glob(
         ["resources/**"],
         allow_empty = True,
     ),
-    visibility = ["//mod:__subpackages__"],
+    visibility = ["//armorstand:__subpackages__"],
 )
 
 expand_template(
@@ -17,7 +17,7 @@ expand_template(
     out = "ModInfo.kt",
     substitutions = {
         "${mod_id}": "armorstand",
-        "${mod_version}": mod_version,
+        "${mod_version}": armorstand_version,
         "${license}": license,
     },
     template = "ModInfoTemplate.kt",
@@ -32,10 +32,10 @@ kt_merge_library(
         ],
         allow_empty = True,
     ) + ["ModInfo.kt"],
-    visibility = ["//mod:__subpackages__"],
+    visibility = ["//armorstand:__subpackages__"],
     deps = [
         "//game/1.21.8:game_server_named",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
-        "@minecraft//:1.21.8_server_libraries",
+        "@minecraft//1.21.8:client_libraries",
     ],
 )

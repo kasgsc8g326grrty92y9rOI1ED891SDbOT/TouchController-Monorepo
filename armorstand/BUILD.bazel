@@ -1,10 +1,21 @@
 load("@//rule:upload_modrinth.bzl", "modrinth_dependency", "upload_modrinth")
 load("@rules_java//java:defs.bzl", "java_binary")
-load("//:properties.bzl", "blazerod_version", "fabric_api_version_modrinth", "fabric_language_kotlin_version_modrinth", "game_version", "kotlin_for_forge_version_modrinth", "mod_version")
+load("//armorstand:properties.bzl", "armorstand_version")
+load("//blazerod:properties.bzl", "blazerod_version")
+load("//rule:extract_update_log.bzl", "extract_update_log")
 load("//rule:generate_remap_classpath.bzl", "generate_remap_classpath")
 load("//rule:remap_jar.bzl", "remap_jar")
 load("//rule/fabric:merge_jij.bzl", "fabric_merge_jij")
 load("//rule/neoforge:merge_jij.bzl", "neoforge_merge_jij")
+
+extract_update_log(
+    name = "update_log",
+    inputs = [
+        "NEWS-zh.md",
+        "NEWS-en.md",
+    ],
+    version = armorstand_version,
+)
 
 alias(
     name = "mod_fabric_unmapped",
@@ -94,114 +105,18 @@ neoforge_merge_jij(
     },
 )
 
-generate_remap_classpath(
-    name = "remap_classpath",
-    prefix = "../../../../../../",
-    deps = [
-        "//armorstand/fabric_client:remapped_deps",
-        "//game/1.21.8:game_client_intermediary",
-    ],
-)
-
-java_binary(
-    name = "client",
-    srcs = [],
-    data = [
-        ":remap_classpath",
-        "//blazerod/model/example-models",
-        "@makeup_ultra_fast//file",
-        "@minecraft_assets//:assets",
-        "@minecraft_assets//:assets_1.21.8",
-        "@yes_steve_model//:model_default",
-        "@yes_steve_model//:model_wine_fox",
-    ],
-    env = {
-        "LANG": "en_US.UTF8",
-    },
-    jvm_flags = [
-        "-Dkotlinx.coroutines.debug=on",
-        "-Dfabric.development=true",
-        "-Dfabric.remapClasspathFile=$(rlocationpath :remap_classpath)",
-        "-Ddev.launch.version=1.21.8",
-        "-Ddev.launch.type=client",
-        "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
-        "-Ddev.launch.mainClass=net.fabricmc.loader.impl.launch.knot.KnotClient",
-        "-Ddev.launch.copyFiles=" +
-        "$(rlocationpath @makeup_ultra_fast//file):shaderpacks/MakeUp-UltraFast-9.2.zip," +
-        "$(rlocationpath //blazerod/model/example-models:example-models):models," +
-        "$(rlocationpath @yes_steve_model//:model_wine_fox):models/wine_fox," +
-        "$(rlocationpath @yes_steve_model//:model_default):models/default",
-        "-Ddev.launch.expandRunfileProperties=fabric.remapClasspathFile",
-        "-Dblazerod.debug=true",
-        "-Dblazerod.debug.gui=true",
-        "-Darmorstand.debug=true",
-        "-Darmorstand.debug.bone=false",
-        "-Darmorstand.debug.gui=false",
-        "-Xmx4G",
-    ],
-    main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
-    runtime_deps = [
-        ":mod_fabric_unmapped",
-        "//armorstand/fabric_client:remapped_deps",
-        "//blazerod:blazerod_fabric_without_jij",
-        "//game/1.21.8:game_client_named",
-        "//game/1.21.8:iris_fabric",
-        "//game/1.21.8:sodium_fabric",
-        "//rule/dev_launch_wrapper",
-        "@maven//:com_h2database_h2",
-        "@maven//:com_illposed_osc_javaosc_core",
-        "@maven//:io_github_douira_glsl_transformer",
-        "@maven//:io_github_llamalad7_mixinextras_fabric",
-        "@maven//:net_fabricmc_fabric_language_kotlin",
-        "@maven//:net_fabricmc_fabric_loader",
-        "@maven//:net_fabricmc_sponge_mixin",
-        "@maven//:net_fabricmc_yarn_v2",
-        "@maven//:org_anarres_jcpp",
-        "@maven//:org_antlr_antlr4_runtime",
-        "@minecraft//1.21.8:client_libraries",
-    ],
-)
-
-java_binary(
-    name = "server",
-    srcs = [],
-    data = [":remap_classpath"],
-    jvm_flags = [
-        "-Dfabric.development=true",
-        "-Dfabric.remapClasspathFile=$(rlocationpath :remap_classpath)",
-        "-Ddev.launch.version=1.21.8",
-        "-Ddev.launch.type=server",
-        "-Ddev.launch.mainClass=net.fabricmc.loader.impl.launch.knot.KnotServer",
-        "-Ddev.launch.expandRunfileProperties=fabric.remapClasspathFile",
-        "-Xmx4G",
-    ],
-    main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
-    runtime_deps = [
-        "//rule/dev_launch_wrapper",
-        "@minecraft//:%s_server_libraries" % game_version,
-        ":mod_fabric_unmapped",
-        "//armorstand/fabric_client:remapped_deps",
-        "//game/1.21.8:game_server_named",
-        "@maven//:io_github_llamalad7_mixinextras_fabric",
-        "@maven//:net_fabricmc_fabric_language_kotlin",
-        "@maven//:net_fabricmc_fabric_loader",
-        "@maven//:net_fabricmc_sponge_mixin",
-        "@maven//:net_fabricmc_yarn_v2",
-    ],
-)
-
 modrinth_dependency(
     name = "fabric_api",
     dependency_type = "required",
     project_id = "P7dR8mSH",
-    version_id = fabric_api_version_modrinth,
+    version_id = "X2hTodix",
 )
 
 modrinth_dependency(
     name = "fabric_language_kotlin",
     dependency_type = "required",
     project_id = "Ha28R6CL",
-    version_id = fabric_language_kotlin_version_modrinth,
+    version_id = "Y91MRWtG",
 )
 
 modrinth_dependency(
@@ -212,15 +127,15 @@ modrinth_dependency(
 
 upload_modrinth(
     name = "upload_modrinth_fabric",
-    changelog = "//:update_log",
+    changelog = ":update_log",
     file = ":mod_fabric",
-    file_name = "ArmorStand-%s+fabric.jar" % mod_version,
-    game_versions = [game_version],
+    file_name = "ArmorStand-%s+fabric.jar" % armorstand_version,
+    game_versions = ["1.21.8"],
     loaders = ["fabric"],
     project_id = "tLPuDSOw",
     token_secret_id = "modrinth_token",
-    version_id = mod_version + "+fabric",
-    version_name = mod_version,
+    version_id = armorstand_version + "+fabric",
+    version_name = armorstand_version,
     version_type = "alpha",
     deps = [
         ":fabric_api",
@@ -233,20 +148,20 @@ modrinth_dependency(
     name = "kotlin_for_forge",
     dependency_type = "required",
     project_id = "ordsPcFz",
-    version_id = kotlin_for_forge_version_modrinth,
+    version_id = "pp2cY80Q",
 )
 
 upload_modrinth(
     name = "upload_modrinth_neoforge",
-    changelog = "//:update_log",
+    changelog = ":update_log",
     file = ":mod_neoforge",
-    file_name = "ArmorStand-%s+neoforge.jar" % mod_version,
-    game_versions = [game_version],
+    file_name = "ArmorStand-%s+neoforge.jar" % armorstand_version,
+    game_versions = ["1.21.8"],
     loaders = ["neoforge"],
     project_id = "tLPuDSOw",
     token_secret_id = "modrinth_token",
-    version_id = mod_version + "+neoforge",
-    version_name = mod_version,
+    version_id = armorstand_version + "+neoforge",
+    version_name = armorstand_version,
     version_type = "alpha",
     deps = [
         ":kotlin_for_forge",

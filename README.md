@@ -14,8 +14,8 @@
 - Combine：迁移中
 - TouchController：暂未迁移
 - TouchControllerWiki：迁移完毕
-- BlazeRod：暂未迁移
-- ArmorStand：暂未迁移
+- BlazeRod：迁移中
+- ArmorStand：迁移中
 
 待所有代码迁移后，这个仓库会和 TouchController 仓库合并作为一个分支，然后这个仓库会进入归档状态。
 
@@ -37,7 +37,7 @@ Projects are gradually being migrated from their respective repositories to here
 - Combine: Migrating
 - TouchController: Not yet migrated
 - TouchControllerWiki：Migrated
-- BlazeRod: Not yet migrated
-- ArmorStand: Not yet migrated
+- BlazeRod: Migrating
+- ArmorStand: Migrating
 
 After all code is migrated, this repository will be merged with the TouchController repository as a branch, and this repository will be archived.

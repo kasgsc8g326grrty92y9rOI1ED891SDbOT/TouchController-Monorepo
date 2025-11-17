@@ -1,25 +1,23 @@
 "MODULE.bazel Iris part"
 
+modrinth = use_extension("//repo:modrinth.bzl", "modrinth")
+
 iris_versions = {
-    "1.21.6": {
-        "version": "1.9.1",
-        "modrinth": {
-            "fabric": "l77DAK6U",
-            "neoforge": "xA5cxBvz",
-        },
-    },
+    "fabric_1_21": "zsoi0dso",
+    "neoforge_1_21": "oXIoDcGE",
+    "fabric_1_21_6": "l77DAK6U",
+    "neoforge_1_21_6": "xA5cxBvz",
+    "fabric_1_21_9": "r1MZ1Bpv",
+    "neoforge_1_21_9": "QwsZwykw",
 }
 
-http_jar = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
-http_jar(
-    name = "iris_fabric_1_21_7",
-    url = "https://cdn.modrinth.com/data/YL57xq9U/versions/l77DAK6U/iris-fabric-1.9.1%2Bmc1.21.7.jar",
-    sha256 = "0e6bd470311cc938b992e9065e0f94a3f603b68b5dfcde25102c64b8733b69bd",
-    downloaded_file_name = "iris.jar",
-)
-http_jar(
-    name = "iris_neoforge_1_21_7",
-    url = "https://cdn.modrinth.com/data/YL57xq9U/versions/xA5cxBvz/iris-neoforge-1.9.1%2Bmc1.21.7.jar",
-    sha256 = "7d5547c730ddf58631d7ded952b9e325cbbee93fd70c2b1c88d312cd21084dae",
-    downloaded_file_name = "iris.jar",
-)
+[
+    (
+        modrinth.version(
+            name = "iris_" + version_name,
+            version_id = version_id,
+        ),
+        use_repo(modrinth, "iris_" + version_name),
+    )
+    for version_name, version_id in iris_versions.items()
+]

@@ -1,0 +1,7 @@
+"MODULE.bazel mdbook part"
+
+mdbook_deps = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
+mdbook_deps.spec(package = "mdbook-alerts", version = "=0.8.0", artifact = "bin")
+mdbook_deps.annotation(crate = "mdbook-alerts", gen_all_binaries = True)
+mdbook_deps.from_specs(name = "mdbook_deps", host_tools = "@rust_host_tools_nightly")
+use_repo(mdbook_deps, "mdbook_deps")

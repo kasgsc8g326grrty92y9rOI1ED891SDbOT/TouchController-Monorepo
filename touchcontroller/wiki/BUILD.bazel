@@ -1,9 +1,18 @@
+load("@bazel_skylib//rules:copy_file.bzl", "copy_file")
 load("@rules_rust_mdbook//:defs.bzl", "mdbook", "mdbook_server")
+
+copy_file(
+    name = "plugin-mdbook-alerts",
+    src = "@mdbook_deps//:mdbook-alerts__mdbook-alerts",
+    out = "mdbook-alerts",
+    is_executable = True,
+)
 
 mdbook(
     name = "wiki",
     srcs = glob(["src/**/*.md"]),
     book = "book.toml",
+    plugins = [":plugin-mdbook-alerts"],
 )
 
 mdbook_server(

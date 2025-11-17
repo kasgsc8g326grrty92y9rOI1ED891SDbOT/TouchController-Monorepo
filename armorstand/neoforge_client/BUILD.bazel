@@ -1,16 +1,15 @@
-load("//:properties.bzl", "game_version", "home_page", "issue_tracker", "license", "mod_version", "neoforge_version", "sources_page")
+load("//armorstand:properties.bzl", "armorstand_version", "home_page", "issue_tracker", "license", "sources_page")
 load("//rule:merge_library.bzl", "kt_merge_library", "merge_library_jar")
-load("//rule:remap_jar.bzl", "remap_jar")
 load("//rule/neoforge:mod_toml_jar.bzl", "neoforge_mod_toml_jar")
 
 neoforge_mod_toml_jar(
     name = "neoforge_mod_toml",
     src = "resources/META-INF/neoforge.mods.toml",
-    resource_strip_prefix = "mod/src/neoforge_client",
+    resource_strip_prefix = "armorstand/neoforge_client",
     substitutions = {
-        "${version}": mod_version,
-        "${game_version}": game_version,
-        "${neoforge_version}": neoforge_version,
+        "${version}": armorstand_version,
+        "${game_version}": "1.21.8",
+        "${neoforge_version}": "21.8.36",
         "${license}": license,
         "${home_page}": home_page,
         "${sources_page}": sources_page,
@@ -29,39 +28,39 @@ kt_merge_library(
     ),
     actual = True,
     associates = [
-        "//mod/src/main",
+        "//armorstand/main",
     ],
     merge_deps = [
-        "//mod/src/client",
-        "//mod/src/neoforge_main:neoforge_main_unmapped",
+        "//armorstand/client",
+        "//armorstand/neoforge_main:neoforge_main_unmapped",
     ],
     resource_jars = [
         ":neoforge_mod_toml",
-        "//mod/src/game:access_transformer",
-        "//mod/src/main:main_resources",
-        "//mod/src/client:client_resources",
+        "//armorstand/game:access_transformer",
+        "//armorstand/main:main_resources",
+        "//armorstand/client:client_resources",
     ],
-    resource_strip_prefix = "mod/src/neoforge/resources",
+    resource_strip_prefix = "armorstand/neoforge/resources",
     resources = glob(
         include = ["resources/**"],
         allow_empty = True,
         exclude = ["resources/META-INF/neoforge.mods.toml"],
     ),
-    visibility = ["//mod:__subpackages__"],
+    visibility = ["//armorstand:__subpackages__"],
     deps = [
         "//blazerod/model/model-formats",
         "//blazerod/render/api/event",
-        "//game/1.21.8:iris_neoforge",
-        "//game/1.21.8:neoforge_named",
-        "//game/1.21.8:sodium_neoforge",
+        "//game/1.21.8:game_client_neoforge",
+        "@iris_neoforge_1_21_6//:primary",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
-        "@minecraft//:1.21.8_client_libraries",
+        "@minecraft//1.21.8:client_libraries",
         "@neoforge_1_21_8//:neoforge_deps",
+        "@sodium_neoforge_1_21_6//:primary",
     ],
 )
 
 merge_library_jar(
     name = "neoforge_unmapped_merged",
-    visibility = ["//mod:__subpackages__"],
+    visibility = ["//armorstand:__subpackages__"],
     deps = [":neoforge_unmapped"],
 )

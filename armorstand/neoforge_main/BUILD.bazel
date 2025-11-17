@@ -1,6 +1,4 @@
-load("//:properties.bzl", "blazerod_version", "game_version", "home_page", "issue_tracker", "license", "neoforge_version", "sources_page")
-load("//rule:merge_library.bzl", "kt_merge_library", "merge_library_jar")
-load("//rule:remap_jar.bzl", "remap_jar")
+load("//rule:merge_library.bzl", "kt_merge_library")
 
 kt_merge_library(
     name = "neoforge_main_unmapped",
@@ -12,16 +10,16 @@ kt_merge_library(
         allow_empty = True,
     ),
     merge_deps = [
-        "//mod/src/main",
+        "//armorstand/main",
     ],
-    resource_strip_prefix = "mod/src/neoforge/resources",
+    resource_strip_prefix = "armorstand/neoforge/resources",
     resources = glob(
         include = ["resources/**"],
         allow_empty = True,
     ),
-    visibility = ["//mod:__subpackages__"],
+    visibility = ["//armorstand:__subpackages__"],
     deps = [
-        "//game/1.21.8:neoforge_named",
+        "//game/1.21.8:game_client_neoforge",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
         "@neoforge_1_21_8//:neoforge_deps",
     ],

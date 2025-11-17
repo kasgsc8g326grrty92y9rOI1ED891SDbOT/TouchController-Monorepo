@@ -1,0 +1,12 @@
+"MODULE.bazel llvm-mingw part"
+
+llvm_mingw_toolchain = use_repo_rule("//third_party/llvm_mingw:llvm_mingw_toolchain.bzl", "llvm_mingw_toolchain")
+llvm_mingw_toolchain(
+    name = "llvm_mingw_toolchain",
+    targets = {
+        "x86_64": "x86_64-w64-mingw32",
+        "i386": "i686-w64-mingw32",
+        "aarch64": "aarch64-w64-mingw32",
+    },
+)
+register_toolchains("@llvm_mingw_toolchain//:x86_64_toolchain")

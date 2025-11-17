@@ -2,10 +2,10 @@ load("//rule:merge_library.bzl", "kt_merge_library")
 
 kt_merge_library(
     name = "math",
-    visibility = ["//blazerod/render:__subpackages__"],
     srcs = ["MathUtil.kt"],
+    visibility = ["//blazerod/render:__subpackages__"],
     deps = [
         "//blazerod/render/game:remapped_client_access_widened_named",
-        "@minecraft//:1.21.8_client_libraries",
-    ]
+        "@minecraft//1.21.8:client_libraries",
+    ],
 )

@@ -13,9 +13,9 @@ java_merge_library(
     visibility = ["//blazerod/render:__subpackages__"],
     deps = [
         "//blazerod/render/game:remapped_client_access_widened_named",
-        "@maven//:io_github_llamalad7_mixinextras_fabric",
-        "@maven//:net_fabricmc_sponge_mixin",
         "@maven//:org_jetbrains_annotations",
-        "@minecraft//:1.21.8_client_libraries",
+        "@maven_fabric_1_21_8//:io_github_llamalad7_mixinextras_fabric",
+        "@maven_fabric_1_21_8//:net_fabricmc_sponge_mixin",
+        "@minecraft//1.21.8:client_libraries",
     ],
 )
