@@ -4,7 +4,7 @@
  
 # 开始
  
-- [游玩须知](./manual/readme.md)
+- [游玩须知](./manual/quickstart.md)
 - [常见问题](./manual/faq.md)
 - [报告 bug](./manual/reporting-bugs.md)
 
