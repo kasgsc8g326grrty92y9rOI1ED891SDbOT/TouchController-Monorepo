@@ -70,7 +70,7 @@ kt_merge_library(
         "//blazerod/render/api/event",
         "//game/1.21.8:game_iris_named",
         "//game/1.21.8:game_sodium_named",
-        "@maven//:net_fabricmc_fabric_loader",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
         "@minecraft//1.21.8:client_libraries",
     ],

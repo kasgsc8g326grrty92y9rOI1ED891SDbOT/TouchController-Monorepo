@@ -33,8 +33,8 @@ def _modrinth_repository_impl(rctx):
         else:
             build_content += [
                 "alias(",
-                '    name = "primary",',
-                '    actual = "%s",' % normalize_filename(primary_file),
+                '    name = "%s",' % normalize_filename(filename),
+                '    actual = "%s",' % filename,
                 ")",
             ]
     build_content += [

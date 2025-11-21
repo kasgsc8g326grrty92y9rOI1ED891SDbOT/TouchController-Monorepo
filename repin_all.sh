@@ -3,6 +3,8 @@
 set -e
 
 REPIN=1 bazel run @maven//:pin
+REPIN=1 bazel run @maven_armorstand//:pin
+REPIN=1 bazel run @maven_blazerod//:pin
 REPIN=1 bazel run @maven_fabric_1_20_6//:pin
 REPIN=1 bazel run @maven_fabric_1_21//:pin
 REPIN=1 bazel run @maven_fabric_1_21_1//:pin

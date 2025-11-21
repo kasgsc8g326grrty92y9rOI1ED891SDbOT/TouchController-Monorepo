@@ -59,6 +59,9 @@ minecraft = use_extension("//repo:minecraft.bzl", "minecraft")
     for version in game_versions.keys()
 ]
 
-minecraft.exclude_library(names = ["org.ow2.asm:asm:9.6"])
+minecraft.exclude_library(names = [
+    "org.ow2.asm:asm:9.3",
+    "org.ow2.asm:asm:9.6",
+])
 use_repo(minecraft, "minecraft")
 use_repo(minecraft, "minecraft_assets")

@@ -15,11 +15,11 @@
     "RenderSystemMixin",
     "ShaderTypeMixin",
     "TextureFormatMixin",
-    "gl.GlBackendMixin",
+    "gl.GlDeviceMixin",
     "gl.GlCommandEncoderMixin",
     "gl.GlConstMixin",
     "gl.GlGpuBufferMixin",
-    "gl.RenderPassImplMixin",
-    "gl.ShaderProgramMixin"
+    "gl.GlRenderPassMixin",
+    "gl.GlProgramMixin"
   ]
 }

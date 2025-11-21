@@ -58,8 +58,8 @@ kt_merge_library(
         "//blazerod/render/game:remapped_client_access_widened_named",
         "//game/1.21.8:game_client_neoforge",
         "//game/1.21.8:game_iris_named",
-        "@maven//:net_fabricmc_fabric_language_kotlin",
-        "@maven//:net_fabricmc_fabric_loader",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_language_kotlin",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
         "@maven//:org_slf4j_slf4j_api",
     ],
 )

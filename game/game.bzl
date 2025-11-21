@@ -4,12 +4,14 @@ load("@rules_java//java:java_import.bzl", "java_import")
 load("//rule:extract_jar.bzl", "extract_jar")
 load("//rule:merge_mapping.bzl", "merge_mapping", "merge_mapping_input")
 load("//rule:remap_jar.bzl", "remap_jar")
+load("//rule:jar.bzl", "jar")
 
 def _game_version_impl(name, visibility, version, client_mappings, client, server, neoforge, intermediary, sodium_intermediary, iris_intermediary):
     intermediary_mapping = name + "_intermediary_mapping"
     intermediary_input = name + "_intermediary_input"
     named_input = name + "_named_input"
     merged_mapping = name + "_merged_mapping"
+    mapping_jar = name + "_mapping_jar"
     client_intermediary = name + "_client_intermediary"
     client_named = name + "_client_named"
     client_neoforge = name + "_client_neoforge"
@@ -55,6 +57,14 @@ def _game_version_impl(name, visibility, version, client_mappings, client, serve
         ],
         output = "merged.tiny",
         output_source_namespace = "official",
+        visibility = visibility,
+    )
+
+    jar(
+        name = mapping_jar,
+        data = {
+            (":" + merged_mapping): "mappings/mappings.tiny",
+        },
         visibility = visibility,
     )
 
@@ -127,7 +137,7 @@ def _game_version_impl(name, visibility, version, client_mappings, client, serve
             inputs = [iris_intermediary],
             classpath = [
                 ":" + client_intermediary,
-                ":" + sodium_named,
+                sodium_intermediary,
             ],
             mapping = ":" + merged_mapping,
             to_namespace = "named",
