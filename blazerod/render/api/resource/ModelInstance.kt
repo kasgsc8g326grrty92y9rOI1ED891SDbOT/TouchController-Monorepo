@@ -1,6 +1,6 @@
 package top.fifthlight.blazerod.api.resource
 
-import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.renderer.MultiBufferSource
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import top.fifthlight.blazerod.api.refcount.RefCount
@@ -26,7 +26,7 @@ interface ModelInstance : RefCount {
     fun getCameraTransform(index: Int): CameraTransform?
 
     fun updateCamera()
-    fun debugRender(viewProjectionMatrix: Matrix4fc, consumers: VertexConsumerProvider)
+    fun debugRender(viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource)
     fun updateRenderData()
 
     fun createRenderTask(

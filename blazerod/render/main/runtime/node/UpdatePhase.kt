@@ -1,6 +1,6 @@
 package top.fifthlight.blazerod.runtime.node
 
-import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.renderer.MultiBufferSource
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import top.fifthlight.blazerod.util.objectpool.ObjectPool
@@ -31,14 +31,14 @@ sealed class UpdatePhase(
     data class DebugRender private constructor(
         val viewProjectionMatrix: Matrix4f = Matrix4f(),
         val cacheMatrix: Matrix4f = Matrix4f(),
-        private var _vertexConsumerProvider: VertexConsumerProvider? = null,
+        private var _multiBufferSource: MultiBufferSource? = null,
     ) : UpdatePhase(
         type = Type.DEBUG_RENDER,
     ), AutoCloseable {
         private var recycled = false
 
-        val vertexConsumerProvider: VertexConsumerProvider
-            get() = _vertexConsumerProvider!!
+        val multiBufferSource: MultiBufferSource
+            get() = _multiBufferSource!!
 
         override fun close() {
             if (recycled) {
@@ -55,16 +55,16 @@ sealed class UpdatePhase(
                 onAcquired = {
                     recycled = false
                 },
-                onReleased = { _vertexConsumerProvider = null },
+                onReleased = { _multiBufferSource = null },
                 onClosed = {},
             )
 
             fun acquire(
                 viewProjectionMatrix: Matrix4fc,
-                vertexConsumerProvider: VertexConsumerProvider,
+                multiBufferSource: MultiBufferSource,
             ) = POOL.acquire().apply {
                 this.viewProjectionMatrix.set(viewProjectionMatrix)
-                _vertexConsumerProvider = vertexConsumerProvider
+                _multiBufferSource = multiBufferSource
             }
         }
     }

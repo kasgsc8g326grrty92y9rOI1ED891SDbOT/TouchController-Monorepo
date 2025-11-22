@@ -5,7 +5,7 @@ import top.fifthlight.blazerod.api.animation.AnimationItemPendingValues;
 
 import java.util.UUID;
 
-public interface PlayerEntityRenderStateExtInternal {
+public interface PlayerRenderStateExtInternal {
     void armorstand$setUuid(UUID uuid);
 
     UUID armorstand$getUuid();

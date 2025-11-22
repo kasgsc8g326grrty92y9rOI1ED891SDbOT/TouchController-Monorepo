@@ -1,6 +1,6 @@
 package top.fifthlight.armorstand.state
 
-import net.minecraft.util.Identifier
+import net.minecraft.resources.ResourceLocation
 import org.slf4j.LoggerFactory
 import top.fifthlight.armorstand.util.ModelLoaders
 import top.fifthlight.blazerod.api.animation.AnimationItem
@@ -41,7 +41,7 @@ data class AnimationSet(
     val itemActive: Map<ItemActiveKey, AnimationItem> = emptyMap(),
 ) {
     data class ItemActiveKey(
-        val itemName: Identifier,
+        val itemName: ResourceLocation,
         val hand: HandSide,
         val actionType: ActionType,
     ) {
@@ -236,7 +236,7 @@ data object AnimationSetLoader {
                             }
                             val (itemName, hand, action) = parts
                             val item = try {
-                                Identifier.of(itemName.lowercase())
+                                ResourceLocation.fromNamespaceAndPath("minecraft", itemName.lowercase())
                             } catch (ex: Exception) {
                                 logger.warn("Bad item name: $itemName", ex)
                                 continue

@@ -2,7 +2,7 @@ package top.fifthlight.armorstand.state
 
 import com.mojang.logging.LogUtils
 import kotlinx.coroutines.*
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.Minecraft
 import top.fifthlight.armorstand.ArmorStand
 import top.fifthlight.armorstand.config.ConfigHolder
 import top.fifthlight.armorstand.manage.ModelManagerHolder
@@ -26,9 +26,9 @@ import kotlin.time.measureTimedValue
 object ModelInstanceManager {
     private val LOGGER = LogUtils.getLogger()
     const val INSTANCE_EXPIRE_NS: Long = 30L * 1000000000L
-    private val client = MinecraftClient.getInstance()
+    private val minecraft = Minecraft.getInstance()
     private val selfUuid: UUID?
-        get() = client.player?.uuid
+        get() = minecraft.player?.uuid
     val modelCaches = mutableMapOf<Path, Deferred<ModelCache>>()
     val modelInstanceItems = mutableMapOf<UUID, ModelInstanceItem>()
     private val modelDir

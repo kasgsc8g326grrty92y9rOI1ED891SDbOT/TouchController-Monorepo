@@ -12,12 +12,12 @@ import top.fifthlight.blazerod.model.Texture
 val Primitive.Mode.blaze3d
     get() = when (this) {
         Primitive.Mode.POINTS -> null
-        Primitive.Mode.LINE_STRIP -> VertexFormat.DrawMode.LINE_STRIP
+        Primitive.Mode.LINE_STRIP -> VertexFormat.Mode.LINE_STRIP
         Primitive.Mode.LINE_LOOP -> null
-        Primitive.Mode.LINES -> VertexFormat.DrawMode.LINES
-        Primitive.Mode.TRIANGLES -> VertexFormat.DrawMode.TRIANGLES
-        Primitive.Mode.TRIANGLE_STRIP -> VertexFormat.DrawMode.TRIANGLE_STRIP
-        Primitive.Mode.TRIANGLE_FAN -> VertexFormat.DrawMode.TRIANGLE_FAN
+        Primitive.Mode.LINES -> VertexFormat.Mode.LINES
+        Primitive.Mode.TRIANGLES -> VertexFormat.Mode.TRIANGLES
+        Primitive.Mode.TRIANGLE_STRIP -> VertexFormat.Mode.TRIANGLE_STRIP
+        Primitive.Mode.TRIANGLE_FAN -> VertexFormat.Mode.TRIANGLE_FAN
     }
 
 val Primitive.Attributes.Key.usageName

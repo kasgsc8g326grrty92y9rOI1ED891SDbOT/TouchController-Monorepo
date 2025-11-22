@@ -8,11 +8,11 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.GpuTextureView
 import it.unimi.dsi.fastutil.ints.Int2ReferenceAVLTreeMap
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gl.RenderPassImpl
-import net.minecraft.client.gl.UniformType
-import net.minecraft.client.render.LightmapTextureManager
-import net.minecraft.util.Identifier
+import net.minecraft.client.Minecraft
+import com.mojang.blaze3d.opengl.GlRenderPass
+import com.mojang.blaze3d.shaders.UniformType
+import net.minecraft.client.renderer.LightTexture
+import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix4f
 import org.joml.Vector2i
 import top.fifthlight.blazerod.BlazeRod
@@ -191,10 +191,10 @@ class VertexShaderTransformRenderer private constructor() :
                         is RenderMaterial.Pbr -> TODO("PBR is not support for now")
 
                         is RenderMaterial.Unlit -> {
-                            withLocation(Identifier.of("blazerod", "unlit" + pipelineInfo.nameSuffix()))
+                            withLocation(ResourceLocation.fromNamespaceAndPath("blazerod", "unlit" + pipelineInfo.nameSuffix()))
 
-                            withVertexShader(Identifier.of("blazerod", "core/unlit"))
-                            withFragmentShader(Identifier.of("blazerod", "core/unlit"))
+                            withVertexShader(ResourceLocation.fromNamespaceAndPath("blazerod", "core/unlit"))
+                            withFragmentShader(ResourceLocation.fromNamespaceAndPath("blazerod", "core/unlit"))
                             withBlend(BlendFunction.TRANSLUCENT)
                             withSampler("SamplerBaseColor")
                             withSampler("SamplerLightMap")
@@ -202,10 +202,10 @@ class VertexShaderTransformRenderer private constructor() :
                         }
 
                         is RenderMaterial.Vanilla -> {
-                            withLocation(Identifier.of("blazerod", "vanilla" + pipelineInfo.nameSuffix()))
+                            withLocation(ResourceLocation.fromNamespaceAndPath("blazerod", "vanilla" + pipelineInfo.nameSuffix()))
 
-                            withVertexShader(Identifier.of("blazerod", "core/vanilla"))
-                            withFragmentShader(Identifier.of("blazerod", "core/vanilla"))
+                            withVertexShader(ResourceLocation.fromNamespaceAndPath("blazerod", "core/vanilla"))
+                            withFragmentShader(ResourceLocation.fromNamespaceAndPath("blazerod", "core/vanilla"))
                             withBlend(BlendFunction.TRANSLUCENT)
                             withSampler("SamplerBaseColor")
                             withSampler("SamplerLightMap")
@@ -279,8 +279,8 @@ class VertexShaderTransformRenderer private constructor() :
                 this.modelMatrices[0] = task.modelMatrix
                 this.modelNormalMatrices[0] = task.modelMatrix.normal(normalMatrix)
                 lightVector.set(
-                    task.light and (LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE or 0xFF0F),
-                    (task.light shr 16) and (LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE or 0xFF0F)
+                    task.light and (LightTexture.FULL_BLOCK or 0xFF0F),
+                    (task.light shr 16) and (LightTexture.FULL_BLOCK or 0xFF0F)
                 )
                 overlayVector.set(
                     task.overlay and 0xFFFF,
@@ -349,23 +349,23 @@ class VertexShaderTransformRenderer private constructor() :
                     is RenderMaterial.Unlit -> {
                         bindSampler("SamplerBaseColor", material.baseColorTexture.view)
                         val lightMapTexture =
-                            MinecraftClient.getInstance().gameRenderer.lightmapTextureManager.glTextureView
+                            Minecraft.getInstance().gameRenderer.lightTexture().textureView
                         bindSampler("SamplerLightMap", lightMapTexture)
                     }
 
                     is RenderMaterial.Vanilla -> {
                         bindSampler("SamplerBaseColor", material.baseColorTexture.view)
-                        val gameRenderer = MinecraftClient.getInstance().gameRenderer
-                        val lightMapTexture = gameRenderer.lightmapTextureManager.glTextureView
+                        val gameRenderer = Minecraft.getInstance().gameRenderer
+                        val lightMapTexture = gameRenderer.lightTexture().textureView
                         bindSampler("SamplerLightMap", lightMapTexture)
-                        val overlayTexture = gameRenderer.overlayTexture.texture.glTextureView
+                        val overlayTexture = gameRenderer.overlayTexture().texture.textureView
                         bindSampler("SamplerOverlay", overlayTexture)
                         val lightUniform = RenderSystem.getShaderLights()
                         setUniform("Lighting", lightUniform)
                     }
                 }
 
-                if (RenderPassImpl.IS_DEVELOPMENT) {
+                if (GlRenderPass.VALIDATION) {
                     require(material.skinned == (skinBuffer != null)) {
                         "Primitive's skin data ${skinBuffer != null} and material skinned ${material.skinned} not matching"
                     }
@@ -456,8 +456,8 @@ class VertexShaderTransformRenderer private constructor() :
                     val light = task.light
                     val overlay = task.overlay
                     lightVector.set(
-                        light and (LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE or 0xFF0F),
-                        (light shr 16) and (LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE or 0xFF0F)
+                        light and (LightTexture.FULL_BLOCK or 0xFF0F),
+                        (light shr 16) and (LightTexture.FULL_BLOCK or 0xFF0F)
                     )
                     overlayVector.set(
                         overlay and 0xFFFF,
@@ -532,21 +532,21 @@ class VertexShaderTransformRenderer private constructor() :
                     is RenderMaterial.Unlit -> {
                         bindSampler("SamplerBaseColor", material.baseColorTexture.view)
                         val lightMapTexture =
-                            MinecraftClient.getInstance().gameRenderer.lightmapTextureManager.glTextureView
+                            Minecraft.getInstance().gameRenderer.lightTexture().textureView
                         bindSampler("SamplerLightMap", lightMapTexture)
                     }
 
                     is RenderMaterial.Vanilla -> {
                         bindSampler("SamplerBaseColor", material.baseColorTexture.view)
-                        val gameRenderer = MinecraftClient.getInstance().gameRenderer
-                        val lightMapTexture = gameRenderer.lightmapTextureManager.glTextureView
+                        val gameRenderer = Minecraft.getInstance().gameRenderer
+                        val lightMapTexture = gameRenderer.lightTexture().textureView
                         bindSampler("SamplerLightMap", lightMapTexture)
-                        val overlayTexture = gameRenderer.overlayTexture.texture.glTextureView
+                        val overlayTexture = gameRenderer.overlayTexture().texture.textureView
                         bindSampler("SamplerOverlay", overlayTexture)
                     }
                 }
 
-                if (RenderPassImpl.IS_DEVELOPMENT) {
+                if (GlRenderPass.VALIDATION) {
                     require(material.skinned == (component.skinIndex != null)) {
                         "Primitive's skin data and material skinned property not matching"
                     }

@@ -12,8 +12,9 @@ import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.gl.*;
-import net.minecraft.client.texture.GlTextureView;
+import com.mojang.blaze3d.opengl.*;
+import com.mojang.blaze3d.shaders.UniformType;
+import com.mojang.blaze3d.opengl.GlTextureView;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.*;
 import org.slf4j.Logger;
@@ -42,21 +43,21 @@ import java.util.function.Supplier;
 public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal {
     @Shadow
     @Final
-    private GlBackend backend;
+    private GlDevice device;
 
     @Shadow
     @Final
     private static Logger LOGGER;
 
     @Shadow
-    private boolean renderPassOpen;
+    private boolean inRenderPass;
 
     @Shadow
     @Nullable
-    private ShaderProgram currentProgram;
+    private GlProgram lastProgram;
 
-    @WrapOperation(method = "drawObjectWithRenderPass", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderPipeline;getVertexFormat()Lcom/mojang/blaze3d/vertex/VertexFormat;"))
-    private VertexFormat onDrawObjectWithRenderPassGetVertexFormat(RenderPipeline instance, Operation<VertexFormat> original, RenderPassImpl pass) {
+    @WrapOperation(method = "drawFromBuffers", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderPipeline;getVertexFormat()Lcom/mojang/blaze3d/vertex/VertexFormat;"))
+    private VertexFormat onDrawObjectWithRenderPassGetVertexFormat(RenderPipeline instance, Operation<VertexFormat> original, GlRenderPass pass) {
         var vertexFormat = ((RenderPassExtInternal) pass).blazerod$getVertexFormat();
         if (vertexFormat != null) {
             return vertexFormat;
@@ -65,8 +66,8 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
         }
     }
 
-    @WrapOperation(method = "drawObjectWithRenderPass", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderPipeline;getVertexFormatMode()Lcom/mojang/blaze3d/vertex/VertexFormat$DrawMode;"))
-    private VertexFormat.DrawMode onDrawObjectWithRenderPassGetVertexMode(RenderPipeline instance, Operation<VertexFormat.DrawMode> original, RenderPassImpl pass) {
+    @WrapOperation(method = "drawFromBuffers", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderPipeline;getVertexFormatMode()Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;"))
+    private VertexFormat.Mode onDrawObjectWithRenderPassGetVertexMode(RenderPipeline instance, Operation<VertexFormat.Mode> original, GlRenderPass pass) {
         var vertexFormatMode = ((RenderPassExtInternal) pass).blazerod$getVertexFormatMode();
         if (vertexFormatMode != null) {
             return vertexFormatMode;
@@ -80,7 +81,7 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
         return x > 0 && (x & (x - 1)) == 0;
     }
 
-    @ModifyArg(method = "writeToTexture(Lcom/mojang/blaze3d/textures/GpuTexture;Lnet/minecraft/client/texture/NativeImage;IIIIIIII)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/opengl/GlStateManager;_pixelStore(II)V", ordinal = 3), index = 1)
+    @ModifyArg(method = "writeToTexture(Lcom/mojang/blaze3d/textures/GpuTexture;Lcom/mojang/blaze3d/platform/NativeImage;IIIIIIII)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/opengl/GlStateManager;_pixelStore(II)V", ordinal = 3), index = 1)
     private int onSetTextureUnpackAlignmentNativeImage(int param) {
         if (!isPowerOfTwo(param)) {
             return 1;
@@ -88,7 +89,7 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
         return param;
     }
 
-    @ModifyArg(method = "writeToTexture(Lcom/mojang/blaze3d/textures/GpuTexture;Ljava/nio/IntBuffer;Lnet/minecraft/client/texture/NativeImage$Format;IIIIII)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/opengl/GlStateManager;_pixelStore(II)V", ordinal = 3), index = 1)
+    @ModifyArg(method = "writeToTexture(Lcom/mojang/blaze3d/textures/GpuTexture;Lcom/mojang/blaze3d/platform/NativeImage;IIIIIIII)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/opengl/GlStateManager;_pixelStore(II)V", ordinal = 3), index = 1)
     private int onSetTextureUnpackAlignmentIntBuffer(int param) {
         if (!isPowerOfTwo(param)) {
             return 1;
@@ -96,12 +97,12 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
         return param;
     }
 
-    @ModifyExpressionValue(method = "setupRenderPass", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderPipeline$UniformDescription;type()Lnet/minecraft/client/gl/UniformType;", ordinal = 2))
+    @ModifyExpressionValue(method = "trySetup", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderPipeline$UniformDescription;type()Lcom/mojang/blaze3d/shaders/UniformType;", ordinal = 2))
     private UniformType onCheckTexelBufferUniformSlice(UniformType original, @Local GpuBufferSlice gpuBufferSlice, @Local RenderPipeline.UniformDescription uniformDescription) {
         if (original != UniformType.TEXEL_BUFFER) {
             return original;
         }
-        if (!((GpuDeviceExt) backend).blazerod$supportTextureBufferSlice()) {
+        if (!((GpuDeviceExt) device).blazerod$supportTextureBufferSlice()) {
             if (gpuBufferSlice.offset() != 0 || gpuBufferSlice.length() != gpuBufferSlice.buffer().size()) {
                 LOGGER.error("Unsupported uniform slice {}", uniformDescription.name());
             }
@@ -110,7 +111,7 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
         return null;
     }
 
-    @WrapWithCondition(method = "setupRenderPass", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL31;glTexBuffer(III)V"))
+    @WrapWithCondition(method = "trySetup", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL31;glTexBuffer(III)V"))
     private boolean onSetTexelBufferUniformSlice(int target, int internalformat, int buffer, @Local GpuBufferSlice slice) {
         if (slice.offset() != 0 || slice.length() != slice.buffer().size()) {
             ARBTextureBufferRange.glTexBufferRange(target, internalformat, buffer, slice.offset(), slice.length());
@@ -119,8 +120,8 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
         return true;
     }
 
-    @Inject(method = "setupRenderPass", at = @At(value = "INVOKE", target = "Ljava/util/Set;clear()V"))
-    private void afterClearSimpleUniforms(RenderPassImpl pass, Collection<String> validationSkippedUniforms, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "trySetup", at = @At(value = "INVOKE", target = "Ljava/util/Set;clear()V"))
+    private void afterClearSimpleUniforms(GlRenderPass pass, Collection<String> validationSkippedUniforms, CallbackInfoReturnable<Boolean> cir) {
         var renderPipeline = pass.pipeline.info();
         var shaderProgram = pass.pipeline.program();
         var passExt = (RenderPassExtInternal) pass;
@@ -128,7 +129,7 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
         var shaderStorageBuffers = shaderProgramExt.blazerod$getStorageBuffers();
         var passStorageBuffers = passExt.blazerod$getStorageBuffers();
 
-        if (RenderPassImpl.IS_DEVELOPMENT) {
+        if (GlRenderPass.VALIDATION) {
             for (var name : shaderStorageBuffers.keySet()) {
                 var entry = passStorageBuffers.get(name);
                 if (entry == null) {
@@ -149,27 +150,27 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
                 throw new IllegalStateException("Missing ssbo " + name + " for pipeline" + renderPipeline.toString());
             }
             var slice = entry.getValue();
-            var glBuffer = (GlGpuBuffer) slice.buffer();
-            GL32.glBindBufferRange(ARBShaderStorageBufferObject.GL_SHADER_STORAGE_BUFFER, info.binding(), glBuffer.id, slice.offset(), slice.length());
+            var glBuffer = (GlBuffer) slice.buffer();
+            GL32.glBindBufferRange(ARBShaderStorageBufferObject.GL_SHADER_STORAGE_BUFFER, info.binding(), glBuffer.handle, slice.offset(), slice.length());
         }
     }
 
     @Override
-    public GlBackend blazerod$getBackend() {
-        return backend;
+    public GlDevice blazerod$getDevice() {
+        return device;
     }
 
     @Override
     public ComputePass blazerod$createComputePass(Supplier<String> label) {
-        if (!((GpuDeviceExt) backend).blazerod$supportComputeShader()) {
+        if (!((GpuDeviceExt) device).blazerod$supportComputeShader()) {
             throw new IllegalStateException("Compute shader is not supported");
         }
-        if (renderPassOpen) {
+        if (inRenderPass) {
             throw new IllegalStateException("Close the existing render pass before creating a new one!");
         }
 
-        renderPassOpen = true;
-        backend.getDebugLabelManager().pushDebugGroup(label);
+        inRenderPass = true;
+        device.debugLabels().pushDebugGroup(label);
         return new ComputePassImpl((GlCommandEncoder) (Object) this);
     }
 
@@ -177,13 +178,13 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
     private boolean setupComputePass(ComputePass computePass, Collection<String> validationSkippedUniforms) {
         var pass = (ComputePassImpl) computePass;
         var pipeline = pass.getPipeline();
-        if (RenderPassImpl.IS_DEVELOPMENT) {
+        if (GlRenderPass.VALIDATION) {
             if (pipeline == null) {
                 throw new IllegalStateException("Can't dispatch without a compute pipeline");
             }
 
             var shaderProgram = pipeline.program();
-            if (shaderProgram == ShaderProgram.INVALID) {
+            if (shaderProgram == GlProgram.INVALID_PROGRAM) {
                 throw new IllegalStateException("Pipeline contains invalid shader program");
             }
 
@@ -207,7 +208,7 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
                     }
 
                     if (uniformDesc.type() == UniformType.TEXEL_BUFFER) {
-                        var tboSliceSupported = ((GpuDeviceExt) backend).blazerod$supportTextureBufferSlice();
+                        var tboSliceSupported = ((GpuDeviceExt) device).blazerod$supportTextureBufferSlice();
                         if (!tboSliceSupported && (bufferSlice.offset() != 0 || bufferSlice.length() != buffer.size())) {
                             throw new IllegalStateException("Uniform texel buffers do not support a slice of a buffer, must be entire buffer");
                         }
@@ -220,7 +221,7 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
 
             var programUniforms = shaderProgram.getUniforms();
             for (var entry : programUniforms.entrySet()) {
-                if (entry.getValue() instanceof GlUniform.Sampler) {
+                if (entry.getValue() instanceof Uniform.Sampler) {
                     var samplerName = entry.getKey();
                     var textureView = (GlTextureView) pass.samplerUniforms.get(samplerName);
                     if (textureView == null) {
@@ -249,33 +250,33 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
                     throw new IllegalStateException("Storage buffer " + name + " must have GpuBufferExt.EXTRA_USAGE_STORAGE_BUFFER");
                 }
             }
-        } else if (pipeline == null || pipeline.program() == ShaderProgram.INVALID) {
+        } else if (pipeline == null || pipeline.program() == GlProgram.INVALID_PROGRAM) {
             return false;
         }
 
-        var currentShaderProgram = pipeline.program();
-        var programChanged = this.currentProgram != currentShaderProgram;
+        var currentGlProgram = pipeline.program();
+        var programChanged = this.lastProgram != currentGlProgram;
         if (programChanged) {
-            var programRef = currentShaderProgram.getGlRef();
+            var programRef = currentGlProgram.getProgramId();
             GlStateManager._glUseProgram(programRef);
-            this.currentProgram = currentShaderProgram;
+            this.lastProgram = currentGlProgram;
         }
 
-        var shaderUniforms = currentShaderProgram.getUniforms();
+        var shaderUniforms = currentGlProgram.getUniforms();
         for (var uniformEntry : shaderUniforms.entrySet()) {
             var uniformName = uniformEntry.getKey();
             var isSimpleUniform = pass.setSimpleUniforms.contains(uniformName);
 
-            switch ((GlUniform) uniformEntry.getValue()) {
-                case GlUniform.UniformBuffer(var blockBinding) -> {
+            switch ((Uniform) uniformEntry.getValue()) {
+                case Uniform.Ubo(var blockBinding) -> {
                     if (isSimpleUniform) {
                         var bufferSlice = pass.simpleUniforms.get(uniformName);
-                        var glBuffer = (GlGpuBuffer) bufferSlice.buffer();
+                        var glBuffer = (GlBuffer) bufferSlice.buffer();
                         GL32.glBindBufferRange(GL31C.GL_UNIFORM_BUFFER, blockBinding,
-                                glBuffer.id, bufferSlice.offset(), bufferSlice.length());
+                                glBuffer.handle, bufferSlice.offset(), bufferSlice.length());
                     }
                 }
-                case GlUniform.TexelBuffer(var location, var samplerIndex, var format, var texture) -> {
+                case Uniform.Utb(var location, var samplerIndex, var format, var texture) -> {
                     if (programChanged || isSimpleUniform) {
                         GlStateManager._glUniform1i(location, samplerIndex);
                     }
@@ -285,18 +286,18 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
                     if (isSimpleUniform) {
                         var bufferSlice = pass.simpleUniforms.get(uniformName);
                         var buffer = bufferSlice.buffer();
-                        var glBuffer = (GlGpuBuffer) buffer;
+                        var glBuffer = (GlBuffer) buffer;
                         var glInternalFormat = GlConst.toGlInternalId(format);
 
                         if (bufferSlice.offset() != 0 || bufferSlice.length() != buffer.size()) {
                             ARBTextureBufferRange.glTexBufferRange(GL31C.GL_TEXTURE_BUFFER,
-                                    glInternalFormat, glBuffer.id, bufferSlice.offset(), bufferSlice.length());
+                                    glInternalFormat, glBuffer.handle, bufferSlice.offset(), bufferSlice.length());
                         } else {
-                            GL31.glTexBuffer(GL31C.GL_TEXTURE_BUFFER, glInternalFormat, glBuffer.id);
+                            GL31.glTexBuffer(GL31C.GL_TEXTURE_BUFFER, glInternalFormat, glBuffer.handle);
                         }
                     }
                 }
-                case GlUniform.Sampler(var location, var samplerIndex) -> {
+                case Uniform.Sampler(var location, var samplerIndex) -> {
                     var textureView = (GlTextureView) pass.samplerUniforms.get(uniformName);
                     if (textureView == null) break;
 
@@ -311,16 +312,16 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
                             : GL11C.GL_TEXTURE_2D;
 
                     if (textureTarget == GL13C.GL_TEXTURE_CUBE_MAP) {
-                        GL11.glBindTexture(textureTarget, texture.getGlId());
+                        GL11.glBindTexture(textureTarget, texture.id);
                     } else {
-                        GlStateManager._bindTexture(texture.getGlId());
+                        GlStateManager._bindTexture(texture.id);
                     }
 
                     var baseMip = textureView.baseMipLevel();
                     var maxLevel = baseMip + textureView.mipLevels() - 1;
                     GlStateManager._texParameter(textureTarget, GL12C.GL_TEXTURE_BASE_LEVEL, baseMip);
                     GlStateManager._texParameter(textureTarget, GL12C.GL_TEXTURE_MAX_LEVEL, maxLevel);
-                    texture.checkDirty(textureTarget);
+                    texture.flushModeChanges(textureTarget);
                 }
                 default -> throw new MatchException(null, null);
             }
@@ -335,9 +336,9 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
                 throw new IllegalStateException("Missing ssbo " + bufferName + " for pipeline" + pipeline);
             }
             var bufferSlice = bufferEntry.getValue();
-            var glBuffer = (GlGpuBuffer) bufferSlice.buffer();
+            var glBuffer = (GlBuffer) bufferSlice.buffer();
             GL32.glBindBufferRange(ARBShaderStorageBufferObject.GL_SHADER_STORAGE_BUFFER,
-                    bindingInfo.binding(), glBuffer.id, bufferSlice.offset(), bufferSlice.length());
+                    bindingInfo.binding(), glBuffer.handle, bufferSlice.offset(), bufferSlice.length());
         }
 
         pass.setSimpleUniforms.clear();
@@ -349,7 +350,7 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
         if (!setupComputePass(pass, Collections.emptyList())) {
             return;
         }
-        if (RenderPassImpl.IS_DEVELOPMENT) {
+        if (GlRenderPass.VALIDATION) {
             if (x <= 0) {
                 throw new IllegalArgumentException("work group x must be positive");
             }
@@ -365,12 +366,12 @@ public abstract class GlCommandEncoderMixin implements CommandEncoderExtInternal
 
     @Override
     public void blazerod$memoryBarrier(int barriers) {
-        if (!((GpuDeviceExt) backend).blazerod$supportMemoryBarrier()) {
+        if (!((GpuDeviceExt) device).blazerod$supportMemoryBarrier()) {
             throw new IllegalStateException("Memory barrier is not supported");
         }
         var bits = 0;
         if ((barriers & CommandEncoderExt.BARRIER_STORAGE_BUFFER_BIT) != 0) {
-            if (!((GpuDeviceExt) backend).blazerod$supportSsbo()) {
+            if (!((GpuDeviceExt) device).blazerod$supportSsbo()) {
                 throw new IllegalStateException("Shader storage buffer is not supported");
             }
             bits |= ARBShaderStorageBufferObject.GL_SHADER_STORAGE_BARRIER_BIT;

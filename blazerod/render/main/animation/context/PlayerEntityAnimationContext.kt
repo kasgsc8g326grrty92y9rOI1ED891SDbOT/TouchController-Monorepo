@@ -1,17 +1,17 @@
 package top.fifthlight.blazerod.animation.context
 
-import net.minecraft.client.option.Perspective
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.util.math.MathHelper
+import net.minecraft.client.CameraType
+import net.minecraft.core.component.DataComponents
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
+import net.minecraft.util.Mth
 import top.fifthlight.blazerod.model.animation.AnimationContext
 import top.fifthlight.blazerod.model.animation.AnimationContext.Property.*
 import top.fifthlight.blazerod.model.animation.AnimationContext.RenderingTargetType
 import kotlin.math.abs
 
 open class PlayerEntityAnimationContext(
-    override val entity: PlayerEntity,
+    override val entity: Player,
 ) : LivingEntityAnimationContext(entity) {
     companion object {
         @JvmStatic
@@ -39,9 +39,9 @@ open class PlayerEntityAnimationContext(
 
     private fun clampBodyYaw(entity: LivingEntity, degrees: Float, tickProgress: Float): Float {
         if (entity.vehicle is LivingEntity) {
-            var f = MathHelper.lerpAngleDegrees(tickProgress, entity.lastBodyYaw, entity.bodyYaw)
+            var f = Mth.rotLerp(tickProgress, entity.yBodyRotO, entity.yBodyRot)
             val g = 85.0f
-            val h = MathHelper.clamp(MathHelper.wrapDegrees(degrees - f), -g, g)
+            val h = Mth.clamp(Mth.wrapDegrees(degrees - f), -g, g)
             f = degrees - h
             if (abs(h) > 50.0f) {
                 f += h * 0.2f
@@ -49,7 +49,7 @@ open class PlayerEntityAnimationContext(
 
             return f
         } else {
-            return MathHelper.lerpAngleDegrees(tickProgress, entity.lastBodyYaw, entity.bodyYaw)
+            return Mth.rotLerp(tickProgress, entity.yBodyRotO, entity.yBodyRot)
         }
     }
 
@@ -58,43 +58,43 @@ open class PlayerEntityAnimationContext(
         RenderTarget -> RenderingTargetType.PLAYER
 
         PlayerHeadXRotation -> floatBuffer.apply {
-            val rawBodyYaw = MathHelper.lerpAngleDegrees(getDeltaTick(), entity.lastHeadYaw, entity.headYaw)
+            val rawBodyYaw = Mth.rotLerp(getDeltaTick(), entity.yHeadRotO, entity.yHeadRot)
             val bodyYaw = clampBodyYaw(entity, rawBodyYaw, getDeltaTick())
-            value = -MathHelper.wrapDegrees(rawBodyYaw - bodyYaw)
+            value = -Mth.wrapDegrees(rawBodyYaw - bodyYaw)
         }
 
         PlayerHeadYRotation -> floatBuffer.apply {
-            value = entity.getLerpedPitch(getDeltaTick())
+            value = entity.getXRot(getDeltaTick())
         }
 
         PlayerIsFirstPerson -> booleanBuffer.apply {
             val isSelf = entity == client.player
-            val isFirstPerson = client.options.perspective == Perspective.FIRST_PERSON
+            val isFirstPerson = client.options.cameraType == CameraType.FIRST_PERSON
             value = isSelf && isFirstPerson
         }
 
         PlayerPersonView -> intBuffer.apply {
             val isSelf = entity == client.player
-            val perspective = client.options.perspective
+            val perspective = client.options.cameraType
             value = when {
                 !isSelf -> 1
-                perspective == Perspective.FIRST_PERSON -> 0
-                perspective == Perspective.THIRD_PERSON_BACK -> 1
-                perspective == Perspective.THIRD_PERSON_FRONT -> 2
+                perspective == CameraType.FIRST_PERSON -> 0
+                perspective == CameraType.THIRD_PERSON_BACK -> 1
+                perspective == CameraType.THIRD_PERSON_FRONT -> 2
                 else -> 0
             }
         }
 
-        PlayerIsSpectator -> booleanBuffer.apply { value = entity.isSpectator }
+        PlayerIsSpectator -> booleanBuffer.apply { value = entity.isSpectator() }
 
-        PlayerIsSneaking -> booleanBuffer.apply { value = entity.isSneaking }
+        PlayerIsSneaking -> booleanBuffer.apply { value = entity.isShiftKeyDown() }
 
         PlayerIsSprinting -> booleanBuffer.apply { value = entity.isSprinting }
 
         PlayerIsSwimming -> booleanBuffer.apply { value = entity.isSwimming }
 
         PlayerBodyXRotation -> floatBuffer.apply {
-            val rawBodyYaw = MathHelper.lerpAngleDegrees(getDeltaTick(), entity.lastHeadYaw, entity.headYaw)
+            val rawBodyYaw = Mth.rotLerp(getDeltaTick(), entity.yHeadRotO, entity.yHeadRot)
             val bodyYaw = clampBodyYaw(entity, rawBodyYaw, getDeltaTick())
             value = -bodyYaw
         }
@@ -103,7 +103,7 @@ open class PlayerEntityAnimationContext(
 
         PlayerIsEating -> booleanBuffer.apply {
             val isUsingItem = entity.isUsingItem
-            val usingItemHasConsumingComponent = entity.activeItem.components.get(DataComponentTypes.CONSUMABLE) != null
+            val usingItemHasConsumingComponent = entity.mainHandItem.components.get(DataComponents.CONSUMABLE) != null
             value = isUsingItem && usingItemHasConsumingComponent
         }
 
@@ -116,7 +116,7 @@ open class PlayerEntityAnimationContext(
         PlayerLevel -> intBuffer.apply { value = entity.experienceLevel }
 
         PlayerFoodLevel -> intBuffer.apply {
-            value = entity.hungerManager.foodLevel
+            value = entity.getFoodData().foodLevel
         }
 
         else -> super.getProperty(type)

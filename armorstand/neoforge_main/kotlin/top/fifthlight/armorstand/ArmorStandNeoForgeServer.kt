@@ -7,7 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.event.lifecycle.FMLDedicatedServerSetupEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent
-import top.fifthlight.armorstand.util.ThreadExecutorDispatcher
+import top.fifthlight.armorstand.util.BlockableEventLoopDispatcher
 
 object ArmorStandNeoForgeServer : ArmorStandNeoForge() {
     override lateinit var mainDispatcher: CoroutineDispatcher
@@ -22,7 +22,7 @@ object ArmorStandNeoForgeServer : ArmorStandNeoForge() {
             @SubscribeEvent
             fun onServerStart(event: ServerAboutToStartEvent) {
                 val server = event.server
-                mainDispatcher = ThreadExecutorDispatcher(server)
+                mainDispatcher = BlockableEventLoopDispatcher(server)
                 scope = CoroutineScope(SupervisorJob() + mainDispatcher)
             }
         })

@@ -3,15 +3,15 @@ package top.fifthlight.armorstand.ui.screen
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.tab.TabManager
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.TabNavigationWidget
-import net.minecraft.client.gui.widget.TextWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
+import net.minecraft.ChatFormatting
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.components.tabs.TabManager
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.components.tabs.TabNavigationBar
+import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
 import org.lwjgl.glfw.GLFW
 import top.fifthlight.armorstand.ArmorStandClient
 import top.fifthlight.armorstand.config.ConfigHolder
@@ -27,24 +27,24 @@ import top.fifthlight.armorstand.util.ceilDiv
 class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, ConfigViewModel>(
     parent = parent,
     viewModelFactory = ::ConfigViewModel,
-    title = Text.translatable("armorstand.config"),
+    title = Component.translatable("armorstand.config"),
 ) {
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
         if (keyCode == GLFW.GLFW_KEY_1 && hasControlDown() && ArmorStandClient.instance.debug) {
-            client?.setScreen(DebugScreen(this))
+            minecraft?.setScreen(DebugScreen(this))
             return true
         }
         return super.keyPressed(keyCode, scanCode, modifiers)
     }
 
     private val topBar by lazy {
-        TextWidget(width, 32, title, currentClient.textRenderer)
+        StringWidget(width, 32, title, currentMinecraft.font)
     }
 
-    private val closeButton = ButtonWidget.builder(ScreenTexts.BACK) { close() }.build()
+    private val closeButton = Button.builder(CommonComponents.GUI_BACK) { onClose() }.build()
 
     private val openModelDirectoryButton =
-        ButtonWidget.builder(Text.translatable("armorstand.config.open_model_directory")) {
+        Button.builder(Component.translatable("armorstand.config.open_model_directory")) {
             viewModel.openModelDir()
         }.build()
 
@@ -61,7 +61,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
             return "armorstand.config.sort.$order.$sort"
         }
 
-        ButtonWidget.builder(Text.translatable("armorstand.config.sort.name.asc")) {
+        Button.builder(Component.translatable("armorstand.config.sort.name.asc")) {
             val (order, ascend) = viewModel.uiState.value.let { Pair(it.order, it.sortAscend) }
             if (ascend) {
                 // switch ascend
@@ -75,20 +75,20 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
         }.size(100, 20).build().also { button ->
             scope.launch {
                 viewModel.uiState.collect { state ->
-                    button.message = Text.translatable(sortText(state.order, state.sortAscend))
+                    button.message = Component.translatable(sortText(state.order, state.sortAscend))
                 }
             }
         }
     }
 
     private val refreshButton by lazy {
-        autoWidthButton(Text.translatable("armorstand.config.refresh")) {
+        autoWidthButton(Component.translatable("armorstand.config.refresh")) {
             viewModel.refreshModels()
         }
     }
 
     private val clearButton by lazy {
-        autoWidthButton(Text.translatable("armorstand.config.clear")) {
+        autoWidthButton(Component.translatable("armorstand.config.clear")) {
             viewModel.selectModel(null)
         }.also { button ->
             scope.launch {
@@ -101,9 +101,9 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
 
     private val searchBox by lazy {
         textField(
-            placeHolder = Text.translatable("armorstand.config.search_placeholder")
-                .formatted(Formatting.ITALIC)
-                .formatted(Formatting.GRAY),
+            placeHolder = Component.translatable("armorstand.config.search_placeholder")
+                .withStyle(ChatFormatting.ITALIC)
+                .withStyle(ChatFormatting.GRAY),
             text = viewModel.uiState.map { it.searchString }.distinctUntilChanged(),
             onChanged = viewModel::updateSearchString,
         )
@@ -111,7 +111,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
 
     private val pager by lazy {
         PagingWidget(
-            textRenderer = textRenderer,
+            textRenderer = font,
             currentPage = viewModel.uiState.value.currentOffset,
             totalPages = viewModel.uiState.value.totalItems,
             onPrevPage = {
@@ -144,18 +144,18 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
         ).also { grid ->
             scope.launch {
                 viewModel.uiState.map { it.currentPageItems }.distinctUntilChanged().collect { items ->
-                    grid.forEachChild {
+                    grid.visitWidgets {
                         if (it is AutoCloseable) {
                             it.close()
                         }
-                        remove(it)
+                        removeWidget(it)
                     }
                     grid.clear()
                     items?.let {
                         for (item in items) {
                             val button = ModelButton(
                                 modelItem = item,
-                                textRenderer = textRenderer,
+                                font = font,
                                 padding = Insets(8),
                                 onPressAction = {
                                     viewModel.selectModel(it.path)
@@ -166,8 +166,8 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
                             )
                             grid.add(button)
                         }
-                        grid.refreshPositions()
-                        grid.forEachChild { addDrawableChild(it) }
+                        grid.arrangeElements()
+                        grid.visitWidgets { addRenderableWidget(it) }
                     }
                 }
             }
@@ -186,7 +186,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
 
     private val sendModelDataButton by lazy {
         checkbox(
-            text = Text.translatable("armorstand.config.send_model_data"),
+            text = Component.translatable("armorstand.config.send_model_data"),
             value = viewModel.uiState.map { it.sendModelData },
             onValueChanged = viewModel::updateSendModelData,
         )
@@ -194,7 +194,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
 
     private val hidePlayerShadowButton by lazy {
         checkbox(
-            text = Text.translatable("armorstand.config.hide_player_shadow"),
+            text = Component.translatable("armorstand.config.hide_player_shadow"),
             value = viewModel.uiState.map { it.hidePlayerShadow },
             onValueChanged = viewModel::updateHidePlayerShadow,
         )
@@ -202,7 +202,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
 
     private val hidePlayerArmorButton by lazy {
         checkbox(
-            text = Text.translatable("armorstand.config.hide_player_armor"),
+            text = Component.translatable("armorstand.config.hide_player_armor"),
             value = viewModel.uiState.map { it.hidePlayerArmor },
             onValueChanged = viewModel::updateHidePlayerArmor,
         )
@@ -210,7 +210,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
 
     private val showOtherPlayersButton by lazy {
         checkbox(
-            text = Text.translatable("armorstand.config.show_other_players"),
+            text = Component.translatable("armorstand.config.show_other_players"),
             value = viewModel.uiState.map { it.showOtherPlayerModel },
             onValueChanged = viewModel::updateShowOtherPlayerModel,
         )
@@ -218,7 +218,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
 
     private val modelScaleSlider by lazy {
         slider(
-            textFactory = { slider, text -> Text.translatable("armorstand.config.model_scale", text) },
+            textFactory = { slider, text -> Component.translatable("armorstand.config.model_scale", text) },
             min = 0.0,
             max = 4.0,
             value = viewModel.uiState.map { it.modelScale.toDouble() },
@@ -229,7 +229,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
     }
 
     private val thirdPersonDistanceScaleSlider = slider(
-        textFactory = { slider, text -> Text.translatable("armorstand.config.third_person_distance_scale", text) },
+        textFactory = { slider, text -> Component.translatable("armorstand.config.third_person_distance_scale", text) },
         min = 0.05,
         max = 2.0,
         value = viewModel.uiState.map { it.thirdPersonDistanceScale.toDouble() },
@@ -238,16 +238,16 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
         },
     )
 
-    private val rendererSelectButton = ButtonWidget.builder(Text.translatable("armorstand.config.renderer_select")) {
-        currentClient.setScreen(RendererSelectScreen(this))
+    private val rendererSelectButton = Button.builder(Component.translatable("armorstand.config.renderer_select")) {
+        currentMinecraft.setScreen(RendererSelectScreen(this))
     }.build()
 
-    private val vmcButton = ButtonWidget.builder(Text.translatable("armorstand.config.vmc")) {
-        currentClient.setScreen(VmcConfigScreen(this))
+    private val vmcButton = Button.builder(Component.translatable("armorstand.config.vmc")) {
+        currentMinecraft.setScreen(VmcConfigScreen(this))
     }.build()
 
     private val previewTab = LayoutScreenTab(
-        title = Text.translatable("armorstand.config.tab.preview"),
+        title = Component.translatable("armorstand.config.tab.preview"),
         padding = Insets(8),
     ) {
         BorderLayout(
@@ -281,7 +281,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
     }
 
     private val settingsTab = LayoutScreenTab(
-        title = Text.translatable("armorstand.config.tab.settings"),
+        title = Component.translatable("armorstand.config.tab.settings"),
         padding = Insets(8),
     ) {
         BorderLayout(
@@ -313,14 +313,14 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
     }
 
     private val metadataTab = LayoutScreenTab(
-        title = Text.translatable("armorstand.config.tab.metadata"),
+        title = Component.translatable("armorstand.config.tab.metadata"),
         padding = Insets(8),
     ) {
         BorderLayout().apply {
             setCenterElement(
                 MetadataWidget(
-                    client = currentClient,
-                    textClickHandler = ::handleTextClick,
+                    minecraft = currentMinecraft,
+                    textClickHandler = ::handleComponentClicked,
                 ).also {
                     scope.launch {
                         viewModel.uiState
@@ -330,18 +330,18 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
                                 it.metadata = metadata
                             }
                     }
-                }, Positioner.create().margin(8)
+                }, LayoutSettings.defaults().padding(8)
             )
         }
     }
 
     private val tabManager = TabManager(
-        { addDrawableChild(it) },
-        { remove(it) },
+        { addRenderableWidget(it) },
+        { removeWidget(it) },
     )
 
-    private var tabNavigationWidget = TabNavigationWidget.builder(tabManager, width)
-        .tabs(previewTab, settingsTab, metadataTab)
+    private var tabNavigationLayoutElement = TabNavigationBar.builder(tabManager, width)
+        .addTabs(previewTab, settingsTab, metadataTab)
         .build()
 
     private var initialized = false
@@ -393,7 +393,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
                                                     padding = Insets(left = padding),
                                                 ).apply {
                                                     toolbarActions.forEach {
-                                                        add(it, Positioner.create().apply { alignVerticalCenter() })
+                                                        add(it, LayoutSettings.defaults().apply { alignVerticallyMiddle() })
                                                     }
                                                     pack()
                                                 }
@@ -411,7 +411,7 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
                                             gap = gap,
                                         ).apply {
                                             toolbarActions.forEach {
-                                                add(it, Positioner.create().apply { alignVerticalCenter() })
+                                                add(it, LayoutSettings.defaults().apply { alignVerticallyMiddle() })
                                             }
                                         },
                                         expand = true,
@@ -421,22 +421,22 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
                             }
                         )
                         setCenterElement(loadingOverlay)
-                        setSecondElement(pager, Positioner.create().margin(padding))
-                        addDrawable(this)
-                        addDrawable(loadingOverlay)
+                        setSecondElement(pager, LayoutSettings.defaults().padding(padding))
+                        addRenderableOnly(this)
+                        addRenderableOnly(loadingOverlay)
                     },
                     weight = 2
                 )
                 add(
                     TabNavigationWrapper(
                         tabManager = tabManager,
-                        inner = tabNavigationWidget,
+                        inner = tabNavigationLayoutElement,
                         surface = Surface.combine(
                             Surface.padding(Insets(bottom = 2), Surface.listBackground()),
                             Surface.footerSeparator(),
                         ),
                     ).also {
-                        addDrawableChild(it)
+                        addRenderableWidget(it)
                     }
                 )
             }
@@ -449,26 +449,26 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
                 align = LinearLayout.Align.CENTER,
                 gap = gap,
             ).apply {
-                add(openModelDirectoryButton, Positioner.create().apply { alignVerticalCenter() })
-                add(closeButton, Positioner.create().apply { alignVerticalCenter() })
+                add(openModelDirectoryButton, LayoutSettings.defaults().apply { alignVerticallyMiddle() })
+                add(closeButton, LayoutSettings.defaults().apply { alignVerticallyMiddle() })
             }
         )
 
-        layout.refreshPositions()
+        layout.arrangeElements()
 
         val (rows, columns) = modelGrid.calculateSize()
         viewModel.updatePageSize((rows * columns).takeIf { it > 0 })
-        modelGrid.forEachChild { remove(it) }
+        modelGrid.visitWidgets { removeWidget(it) }
 
-        layout.forEachChild { addDrawableChild(it) }
+        layout.visitWidgets { addRenderableWidget(it) }
 
         pager.init()
-        addDrawableChild(pager)
+        addRenderableWidget(pager)
         if (!initialized) {
             initialized = true
-            tabNavigationWidget.selectTab(0, false)
+            tabNavigationLayoutElement.selectTab(0, false)
         } else {
-            tabManager.currentTab?.forEachChild { addDrawableChild(it) }
+            tabManager.currentTab?.visitChildren { addRenderableWidget(it) }
         }
     }
 
@@ -476,12 +476,12 @@ class ConfigScreen(parent: Screen? = null) : ArmorStandScreen<ConfigScreen, Conf
         viewModel.tick()
     }
 
-    override fun close() {
-        modelGrid.forEachChild {
+    override fun onClose() {
+        modelGrid.visitWidgets {
             if (it is AutoCloseable) {
                 it.close()
             }
         }
-        super.close()
+        super.onClose()
     }
 }

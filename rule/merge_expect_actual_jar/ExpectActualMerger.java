@@ -16,9 +16,7 @@ import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
+import java.util.jar.*;
 import java.util.stream.Collectors;
 
 public class ExpectActualMerger {
@@ -29,6 +27,7 @@ public class ExpectActualMerger {
     private static final String expectPrefix = "META-INF/expects/";
     private static final String actualPrefix = "META-INF/actuals/";
     private static Path outputPath;
+    private static final HashMap<String, String> manifestEntries = new HashMap<>();
 
     private static String internalNameToPath(String internalName) {
         if (!internalName.startsWith("L") || !internalName.endsWith(";")) {
@@ -65,6 +64,12 @@ public class ExpectActualMerger {
                     mergeEntries.put(entryPath, new MergeEntry.ResourceFile(Path.of(filePath)));
                 }
 
+                case "--manifest" -> {
+                    var key = args[++i];
+                    var value = args[++i];
+                    manifestEntries.put(key, value);
+                }
+
                 default -> {
                     var inputPath = Path.of(args[i]);
                     var jarFile = new JarFile(inputPath.toFile());
@@ -96,7 +101,7 @@ public class ExpectActualMerger {
                                 }
                                 actualDataMap.put(interfaceFullQualifiedName, actualData);
                             }
-                        } else if (!entry.isDirectory()) {
+                        } else if (!"META-INF/MANIFEST.MF".equals(name) && !entry.isDirectory()) {
                             var hasFile = mergeEntries.containsKey(name);
                             var isFactoryFile = factoryClasses.contains(name);
                             var isClassFile = name.endsWith(".class");
@@ -159,7 +164,12 @@ public class ExpectActualMerger {
 
     @SuppressWarnings("resource")
     private static void writeJar(List<Map.Entry<String, MergeEntry>> entries) throws IOException {
-        try (var outputStream = new JarOutputStream(Files.newOutputStream(outputPath))) {
+        var manifest = new Manifest();
+        manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+        for (var entry : manifestEntries.entrySet()) {
+            manifest.getMainAttributes().putValue(entry.getKey(), entry.getValue());
+        }
+        try (var outputStream = new JarOutputStream(Files.newOutputStream(outputPath), manifest)) {
             for (var entry : entries) {
                 var value = entry.getValue();
                 switch (value) {

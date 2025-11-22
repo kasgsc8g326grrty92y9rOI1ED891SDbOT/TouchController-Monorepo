@@ -1,15 +1,15 @@
 package top.fifthlight.armorstand.state
 
-import net.minecraft.client.network.AbstractClientPlayerEntity
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState
-import net.minecraft.entity.EntityPose
-import net.minecraft.entity.EntityType
-import net.minecraft.registry.tag.EntityTypeTags
-import net.minecraft.util.Arm
-import net.minecraft.util.math.Direction
-import net.minecraft.util.math.MathHelper
-import top.fifthlight.armorstand.extension.internal.PlayerEntityRenderStateExtInternal
-import top.fifthlight.armorstand.util.toRadian
+import net.minecraft.client.player.AbstractClientPlayer
+import net.minecraft.client.renderer.entity.state.PlayerRenderState
+import net.minecraft.world.entity.Pose
+import net.minecraft.world.entity.EntityType
+import net.minecraft.tags.EntityTypeTags
+import net.minecraft.world.entity.HumanoidArm
+import net.minecraft.core.Direction
+import net.minecraft.util.Mth
+import top.fifthlight.armorstand.extension.internal.PlayerRenderStateExtInternal
+import top.fifthlight.armorstand.util.toRadians
 import top.fifthlight.armorstand.vmc.VmcMarionetteManager
 import top.fifthlight.blazerod.api.animation.AnimationContextsFactory
 import top.fifthlight.blazerod.api.animation.AnimationItemInstance
@@ -52,7 +52,7 @@ sealed interface ModelController {
             val effectiveTime = currentTime + offsetMillis
             val cycleProgress = effectiveTime % averageBlinkInterval
             return if (cycleProgress < blinkDuration) {
-                val phase = (cycleProgress.toFloat() / blinkDuration.toFloat()) * MathHelper.PI
+                val phase = (cycleProgress.toFloat() / blinkDuration.toFloat()) * Mth.PI
                 sin(phase)
             } else {
                 0f
@@ -71,21 +71,21 @@ sealed interface ModelController {
             currentTime,
         )
 
-        var PlayerEntityRenderState.animationPendingValues
-            get() = (this as PlayerEntityRenderStateExtInternal).`armorstand$getAnimationPendingValues`()
-            set(value) = (this as PlayerEntityRenderStateExtInternal).`armorstand$setAnimationPendingValues`(value)
+        var PlayerRenderState.animationPendingValues
+            get() = (this as PlayerRenderStateExtInternal).`armorstand$getAnimationPendingValues`()
+            set(value) = (this as PlayerRenderStateExtInternal).`armorstand$setAnimationPendingValues`(value)
     }
 
     fun update(
         uuid: UUID,
-        player: AbstractClientPlayerEntity,
-        renderState: PlayerEntityRenderState,
+        player: AbstractClientPlayer,
+        renderState: PlayerRenderState,
     )
 
     fun apply(
         uuid: UUID,
         instance: ModelInstance,
-        renderState: PlayerEntityRenderState,
+        renderState: PlayerRenderState,
     )
 
     private class JointItem(
@@ -142,14 +142,14 @@ sealed interface ModelController {
 
         override fun update(
             uuid: UUID,
-            player: AbstractClientPlayerEntity,
-            renderState: PlayerEntityRenderState,
+            player: AbstractClientPlayer,
+            renderState: PlayerRenderState,
         ) = Unit
 
-        override fun apply(uuid: UUID, instance: ModelInstance, renderState: PlayerEntityRenderState) {
-            val sleepingDirection = renderState.sleepingDirection
-            val bodyYaw = if (renderState.isInPose(EntityPose.SLEEPING) && sleepingDirection != null) {
-                when (sleepingDirection) {
+        override fun apply(uuid: UUID, instance: ModelInstance, renderState: PlayerRenderState) {
+            val bedOrientation = renderState.bedOrientation
+            val bodyYaw = if (renderState.hasPose(Pose.SLEEPING) && bedOrientation != null) {
+                when (bedOrientation) {
                     Direction.SOUTH -> 0f
                     Direction.EAST -> PI.toFloat() * 0.5f
                     Direction.NORTH -> PI.toFloat()
@@ -157,10 +157,10 @@ sealed interface ModelController {
                     else -> 0f
                 }
             } else {
-                MathHelper.PI - renderState.bodyYaw.toRadian()
+                Mth.PI - renderState.bodyRot.toRadians()
             }
-            val headYaw = -renderState.relativeHeadYaw.toRadian()
-            val headPitch = -renderState.pitch.toRadian()
+            val headYaw = -renderState.yRot.toRadians()
+            val headPitch = -renderState.xRot.toRadians()
             center?.update(instance) {
                 rotation.rotationY(bodyYaw)
             }
@@ -190,14 +190,14 @@ sealed interface ModelController {
 
         override fun update(
             uuid: UUID,
-            player: AbstractClientPlayerEntity,
-            renderState: PlayerEntityRenderState,
+            player: AbstractClientPlayer,
+            renderState: PlayerRenderState,
         ) = AnimationContextsFactory.create().player(player).let { context ->
             animationState.updateTime(context)
             renderState.animationPendingValues = animationInstance.update(context, animationState)
         }
 
-        override fun apply(uuid: UUID, instance: ModelInstance, renderState: PlayerEntityRenderState) {
+        override fun apply(uuid: UUID, instance: ModelInstance, renderState: PlayerRenderState) {
             renderState.animationPendingValues?.let {
                 animationInstance.apply(instance, it)
                 renderState.animationPendingValues = null
@@ -326,35 +326,35 @@ sealed interface ModelController {
         }
 
         private fun getState(
-            player: AbstractClientPlayerEntity,
-            renderState: PlayerEntityRenderState,
+            player: AbstractClientPlayer,
+            renderState: PlayerRenderState,
         ): PlayState {
             val vehicleType = player.vehicle?.type
             return when {
-                player.isDead -> PlayState.Dying
+                player.isDeadOrDying -> PlayState.Dying
 
                 vehicleType in horseEntityTypes -> PlayState.OnHorse
                 vehicleType == EntityType.PIG -> PlayState.OnPig
-                vehicleType?.isIn(EntityTypeTags.BOAT) == true -> PlayState.OnBoat
+                vehicleType?.`is`(EntityTypeTags.BOAT) == true -> PlayState.OnBoat
                 vehicleType != null -> PlayState.Riding
 
-                renderState.pose == EntityPose.SLEEPING -> PlayState.Sleeping
-                renderState.pose == EntityPose.GLIDING -> PlayState.ElytraFly
+                renderState.pose == Pose.SLEEPING -> PlayState.Sleeping
+                renderState.pose == Pose.FALL_FLYING -> PlayState.ElytraFly
                 player.isSwimming -> PlayState.Swimming
-                renderState.pose == EntityPose.SWIMMING -> if (player.movement.horizontalLength() > .01) {
+                renderState.pose == Pose.SWIMMING -> if (player.knownMovement.horizontalDistance() > .01) {
                     PlayState.Crawling
                 } else {
                     PlayState.CrawlIdle
                 }
 
-                player.isClimbing -> when {
-                    player.movement.y > 0.1 -> PlayState.OnClimbableUp
-                    player.movement.y < -0.1 -> PlayState.OnClimbableDown
-                    player.isSneaking -> PlayState.OnClimbable
+                player.onClimbable() -> when {
+                    player.getDeltaMovement().y > 0.1 -> PlayState.OnClimbableUp
+                    player.getDeltaMovement().y < -0.1 -> PlayState.OnClimbableDown
+                    player.isShiftKeyDown -> PlayState.OnClimbable
                     else -> PlayState.Idle
                 }
 
-                renderState.pose == EntityPose.CROUCHING -> if (player.movement.horizontalLength() > .01) {
+                renderState.pose == Pose.CROUCHING -> if (player.knownMovement.horizontalDistance() > .01) {
                     PlayState.Sneaking
                 } else {
                     PlayState.SneakIdle
@@ -362,11 +362,11 @@ sealed interface ModelController {
 
                 player.isSprinting -> PlayState.Sprinting
 
-                player.movement.horizontalLength() > .05 -> PlayState.Walking
+                player.knownMovement.horizontalDistance() > .05 -> PlayState.Walking
 
-                renderState.handSwinging -> when (renderState.preferredArm) {
-                    Arm.LEFT -> PlayState.LeftArmSwinging
-                    Arm.RIGHT -> PlayState.RightArmSwinging
+                renderState.swinging -> when (player.mainArm) {
+                    HumanoidArm.LEFT -> PlayState.LeftArmSwinging
+                    HumanoidArm.RIGHT -> PlayState.RightArmSwinging
                 }
 
                 else -> PlayState.Idle
@@ -375,8 +375,8 @@ sealed interface ModelController {
 
         override fun update(
             uuid: UUID,
-            player: AbstractClientPlayerEntity,
-            renderState: PlayerEntityRenderState,
+            player: AbstractClientPlayer,
+            renderState: PlayerRenderState,
         ): Unit = AnimationContextsFactory.create().player(player).let { context ->
             val newState = getState(player, renderState)
             if (newState != playState) {
@@ -392,7 +392,7 @@ sealed interface ModelController {
             renderState.animationPendingValues = item?.update(context, animationState)
         }
 
-        override fun apply(uuid: UUID, instance: ModelInstance, renderState: PlayerEntityRenderState) {
+        override fun apply(uuid: UUID, instance: ModelInstance, renderState: PlayerRenderState) {
             val item = item ?: return
             if (reset) {
                 instance.clearTransform()
@@ -403,9 +403,9 @@ sealed interface ModelController {
                 renderState.animationPendingValues = null
             }
 
-            val sleepingDirection = renderState.sleepingDirection
-            val bodyYaw = if (renderState.isInPose(EntityPose.SLEEPING) && sleepingDirection != null) {
-                when (sleepingDirection) {
+            val bedOrientation = renderState.bedOrientation
+            val bodyYaw = if (renderState.hasPose(Pose.SLEEPING) && bedOrientation != null) {
+                when (bedOrientation) {
                     Direction.SOUTH -> 0f
                     Direction.EAST -> PI.toFloat() * 0.5f
                     Direction.NORTH -> PI.toFloat()
@@ -413,11 +413,11 @@ sealed interface ModelController {
                     else -> 0f
                 }
             } else {
-                MathHelper.PI - renderState.bodyYaw.toRadian()
+                Mth.PI - renderState.bodyRot.toRadians()
             }
 
-            val headYaw = -renderState.relativeHeadYaw.toRadian()
-            val headPitch = -renderState.pitch.toRadian()
+            val headYaw = -renderState.yRot.toRadians()
+            val headPitch = -renderState.xRot.toRadians()
             instance.setTransformDecomposed(instance.scene.rootNode.nodeIndex, TransformId.RELATIVE_ANIMATION) {
                 rotation.rotationY(bodyYaw)
             }
@@ -441,9 +441,9 @@ sealed interface ModelController {
         private val bones = mutableMapOf<HumanoidTag, Optional<JointItem>>()
         private val expressions = mutableMapOf<Expression.Tag, Optional<ExpressionItem>>()
 
-        override fun update(uuid: UUID, player: AbstractClientPlayerEntity, renderState: PlayerEntityRenderState) = Unit
+        override fun update(uuid: UUID, player: AbstractClientPlayer, renderState: PlayerRenderState) = Unit
 
-        override fun apply(uuid: UUID, instance: ModelInstance, renderState: PlayerEntityRenderState) {
+        override fun apply(uuid: UUID, instance: ModelInstance, renderState: PlayerRenderState) {
             val state = VmcMarionetteManager.getState() ?: return
             state.rootTransform?.let {
                 instance.setTransformDecomposed(scene.rootNode.nodeIndex, TransformId.ABSOLUTE) {

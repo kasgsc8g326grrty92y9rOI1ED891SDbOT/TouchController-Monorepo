@@ -14,7 +14,7 @@ class GpuIndexBuffer(
 
     init {
         buffer.increaseReferenceCount()
-        buffer.inner.size == length * type.size
+        buffer.inner.size == length * type.bytes
     }
 
     override fun onClosed() {

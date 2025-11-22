@@ -1,18 +1,19 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Element
-import net.minecraft.client.gui.ScreenRect
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.ContainerWidget
-import net.minecraft.client.gui.widget.Widget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.*
-import net.minecraft.util.Colors
-import net.minecraft.util.Formatting
+import net.minecraft.ChatFormatting
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.events.GuiEventListener
+import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.client.gui.navigation.ScreenRectangle
+import net.minecraft.client.gui.layouts.LayoutElement
+import net.minecraft.client.gui.components.AbstractContainerWidget
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.*
+import net.minecraft.util.CommonColors
 import top.fifthlight.blazerod.model.Metadata
 import java.net.URI
 import java.net.URISyntaxException
@@ -20,19 +21,19 @@ import java.util.function.Consumer
 import kotlin.math.max
 
 class MetadataWidget(
-    private val client: MinecraftClient,
+    private val minecraft: Minecraft,
     textClickHandler: (Style) -> Unit,
     x: Int = 0,
     y: Int = 0,
     width: Int = 0,
     height: Int = 0,
     metadata: Metadata? = null,
-) : ContainerWidget(x, y, width, height, ScreenTexts.EMPTY) {
+) : AbstractContainerWidget(x, y, width, height, CommonComponents.EMPTY) {
     companion object {
         private const val GAP = 8
     }
 
-    private val textRenderer = client.textRenderer
+    private val textRenderer = minecraft.font
     private val entries = listOf<Entry>(
         Entry.TitleAndVersionEntry(textRenderer, textClickHandler),
         Entry.AuthorListEntry(textRenderer, textClickHandler),
@@ -43,23 +44,23 @@ class MetadataWidget(
         Entry.PermissionsEntry(textRenderer, textClickHandler),
     )
 
-    override fun getContentsHeightWithPadding(): Int = entries.filter { it.visible }.let { entries ->
+    override fun contentHeight(): Int = entries.filter { it.visible }.let { entries ->
         entries.sumOf { it.height } + GAP * (entries.size - 1)
     }
 
-    override fun getDeltaYPerScroll(): Double = client.textRenderer.fontHeight * 4.0
+    override fun scrollRate(): Double = minecraft.font.lineHeight * 4.0
 
     override fun renderWidget(
-        context: DrawContext,
+        graphics: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
-        refreshScroll()
-        context.enableScissor(x, y, right, bottom)
-        val entryWidth = scrollbarX - 4 - x
-        val visibleAreaTop = scrollY.toInt()
-        val visibleAreaBottom = scrollY.toInt() + height
+        refreshScrollAmount()
+        graphics.enableScissor(x, y, right, bottom)
+        val entryWidth = scrollBarX() - 4 - x
+        val visibleAreaTop = scrollAmount().toInt()
+        val visibleAreaBottom = scrollAmount().toInt() + height
         var currentYOffset = 0
         for (entry in entries) {
             if (!entry.visible) {
@@ -73,7 +74,7 @@ class MetadataWidget(
                 continue
             }
             entry.render(
-                context,
+                graphics,
                 mouseX,
                 mouseY,
                 x,
@@ -82,8 +83,8 @@ class MetadataWidget(
                 deltaTicks,
             )
         }
-        context.disableScissor()
-        drawScrollbar(context)
+        graphics.disableScissor()
+        renderScrollbar(graphics)
     }
 
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
@@ -98,7 +99,7 @@ class MetadataWidget(
         return super.mouseClicked(mouseX, mouseY, button)
     }
 
-    override fun appendClickableNarrations(builder: NarrationMessageBuilder) {
+    override fun updateWidgetNarration(builder: NarrationElementOutput) {
         // TODO for better accessibility
     }
 
@@ -108,13 +109,13 @@ class MetadataWidget(
             entries.forEach { it.update(value) }
         }
 
-    override fun children(): List<Element> = entries.filter { it.visible }
+    override fun children(): List<GuiEventListener> = entries.filter { it.visible }
 
     @Suppress("PropertyName")
     private sealed class Entry(
-        val textRenderer: TextRenderer,
+        val font: Font,
         val textClickHandler: (Style) -> Unit,
-    ) : Element, Widget {
+    ) : GuiEventListener, LayoutElement {
         abstract fun update(metadata: Metadata?)
         abstract val visible: Boolean
         abstract fun refreshPositions(x: Int, y: Int, width: Int)
@@ -142,12 +143,12 @@ class MetadataWidget(
         override fun getY() = _y
         override fun getWidth() = _width
         override fun getHeight() = _height
-        override fun getNavigationFocus(): ScreenRect = super<Widget>.navigationFocus
+        override fun getRectangle(): ScreenRectangle = ScreenRectangle(_x, _y, _width, _height)
 
-        override fun forEachChild(consumer: Consumer<ClickableWidget>) = Unit
+        override fun visitWidgets(consumer: Consumer<AbstractWidget>) = Unit
 
         abstract fun render(
-            context: DrawContext,
+            graphics: GuiGraphics,
             mouseX: Int,
             mouseY: Int,
             x: Int,
@@ -157,7 +158,7 @@ class MetadataWidget(
         )
 
         class AuthorListEntry(
-            textRenderer: TextRenderer,
+            textRenderer: Font,
             textClickHandler: (Style) -> Unit,
             val padding: Int = 8,
             val margin: Int = 8,
@@ -165,10 +166,10 @@ class MetadataWidget(
             val surface: Surface = Surface.color(0x88000000u) + Surface.border(0xAA000000u),
         ) : Entry(textRenderer, textClickHandler) {
             private class AuthorEntry(
-                val name: Text,
-                val role: Text? = null,
-                val contact: List<Text>,
-                val comment: Text? = null,
+                val name: Component,
+                val role: Component? = null,
+                val contact: List<Component>,
+                val comment: Component? = null,
                 var nameHeight: Int = 0,
                 var nameWidth: Int = 0,
                 var roleWidth: Int = 0,
@@ -186,8 +187,8 @@ class MetadataWidget(
             override fun update(metadata: Metadata?) {
                 authors = metadata?.authors?.map { author ->
                     AuthorEntry(
-                        name = Text.literal(author.name),
-                        role = author.role?.let { Text.literal(it) },
+                        name = Component.literal(author.name),
+                        role = author.role?.let { Component.literal(it) },
                         contact = author.contact?.map { (type, value) ->
                             val content = when {
                                 value.startsWith("https://", ignoreCase = true) ||
@@ -196,15 +197,15 @@ class MetadataWidget(
                                 type.equals("email", ignoreCase = true) ||
                                         type.equals("e-mail", ignoreCase = true) -> value.emailText()
 
-                                else -> Text.literal(value)
+                                else -> Component.literal(value)
                             }
-                            Text.translatable(
+                            Component.translatable(
                                 "armorstand.metadata.author.contact",
                                 type,
                                 content,
                             )
                         } ?: listOf(),
-                        comment = author.comment?.let { Text.literal(it) },
+                        comment = author.comment?.let { Component.literal(it) },
                         contactsLineHeight = IntArray(author.contact?.size ?: 0),
                     )
                 } ?: listOf()
@@ -218,18 +219,18 @@ class MetadataWidget(
 
                     val role = author.role
                     if (role != null) {
-                        val roleWidth = textRenderer.getWidth(role)
+                        val roleWidth = font.width(role)
                         val nameWidth = realWidth - roleWidth - 8
-                        val nameHeight = textRenderer.getWrappedLinesHeight(author.name, nameWidth)
-                        val titleLineHeight = max(nameHeight, textRenderer.fontHeight)
+                        val nameHeight = font.wordWrapHeight(author.name, nameWidth)
+                        val titleLineHeight = max(nameHeight, font.lineHeight)
                         author.nameWidth = nameWidth
                         author.nameHeight = nameHeight
                         author.roleWidth = roleWidth
                         author.titleLineHeight = titleLineHeight
                         authorHeight += titleLineHeight
                     } else {
-                        val nameHeight = textRenderer.getWrappedLinesHeight(author.name, realWidth)
-                        val titleLineHeight = max(nameHeight, textRenderer.fontHeight)
+                        val nameHeight = font.wordWrapHeight(author.name, realWidth)
+                        val titleLineHeight = max(nameHeight, font.lineHeight)
                         author.nameWidth = realWidth
                         author.nameHeight = nameHeight
                         author.titleLineHeight = titleLineHeight
@@ -237,14 +238,14 @@ class MetadataWidget(
                     }
 
                     for ((index, contact) in author.contact.withIndex()) {
-                        val contactHeight = textRenderer.getWrappedLinesHeight(contact, realWidth)
+                        val contactHeight = font.wordWrapHeight(contact, realWidth)
                         author.contactsLineHeight[index] = contactHeight
                         authorHeight += gap + contactHeight
                     }
 
                     val comment = author.comment
                     if (comment != null) {
-                        val commentHeight = textRenderer.getWrappedLinesHeight(comment, realWidth)
+                        val commentHeight = font.wordWrapHeight(comment, realWidth)
                         author.commentsHeight = commentHeight
                         authorHeight += gap + commentHeight
                     } else {
@@ -264,7 +265,7 @@ class MetadataWidget(
             }
 
             override fun render(
-                context: DrawContext,
+                graphics: GuiGraphics,
                 mouseX: Int,
                 mouseY: Int,
                 x: Int,
@@ -277,25 +278,25 @@ class MetadataWidget(
                 var currentY = y
 
                 for (author in authors) {
-                    surface.draw(context, x, currentY, width, author.totalHeight + padding * 2)
+                    surface.draw(graphics, x, currentY, width, author.totalHeight + padding * 2)
                     currentY += padding
-                    context.drawWrappedText(
-                        textRenderer,
+                    graphics.drawWordWrap(
+                        font,
                         author.name,
                         currentX,
                         currentY,
                         author.nameWidth,
-                        Colors.WHITE,
+                        CommonColors.WHITE,
                         false,
                     )
                     author.role?.let { role ->
-                        context.drawWrappedText(
-                            textRenderer,
+                        graphics.drawWordWrap(
+                            font,
                             role,
                             currentX + realWidth - author.roleWidth,
                             currentY,
                             author.roleWidth,
-                            Colors.WHITE,
+                            CommonColors.WHITE,
                             false,
                         )
                     }
@@ -303,13 +304,13 @@ class MetadataWidget(
 
                     for ((index, contact) in author.contact.withIndex()) {
                         currentY += gap
-                        context.drawWrappedText(
-                            textRenderer,
+                        graphics.drawWordWrap(
+                            font,
                             contact,
                             currentX,
                             currentY,
                             realWidth,
-                            Colors.WHITE,
+                            CommonColors.WHITE,
                             false,
                         )
                         currentY += author.contactsLineHeight[index]
@@ -317,13 +318,13 @@ class MetadataWidget(
 
                     author.comment?.let { comment ->
                         currentY += gap
-                        context.drawWrappedText(
-                            textRenderer,
+                        graphics.drawWordWrap(
+                            font,
                             comment,
                             currentX,
                             currentY,
                             realWidth,
-                            Colors.WHITE,
+                            CommonColors.WHITE,
                             false,
                         )
                         currentY += author.commentsHeight
@@ -354,10 +355,10 @@ class MetadataWidget(
                         val contactHeight = author.contactsLineHeight[index]
                         if (offsetY in currentY until currentY + contactHeight) {
                             val lineOffsetY = offsetY - currentY
-                            val lineIndex = lineOffsetY / textRenderer.fontHeight
-                            val textLines = textRenderer.wrapLines(contact, realWidth)
+                            val lineIndex = lineOffsetY / font.lineHeight
+                            val textLines = font.split(contact, realWidth)
                             val textLine = textLines.getOrNull(lineIndex) ?: return false
-                            val style = textRenderer.textHandler.getStyleAt(textLine, offsetX - padding) ?: return false
+                            val style = font.splitter.componentStyleAtWidth(textLine, offsetX - padding) ?: return false
                             textClickHandler(style)
                         }
                         currentY += contactHeight
@@ -374,14 +375,14 @@ class MetadataWidget(
         }
 
         abstract class TextListEntry(
-            textRenderer: TextRenderer,
+            font: Font,
             textClickHandler: (Style) -> Unit,
             val padding: Int = 8,
             val gap: Int = 8,
             val surface: Surface = Surface.color(0x88000000u) + Surface.border(0xAA000000u),
-        ) : Entry(textRenderer, textClickHandler) {
-            private var texts: List<Text>? = null
-            abstract fun getTexts(metadata: Metadata?): List<Text>?
+        ) : Entry(font, textClickHandler) {
+            private var texts: List<Component>? = null
+            abstract fun getTexts(metadata: Metadata?): List<Component>?
 
             override val visible: Boolean
                 get() = texts?.isNotEmpty() ?: false
@@ -398,7 +399,7 @@ class MetadataWidget(
                 val realWidth = width - padding * 2
                 texts?.let { texts ->
                     for (i in 0 until texts.size) {
-                        val textHeight = textRenderer.getWrappedLinesHeight(texts[i], realWidth)
+                        val textHeight = this@TextListEntry.font.wordWrapHeight(texts[i], realWidth)
                         textHeights[i] = textHeight
                         totalHeight += textHeight
                     }
@@ -410,7 +411,7 @@ class MetadataWidget(
             }
 
             override fun render(
-                context: DrawContext,
+                graphics: GuiGraphics,
                 mouseX: Int,
                 mouseY: Int,
                 x: Int,
@@ -418,18 +419,18 @@ class MetadataWidget(
                 width: Int,
                 deltaTicks: Float,
             ) {
-                surface.draw(context, x, y, width, height)
+                surface.draw(graphics, x, y, width, height)
                 val realWidth = width - padding * 2
                 texts?.let { texts ->
                     var currentY = y + padding
                     for ((index, text) in texts.withIndex()) {
-                        context.drawWrappedText(
-                            textRenderer,
+                        graphics.drawWordWrap(
+                            this@TextListEntry.font,
                             text,
                             x + padding,
                             currentY,
                             realWidth,
-                            Colors.WHITE,
+                            CommonColors.WHITE,
                             false,
                         )
                         currentY += textHeights[index] + gap
@@ -452,11 +453,11 @@ class MetadataWidget(
                 for ((index, height) in textHeights.withIndex()) {
                     if (offsetY in textY until textY + height) {
                         val lineOffsetY = offsetY - textY
-                        val lineIndex = lineOffsetY / textRenderer.fontHeight
+                        val lineIndex = lineOffsetY / this@TextListEntry.font.lineHeight
                         val text = texts[index]
-                        val textLines = textRenderer.wrapLines(text, width - padding * 2)
+                        val textLines = this@TextListEntry.font.split(text, width - padding * 2)
                         val textLine = textLines.getOrNull(lineIndex) ?: return false
-                        val style = textRenderer.textHandler.getStyleAt(textLine, offsetX) ?: return false
+                        val style = font.splitter.componentStyleAtWidth(textLine, offsetX - padding) ?: return false
                         textClickHandler(style)
                         break
                     }
@@ -468,23 +469,23 @@ class MetadataWidget(
         }
 
         class TitleAndVersionEntry(
-            textRenderer: TextRenderer,
+            textRenderer: Font,
             textClickHandler: (Style) -> Unit,
         ) : TextListEntry(textRenderer, textClickHandler) {
             override fun getTexts(metadata: Metadata?) = metadata?.let {
                 listOfNotNull(
                     metadata.title?.let {
-                        Text.translatable("armorstand.metadata.title", metadata.title)
+                        Component.translatable("armorstand.metadata.title", metadata.title)
                     } ?: run {
-                        Text.translatable("armorstand.metadata.title.unknown")
+                        Component.translatable("armorstand.metadata.title.unknown")
                     },
-                    metadata.version?.let { Text.translatable("armorstand.metadata.version", it) },
+                    metadata.version?.let { Component.translatable("armorstand.metadata.version", it) },
                 )
             }
         }
 
         class CopyrightEntry(
-            textRenderer: TextRenderer,
+            textRenderer: Font,
             textClickHandler: (Style) -> Unit,
         ) : TextListEntry(textRenderer, textClickHandler) {
             override fun getTexts(metadata: Metadata?) = metadata?.let { metadata ->
@@ -492,7 +493,7 @@ class MetadataWidget(
                     metadata.copyrightInformation
                         ?.takeIf(String::isNotBlank)
                         ?.let { copyrightInformation ->
-                            Text.translatable(
+                            Component.translatable(
                                 "armorstand.metadata.copyright_information",
                                 copyrightInformation
                             )
@@ -501,157 +502,156 @@ class MetadataWidget(
                         ?.filter { it.isNotBlank() }
                         ?.takeIf(List<String>::isNotEmpty)
                         ?.let { references ->
-                            Text.translatable("armorstand.metadata.references", references.joinToString(", "))
+                            Component.translatable("armorstand.metadata.references", references.joinToString(", "))
                         }
                 ).takeIf { list -> list.isNotEmpty() }
             }
         }
 
         class LinksEntry(
-            textRenderer: TextRenderer,
+            textRenderer: Font,
             textClickHandler: (Style) -> Unit,
         ) : TextListEntry(textRenderer, textClickHandler) {
             override fun getTexts(metadata: Metadata?) = listOfNotNull(
                 metadata?.linkHome
                     ?.takeIf(String::isNotBlank)
-                    ?.let { Text.translatable("armorstand.metadata.link_home", it.urlText()) },
+                    ?.let { Component.translatable("armorstand.metadata.link_home", it.urlText()) },
                 metadata?.linkDonate
                     ?.takeIf(String::isNotBlank)
-                    ?.let { Text.translatable("armorstand.metadata.link_donate", it.urlText()) },
+                    ?.let { Component.translatable("armorstand.metadata.link_donate", it.urlText()) },
             )
         }
 
         class CommentsEntry(
-            textRenderer: TextRenderer,
+            textRenderer: Font,
             textClickHandler: (Style) -> Unit,
         ) : TextListEntry(textRenderer, textClickHandler) {
             override fun getTexts(metadata: Metadata?) = listOfNotNull(
                 metadata?.comment
                     ?.takeIf(String::isNotBlank)
                     ?.replace("\r\n", "\n")
-                    ?.let { Text.translatable("armorstand.metadata.comments", it) }
+                    ?.let { Component.translatable("armorstand.metadata.comments", it) }
             )
         }
 
         class LicenseEntry(
-            textRenderer: TextRenderer,
+            textRenderer: Font,
             textClickHandler: (Style) -> Unit,
         ) : TextListEntry(textRenderer, textClickHandler) {
             override fun getTexts(metadata: Metadata?) = listOfNotNull(
                 metadata?.licenseType
                     ?.takeIf(String::isNotBlank)
-                    ?.let { Text.translatable("armorstand.metadata.license_type", it) },
+                    ?.let { Component.translatable("armorstand.metadata.license_type", it) },
                 metadata?.licenseDescription
                     ?.takeIf(String::isNotBlank)
-                    ?.let { Text.translatable("armorstand.metadata.license_description", it) },
+                    ?.let { Component.translatable("armorstand.metadata.license_description", it) },
                 metadata?.licenseUrl
                     ?.takeIf(String::isNotBlank)
-                    ?.let { Text.translatable("armorstand.metadata.license_url", it.urlText()) },
+                    ?.let { Component.translatable("armorstand.metadata.license_url", it.urlText()) },
                 metadata?.thirdPartyLicenses
                     ?.takeIf(String::isNotBlank)
-                    ?.let { Text.translatable("armorstand.metadata.third_party_licenses", it) },
+                    ?.let { Component.translatable("armorstand.metadata.third_party_licenses", it) },
                 metadata?.specLicenseUrl
                     ?.takeIf(String::isNotBlank)
-                    ?.let { Text.translatable("armorstand.metadata.spec_license_url", it.urlText()) },
+                    ?.let { Component.translatable("armorstand.metadata.spec_license_url", it.urlText()) },
             )
         }
 
         class PermissionsEntry(
-            textRenderer: TextRenderer,
+            textRenderer: Font,
             textClickHandler: (Style) -> Unit,
         ) : TextListEntry(textRenderer, textClickHandler) {
             override fun getTexts(metadata: Metadata?) = listOfNotNull(
                 metadata?.allowedUser?.let {
                     when (it) {
-                        Metadata.AllowedUser.ONLY_AUTHOR -> Text.translatable("armorstand.metadata.allowed_user.only_author")
-                        Metadata.AllowedUser.EXPLICITLY_LICENSED_PERSON -> Text.translatable("armorstand.metadata.allowed_user.explicitly_licensed_person")
-                        Metadata.AllowedUser.EVERYONE -> Text.translatable("armorstand.metadata.allowed_user.everyone")
+                        Metadata.AllowedUser.ONLY_AUTHOR -> Component.translatable("armorstand.metadata.allowed_user.only_author")
+                        Metadata.AllowedUser.EXPLICITLY_LICENSED_PERSON -> Component.translatable("armorstand.metadata.allowed_user.explicitly_licensed_person")
+                        Metadata.AllowedUser.EVERYONE -> Component.translatable("armorstand.metadata.allowed_user.everyone")
                     }
                 },
                 metadata?.allowViolentUsage?.let {
                     if (it) {
-                        Text.translatable("armorstand.metadata.violent_usage.allow")
+                        Component.translatable("armorstand.metadata.violent_usage.allow")
                     } else {
-                        Text.translatable("armorstand.metadata.violent_usage.disallow")
+                        Component.translatable("armorstand.metadata.violent_usage.disallow")
                     }
                 },
                 metadata?.allowSexualUsage?.let {
                     if (it) {
-                        Text.translatable("armorstand.metadata.sexual_usage.allow")
+                        Component.translatable("armorstand.metadata.sexual_usage.allow")
                     } else {
-                        Text.translatable("armorstand.metadata.sexual_usage.disallow")
+                        Component.translatable("armorstand.metadata.sexual_usage.disallow")
                     }
                 },
                 metadata?.commercialUsage?.let {
                     when (it) {
-                        Metadata.CommercialUsage.DISALLOW -> Text.translatable("armorstand.metadata.commercial_usage.disallow")
-                        Metadata.CommercialUsage.ALLOW -> Text.translatable("armorstand.metadata.commercial_usage.allow")
-                        Metadata.CommercialUsage.PERSONAL_NON_PROFIT -> Text.translatable("armorstand.metadata.commercial_usage.personal_non_profit")
-                        Metadata.CommercialUsage.PERSONAL_PROFIT -> Text.translatable("armorstand.metadata.commercial_usage.personal_profit")
-                        Metadata.CommercialUsage.CORPORATION -> Text.translatable("armorstand.metadata.commercial_usage.corporation")
+                        Metadata.CommercialUsage.DISALLOW -> Component.translatable("armorstand.metadata.commercial_usage.disallow")
+                        Metadata.CommercialUsage.ALLOW -> Component.translatable("armorstand.metadata.commercial_usage.allow")
+                        Metadata.CommercialUsage.PERSONAL_NON_PROFIT -> Component.translatable("armorstand.metadata.commercial_usage.personal_non_profit")
+                        Metadata.CommercialUsage.PERSONAL_PROFIT -> Component.translatable("armorstand.metadata.commercial_usage.personal_profit")
+                        Metadata.CommercialUsage.CORPORATION -> Component.translatable("armorstand.metadata.commercial_usage.corporation")
                     }
                 },
                 metadata?.allowPoliticalOrReligiousUsage?.let {
                     if (it) {
-                        Text.translatable("armorstand.metadata.political_or_religious_usage.allow")
+                        Component.translatable("armorstand.metadata.political_or_religious_usage.allow")
                     } else {
-                        Text.translatable("armorstand.metadata.political_or_religious_usage.disallow")
+                        Component.translatable("armorstand.metadata.political_or_religious_usage.disallow")
                     }
                 },
                 metadata?.allowAntisocialOrHateUsage?.let {
                     if (it) {
-                        Text.translatable("armorstand.metadata.antisocial_or_hate_usage.allow")
+                        Component.translatable("armorstand.metadata.antisocial_or_hate_usage.allow")
                     } else {
-                        Text.translatable("armorstand.metadata.antisocial_or_hate_usage.disallow")
+                        Component.translatable("armorstand.metadata.antisocial_or_hate_usage.disallow")
                     }
                 },
                 metadata?.creditNotation?.let {
                     when (it) {
-                        Metadata.CreditNotation.REQUIRED -> Text.translatable("armorstand.metadata.credit_notation.required")
-                        Metadata.CreditNotation.UNNECESSARY -> Text.translatable("armorstand.metadata.credit_notation.unnecessary")
+                        Metadata.CreditNotation.REQUIRED -> Component.translatable("armorstand.metadata.credit_notation.required")
+                        Metadata.CreditNotation.UNNECESSARY -> Component.translatable("armorstand.metadata.credit_notation.unnecessary")
                     }
                 },
                 metadata?.allowRedistribution?.let {
                     if (it) {
-                        Text.translatable("armorstand.metadata.redistribution.allow")
+                        Component.translatable("armorstand.metadata.redistribution.allow")
                     } else {
-                        Text.translatable("armorstand.metadata.redistribution.disallow")
+                        Component.translatable("armorstand.metadata.redistribution.disallow")
                     }
                 },
                 metadata?.modificationPermission?.let {
                     when (it) {
-                        Metadata.ModificationPermission.PROHIBITED -> Text.translatable("armorstand.metadata.modification_permission.prohibited")
-                        Metadata.ModificationPermission.ALLOW_MODIFICATION -> Text.translatable("armorstand.metadata.modification_permission.allow_modification")
-                        Metadata.ModificationPermission.ALLOW_MODIFICATION_REDISTRIBUTION -> Text.translatable("armorstand.metadata.modification_permission.allow_modification_redistribution")
+                        Metadata.ModificationPermission.PROHIBITED -> Component.translatable("armorstand.metadata.modification_permission.prohibited")
+                        Metadata.ModificationPermission.ALLOW_MODIFICATION -> Component.translatable("armorstand.metadata.modification_permission.allow_modification")
+                        Metadata.ModificationPermission.ALLOW_MODIFICATION_REDISTRIBUTION -> Component.translatable("armorstand.metadata.modification_permission.allow_modification_redistribution")
                     }
                 },
                 metadata?.permissionUrl
                     ?.takeIf(String::isNotBlank)
-                    ?.let { Text.translatable("armorstand.metadata.permission_url", it.urlText()) },
+                    ?.let { Component.translatable("armorstand.metadata.permission_url", it.urlText()) },
             )
         }
     }
 }
 
-private fun String.urlText(uri: URI): Text = MutableText
-    .of(PlainTextContent.of(this))
-    .setStyle(
+private fun String.urlText(uri: URI): Component = Component.literal(this)
+    .withStyle(
         Style.EMPTY
-            .withFormatting(Formatting.BLUE)
-            .withUnderline(true)
-            .withClickEvent(ClickEvent.OpenUrl(uri))
+            .withColor(ChatFormatting.BLUE)
+            .withUnderlined(true)
+            .withClickEvent(ClickEvent { ClickEvent.Action.OPEN_URL })
     )
 
-private fun String.emailText(): Text {
+private fun String.emailText(): Component {
     val uri = try {
         URI("mailto:$this")
     } catch (e: URISyntaxException) {
-        return Text.of(this)
+        return Component.literal(this)
     }
-    return MutableText.of(PlainTextContent.of(this)).setStyle(
+    return Component.literal(this).withStyle(
         Style.EMPTY
-            .withFormatting(Formatting.BLUE)
-            .withUnderline(true)
+            .withColor(ChatFormatting.BLUE)
+            .withUnderlined(true)
             .withClickEvent(ClickEvent.OpenUrl(uri))
     )
 }
@@ -659,5 +659,5 @@ private fun String.emailText(): Text {
 private fun String.urlText() = try {
     urlText(URI(this))
 } catch (e: URISyntaxException) {
-    Text.of(this)
+    Component.literal(this)
 }

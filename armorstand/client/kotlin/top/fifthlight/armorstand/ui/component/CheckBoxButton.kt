@@ -1,42 +1,42 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder
-import net.minecraft.client.gui.screen.narration.NarrationPart
-import net.minecraft.client.gui.widget.CheckboxWidget
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.text.Text
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.client.gui.narration.NarratedElementType
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.Checkbox
+import net.minecraft.network.chat.Component
 
 class CheckBoxButton(
     var checked: Boolean,
     private val onClicked: () -> Unit,
-) : ClickableWidget(0, 0, SIZE, SIZE, Text.empty()) {
+) : AbstractWidget(0, 0, SIZE, SIZE, Component.empty()) {
     companion object {
         private const val SIZE = 17
     }
 
     override fun renderWidget(
-        context: DrawContext,
+        context: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
         val identifier = if (checked) {
             if (this.isFocused) {
-                CheckboxWidget.SELECTED_HIGHLIGHTED_TEXTURE
+                Checkbox.CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE
             } else {
-                CheckboxWidget.SELECTED_TEXTURE
+                Checkbox.CHECKBOX_SELECTED_SPRITE
             }
         } else {
             if (this.isFocused) {
-                CheckboxWidget.HIGHLIGHTED_TEXTURE
+                Checkbox.CHECKBOX_HIGHLIGHTED_SPRITE
             } else {
-                CheckboxWidget.TEXTURE
+                Checkbox.CHECKBOX_SPRITE
             }
         }
 
-        context.drawGuiTexture(
+        context.blitSprite(
             RenderPipelines.GUI_TEXTURED,
             identifier,
             x,
@@ -48,13 +48,13 @@ class CheckBoxButton(
 
     override fun onClick(mouseX: Double, mouseY: Double) = onClicked()
 
-    override fun appendClickableNarrations(builder: NarrationMessageBuilder) {
-        builder.put(NarrationPart.TITLE, narrationMessage)
+    override fun updateWidgetNarration(builder: NarrationElementOutput) {
+        builder.add(NarratedElementType.TITLE, message)
         if (active) {
             if (isFocused) {
-                builder.put(NarrationPart.USAGE, Text.translatable("narration.checkbox.usage.focused"))
+                builder.add(NarratedElementType.USAGE, Component.translatable("narration.checkbox.usage.focused"))
             } else {
-                builder.put(NarrationPart.USAGE, Text.translatable("narration.checkbox.usage.hovered"))
+                builder.add(NarratedElementType.USAGE, Component.translatable("narration.checkbox.usage.hovered"))
             }
         }
     }

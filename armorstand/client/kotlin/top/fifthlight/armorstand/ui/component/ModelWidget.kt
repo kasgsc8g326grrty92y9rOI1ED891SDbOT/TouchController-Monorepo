@@ -1,12 +1,12 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.ingame.InventoryScreen
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.sound.SoundManager
-import net.minecraft.text.Text
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.client.gui.screens.inventory.InventoryScreen
+import net.minecraft.client.sounds.SoundManager
+import net.minecraft.network.chat.Component
 import kotlin.math.min
 
 class ModelWidget(
@@ -15,19 +15,19 @@ class ModelWidget(
     width: Int = 1,
     height: Int = 1,
     private val surface: Surface = Surface.empty,
-) : ClickableWidget(x, y, width, height, Text.empty()) {
-    override fun isNarratable() = false
+) : AbstractWidget(x, y, width, height, Component.empty()) {
+    override fun isActive() = false
 
     override fun renderWidget(
-        context: DrawContext,
+        context: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
         surface.draw(context, x, y, width, height)
-        val client = MinecraftClient.getInstance()
-        client.player?.let { player ->
-            InventoryScreen.drawEntity(
+        val minecraft = Minecraft.getInstance()
+        minecraft.player?.let { player ->
+            InventoryScreen.renderEntityInInventoryFollowsMouse(
                 context,
                 x,
                 y,
@@ -44,5 +44,5 @@ class ModelWidget(
 
     override fun playDownSound(soundManager: SoundManager) {}
 
-    override fun appendClickableNarrations(builder: NarrationMessageBuilder) {}
+    override fun updateWidgetNarration(builder: NarrationElementOutput) {}
 }

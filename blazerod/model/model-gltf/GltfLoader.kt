@@ -4,7 +4,6 @@ import kotlinx.serialization.json.Json
 import org.joml.Matrix4f
 import org.joml.Quaternionf
 import org.joml.Vector3f
-import org.joml.getVector3f
 import top.fifthlight.blazerod.model.*
 import top.fifthlight.blazerod.model.animation.*
 import top.fifthlight.blazerod.model.gltf.format.*
@@ -459,7 +458,7 @@ internal class GltfLoader(
                             keyframeData = AccessorAnimationKeyFrameData(
                                 accessor = outputAccessor,
                                 elements = sampler.interpolation.elements,
-                                elementGetter = { buffer, result -> buffer.getVector3f(result) },
+                                elementGetter = { buffer, result -> result.set(buffer.getFloat(), buffer.getFloat(), buffer.getFloat()) },
                             ),
                             interpolation = sampler.interpolation,
                         )
@@ -478,7 +477,7 @@ internal class GltfLoader(
                             keyframeData = AccessorAnimationKeyFrameData(
                                 accessor = outputAccessor,
                                 elements = sampler.interpolation.elements,
-                                elementGetter = { buffer, result -> buffer.getVector3f(result) },
+                                elementGetter = { buffer, result -> result.set(buffer.getFloat(), buffer.getFloat(), buffer.getFloat()) },
                             ),
                             interpolation = sampler.interpolation,
                         )

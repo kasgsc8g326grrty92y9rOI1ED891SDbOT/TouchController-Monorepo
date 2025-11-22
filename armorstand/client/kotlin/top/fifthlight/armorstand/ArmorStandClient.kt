@@ -1,6 +1,6 @@
 package top.fifthlight.armorstand
 
-import net.minecraft.client.option.KeyBinding
+import net.minecraft.client.KeyMapping
 import org.lwjgl.glfw.GLFW
 
 interface ArmorStandClient : ArmorStand {
@@ -8,21 +8,21 @@ interface ArmorStandClient : ArmorStand {
         lateinit var instance: ArmorStandClient
 
         val configKeyBinding by lazy {
-            KeyBinding(
+            KeyMapping(
                 "armorstand.keybinding.config",
                 GLFW.GLFW_KEY_I,
                 "armorstand.name"
             )
         }
         val animationKeyBinding by lazy {
-            KeyBinding(
+            KeyMapping(
                 "armorstand.keybinding.animation",
                 GLFW.GLFW_KEY_K,
                 "armorstand.name"
             )
         }
         val modelSwitchKeyBinding by lazy {
-            KeyBinding(
+            KeyMapping(
                 "armorstand.keybinding.model_switch",
                 GLFW.GLFW_KEY_U,
                 "armorstand.name"

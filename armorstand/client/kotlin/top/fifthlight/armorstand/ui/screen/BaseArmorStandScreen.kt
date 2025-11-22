@@ -1,17 +1,17 @@
 package top.fifthlight.armorstand.ui.screen
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.Text
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
 
 abstract class BaseArmorStandScreen<T: BaseArmorStandScreen<T>>(
     protected val parent: Screen? = null,
-    title: Text,
+    title: Component,
 ): Screen(title) {
-    val currentClient: MinecraftClient
-        get() = super.client ?: MinecraftClient.getInstance()
+    val currentMinecraft: Minecraft
+        get() = super.minecraft ?: Minecraft.getInstance()
 
-    override fun close() {
-        currentClient.setScreen(parent)
+    override fun onClose() {
+        currentMinecraft.setScreen(parent)
     }
 }

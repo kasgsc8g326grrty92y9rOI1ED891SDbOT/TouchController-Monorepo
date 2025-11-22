@@ -1,7 +1,7 @@
 package top.fifthlight.blazerod.animation.context
 
-import net.minecraft.entity.Entity
-import net.minecraft.util.math.Direction
+import net.minecraft.world.entity.Entity
+import net.minecraft.core.Direction
 import top.fifthlight.blazerod.model.animation.AnimationContext
 import top.fifthlight.blazerod.model.animation.AnimationContext.Property.*
 import top.fifthlight.blazerod.model.animation.AnimationContext.RenderingTargetType
@@ -35,11 +35,11 @@ open class EntityAnimationContext(
     override fun <T> getProperty(type: AnimationContext.Property<T>): T? = when (type) {
         RenderTarget -> RenderingTargetType.ENTITY
 
-        EntityPosition -> vector3dBuffer.set(entity.pos)
+        EntityPosition -> vector3dBuffer.set(entity.position())
 
-        EntityPositionDelta -> entity.pos.sub(entity.lastRenderPos, vector3dBuffer)
+        EntityPositionDelta -> entity.position().sub(entity.oldPosition(), vector3dBuffer)
 
-        EntityHorizontalFacing -> when (entity.horizontalFacing) {
+        EntityHorizontalFacing -> when (entity.getDirection()) {
             Direction.NORTH -> 2
             Direction.SOUTH -> 3
             Direction.WEST -> 4
@@ -48,22 +48,22 @@ open class EntityAnimationContext(
         }.let { intBuffer.apply { value = it } }
 
         EntityGroundSpeed -> doubleBuffer.apply {
-            value = entity.movement.horizontalLength()
+            value = entity.knownMovement.horizontalDistance()
         }
 
-        EntityVerticalSpeed -> doubleBuffer.apply { value = entity.movement.y }
+        EntityVerticalSpeed -> doubleBuffer.apply { value = entity.knownMovement.y }
 
-        EntityHasRider -> booleanBuffer.apply { value = entity.hasPassengers() }
+        EntityHasRider -> booleanBuffer.apply { value = entity.isVehicle }
 
-        EntityIsRiding -> booleanBuffer.apply { value = entity.hasVehicle() }
+        EntityIsRiding -> booleanBuffer.apply { value = entity.isPassenger }
 
-        EntityIsInWater -> booleanBuffer.apply { value = entity.isTouchingWater }
+        EntityIsInWater -> booleanBuffer.apply { value = entity.isInWater }
 
-        EntityIsInWaterOrRain -> booleanBuffer.apply { value = entity.isTouchingWaterOrRain }
+        EntityIsInWaterOrRain -> booleanBuffer.apply { value = entity.isInWaterOrRain }
 
         EntityIsInFire -> booleanBuffer.apply { value = entity.isOnFire }
 
-        EntityIsOnGround -> booleanBuffer.apply { value = entity.isOnGround }
+        EntityIsOnGround -> booleanBuffer.apply { value = entity.onGround() }
 
         else -> super.getProperty(type)
     } as T?

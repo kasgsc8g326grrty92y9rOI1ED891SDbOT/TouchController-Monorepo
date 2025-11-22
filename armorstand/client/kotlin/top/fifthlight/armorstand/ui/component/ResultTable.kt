@@ -1,40 +1,40 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
+import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.narration.NarrationElementOutput
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
 import top.fifthlight.armorstand.ui.state.DatabaseScreenState
 import kotlin.math.max
 
 class ResultTable(
-    private val textRenderer: TextRenderer,
+    private val textRenderer: Font,
     x: Int = 0,
     y: Int = 0,
     width: Int = 0,
     height: Int = 0,
-) : ClickableWidget(x, y, width, height, Text.empty()) {
+) : AbstractWidget(x, y, width, height, Component.empty()) {
     private var layout: Layout? = null
 
     private sealed class Layout {
         abstract fun render(
             table: ResultTable,
-            context: DrawContext,
+            graphics: GuiGraphics,
         )
 
         data object Empty : Layout() {
             override fun render(
                 table: ResultTable,
-                context: DrawContext,
+                graphics: GuiGraphics,
             ) {
-                context.drawText(
+                graphics.drawString(
                     table.textRenderer,
-                    Text.translatable("armorstand.debug_database.empty_tip"),
+                    Component.translatable("armorstand.debug_database.empty_tip"),
                     table.x,
                     table.y,
-                    Colors.WHITE,
+                    CommonColors.WHITE,
                     false,
                 )
             }
@@ -43,61 +43,61 @@ class ResultTable(
         data object Loading : Layout() {
             override fun render(
                 table: ResultTable,
-                context: DrawContext,
+                graphics: GuiGraphics,
             ) {
-                context.drawText(
+                graphics.drawString(
                     table.textRenderer,
-                    Text.translatable("armorstand.debug_database.querying"),
+                    Component.translatable("armorstand.debug_database.querying"),
                     table.x,
                     table.y,
-                    Colors.WHITE,
+                    CommonColors.WHITE,
                     false,
                 )
             }
         }
 
-        data class Failed(val message: Text?) : Layout() {
+        data class Failed(val message: Component?) : Layout() {
             override fun render(
                 table: ResultTable,
-                context: DrawContext,
+                graphics: GuiGraphics,
             ) {
-                context.drawWrappedText(
+                graphics.drawWordWrap(
                     table.textRenderer,
-                    message ?: Text.translatable("armorstand.debug_database.query_failed"),
+                    message ?: Component.translatable("armorstand.debug_database.query_failed"),
                     table.x,
                     table.y,
                     table.width,
-                    Colors.WHITE,
+                    CommonColors.WHITE,
                     false,
                 )
             }
         }
 
-        data class Updated(val message: Text) : Layout() {
+        data class Updated(val message: Component) : Layout() {
             override fun render(
                 table: ResultTable,
-                context: DrawContext,
+                graphics: GuiGraphics,
             ) {
-                context.drawText(
+                graphics.drawString(
                     table.textRenderer,
                     message,
                     table.x,
                     table.y,
-                    Colors.WHITE,
+                    CommonColors.WHITE,
                     false,
                 )
             }
         }
 
         data class Result(
-            val duration: Text,
-            val headers: List<Text>,
-            val rows: List<List<Text>>,
+            val duration: Component,
+            val headers: List<Component>,
+            val rows: List<List<Component>>,
             val columnWidths: List<Int>,
         ) : Layout() {
             override fun render(
                 table: ResultTable,
-                context: DrawContext,
+                graphics: GuiGraphics,
             ) {
                 val textRenderer = table.textRenderer
                 val x = table.x
@@ -105,45 +105,45 @@ class ResultTable(
                 var offsetX = 0
                 var offsetY = 0
                 // render duration
-                context.drawText(
+                graphics.drawString(
                     textRenderer,
                     duration,
                     x,
                     y,
-                    Colors.WHITE,
+                    CommonColors.WHITE,
                     false,
                 )
-                offsetY += textRenderer.fontHeight + 2
+                offsetY += textRenderer.lineHeight + 2
                 // render headers
                 for ((index, header) in headers.withIndex()) {
-                    context.drawText(
+                    graphics.drawString(
                         textRenderer,
                         header,
                         x + offsetX,
                         y + offsetY,
-                        Colors.WHITE,
+                        CommonColors.WHITE,
                         false,
                     )
                     offsetX += columnWidths[index] + 2
                 }
-                context.drawHorizontalLine(x, x + offsetX, y + offsetY + textRenderer.fontHeight, Colors.WHITE)
+                graphics.hLine(x, x + offsetX, y + offsetY + textRenderer.lineHeight, CommonColors.WHITE)
                 // render rows
                 offsetX = 0
-                offsetY += textRenderer.fontHeight + 2
+                offsetY += textRenderer.lineHeight + 2
                 for (row in rows) {
                     for ((index, column) in row.withIndex()) {
-                        context.drawText(
+                        graphics.drawString(
                             textRenderer,
                             column,
                             x + offsetX,
                             y + offsetY,
-                            Colors.WHITE,
+                            CommonColors.WHITE,
                             false,
                         )
                         offsetX += columnWidths[index] + 2
                     }
                     offsetX = 0
-                    offsetY += textRenderer.fontHeight + 2
+                    offsetY += textRenderer.lineHeight + 2
                 }
             }
         }
@@ -157,12 +157,12 @@ class ResultTable(
 
             is DatabaseScreenState.QueryState.Failed -> Layout.Failed(
                 message = state.error?.let {
-                    Text.translatable("armorstand.debug_database.query_failed_with_message", it)
+                    Component.translatable("armorstand.debug_database.query_failed_with_message", it)
                 }
             )
 
             is DatabaseScreenState.QueryState.Updated -> Layout.Updated(
-                message = Text.translatable(
+                message = Component.translatable(
                     "armorstand.debug_database.executed",
                     state.updateCount,
                     state.duration.toString()
@@ -170,18 +170,18 @@ class ResultTable(
             )
 
             is DatabaseScreenState.QueryState.Result -> {
-                val headerTexts = state.headers.map { Text.literal(it) }
-                val rowTexts = state.rows.map { row -> row.map { Text.literal(it) } }
+                val headerTexts = state.headers.map { Component.literal(it) }
+                val rowTexts = state.rows.map { row -> row.map { Component.literal(it) } }
                 val columnWidths = mutableListOf<Int>().apply {
-                    headerTexts.forEach { add(textRenderer.getWidth(it)) }
+                    headerTexts.forEach { add(textRenderer.width(it)) }
                 }
                 for (row in rowTexts) {
                     for ((index, column) in row.withIndex()) {
-                        columnWidths[index] = max(columnWidths[index], textRenderer.getWidth(column))
+                        columnWidths[index] = max(columnWidths[index], textRenderer.width(column))
                     }
                 }
                 Layout.Result(
-                    duration = Text.translatable("armorstand.debug_database.queried_time", state.duration.toString()),
+                    duration = Component.translatable("armorstand.debug_database.queried_time", state.duration.toString()),
                     headers = headerTexts,
                     rows = rowTexts,
                     columnWidths = columnWidths,
@@ -191,13 +191,13 @@ class ResultTable(
     }
 
     override fun renderWidget(
-        context: DrawContext,
+        graphics: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
-        layout?.render(this, context)
+        layout?.render(this, graphics)
     }
 
-    override fun appendClickableNarrations(builder: NarrationMessageBuilder) {}
+    override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {}
 }

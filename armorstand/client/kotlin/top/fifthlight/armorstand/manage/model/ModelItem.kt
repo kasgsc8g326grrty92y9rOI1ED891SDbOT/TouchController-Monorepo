@@ -1,6 +1,6 @@
 package top.fifthlight.armorstand.manage.model
 
-import net.minecraft.util.Identifier
+import net.minecraft.resources.ResourceLocation
 import top.fifthlight.armorstand.util.ModelHash
 import java.nio.file.Path
 import kotlin.io.path.extension
@@ -15,40 +15,40 @@ data class ModelItem(
     val type by lazy { Type.of(path) }
 
     enum class Type(
-        val icon: Identifier,
+        val icon: ResourceLocation,
         val extensions: Set<String> = setOf(),
         val markerFiles: Set<String> = setOf(),
     ) {
         GLTF(
-            icon = Identifier.of("armorstand", "thumbnail_gltf"),
+            icon = ResourceLocation.fromNamespaceAndPath("armorstand", "thumbnail_gltf"),
             extensions = setOf("gltf", "glb"),
         ),
         VRM(
-            icon = Identifier.of("armorstand", "thumbnail_vrm"),
+            icon = ResourceLocation.fromNamespaceAndPath("armorstand", "thumbnail_vrm"),
             extensions = setOf("vrm"),
         ),
         PMX(
-            icon = Identifier.of("armorstand", "thumbnail_pmx"),
+            icon = ResourceLocation.fromNamespaceAndPath("armorstand", "thumbnail_pmx"),
             extensions = setOf("pmx"),
         ),
         PMD(
-            icon = Identifier.of("armorstand", "thumbnail_pmd"),
+            icon = ResourceLocation.fromNamespaceAndPath("armorstand", "thumbnail_pmd"),
             extensions = setOf("pmd"),
         ),
         FBX(
-            icon = Identifier.of("armorstand", "thumbnail_fbx"),
+            icon = ResourceLocation.fromNamespaceAndPath("armorstand", "thumbnail_fbx"),
             extensions = setOf("fbx"),
         ),
         OBJ(
-            icon = Identifier.of("armorstand", "thumbnail_obj"),
+            icon = ResourceLocation.fromNamespaceAndPath("armorstand", "thumbnail_obj"),
             extensions = setOf("obj"),
         ),
         JSON(
-            icon = Identifier.of("armorstand", "thumbnail_json"),
+            icon = ResourceLocation.fromNamespaceAndPath("armorstand", "thumbnail_json"),
             markerFiles = setOf("ysm.json", "model.json"),
         ),
         UNKNOWN(
-            icon = Identifier.of("armorstand", "thumbnail_unknown"),
+            icon = ResourceLocation.fromNamespaceAndPath("armorstand", "thumbnail_unknown"),
             extensions = setOf(),
         );
 

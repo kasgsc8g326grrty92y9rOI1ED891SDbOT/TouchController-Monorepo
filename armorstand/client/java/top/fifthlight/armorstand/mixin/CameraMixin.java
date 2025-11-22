@@ -1,9 +1,9 @@
 package top.fifthlight.armorstand.mixin;
 
-import net.minecraft.client.render.Camera;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Camera;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,17 +17,17 @@ import top.fifthlight.armorstand.config.ConfigHolder;
 @Mixin(Camera.class)
 public class CameraMixin {
     @Shadow
-    private Entity focusedEntity;
+    private Entity entity;
 
     @Shadow
-    private float lastTickProgress;
+    private float partialTickTime;
 
-    @ModifyArg(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;clipToSpace(F)F"))
+    @ModifyArg(method = "setup", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;getMaxZoom(F)F"))
     public float thirdPersonDistance(float f) {
         return f * ConfigHolder.INSTANCE.getConfig().getValue().getThirdPersonDistanceScale();
     }
 
-    @Inject(method = "getPitch", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getXRot", at = @At("HEAD"), cancellable = true)
     public void wrapGetPitch(CallbackInfoReturnable<Float> cir) {
         var transform = PlayerRenderer.getCurrentCameraTransform();
         if (transform != null) {
@@ -35,7 +35,7 @@ public class CameraMixin {
         }
     }
 
-    @Inject(method = "getYaw", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getYRot", at = @At("HEAD"), cancellable = true)
     public void wrapGetYaw(CallbackInfoReturnable<Float> cir) {
         var transform = PlayerRenderer.getCurrentCameraTransform();
         if (transform != null) {
@@ -43,7 +43,7 @@ public class CameraMixin {
         }
     }
 
-    @Inject(method = "getRotation", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "rotation", at = @At("HEAD"), cancellable = true)
     public void wrapGetRotation(CallbackInfoReturnable<Quaternionf> cir) {
         var transform = PlayerRenderer.getCurrentCameraTransform();
         if (transform != null) {
@@ -51,16 +51,16 @@ public class CameraMixin {
         }
     }
 
-    @Inject(method = "getPos", at = @At("HEAD"), cancellable = true)
-    public void wrapGetPos(CallbackInfoReturnable<Vec3d> cir) {
+    @Inject(method = "position", at = @At("HEAD"), cancellable = true)
+    public void wrapGetPos(CallbackInfoReturnable<Vec3> cir) {
         var transform = PlayerRenderer.getCurrentCameraTransform();
         if (transform != null) {
-            var tickProgress = (double) this.lastTickProgress;
+            var tickProgress = (double) this.partialTickTime;
             var position = transform.getPosition();
-            cir.setReturnValue(new Vec3d(
-                    position.x() + MathHelper.lerp(tickProgress, focusedEntity.lastX, focusedEntity.getX()),
-                    position.y() + MathHelper.lerp(tickProgress, focusedEntity.lastY, focusedEntity.getY()),
-                    position.z() + MathHelper.lerp(tickProgress, focusedEntity.lastZ, focusedEntity.getZ())
+            cir.setReturnValue(new Vec3(
+                    position.x() + Mth.lerp(tickProgress, entity.xo, entity.getX()),
+                    position.y() + Mth.lerp(tickProgress, entity.yo, entity.getY()),
+                    position.z() + Mth.lerp(tickProgress, entity.zo, entity.getZ())
             ));
         }
     }

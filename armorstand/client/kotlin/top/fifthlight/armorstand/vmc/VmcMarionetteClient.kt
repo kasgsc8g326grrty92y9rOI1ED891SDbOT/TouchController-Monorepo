@@ -6,9 +6,9 @@ import com.illposed.osc.OSCPacket
 import com.illposed.osc.transport.Transport
 import com.illposed.osc.transport.udp.UDPTransport
 import kotlinx.coroutines.*
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.Minecraft
 import org.slf4j.LoggerFactory
-import top.fifthlight.armorstand.util.ThreadExecutorDispatcher
+import top.fifthlight.armorstand.util.BlockableEventLoopDispatcher
 import top.fifthlight.blazerod.model.Expression
 import top.fifthlight.blazerod.model.HumanoidTag
 
@@ -19,7 +19,7 @@ class VmcMarionetteClient(
         private val logger = LoggerFactory.getLogger(VmcMarionetteClient::class.java)
     }
 
-    private val scope = CoroutineScope(ThreadExecutorDispatcher(MinecraftClient.getInstance()) + SupervisorJob())
+    private val scope = CoroutineScope(BlockableEventLoopDispatcher(Minecraft.getInstance()) + SupervisorJob())
 
     @Volatile
     private var closed = false

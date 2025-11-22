@@ -6,17 +6,17 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
-import net.minecraft.util.Identifier
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Button
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
+import net.minecraft.resources.ResourceLocation
 import top.fifthlight.armorstand.config.ConfigHolder
 import top.fifthlight.armorstand.manage.model.ModelItem
-import top.fifthlight.armorstand.util.ThreadExecutorDispatcher
+import top.fifthlight.armorstand.util.BlockableEventLoopDispatcher
 
 class ModelButton(
     x: Int = 0,
@@ -24,24 +24,24 @@ class ModelButton(
     width: Int = 0,
     height: Int = 0,
     private val modelItem: ModelItem,
-    private val textRenderer: TextRenderer,
+    private val font: Font,
     private val padding: Insets = Insets(),
     onPressAction: (ModelItem) -> Unit,
     private val onFavoriteAction: (ModelItem) -> Unit,
-) : ButtonWidget(
+) : Button(
     x,
     y,
     width,
     height,
-    Text.literal(modelItem.name),
+    Component.literal(modelItem.name),
     { onPressAction.invoke(modelItem) },
-    DEFAULT_NARRATION_SUPPLIER,
+    DEFAULT_NARRATION,
 ), AutoCloseable {
     companion object {
-        private val STAR_ICON: Identifier = Identifier.of("armorstand", "star")
-        private val STAR_EMPTY_ICON: Identifier = Identifier.of("armorstand", "star_empty")
-        private val STAR_HOVERED_ICON: Identifier = Identifier.of("armorstand", "star_hovered")
-        private val STAR_EMPTY_HOVERED_ICON: Identifier = Identifier.of("armorstand", "star_empty_hovered")
+        private val STAR_ICON: ResourceLocation = ResourceLocation.fromNamespaceAndPath("armorstand", "star")
+        private val STAR_EMPTY_ICON: ResourceLocation = ResourceLocation.fromNamespaceAndPath("armorstand", "star_empty")
+        private val STAR_HOVERED_ICON: ResourceLocation = ResourceLocation.fromNamespaceAndPath("armorstand", "star_hovered")
+        private val STAR_EMPTY_HOVERED_ICON: ResourceLocation = ResourceLocation.fromNamespaceAndPath("armorstand", "star_empty_hovered")
         private const val STAR_ICON_SIZE = 9
         private const val STAR_ICON_PADDING = 4
     }
@@ -49,7 +49,7 @@ class ModelButton(
     private var closed = false
     private fun requireOpen() = require(!closed) { "Model button already closed" }
 
-    private val scope = CoroutineScope(ThreadExecutorDispatcher(MinecraftClient.getInstance()) + Job())
+    private val scope = CoroutineScope(BlockableEventLoopDispatcher(Minecraft.getInstance()) + Job())
     private var checked = false
     private val modelIcon = ModelIcon(modelItem)
 
@@ -69,7 +69,7 @@ class ModelButton(
     override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
         val clickedFavoriteButton = mouseX.toInt() in favoriteButtonXRange && mouseY.toInt() in favoriteButtonYRange
         if (active && visible && isValidClickButton(button) && clickedFavoriteButton) {
-            playDownSound(MinecraftClient.getInstance().getSoundManager())
+            playDownSound(Minecraft.getInstance().soundManager)
             onFavoriteAction.invoke(modelItem)
             return true
         }
@@ -77,14 +77,14 @@ class ModelButton(
     }
 
     override fun renderWidget(
-        context: DrawContext,
+        graphics: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
         requireOpen()
         if (active && checked) {
-            context.fill(
+            graphics.fill(
                 x,
                 y,
                 x + width,
@@ -92,16 +92,16 @@ class ModelButton(
                 0x66000000u.toInt(),
             )
         }
-        if (active && hovered) {
-            context.drawBorder(
+        if (active && isHovered) {
+            graphics.renderOutline(
                 x,
                 y,
                 width,
                 height,
                 0x99000000u.toInt(),
             )
-        } else if (isSelected) {
-            context.drawBorder(
+        } else if (isHovered) {
+            graphics.renderOutline(
                 x,
                 y,
                 width,
@@ -111,7 +111,7 @@ class ModelButton(
         }
         val mouseInFavoriteIcon = mouseX in favoriteButtonXRange && mouseY in favoriteButtonYRange
         if (modelItem.favorite) {
-            context.drawGuiTexture(
+            graphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 if (mouseInFavoriteIcon) {
                     STAR_HOVERED_ICON
@@ -123,8 +123,8 @@ class ModelButton(
                 STAR_ICON_SIZE,
                 STAR_ICON_SIZE,
             )
-        } else if (hovered) {
-            context.drawGuiTexture(
+        } else if (isHovered) {
+            graphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 if (mouseInFavoriteIcon) {
                     STAR_EMPTY_HOVERED_ICON
@@ -143,22 +143,22 @@ class ModelButton(
         val left = x + padding.left
         val right = x + width - padding.right
 
-        val imageBottom = bottom - textRenderer.fontHeight - 8
+        val imageBottom = bottom - font.lineHeight - 8
         val imageWidth = right - left
         val imageHeight = imageBottom - top
         modelIcon.setPosition(left, top)
         modelIcon.setDimensions(imageWidth, imageHeight)
-        modelIcon.render(context, mouseX, mouseY, deltaTicks)
+        modelIcon.render(graphics, mouseX, mouseY, deltaTicks)
 
-        drawScrollableText(
-            context,
-            textRenderer,
+        renderScrollingString(
+            graphics,
+            font,
             message,
             left,
-            bottom - textRenderer.fontHeight,
+            bottom - font.lineHeight,
             right,
             bottom,
-            Colors.WHITE,
+            CommonColors.WHITE,
         )
     }
 

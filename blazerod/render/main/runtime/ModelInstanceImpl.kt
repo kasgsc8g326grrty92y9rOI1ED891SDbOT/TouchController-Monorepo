@@ -1,6 +1,6 @@
 package top.fifthlight.blazerod.runtime
 
-import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.renderer.MultiBufferSource
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import top.fifthlight.blazerod.api.refcount.AbstractRefCount
@@ -180,8 +180,8 @@ class ModelInstanceImpl(
         scene.updateCamera(this)
     }
 
-    override fun debugRender(viewProjectionMatrix: Matrix4fc, consumers: VertexConsumerProvider) {
-        scene.debugRender(this, viewProjectionMatrix, consumers)
+    override fun debugRender(viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource) {
+        scene.debugRender(this, viewProjectionMatrix, bufferSource)
     }
 
     override fun updateRenderData() {

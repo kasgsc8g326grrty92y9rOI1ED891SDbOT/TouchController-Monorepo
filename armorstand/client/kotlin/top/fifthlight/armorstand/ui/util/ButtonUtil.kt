@@ -1,13 +1,13 @@
 package top.fifthlight.armorstand.ui.util
 
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.text.Text
+import net.minecraft.client.gui.components.Button
+import net.minecraft.network.chat.Component
 import top.fifthlight.armorstand.ui.screen.BaseArmorStandScreen
 
 fun <T : BaseArmorStandScreen<T>> BaseArmorStandScreen<T>.autoWidthButton(
-    text: Text,
+    text: Component,
     padding: Int = 8,
-    onPress: ButtonWidget.PressAction,
-): ButtonWidget = ButtonWidget.builder(text, onPress)
-    .width(currentClient.textRenderer.getWidth(text) + padding * 2)
+    onPress: Button.OnPress,
+): Button = Button.builder(text, onPress)
+    .width(currentMinecraft.font.width(text) + padding * 2)
     .build()

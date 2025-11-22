@@ -1,28 +1,28 @@
 package top.fifthlight.armorstand.ui.screen
 
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.TextWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
 import top.fifthlight.armorstand.ui.component.BorderLayout
 import top.fifthlight.armorstand.ui.component.LinearLayout
 
 class DebugScreen(parent: Screen? = null) : BaseArmorStandScreen<DebugScreen>(
-    title = Text.translatable("armorstand.debug_screen"),
+    title = Component.translatable("armorstand.debug_screen"),
     parent = parent
 ) {
     private val topBar by lazy {
-        TextWidget(width, 32, title, currentClient.textRenderer)
+        StringWidget(width, 32, title, currentMinecraft.font)
     }
-    private val closeButton = ButtonWidget.builder(ScreenTexts.BACK) { close() }.build()
+    private val closeButton = Button.builder(CommonComponents.GUI_BACK) { onClose() }.build()
     private val debugTip by lazy {
-        TextWidget(Text.translatable("armorstand.debug_screen.tip"), currentClient.textRenderer)
+        StringWidget(Component.translatable("armorstand.debug_screen.tip"), currentMinecraft.font)
     }
     private val buttons = listOf(
-        ButtonWidget.builder(Text.translatable("armorstand.debug_screen.database")) {
-            currentClient.setScreen(DatabaseScreen(this@DebugScreen))
+        Button.builder(Component.translatable("armorstand.debug_screen.database")) {
+            currentMinecraft.setScreen(DatabaseScreen(this@DebugScreen))
         }.build()
     )
 
@@ -39,9 +39,9 @@ class DebugScreen(parent: Screen? = null) : BaseArmorStandScreen<DebugScreen>(
                 width = width,
                 gap = 8
             ).apply {
-                add(debugTip, Positioner.create().apply { alignHorizontalCenter() })
+                add(debugTip, LayoutSettings.defaults().apply { alignHorizontallyCenter() })
                 buttons.forEach { button ->
-                    add(button, Positioner.create().apply { alignHorizontalCenter() })
+                    add(button, LayoutSettings.defaults().apply { alignHorizontallyCenter() })
                 }
             }
         )
@@ -53,9 +53,9 @@ class DebugScreen(parent: Screen? = null) : BaseArmorStandScreen<DebugScreen>(
                 align = LinearLayout.Align.CENTER,
                 gap = 8,
             ).apply {
-                add(closeButton, Positioner.create().apply { alignVerticalCenter() })
+                add(closeButton, LayoutSettings.defaults().apply { alignVerticallyMiddle() })
             })
-        rootLayout.refreshPositions()
-        rootLayout.forEachChild { addDrawableChild(it) }
+        rootLayout.arrangeElements()
+        rootLayout.visitWidgets { addRenderableWidget(it) }
     }
 }

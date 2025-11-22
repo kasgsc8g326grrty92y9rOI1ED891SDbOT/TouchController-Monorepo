@@ -1,6 +1,6 @@
 package top.fifthlight.blazerod.extension
 
-import net.minecraft.client.texture.NativeImage
+import com.mojang.blaze3d.platform.NativeImage
 import org.lwjgl.stb.STBImage
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
@@ -25,7 +25,7 @@ object NativeImageExt {
 
     @JvmStatic
     fun read(pixelFormat: NativeImage.Format?, textureType: Texture.TextureType?, buffer: ByteBuffer): NativeImage {
-        require(pixelFormat?.isWriteable != false) { throw UnsupportedOperationException("Don't know how to read format $pixelFormat") }
+        require(pixelFormat?.supportedByStb() != false) { throw UnsupportedOperationException("Don't know how to read format $pixelFormat") }
         require(MemoryUtil.memAddress(buffer) != 0L) { "Invalid buffer" }
         textureType?.let { textureType ->
             require(buffer.remaining() >= textureType.magic.size) { "Bad image size: ${buffer.remaining()}, type: $textureType" }
@@ -45,13 +45,12 @@ object NativeImageExt {
                 x,
                 y,
                 channels,
-                pixelFormat?.channelCount ?: 0,
+                pixelFormat?.components() ?: 0,
             ) ?: throw IOException("Could not load image: " + STBImage.stbi_failure_reason())
 
             val address = MemoryUtil.memAddress(imageBuffer)
-            NativeImage.MEMORY_POOL.malloc(address, imageBuffer.limit())
             NativeImage(
-                pixelFormat ?: NativeImage.Format.fromChannelCount(channels.get(0)),
+                pixelFormat ?: NativeImage.Format.getStbFormat(channels.get(0)),
                 x.get(0),
                 y.get(0),
                 true,

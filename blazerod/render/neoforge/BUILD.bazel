@@ -18,7 +18,7 @@ neoforge_mod_toml_jar(
 )
 
 kt_merge_library(
-    name = "neoforge_unmapped",
+    name = "neoforge",
     srcs = glob(["**/*.kt"]),
     actual = True,
     merge_deps = [
@@ -55,7 +55,7 @@ kt_merge_library(
 )
 
 merge_library_jar(
-    name = "neoforge_unmapped_merged",
+    name = "neoforge_merged",
     visibility = ["//blazerod/render:__subpackages__"],
-    deps = [":neoforge_unmapped"],
+    deps = [":neoforge"],
 )

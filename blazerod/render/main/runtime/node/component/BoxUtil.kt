@@ -1,36 +1,36 @@
 package top.fifthlight.blazerod.runtime.node.component
 
-import net.minecraft.client.render.VertexConsumer
+import com.mojang.blaze3d.vertex.VertexConsumer
 import org.joml.Matrix4f
 
 fun VertexConsumer.drawBox(matrix: Matrix4f, halfSize: Float, color: Int) {
-    vertex(matrix, -halfSize, -halfSize, halfSize).color(color)
-    vertex(matrix, halfSize, -halfSize, halfSize).color(color)
-    vertex(matrix, halfSize, halfSize, halfSize).color(color)
-    vertex(matrix, -halfSize, halfSize, halfSize).color(color)
+    addVertex(matrix, -halfSize, -halfSize, halfSize).setColor(color)
+    addVertex(matrix, halfSize, -halfSize, halfSize).setColor(color)
+    addVertex(matrix, halfSize, halfSize, halfSize).setColor(color)
+    addVertex(matrix, -halfSize, halfSize, halfSize).setColor(color)
 
-    vertex(matrix, -halfSize, -halfSize, -halfSize).color(color)
-    vertex(matrix, -halfSize, halfSize, -halfSize).color(color)
-    vertex(matrix, halfSize, halfSize, -halfSize).color(color)
-    vertex(matrix, halfSize, -halfSize, -halfSize).color(color)
+    addVertex(matrix, -halfSize, -halfSize, -halfSize).setColor(color)
+    addVertex(matrix, -halfSize, halfSize, -halfSize).setColor(color)
+    addVertex(matrix, halfSize, halfSize, -halfSize).setColor(color)
+    addVertex(matrix, halfSize, -halfSize, -halfSize).setColor(color)
 
-    vertex(matrix, -halfSize, -halfSize, -halfSize).color(color)
-    vertex(matrix, -halfSize, -halfSize, halfSize).color(color)
-    vertex(matrix, -halfSize, halfSize, halfSize).color(color)
-    vertex(matrix, -halfSize, halfSize, -halfSize).color(color)
+    addVertex(matrix, -halfSize, -halfSize, -halfSize).setColor(color)
+    addVertex(matrix, -halfSize, -halfSize, halfSize).setColor(color)
+    addVertex(matrix, -halfSize, halfSize, halfSize).setColor(color)
+    addVertex(matrix, -halfSize, halfSize, -halfSize).setColor(color)
 
-    vertex(matrix, halfSize, -halfSize, -halfSize).color(color)
-    vertex(matrix, halfSize, halfSize, -halfSize).color(color)
-    vertex(matrix, halfSize, halfSize, halfSize).color(color)
-    vertex(matrix, halfSize, -halfSize, halfSize).color(color)
+    addVertex(matrix, halfSize, -halfSize, -halfSize).setColor(color)
+    addVertex(matrix, halfSize, halfSize, -halfSize).setColor(color)
+    addVertex(matrix, halfSize, halfSize, halfSize).setColor(color)
+    addVertex(matrix, halfSize, -halfSize, halfSize).setColor(color)
 
-    vertex(matrix, -halfSize, halfSize, -halfSize).color(color)
-    vertex(matrix, -halfSize, halfSize, halfSize).color(color)
-    vertex(matrix, halfSize, halfSize, halfSize).color(color)
-    vertex(matrix, halfSize, halfSize, -halfSize).color(color)
+    addVertex(matrix, -halfSize, halfSize, -halfSize).setColor(color)
+    addVertex(matrix, -halfSize, halfSize, halfSize).setColor(color)
+    addVertex(matrix, halfSize, halfSize, halfSize).setColor(color)
+    addVertex(matrix, halfSize, halfSize, -halfSize).setColor(color)
 
-    vertex(matrix, -halfSize, -halfSize, -halfSize).color(color)
-    vertex(matrix, halfSize, -halfSize, -halfSize).color(color)
-    vertex(matrix, halfSize, -halfSize, halfSize).color(color)
-    vertex(matrix, -halfSize, -halfSize, halfSize).color(color)
+    addVertex(matrix, -halfSize, -halfSize, -halfSize).setColor(color)
+    addVertex(matrix, halfSize, -halfSize, -halfSize).setColor(color)
+    addVertex(matrix, halfSize, -halfSize, halfSize).setColor(color)
+    addVertex(matrix, -halfSize, -halfSize, halfSize).setColor(color)
 }

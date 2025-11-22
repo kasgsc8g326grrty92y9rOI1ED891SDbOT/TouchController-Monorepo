@@ -1,6 +1,6 @@
 package top.fifthlight.blazerod.runtime.load
 
-import net.minecraft.client.gl.RenderPassImpl
+import com.mojang.blaze3d.opengl.GlRenderPass
 import top.fifthlight.blazerod.api.refcount.checkInUse
 import top.fifthlight.blazerod.model.TransformId
 import top.fifthlight.blazerod.runtime.RenderSceneImpl
@@ -176,7 +176,7 @@ class SceneReconstructor private constructor(private val info: GpuLoadModelLoadI
 
     companion object {
         suspend fun reconstruct(info: GpuLoadModelLoadInfo) = SceneReconstructor(info).reconstruct().also {
-            if (RenderPassImpl.IS_DEVELOPMENT) {
+            if (GlRenderPass.VALIDATION) {
                 info.textures.forEach { it.await()?.checkInUse() }
                 info.indexBuffers.forEach { it.await().checkInUse() }
                 info.vertexBuffers.forEach { it.await().gpuBuffer?.checkInUse() }

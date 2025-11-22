@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 public interface RenderPassExt {
     void blazerod$setVertexFormat(VertexFormat vertexFormat);
 
-    void blazerod$setVertexFormatMode(VertexFormat.DrawMode vertexFormatMode);
+    void blazerod$setVertexFormatMode(VertexFormat.Mode vertexFormatMode);
 
     void blazerod$setStorageBuffer(@NotNull String name, GpuBufferSlice buffer);
 

@@ -2,30 +2,30 @@ package top.fifthlight.armorstand.ui.util
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import net.minecraft.client.gui.widget.TextFieldWidget
-import net.minecraft.text.Text
+import net.minecraft.client.gui.components.EditBox
+import net.minecraft.network.chat.Component
 import top.fifthlight.armorstand.ui.model.ViewModel
 import top.fifthlight.armorstand.ui.screen.ArmorStandScreen
 
 fun <T : ArmorStandScreen<T, M>, M : ViewModel> ArmorStandScreen<T, M>.textField(
-    placeHolder: Text? = null,
+    placeHolder: Component? = null,
     width: Int = this.width,
     height: Int = 20,
     text: Flow<String>,
     maxChars: Int? = null,
     onChanged: (String) -> Unit,
-) = TextFieldWidget(textRenderer, width, height, Text.empty()).apply {
+) = EditBox(font, width, height, Component.empty()).apply {
     placeHolder?.let {
-        setPlaceholder(placeHolder)
+        setHint(placeHolder)
     }
     setMaxLength(maxChars ?: Int.MAX_VALUE)
-    setChangedListener {
+    setResponder {
         onChanged(it)
     }
     scope.launch {
         text.collect { newText ->
-            if (newText != this@apply.text) {
-                this@apply.text = newText
+            if (newText != this@apply.value) {
+                this@apply.value = newText
             }
         }
     }

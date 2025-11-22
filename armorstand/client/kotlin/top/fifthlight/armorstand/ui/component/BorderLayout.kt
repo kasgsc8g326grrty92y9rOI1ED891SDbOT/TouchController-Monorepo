@@ -1,11 +1,11 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Drawable
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.Widget
-import net.minecraft.client.gui.widget.WrapperWidget
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Renderable
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.layouts.LayoutElement
+import net.minecraft.client.gui.layouts.AbstractLayout
 import java.util.function.Consumer
 
 class BorderLayout(
@@ -15,21 +15,21 @@ class BorderLayout(
     height: Int = 0,
     var direction: Direction = Direction.HORIZONTAL,
     val surface: Surface = Surface.empty,
-) : WrapperWidget(x, y, width, height), ResizableLayout, Drawable {
+) : AbstractLayout(x, y, width, height), ResizableLayout, Renderable {
     enum class Direction {
         HORIZONTAL,
         VERTICAL
     }
 
-    private class Element<T : Widget>(
+    private class Element<T : LayoutElement>(
         private val inner: T,
-        positioner: Positioner,
+        layoutSettings: LayoutSettings,
         private val onSizeChanged: (widget: T, width: Int, height: Int) -> Unit = { _, _, _ -> },
-    ) : WrappedElement(inner, positioner) {
+    ) : AbstractChildWrapper(inner, layoutSettings) {
         fun setSize(width: Int, height: Int) = onSizeChanged(
             inner,
-            width - positioner.marginLeft - positioner.marginRight,
-            height - positioner.marginTop - positioner.marginBottom
+            width - layoutSettings.paddingLeft - layoutSettings.paddingRight,
+            height - layoutSettings.paddingTop - layoutSettings.paddingBottom
         )
     }
 
@@ -37,77 +37,77 @@ class BorderLayout(
     private var secondElement: Element<*>? = null
     private var centerElement: Element<*>? = null
 
-    override fun forEachElement(consumer: Consumer<Widget>) {
-        firstElement?.let { consumer.accept(it.widget) }
-        centerElement?.let { consumer.accept(it.widget) }
-        secondElement?.let { consumer.accept(it.widget) }
+    override fun visitChildren(consumer: Consumer<LayoutElement>) {
+        firstElement?.let { consumer.accept(it.child) }
+        centerElement?.let { consumer.accept(it.child) }
+        secondElement?.let { consumer.accept(it.child) }
     }
 
-    fun <T : Widget> setFirstElement(
+    fun <T : LayoutElement> setFirstElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         onSizeChanged: (widget: T, width: Int, height: Int) -> Unit,
     ) {
-        firstElement = Element(widget, positioner, onSizeChanged)
+        firstElement = Element(widget, layoutSettings, onSizeChanged)
     }
 
-    fun <T : Widget> setSecondElement(
+    fun <T : LayoutElement> setSecondElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         onSizeChanged: (widget: T, width: Int, height: Int) -> Unit,
     ) {
-        secondElement = Element(widget, positioner, onSizeChanged)
+        secondElement = Element(widget, layoutSettings, onSizeChanged)
     }
 
-    fun <T : Widget> setCenterElement(
+    fun <T : LayoutElement> setCenterElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         onSizeChanged: (widget: T, width: Int, height: Int) -> Unit,
     ) {
-        centerElement = Element(widget, positioner, onSizeChanged)
+        centerElement = Element(widget, layoutSettings, onSizeChanged)
     }
 
 
-    fun <T : ClickableWidget> setFirstElement(
+    fun <T : AbstractWidget> setFirstElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
     ) {
-        firstElement = Element(widget, positioner) { widget, width, height -> widget.setDimensions(width, height) }
+        firstElement = Element(widget, layoutSettings) { widget, width, height -> widget.setSize(width, height) }
     }
 
-    fun <T : ClickableWidget> setSecondElement(
+    fun <T : AbstractWidget> setSecondElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
     ) {
-        secondElement = Element(widget, positioner) { widget, width, height -> widget.setDimensions(width, height) }
+        secondElement = Element(widget, layoutSettings) { widget, width, height -> widget.setSize(width, height) }
     }
 
-    fun <T : ClickableWidget> setCenterElement(
+    fun <T : AbstractWidget> setCenterElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
     ) {
-        centerElement = Element(widget, positioner) { widget, width, height -> widget.setDimensions(width, height) }
+        centerElement = Element(widget, layoutSettings) { widget, width, height -> widget.setSize(width, height) }
     }
 
     fun <T> setFirstElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
-    ) where T : ResizableLayout, T: Widget {
-        firstElement = Element(widget, positioner) { widget, width, height -> widget.setDimensions(width, height) }
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
+    ) where T : ResizableLayout, T: LayoutElement {
+        firstElement = Element(widget, layoutSettings) { widget, width, height -> widget.setDimensions(width, height) }
     }
 
     fun <T> setSecondElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
-    ) where T : ResizableLayout, T: Widget {
-        secondElement = Element(widget, positioner) { widget, width, height -> widget.setDimensions(width, height) }
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
+    ) where T : ResizableLayout, T: LayoutElement {
+        secondElement = Element(widget, layoutSettings) { widget, width, height -> widget.setDimensions(width, height) }
     }
 
     fun <T> setCenterElement(
         widget: T,
-        positioner: Positioner = Positioner.create(),
-    ) where T : ResizableLayout, T: Widget {
-        centerElement = Element(widget, positioner) { widget, width, height -> widget.setDimensions(width, height) }
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
+    ) where T : ResizableLayout, T: LayoutElement {
+        centerElement = Element(widget, layoutSettings) { widget, width, height -> widget.setDimensions(width, height) }
     }
 
     override fun setDimensions(width: Int, height: Int) {
@@ -115,7 +115,7 @@ class BorderLayout(
         this.height = height
     }
 
-    override fun refreshPositions() {
+    override fun arrangeElements() {
         val first = firstElement
         val second = secondElement
         val center = centerElement
@@ -163,11 +163,11 @@ class BorderLayout(
                 }
             }
         }
-        super.refreshPositions()
+        super.arrangeElements()
     }
 
     override fun render(
-        context: DrawContext,
+        context: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,

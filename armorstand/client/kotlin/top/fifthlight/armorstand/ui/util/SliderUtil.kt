@@ -2,9 +2,9 @@ package top.fifthlight.armorstand.ui.util
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import net.minecraft.client.gui.widget.SliderWidget
-import net.minecraft.text.Text
-import net.minecraft.util.math.MathHelper
+import net.minecraft.client.gui.components.AbstractSliderButton
+import net.minecraft.network.chat.Component
+import net.minecraft.util.Mth
 import top.fifthlight.armorstand.ui.model.ViewModel
 import top.fifthlight.armorstand.ui.screen.ArmorStandScreen
 import kotlin.math.pow
@@ -15,9 +15,9 @@ abstract class RangedSliderWidget(
     y: Int,
     width: Int,
     height: Int,
-    text: Text,
+    text: Component,
     value: Double,
-) : SliderWidget(x, y, width, height, text, value) {
+) : AbstractSliderButton(x, y, width, height, text, value) {
     abstract val realValue: Double
     abstract val min: Double
     abstract val max: Double
@@ -33,7 +33,7 @@ private class RangedSliderWidgetImpl(
     max: Double,
     width: Int,
     height: Int,
-    private val messageFactory: (RangedSliderWidget, String) -> Text,
+    private val messageFactory: (RangedSliderWidget, String) -> Component,
     private val decimalPlaces: Int? = 2,
     private val onValueChanged: (Boolean, Double) -> Unit,
 ) : RangedSliderWidget(
@@ -41,7 +41,7 @@ private class RangedSliderWidgetImpl(
     y = 0,
     width = width,
     height = height,
-    text = Text.empty(),
+    text = Component.empty(),
     value = value,
 ) {
     override var realValue = value
@@ -78,7 +78,7 @@ private class RangedSliderWidgetImpl(
 
     fun setValue(value: Double) {
         val prevValue = this.value
-        this.value = MathHelper.clamp(value, 0.0, 1.0)
+        this.value = Mth.clamp(value, 0.0, 1.0)
         if (prevValue != this.value) {
             this.applyValue(false)
         }
@@ -109,7 +109,7 @@ private class RangedSliderWidgetImpl(
 }
 
 fun <T : ArmorStandScreen<T, M>, M : ViewModel> ArmorStandScreen<T, M>.slider(
-    textFactory: (RangedSliderWidget, String) -> Text,
+    textFactory: (RangedSliderWidget, String) -> Component,
     width: Int = 150,
     height: Int = 20,
     min: Double = 0.0,

@@ -3,17 +3,17 @@ package top.fifthlight.armorstand.util
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Runnable
-import net.minecraft.util.thread.ThreadExecutor
+import net.minecraft.util.thread.BlockableEventLoop
 import kotlin.coroutines.CoroutineContext
 
-class ThreadExecutorDispatcher(private val executor: ThreadExecutor<*>) : CoroutineDispatcher() {
-    override fun isDispatchNeeded(context: CoroutineContext) = !executor.isOnThread
+class BlockableEventLoopDispatcher(private val executor: BlockableEventLoop<*>) : CoroutineDispatcher() {
+    override fun isDispatchNeeded(context: CoroutineContext) = !this.executor.isSameThread
 
     override fun dispatch(context: CoroutineContext, block: Runnable) {
-        if (executor.isOnThread) {
+        if (this.executor.isSameThread) {
             Dispatchers.Unconfined.dispatch(context, block)
         } else {
-            executor.execute(block)
+            this.executor.execute(block)
         }
     }
 }

@@ -1,10 +1,10 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Drawable
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.Widget
-import net.minecraft.client.gui.widget.WrapperWidget
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Renderable
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.layouts.LayoutElement
+import net.minecraft.client.gui.layouts.AbstractLayout
 import java.util.function.Consumer
 import kotlin.math.max
 
@@ -15,19 +15,19 @@ class GridLayout(
     height: Int = 0,
     private val surface: Surface?,
     private val gridPadding: Insets = Insets.ZERO,
-) : WrapperWidget(x, y, width, height), ResizableLayout, Drawable {
-    private class Element<T : Widget>(
+) : AbstractLayout(x, y, width, height), ResizableLayout, Renderable {
+    private class Element<T : LayoutElement>(
         val column: Int,
         val row: Int,
         inner: T,
-        positioner: Positioner,
-    ) : WrappedElement(inner, positioner)
+        layoutSettings: LayoutSettings,
+    ) : AbstractChildWrapper(inner, layoutSettings)
 
     private val elements = mutableListOf<Element<*>>()
     private val grids = mutableMapOf<Pair<Int, Int>, Element<*>>()
 
-    override fun forEachElement(consumer: Consumer<Widget>) {
-        elements.forEach { consumer.accept(it.widget) }
+    override fun visitChildren(consumer: Consumer<LayoutElement>) {
+        elements.forEach { consumer.accept(it.child) }
     }
 
     override fun setDimensions(width: Int, height: Int) {
@@ -46,19 +46,19 @@ class GridLayout(
             grids[element.column to element.row] = element
             val rowHeight = rowHeights[element.row]
             val columnWidth = columnWidths[element.column]
-            rowHeights[element.row] = max(rowHeight ?: 0, element.widget.height + gridPadding.top + gridPadding.bottom)
+            rowHeights[element.row] = max(rowHeight ?: 0, element.child.height + gridPadding.top + gridPadding.bottom)
             columnWidths[element.column] =
-                max(columnWidth ?: 0, element.widget.width + gridPadding.left + gridPadding.right)
+                max(columnWidth ?: 0, element.child.width + gridPadding.left + gridPadding.right)
         }
     }
 
-    fun <T : Widget> add(
+    fun <T : LayoutElement> add(
         column: Int,
         row: Int,
         widget: T,
-        positioner: Positioner = Positioner.create().alignHorizontalCenter().alignVerticalCenter(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults().alignHorizontallyCenter().alignVerticallyMiddle(),
     ) {
-        elements.add(Element(column, row, widget, positioner))
+        elements.add(Element(column, row, widget, layoutSettings))
     }
 
     fun clear() {
@@ -75,7 +75,7 @@ class GridLayout(
         setDimensions(totalColumnWidth, totalRowHeight)
     }
 
-    override fun refreshPositions() {
+    override fun arrangeElements() {
         recalculateSizes()
         var currentY = y
         for (row in rowHeights.sequencedKeySet()) {
@@ -90,11 +90,11 @@ class GridLayout(
             }
             currentY += columnHeight
         }
-        super.refreshPositions()
+        super.arrangeElements()
     }
 
     override fun render(
-        context: DrawContext,
+        context: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,

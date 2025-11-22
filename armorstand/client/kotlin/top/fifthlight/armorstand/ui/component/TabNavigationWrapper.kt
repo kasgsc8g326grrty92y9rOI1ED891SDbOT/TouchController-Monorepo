@@ -1,21 +1,25 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gl.RenderPipelines
+import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.gui.*
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.screen.world.CreateWorldScreen
-import net.minecraft.client.gui.tab.TabManager
-import net.minecraft.client.gui.widget.LayoutWidget
-import net.minecraft.client.gui.widget.TabNavigationWidget
-import net.minecraft.client.gui.widget.Widget
+import net.minecraft.client.gui.components.Renderable
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.navigation.ScreenRectangle
+import net.minecraft.client.gui.components.events.ContainerEventHandler
+import net.minecraft.client.gui.components.tabs.TabManager
+import net.minecraft.client.gui.components.tabs.TabNavigationBar
+import net.minecraft.client.gui.layouts.LayoutElement
+import net.minecraft.client.gui.layouts.Layout
+import net.minecraft.client.gui.narration.NarratableEntry
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen
 import java.util.function.Consumer
 
 @Suppress("JavaDefaultMethodsNotOverriddenByDelegation")
 class TabNavigationWrapper(
     val tabManager: TabManager,
-    val inner: TabNavigationWidget,
+    val inner: TabNavigationBar,
     val surface: Surface = Surface.empty,
-) : ParentElement by inner, Selectable by inner, Widget, ResizableLayout, Drawable, LayoutWidget {
+) : ContainerEventHandler by inner, NarratableEntry by inner, LayoutElement, ResizableLayout, Renderable, Layout {
     private var height: Int = 0
     private var width: Int = 0
     private var _x = 0
@@ -48,45 +52,45 @@ class TabNavigationWrapper(
 
     override fun getHeight() = height
 
-    override fun forEachElement(consumer: Consumer<Widget>) {}
+    override fun visitChildren(consumer: Consumer<LayoutElement>) {}
 
     override fun isMouseOver(mouseX: Double, mouseY: Double) = inner.isMouseOver(mouseX, mouseY)
 
-    override fun refreshPositions() {
-        inner.init()
+    override fun arrangeElements() {
+        inner.arrangeElements()
         val realWidth = width.coerceAtMost(400) - 28
-        inner.grid.setPosition((width - realWidth) / 2 + _x, _y)
-        inner.grid.refreshPositions()
-        val navHeight = inner.navigationFocus.height()
-        val area = ScreenRect(_x, _y + navHeight, width, height - navHeight)
+        inner.layout.setPosition((width - realWidth) / 2 + _x, _y)
+        inner.layout.arrangeElements()
+        val navHeight = inner.rectangle.height()
+        val area = ScreenRectangle(_x, _y + navHeight, width, height - navHeight)
         tabManager.setTabArea(area)
     }
 
     override fun render(
-        context: DrawContext,
+        context: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
-        context.drawTexture(
+        context.blit(
             RenderPipelines.GUI_TEXTURED,
-            CreateWorldScreen.TAB_HEADER_BACKGROUND_TEXTURE,
+            CreateWorldScreen.TAB_HEADER_BACKGROUND,
             _x,
             _y,
             0.0F,
             0.0F,
             width,
-            inner.navigationFocus.height(),
+            inner.rectangle.height(),
             16,
             16,
         )
         val left = inner.tabButtons.first().x
         val right = inner.tabButtons.last().right
-        context.drawTexture(
+        context.blit(
             RenderPipelines.GUI_TEXTURED,
-            Screen.HEADER_SEPARATOR_TEXTURE,
+            Screen.HEADER_SEPARATOR,
             _x,
-            _y + inner.grid.height - 2,
+            _y + inner.rectangle.height() - 2,
             0.0f,
             0.0f,
             left - _x,
@@ -94,11 +98,11 @@ class TabNavigationWrapper(
             32,
             2,
         )
-        context.drawTexture(
+        context.blit(
             RenderPipelines.GUI_TEXTURED,
-            Screen.HEADER_SEPARATOR_TEXTURE,
+            Screen.HEADER_SEPARATOR,
             right,
-            _y + inner.grid.height - 2,
+            _y + inner.rectangle.height() - 2,
             0.0F,
             0.0F,
             _x + width - right,
@@ -109,14 +113,14 @@ class TabNavigationWrapper(
         inner.tabButtons.forEach { button ->
             button.render(context, mouseX, mouseY, deltaTicks)
         }
-        surface.draw(context, _x, _y + inner.grid.height, width, height - inner.grid.height)
+        surface.draw(context, _x, _y + inner.rectangle.height(), width, height - inner.rectangle.height())
     }
 
-    override fun isNarratable() = inner.isNarratable
+    override fun isActive() = inner.isActive
 
-    override fun getNarratedParts(): Collection<Selectable> = inner.narratedParts
+    override fun getNarratables(): Collection<NarratableEntry> = inner.narratables
 
-    override fun getNavigationOrder() = inner.navigationOrder
+    override fun narrationPriority(): NarratableEntry.NarrationPriority = inner.narrationPriority()
 
-    override fun getNavigationFocus(): ScreenRect = inner.navigationFocus
+    override fun getRectangle(): ScreenRectangle = inner.rectangle
 }

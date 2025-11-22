@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.Minecraft
 import top.fifthlight.armorstand.ArmorStand
 import top.fifthlight.armorstand.ArmorStandClient
 import top.fifthlight.armorstand.config.ConfigHolder
@@ -15,11 +15,11 @@ import java.nio.file.Path
 import java.util.*
 
 object ClientModelPathManager {
-    private val client = MinecraftClient.getInstance()
+    private val minecraft = Minecraft.getInstance()
     var selfPath: Path? = null
         private set
     private val selfUuid: UUID?
-        get() = client.player?.uuid
+        get() = minecraft.player?.uuid
     private val modelPaths = mutableMapOf<UUID, Path>()
 
     fun initialize() {

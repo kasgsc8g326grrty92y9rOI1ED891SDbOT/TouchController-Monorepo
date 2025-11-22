@@ -1,9 +1,9 @@
 package top.fifthlight.blazerod.mixin.gl;
 
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.opengl.GlCommandEncoder;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.gl.GlCommandEncoder;
-import net.minecraft.client.gl.RenderPassImpl;
+import com.mojang.blaze3d.opengl.GlRenderPass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -18,14 +18,14 @@ import top.fifthlight.blazerod.extension.internal.RenderPassExtInternal;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mixin(RenderPassImpl.class)
-public abstract class RenderPassImplMixin implements RenderPassExtInternal {
+@Mixin(GlRenderPass.class)
+public abstract class GlRenderPassMixin implements RenderPassExtInternal {
     @Shadow
     private boolean closed;
 
     @Shadow
     @Final
-    private GlCommandEncoder resourceManager;
+    private GlCommandEncoder encoder;
 
     @Unique
     private HashMap<String, GpuBufferSlice> storageBuffers;
@@ -34,7 +34,7 @@ public abstract class RenderPassImplMixin implements RenderPassExtInternal {
     private VertexFormat vertexFormat;
 
     @Unique
-    private VertexFormat.DrawMode vertexFormatMode;
+    private VertexFormat.Mode vertexFormatMode;
 
     @Override
     public void blazerod$setVertexFormat(VertexFormat vertexFormat) {
@@ -48,13 +48,13 @@ public abstract class RenderPassImplMixin implements RenderPassExtInternal {
     }
 
     @Override
-    public void blazerod$setVertexFormatMode(VertexFormat.DrawMode vertexFormatMode) {
+    public void blazerod$setVertexFormatMode(VertexFormat.Mode vertexFormatMode) {
         this.vertexFormatMode = vertexFormatMode;
     }
 
     @Override
     @Nullable
-    public VertexFormat.DrawMode blazerod$getVertexFormatMode() {
+    public VertexFormat.Mode blazerod$getVertexFormatMode() {
         return vertexFormatMode;
     }
 
@@ -79,7 +79,7 @@ public abstract class RenderPassImplMixin implements RenderPassExtInternal {
         if (this.closed) {
             throw new IllegalStateException("Can't use a closed render pass");
         } else {
-            this.resourceManager.drawBoundObjectWithRenderPass((RenderPassImpl) (Object) this, baseVertex, firstIndex, count, null, instanceCount);
+            this.encoder.executeDraw((GlRenderPass) (Object) this, baseVertex, firstIndex, count, null, instanceCount);
         }
     }
 }

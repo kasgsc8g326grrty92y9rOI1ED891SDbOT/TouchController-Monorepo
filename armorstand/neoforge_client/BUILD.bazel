@@ -18,7 +18,7 @@ neoforge_mod_toml_jar(
 )
 
 kt_merge_library(
-    name = "neoforge_unmapped",
+    name = "neoforge",
     srcs = glob(
         include = [
             "kotlin/**/*.kt",
@@ -60,7 +60,7 @@ kt_merge_library(
 )
 
 merge_library_jar(
-    name = "neoforge_unmapped_merged",
+    name = "neoforge_merged",
     visibility = ["//armorstand:__subpackages__"],
-    deps = [":neoforge_unmapped"],
+    deps = [":neoforge"],
 )

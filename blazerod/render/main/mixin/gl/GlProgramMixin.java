@@ -1,7 +1,7 @@
 package top.fifthlight.blazerod.mixin.gl;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gl.ShaderProgram;
+import com.mojang.blaze3d.opengl.GlProgram;
 import org.lwjgl.opengl.ARBProgramInterfaceQuery;
 import org.lwjgl.opengl.ARBShaderStorageBufferObject;
 import org.lwjgl.opengl.GL43C;
@@ -21,24 +21,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@Mixin(ShaderProgram.class)
-public abstract class ShaderProgramMixin implements ShaderProgramExtInternal {
+@Mixin(GlProgram.class)
+public abstract class GlProgramMixin implements ShaderProgramExtInternal {
     @Shadow
     @Final
     private static Logger LOGGER;
     @Shadow
     @Final
-    private int glRef;
+    private int programId;
     @Shadow
     @Final
     private String debugLabel;
 
     @Unique
-    private Map<String, GlStorageBuffer> storageBuffers;
+    private Map<String, ShaderProgramExtInternal.GlStorageBuffer> storageBuffers;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void afterInit(int glRef, String debugLabel, CallbackInfo ci) {
-        // Iris extends ShaderProgram, so fallback here
+        // Iris extends GlProgram, so fallback here
         this.storageBuffers = Map.of();
     }
 
@@ -50,26 +50,26 @@ public abstract class ShaderProgramMixin implements ShaderProgramExtInternal {
         }
 
         var nextBinding = 0;
-        var buffers = new HashMap<String, GlStorageBuffer>(storageBuffers.size());
+        var buffers = new HashMap<String, ShaderProgramExtInternal.GlStorageBuffer>(storageBuffers.size());
         for (var name : storageBuffers) {
-            var index = ARBProgramInterfaceQuery.glGetProgramResourceIndex(this.glRef, ARBProgramInterfaceQuery.GL_SHADER_STORAGE_BLOCK, name);
+            var index = ARBProgramInterfaceQuery.glGetProgramResourceIndex(this.programId, ARBProgramInterfaceQuery.GL_SHADER_STORAGE_BLOCK, name);
             if (index == GL43C.GL_INVALID_INDEX) {
                 LOGGER.warn("{} shader program does not use storage buffer {} defined in the pipeline. This might be a bug.", this.debugLabel, name);
                 continue;
             }
             var binding = nextBinding++;
-            ARBShaderStorageBufferObject.glShaderStorageBlockBinding(this.glRef, index, binding);
+            ARBShaderStorageBufferObject.glShaderStorageBlockBinding(this.programId, index, binding);
             buffers.put(name, new GlStorageBuffer(name, binding));
         }
 
         int ssboSize;
         try (var stack = MemoryStack.stackPush()) {
             var ssbos = stack.mallocInt(1);
-            ARBProgramInterfaceQuery.glGetProgramInterfaceiv(this.glRef, ARBProgramInterfaceQuery.GL_SHADER_STORAGE_BLOCK, ARBProgramInterfaceQuery.GL_ACTIVE_RESOURCES, ssbos);
+            ARBProgramInterfaceQuery.glGetProgramInterfaceiv(this.programId, ARBProgramInterfaceQuery.GL_SHADER_STORAGE_BLOCK, ARBProgramInterfaceQuery.GL_ACTIVE_RESOURCES, ssbos);
             ssboSize = ssbos.get(0);
         }
         for (var i = 0; i < ssboSize; i++) {
-            var name = ARBProgramInterfaceQuery.glGetProgramResourceName(this.glRef, ARBProgramInterfaceQuery.GL_SHADER_STORAGE_BLOCK, i);
+            var name = ARBProgramInterfaceQuery.glGetProgramResourceName(this.programId, ARBProgramInterfaceQuery.GL_SHADER_STORAGE_BLOCK, i);
             if (!buffers.containsKey(name)) {
                 LOGGER.warn("Found unknown ssbo {} in {}", name, this.debugLabel);
             }

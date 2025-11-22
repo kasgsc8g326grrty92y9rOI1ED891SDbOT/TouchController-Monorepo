@@ -1,11 +1,11 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.Font
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Button
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 
 class PlayButton(
     x: Int = 0,
@@ -13,8 +13,8 @@ class PlayButton(
     width: Int = 20,
     height: Int = 20,
     playing: Boolean = false,
-    onPress: PressAction,
-) : ButtonWidget(
+    onPress: OnPress,
+) : Button(
     x,
     y,
     width,
@@ -25,13 +25,13 @@ class PlayButton(
         PLAY_TEXT
     },
     onPress,
-    DEFAULT_NARRATION_SUPPLIER,
+    DEFAULT_NARRATION,
 ) {
     companion object {
-        private val PAUSE_TEXT = Text.translatable("armorstand.animation.pause")
-        private val PLAY_TEXT = Text.translatable("armorstand.animation.play")
-        private val PAUSE_ICON = Identifier.of("armorstand", "pause")
-        private val PLAY_ICON = Identifier.of("armorstand", "play")
+        private val PAUSE_TEXT = Component.translatable("armorstand.animation.pause")
+        private val PLAY_TEXT = Component.translatable("armorstand.animation.play")
+        private val PAUSE_ICON = ResourceLocation.fromNamespaceAndPath("armorstand", "pause")
+        private val PLAY_ICON = ResourceLocation.fromNamespaceAndPath("armorstand", "play")
         private const val ICON_WIDTH = 8
         private const val ICON_HEIGHT = 8
     }
@@ -46,13 +46,13 @@ class PlayButton(
             }
         }
 
-    override fun drawMessage(context: DrawContext, textRenderer: TextRenderer, color: Int) {
+    override fun renderString(graphics: GuiGraphics, font: Font, color: Int) {
         val icon = if (playing) {
             PAUSE_ICON
         } else {
             PLAY_ICON
         }
-        context.drawGuiTexture(
+        graphics.blitSprite(
             RenderPipelines.GUI_TEXTURED,
             icon,
             x + (width - ICON_WIDTH) / 2,

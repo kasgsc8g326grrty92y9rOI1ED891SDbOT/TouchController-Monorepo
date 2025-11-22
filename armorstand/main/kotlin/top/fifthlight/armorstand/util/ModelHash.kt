@@ -1,14 +1,14 @@
 package top.fifthlight.armorstand.util
 
 import io.netty.buffer.ByteBuf
-import net.minecraft.network.codec.PacketCodec
-import net.minecraft.network.codec.PacketCodecs
+import net.minecraft.network.codec.StreamCodec
+import net.minecraft.network.codec.ByteBufCodecs
 
 data class ModelHash(
     val hash: ByteArray,
 ) {
     companion object {
-        val CODEC: PacketCodec<ByteBuf, ModelHash> = PacketCodecs.BYTE_ARRAY.xmap(::ModelHash, ModelHash::hash)
+        val STREAM_CODEC: StreamCodec<ByteBuf, ModelHash> = ByteBufCodecs.BYTE_ARRAY.map(::ModelHash, ModelHash::hash)
     }
 
     init {

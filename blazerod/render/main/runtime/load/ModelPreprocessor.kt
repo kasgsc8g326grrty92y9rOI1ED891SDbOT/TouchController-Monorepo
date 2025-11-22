@@ -426,12 +426,12 @@ class ModelPreprocessor private constructor(
     ): PrimitiveLoadInfo? {
         val vertexFormatMode = when (primitive.mode) {
             Primitive.Mode.POINTS -> return null
-            Primitive.Mode.LINE_STRIP -> VertexFormat.DrawMode.LINE_STRIP
+            Primitive.Mode.LINE_STRIP -> VertexFormat.Mode.LINE_STRIP
             Primitive.Mode.LINE_LOOP -> return null
-            Primitive.Mode.LINES -> VertexFormat.DrawMode.LINES
-            Primitive.Mode.TRIANGLES -> VertexFormat.DrawMode.TRIANGLES
-            Primitive.Mode.TRIANGLE_STRIP -> VertexFormat.DrawMode.TRIANGLE_STRIP
-            Primitive.Mode.TRIANGLE_FAN -> VertexFormat.DrawMode.TRIANGLE_FAN
+            Primitive.Mode.LINES -> VertexFormat.Mode.LINES
+            Primitive.Mode.TRIANGLES -> VertexFormat.Mode.TRIANGLES
+            Primitive.Mode.TRIANGLE_STRIP -> VertexFormat.Mode.TRIANGLE_STRIP
+            Primitive.Mode.TRIANGLE_FAN -> VertexFormat.Mode.TRIANGLE_FAN
         }
         val skinned =
             skinIndex != null && primitive.attributes.joints.isNotEmpty() && primitive.attributes.weights.isNotEmpty()

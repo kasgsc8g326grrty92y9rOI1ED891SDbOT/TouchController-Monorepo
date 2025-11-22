@@ -1,7 +1,7 @@
 package top.fifthlight.armorstand.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,18 +15,18 @@ import top.fifthlight.armorstand.PlayerRenderer;
 public abstract class GameRendererMixin {
     @Shadow
     @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
 
     @Shadow
-    public abstract float getFarPlaneDistance();
+    public abstract float getDepthFar();
 
-    @Inject(method = "getBasicProjectionMatrix(F)Lorg/joml/Matrix4f;", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getProjectionMatrix(F)Lorg/joml/Matrix4f;", at = @At("HEAD"), cancellable = true)
     public void overrideProjectionMatrix(float fovDegrees, CallbackInfoReturnable<Matrix4f> cir) {
         var transform = PlayerRenderer.getCurrentCameraTransform();
         if (transform != null) {
-            var aspectRadio = (float) client.getWindow().getFramebufferWidth() / (float) client.getWindow().getFramebufferHeight();
+            var aspectRadio = (float) minecraft.getWindow().getWidth() / (float) minecraft.getWindow().getHeight();
             var matrix = new Matrix4f();
-            transform.getMatrix(matrix, aspectRadio, getFarPlaneDistance());
+            transform.getMatrix(matrix, aspectRadio, getDepthFar());
             cir.setReturnValue(matrix);
         }
     }

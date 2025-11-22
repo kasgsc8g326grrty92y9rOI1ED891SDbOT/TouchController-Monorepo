@@ -1,11 +1,11 @@
 package top.fifthlight.armorstand.network
 
-import net.minecraft.network.PacketByteBuf
-import net.minecraft.network.codec.PacketCodec
-import net.minecraft.network.codec.PacketCodecs
-import net.minecraft.network.packet.CustomPayload
-import net.minecraft.util.Identifier
-import net.minecraft.util.Uuids
+import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.codec.StreamCodec
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.core.UUIDUtil
 import top.fifthlight.armorstand.util.ModelHash
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -13,19 +13,19 @@ import kotlin.jvm.optionals.getOrNull
 data class PlayerModelUpdateS2CPayload(
     val uuid: UUID,
     val modelHash: ModelHash?,
-) : CustomPayload {
+) : CustomPacketPayload {
     companion object {
-        private val PAYLOAD_ID = Identifier.of("armorstand", "player_model_update")
-        val ID = CustomPayload.Id<PlayerModelUpdateS2CPayload>(PAYLOAD_ID)
-        val CODEC: PacketCodec<PacketByteBuf, PlayerModelUpdateS2CPayload> = PacketCodec.tuple(
-            Uuids.PACKET_CODEC,
+        private val PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath("armorstand", "player_model_update")
+        val ID = CustomPacketPayload.Type<PlayerModelUpdateS2CPayload>(PAYLOAD_ID)
+        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, PlayerModelUpdateS2CPayload> = StreamCodec.composite(
+            UUIDUtil.STREAM_CODEC,
             PlayerModelUpdateS2CPayload::uuid,
-            PacketCodecs.optional(ModelHash.CODEC),
+            ByteBufCodecs.optional(ModelHash.STREAM_CODEC),
             { Optional.ofNullable(it.modelHash) },
             { uuid, modelId -> PlayerModelUpdateS2CPayload(uuid, modelId.getOrNull()) },
         )
     }
 
-    override fun getId() = ID
+    override fun type() = ID
 
 }

@@ -175,9 +175,12 @@ def _merge_library_jar_impl(ctx):
         args.add(strip)
         if len(files) == 0:
             fail("Resource label without resource: " + str(resource.label))
-        for file in files:
-            args.add("--resource")
-            args.add(file)
+        args.add(files, before_each = "--resource")
+
+    for key, value in ctx.attr.manifest_entries.items():
+        args.add("--manifest")
+        args.add(key)
+        args.add(value)
 
     ctx.actions.run(
         inputs = depset(
@@ -203,7 +206,7 @@ merge_library_jar = rule(
     implementation = _merge_library_jar_impl,
     attrs = {
         "deps": attr.label_list(
-            mandatory = True,
+            mandatory = False,
             providers = [MergeLibraryInfo],
             doc = "Input libraries to be merged",
         ),
@@ -212,6 +215,11 @@ merge_library_jar = rule(
             allow_files = True,
             default = {},
             doc = "Resource to be merged, with perfix to strip",
+        ),
+        "manifest_entries": attr.string_dict(
+            mandatory = False,
+            default = {},
+            doc = "Manifest entries to be include in final JAR.",
         ),
         "_merge_jar_executable": attr.label(
             default = Label("@//rule/merge_expect_actual_jar"),

@@ -1,9 +1,9 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.Widget
-import net.minecraft.client.gui.widget.WrapperWidget
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.layouts.LayoutElement
+import net.minecraft.client.gui.layouts.AbstractLayout
 import java.util.function.Consumer
 
 class SpreadLayout(
@@ -14,30 +14,30 @@ class SpreadLayout(
     var direction: Direction = Direction.HORIZONTAL,
     var gap: Int = 0,
     var padding: Insets = Insets.ZERO,
-) : WrapperWidget(x, y, width, height), ResizableLayout {
+) : AbstractLayout(x, y, width, height), ResizableLayout {
 
     enum class Direction {
         HORIZONTAL,
         VERTICAL,
     }
 
-    private class Element<T : Widget>(
+    private class Element<T : LayoutElement>(
         private val inner: T,
-        positioner: Positioner,
+        positioner: LayoutSettings,
         var weight: Int = 1,
         private val onSizeChanged: (widget: T, width: Int, height: Int) -> Unit = { _, _, _ -> },
-    ) : WrappedElement(inner, positioner) {
+    ) : AbstractChildWrapper(inner, positioner) {
         fun setSize(width: Int, height: Int) = onSizeChanged(
             inner,
-            width - positioner.marginLeft - positioner.marginRight,
-            height - positioner.marginTop - positioner.marginBottom
+            width - layoutSettings.paddingLeft - layoutSettings.paddingRight,
+            height - layoutSettings.paddingTop - layoutSettings.paddingBottom
         )
     }
 
     private val elements = mutableListOf<Element<*>>()
 
-    override fun forEachElement(consumer: Consumer<Widget>) {
-        elements.forEach { consumer.accept(it.widget) }
+    override fun visitChildren(consumer: Consumer<LayoutElement>) {
+        elements.forEach { consumer.accept(it.child) }
     }
 
     override fun setDimensions(width: Int, height: Int) {
@@ -45,32 +45,32 @@ class SpreadLayout(
         this.height = height
     }
 
-    fun <T : Widget> add(
+    fun <T : LayoutElement> add(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         weight: Int = 1,
         onSizeChanged: (widget: T, width: Int, height: Int) -> Unit
     ) {
-        elements.add(Element(widget, positioner, weight.coerceAtLeast(1), onSizeChanged))
+        elements.add(Element(widget, layoutSettings, weight.coerceAtLeast(1), onSizeChanged))
     }
 
-    fun <T : ClickableWidget> add(
+    fun <T : AbstractWidget> add(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         weight: Int = 1,
     ) {
-        add(widget, positioner, weight) { w, width, height -> w.setDimensions(width, height) }
+        add(widget, layoutSettings, weight) { w, width, height -> w.setSize(width, height) }
     }
 
     fun <T> add(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         weight: Int = 1,
-    ) where T : ResizableLayout, T : Widget {
-        add(widget, positioner, weight) { w, width, height -> w.setDimensions(width, height) }
+    ) where T : ResizableLayout, T : LayoutElement {
+        add(widget, layoutSettings, weight) { w, width, height -> w.setDimensions(width, height) }
     }
 
-    override fun refreshPositions() {
+    override fun arrangeElements() {
         val count = elements.size
         if (count == 0) return
 
@@ -79,7 +79,7 @@ class SpreadLayout(
             Direction.VERTICAL -> refreshVertical()
         }
 
-        super.refreshPositions()
+        super.arrangeElements()
     }
 
     private fun refreshHorizontal() {

@@ -1,7 +1,7 @@
 package top.fifthlight.blazerod.runtime.node.component
 
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.util.Colors
+import net.minecraft.client.renderer.RenderType
+import net.minecraft.util.CommonColors
 import org.joml.*
 import top.fifthlight.blazerod.model.TransformId
 import top.fifthlight.blazerod.runtime.ModelInstanceImpl
@@ -354,24 +354,24 @@ class IkTargetComponent(
             }
 
             is UpdatePhase.DebugRender -> {
-                val consumers = phase.vertexConsumerProvider
+                val consumers = phase.multiBufferSource
 
-                val boxBuffer = consumers.getBuffer(RenderLayer.getDebugQuads())
+                val boxBuffer = consumers.getBuffer(RenderType.debugQuads())
                 for (joint in chains) {
                     val jointMatrix = phase.viewProjectionMatrix.mul(
                         instance.getWorldTransform(joint.nodeIndex),
                         phase.cacheMatrix
                     )
-                    boxBuffer.drawBox(jointMatrix, 0.005f, Colors.BLUE)
+                    boxBuffer.drawBox(jointMatrix, 0.005f, CommonColors.BLUE)
                 }
 
                 val effectorMatrix =
                     phase.viewProjectionMatrix.mul(instance.getWorldTransform(effectorNodeIndex), phase.cacheMatrix)
-                boxBuffer.drawBox(effectorMatrix, 0.01f, Colors.RED)
+                boxBuffer.drawBox(effectorMatrix, 0.01f, CommonColors.RED)
 
                 val targetMatrix =
                     phase.viewProjectionMatrix.mul(instance.getWorldTransform(node), phase.cacheMatrix)
-                boxBuffer.drawBox(targetMatrix, 0.01f, Colors.GREEN)
+                boxBuffer.drawBox(targetMatrix, 0.01f, CommonColors.GREEN)
 
                 val lineBuffer = consumers.getBuffer(DEBUG_RENDER_LAYER)
                 for (joint in chains) {
@@ -380,13 +380,13 @@ class IkTargetComponent(
                         phase.cacheMatrix
                     )
                     val lineSize = .05f
-                    lineBuffer.vertex(jointMatrix, 0.0f, 0.0f, 0.0f).color(Colors.RED).normal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.vertex(jointMatrix, lineSize, 0.0f, 0.0f).color(Colors.RED).normal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.vertex(jointMatrix, 0.0f, lineSize, 0.0f).color(Colors.GREEN).normal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.vertex(jointMatrix, 0.0f, lineSize, lineSize).color(Colors.GREEN)
-                        .normal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.vertex(jointMatrix, lineSize, 0.0f, 0.0f).color(Colors.BLUE).normal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.vertex(jointMatrix, lineSize, 0.0f, lineSize).color(Colors.BLUE).normal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, 0.0f, 0.0f, 0.0f).setColor(CommonColors.RED).setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, 0.0f).setColor(CommonColors.RED).setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, 0.0f, lineSize, 0.0f).setColor(CommonColors.GREEN).setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, 0.0f, lineSize, lineSize).setColor(CommonColors.GREEN)
+                        .setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, 0.0f).setColor(CommonColors.BLUE).setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, lineSize).setColor(CommonColors.BLUE).setNormal(0.0f, 1.0f, 0.0f)
                 }
             }
 

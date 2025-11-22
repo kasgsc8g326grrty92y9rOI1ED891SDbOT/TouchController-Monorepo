@@ -1,13 +1,14 @@
 package top.fifthlight.armorstand
 
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.network.AbstractClientPlayerEntity
-import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState
-import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.client.Minecraft
+import net.minecraft.client.player.AbstractClientPlayer
+import net.minecraft.client.player.LocalPlayer
+import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.entity.state.PlayerRenderState
 import org.joml.Matrix4f
 import top.fifthlight.armorstand.config.ConfigHolder
 import top.fifthlight.armorstand.state.ModelInstanceManager
@@ -62,8 +63,8 @@ object PlayerRenderer {
 
     @JvmStatic
     fun updatePlayer(
-        player: AbstractClientPlayerEntity,
-        state: PlayerEntityRenderState,
+        player: AbstractClientPlayer,
+        state: PlayerRenderState,
     ) {
         val uuid = player.uuid
         val entry = ModelInstanceManager.get(uuid, System.nanoTime())
@@ -78,9 +79,9 @@ object PlayerRenderer {
     @JvmStatic
     fun appendPlayer(
         uuid: UUID,
-        vanillaState: PlayerEntityRenderState,
-        matrixStack: MatrixStack,
-        consumers: VertexConsumerProvider,
+        vanillaState: PlayerRenderState,
+        matrixStack: PoseStack,
+        consumers: MultiBufferSource,
         light: Int,
         overlay: Int,
     ): Boolean {
@@ -95,23 +96,23 @@ object PlayerRenderer {
         controller.apply(uuid, instance, vanillaState)
         instance.updateRenderData()
 
-        val backupItem = matrixStack.peek().copy()
-        matrixStack.pop()
-        matrixStack.push()
+        val backupItem = matrixStack.last().copy()
+        matrixStack.popPose()
+        matrixStack.pushPose()
 
         if (ArmorStandClient.instance.debugBone) {
-            instance.debugRender(matrixStack.peek().positionMatrix, consumers)
+            instance.debugRender(matrixStack.last().pose(), consumers)
         } else {
-            matrix.set(matrixStack.peek().positionMatrix)
+            matrix.set(matrixStack.last().pose())
             matrix.scale(ConfigHolder.config.value.modelScale)
             val currentRenderer = RendererManager.currentRenderer
             val task = instance.createRenderTask(matrix, light, overlay)
             if (currentRenderer is ScheduledRenderer<*, *> && renderingWorld) {
                 currentRenderer.schedule(task)
             } else {
-                val mainTarget = MinecraftClient.getInstance().framebuffer
-                val colorFrameBuffer = RenderSystem.outputColorTextureOverride ?: mainTarget.colorAttachmentView!!
-                val depthFrameBuffer = RenderSystem.outputDepthTextureOverride ?: mainTarget.depthAttachmentView
+                val mainTarget = Minecraft.getInstance().mainRenderTarget
+                val colorFrameBuffer = RenderSystem.outputColorTextureOverride ?: mainTarget.colorTextureView!!
+                val depthFrameBuffer = RenderSystem.outputDepthTextureOverride ?: mainTarget.depthTextureView
                 currentRenderer.render(
                     colorFrameBuffer = colorFrameBuffer,
                     depthFrameBuffer = depthFrameBuffer,
@@ -122,21 +123,21 @@ object PlayerRenderer {
             }
         }
 
-        matrixStack.pop()
-        matrixStack.push()
-        matrixStack.peek().apply {
-            positionMatrix.set(backupItem.positionMatrix)
-            normalMatrix.set(backupItem.normalMatrix)
+        matrixStack.popPose()
+        matrixStack.pushPose()
+        matrixStack.last().apply {
+            pose().set(backupItem.pose())
+            normal().set(backupItem.normal())
         }
         return true
     }
 
     fun executeDraw() {
         renderingWorld = false
-        val mainTarget = MinecraftClient.getInstance().framebuffer
+        val mainTarget = Minecraft.getInstance().mainRenderTarget
         RendererManager.currentRendererScheduled?.let { renderer ->
-            val colorFrameBuffer = RenderSystem.outputColorTextureOverride ?: mainTarget.colorAttachmentView!!
-            val depthFrameBuffer = RenderSystem.outputDepthTextureOverride ?: mainTarget.depthAttachmentView
+            val colorFrameBuffer = RenderSystem.outputColorTextureOverride ?: mainTarget.colorTextureView!!
+            val depthFrameBuffer = RenderSystem.outputDepthTextureOverride ?: mainTarget.depthTextureView
             renderer.executeTasks(colorFrameBuffer, depthFrameBuffer)
         }
     }

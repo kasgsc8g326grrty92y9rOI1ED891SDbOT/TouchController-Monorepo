@@ -1,28 +1,28 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.ObjectSelectionList
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
 import top.fifthlight.armorstand.ui.state.AnimationScreenState
 
 class AnimationList(
-    client: MinecraftClient,
+    client: Minecraft,
     width: Int = 0,
     height: Int = 0,
     x: Int = 0,
     y: Int = 0,
     val onClicked: (AnimationScreenState.AnimationItem) -> Unit,
-) : AlwaysSelectedEntryListWidget<AnimationList.Entry>(
+) : ObjectSelectionList<AnimationList.Entry>(
     client,
     width,
     height,
     y,
     42,
 ) {
-    override fun drawMenuListBackground(context: DrawContext) = Unit
-    override fun drawHeaderAndFooterSeparators(context: DrawContext) = Unit
+    override fun renderListBackground(context: GuiGraphics) = Unit
+    override fun renderListSeparators(context: GuiGraphics) = Unit
 
     init {
         this.x = x
@@ -32,14 +32,14 @@ class AnimationList(
         private const val ENTRY_PADDING = 8
     }
 
-    override fun getScrollbarX() = right - 6
+    override fun scrollBarX() = right - 6
 
     override fun getRowLeft() = x
 
     override fun getRowWidth() = width - 9
 
-    override fun drawSelectionHighlight(
-        context: DrawContext,
+    override fun renderSelection(
+        context: GuiGraphics,
         y: Int,
         entryWidth: Int,
         entryHeight: Int,
@@ -57,26 +57,26 @@ class AnimationList(
         }
     }
 
-    inner class Entry(val item: AnimationScreenState.AnimationItem) : AlwaysSelectedEntryListWidget.Entry<Entry>() {
+    inner class Entry(val item: AnimationScreenState.AnimationItem) : ObjectSelectionList.Entry<Entry>() {
         private val name =
-            item.name?.let { name -> Text.literal(name) } ?: Text.translatable("armorstand.animation.name.unnamed")
+            item.name?.let { name -> Component.literal(name) } ?: Component.translatable("armorstand.animation.name.unnamed")
         private val length = item.duration?.let { duration ->
             val minutes = (duration / 60).toInt().toString().padStart(2, '0')
             val seconds = (duration % 60).toInt().toString().padStart(2, '0')
-            Text.literal("$minutes:$seconds")
+            Component.literal("$minutes:$seconds")
         }
         private val source = when (val source = item.source) {
-            is AnimationScreenState.AnimationItem.Source.Embed -> Text.translatable("armorstand.animation.source.embed")
-            is AnimationScreenState.AnimationItem.Source.External -> Text.translatable(
+            is AnimationScreenState.AnimationItem.Source.Embed -> Component.translatable("armorstand.animation.source.embed")
+            is AnimationScreenState.AnimationItem.Source.External -> Component.translatable(
                 "armorstand.animation.source.external",
                 source.path.fileName
             )
         }
 
-        override fun getNarration(): Text = Text.empty()
+        override fun getNarration(): Component = Component.empty()
 
         override fun render(
-            context: DrawContext,
+            context: GuiGraphics,
             index: Int,
             y: Int,
             x: Int,
@@ -87,47 +87,47 @@ class AnimationList(
             hovered: Boolean,
             tickProgress: Float,
         ) {
-            val textRenderer = client.textRenderer
+            val font = minecraft.font
             val length = length
-            val timeWidth = length?.let { length -> textRenderer.getWidth(length) }
-            val nameTextWidth = textRenderer.getWidth(name)
+            val timeWidth = length?.let { length -> font.width(length) }
+            val nameTextWidth = font.width(name)
             val timeExtraPadding = 2
             val nameAreaWidth = if (timeWidth != null) {
                 entryWidth - ENTRY_PADDING * 3 - timeWidth - timeExtraPadding
             } else {
                 entryWidth - ENTRY_PADDING * 2
             }
-            drawScrollableText(
+            renderScrollingString(
                 context,
-                textRenderer,
+                font,
                 name,
                 x + ENTRY_PADDING + nameTextWidth / 2,
                 x + ENTRY_PADDING,
                 y + ENTRY_PADDING,
                 x + ENTRY_PADDING + nameAreaWidth,
-                y + ENTRY_PADDING + textRenderer.fontHeight,
-                Colors.WHITE,
+                y + ENTRY_PADDING + font.lineHeight,
+                CommonColors.WHITE,
             )
             length?.let { length ->
-                context.drawTextWithShadow(
-                    textRenderer,
+                context.drawString(
+                    font,
                     length,
                     x + entryWidth - ENTRY_PADDING - timeWidth!! - timeExtraPadding,
                     y + ENTRY_PADDING,
-                    Colors.GRAY,
+                    CommonColors.GRAY,
                 )
             }
-            val sourceTextWidth = textRenderer.getWidth(source)
-            drawScrollableText(
+            val sourceTextWidth = font.width(source)
+            renderScrollingString(
                 context,
-                textRenderer,
+                font,
                 source,
                 x + ENTRY_PADDING + sourceTextWidth / 2,
                 x + ENTRY_PADDING,
-                y + entryHeight - ENTRY_PADDING - textRenderer.fontHeight,
+                y + entryHeight - ENTRY_PADDING - font.lineHeight,
                 x + entryWidth - ENTRY_PADDING,
                 y + entryHeight - ENTRY_PADDING,
-                Colors.GRAY,
+                CommonColors.GRAY,
             )
         }
 

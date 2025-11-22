@@ -232,9 +232,12 @@ def _minecraft_assets_repo_impl(rctx):
         build_content.append("filegroup(")
         build_content.append('    name = "objects_%s",' % manifest_id)
         build_content.append("    srcs = [")
+        asset_pathes = {}
         for asset_item in manifest["objects"].values():
             asset_hash = asset_item["hash"]
             asset_path = asset_objects[asset_hash]
+            asset_pathes[asset_hash] = asset_path
+        for asset_hash, asset_path in asset_pathes.items():
             build_content.append('        "objects/%s",' % asset_path)
         build_content.append("    ],")
         build_content.append(")")
@@ -250,10 +253,6 @@ def _minecraft_assets_repo_impl(rctx):
             '    name = "indexes_%s",' % version_id,
             '    actual = "indexes/%s.json",' % version_manifest,
             ")",
-            "alias(",
-            '    name = "objects_%s",' % version_id,
-            '    actual = ":objects_%s",' % version_manifest,
-            ")",
             "filegroup(",
             '    name = "assets_%s",' % version_id,
             "    srcs = [",
@@ -263,6 +262,13 @@ def _minecraft_assets_repo_impl(rctx):
             "    ],",
             ")",
         ]
+        if version_id != version_manifest:
+            build_content += [
+                "alias(",
+                '    name = "objects_%s",' % version_id,
+                '    actual = ":objects_%s",' % version_manifest,
+                ")",
+            ]
 
     build_content += [
         "alias(",
@@ -392,6 +398,9 @@ def _minecraft_impl(mctx):
                 name = library["name"]
                 artifact = downloads.get("artifact")
                 classifiers = downloads.get("classifiers")
+
+                if name in exclude_library_names:
+                    continue
 
                 def add_artifact(id, artifact):
                     if id not in library_paths:

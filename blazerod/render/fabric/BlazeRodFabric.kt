@@ -1,15 +1,15 @@
 package top.fifthlight.blazerod
 
+import com.mojang.blaze3d.opengl.GlRenderPass
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gl.RenderPassImpl
+import net.minecraft.client.Minecraft
 import org.slf4j.LoggerFactory
 import top.fifthlight.blazerod.api.event.RenderEvents
 import top.fifthlight.blazerod.debug.*
 import top.fifthlight.blazerod.runtime.resource.RenderTexture
 import top.fifthlight.blazerod.runtime.uniform.UniformBuffer
-import top.fifthlight.blazerod.util.dispatchers.ThreadExecutorDispatcher
+import top.fifthlight.blazerod.util.dispatchers.BlockableEventLoopDispatcher
 import top.fifthlight.blazerod.util.objectpool.cleanupObjectPools
 import javax.swing.SwingUtilities
 
@@ -17,11 +17,11 @@ object BlazeRodFabric : ClientModInitializer {
     private val LOGGER = LoggerFactory.getLogger(BlazeRodFabric::class.java)
 
     override fun onInitializeClient() {
-        BlazeRod.mainDispatcher = ThreadExecutorDispatcher(MinecraftClient.getInstance())
+        BlazeRod.mainDispatcher = BlockableEventLoopDispatcher(Minecraft.getInstance())
 
         if (System.getProperty("blazerod.debug") == "true") {
             BlazeRod.debug = true
-            RenderPassImpl.IS_DEVELOPMENT = true
+            GlRenderPass.VALIDATION = true
             if (System.getProperty("blazerod.debug.gui") == "true") {
                 ResourceCountTracker.initialize()
                 ObjectPoolTracker.initialize()

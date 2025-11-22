@@ -13,7 +13,7 @@ public interface RenderPassExtInternal extends RenderPassExt {
     VertexFormat blazerod$getVertexFormat();
 
     @Nullable
-    VertexFormat.DrawMode blazerod$getVertexFormatMode();
+    VertexFormat.Mode blazerod$getVertexFormatMode();
 
     @NotNull
     Map<String, GpuBufferSlice> blazerod$getStorageBuffers();

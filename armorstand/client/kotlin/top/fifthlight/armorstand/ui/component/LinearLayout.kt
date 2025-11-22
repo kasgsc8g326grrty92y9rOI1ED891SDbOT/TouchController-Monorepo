@@ -1,11 +1,11 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Drawable
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.Widget
-import net.minecraft.client.gui.widget.WrapperWidget
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.Renderable
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.layouts.LayoutElement
+import net.minecraft.client.gui.layouts.AbstractLayout
 import java.util.function.Consumer
 
 class LinearLayout(
@@ -18,7 +18,7 @@ class LinearLayout(
     var gap: Int = 0,
     var padding: Insets = Insets.ZERO,
     val surface: Surface = Surface.empty,
-) : WrapperWidget(x, y, width, height), Drawable, ResizableLayout {
+) : AbstractLayout(x, y, width, height), Renderable, ResizableLayout {
     enum class Direction {
         HORIZONTAL,
         VERTICAL,
@@ -30,90 +30,90 @@ class LinearLayout(
         END,
     }
 
-    private class Element<T : Widget>(
+    private class Element<T : LayoutElement>(
         private val inner: T,
-        positioner: Positioner,
+        positioner: LayoutSettings,
         private val onSizeChanged: (widget: T, width: Int, height: Int) -> Unit,
-    ) : WrappedElement(inner, positioner) {
+    ) : AbstractChildWrapper(inner, positioner) {
         fun setSize(width: Int, height: Int) = onSizeChanged(
             inner,
-            width - positioner.marginLeft - positioner.marginRight,
-            height - positioner.marginTop - positioner.marginBottom
+            width - layoutSettings.paddingLeft - layoutSettings.paddingRight,
+            height - layoutSettings.paddingTop - layoutSettings.paddingBottom
         )
     }
 
     private val elements = mutableListOf<Element<*>>()
 
-    fun <T : Widget> add(
+    fun <T : LayoutElement> add(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         onSizeChanged: (widget: T, width: Int, height: Int) -> Unit,
     ) {
-        elements.add(Element(widget, positioner, onSizeChanged))
+        elements.add(Element(widget, layoutSettings, onSizeChanged))
     }
 
-    fun <T : ClickableWidget> add(
+    fun <T : AbstractWidget> add(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         expand: Boolean = false,
     ) {
         if (expand) {
-            add(widget, positioner) { w, width, height -> w.setDimensions(width, height) }
+            add(widget, layoutSettings) { w, width, height -> w.setSize(width, height) }
         } else {
-            add(widget, positioner) { w, width, height -> }
+            add(widget, layoutSettings) { w, width, height -> }
         }
     }
 
     fun <T> add(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         expand: Boolean = false,
-    ) where T : ResizableLayout, T : Widget {
+    ) where T : ResizableLayout, T : LayoutElement {
         if (expand) {
-            add(widget, positioner) { w, width, height -> w.setDimensions(width, height) }
+            add(widget, layoutSettings) { w, width, height -> w.setDimensions(width, height) }
         } else {
-            add(widget, positioner) { w, width, height -> }
+            add(widget, layoutSettings) { w, width, height -> }
         }
     }
 
-    fun removeAt(index: Int): Widget = elements.removeAt(index).widget
+    fun removeAt(index: Int): LayoutElement = elements.removeAt(index).child
 
-    fun <T : Widget> setAt(
+    fun <T : LayoutElement> setAt(
         index: Int,
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         onSizeChanged: (widget: T, width: Int, height: Int) -> Unit,
     ) {
-        elements[index] = Element(widget, positioner, onSizeChanged)
+        elements[index] = Element(widget, layoutSettings, onSizeChanged)
     }
 
-    fun <T : ClickableWidget> setAt(
+    fun <T : AbstractWidget> setAt(
         index: Int,
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         expand: Boolean = false,
     ) {
         if (expand) {
-            setAt(index, widget, positioner) { w, width, height -> w.setDimensions(width, height) }
+            setAt(index, widget, layoutSettings) { w, width, height -> w.setSize(width, height) }
         } else {
-            setAt(index, widget, positioner) { w, width, height -> }
+            setAt(index, widget, layoutSettings) { w, width, height -> }
         }
     }
 
     fun <T> setAt(
         index: Int,
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         expand: Boolean = false,
-    ) where T : ResizableLayout, T : Widget {
+    ) where T : ResizableLayout, T : LayoutElement {
         if (expand) {
-            setAt(index, widget, positioner) { w, width, height -> w.setDimensions(width, height) }
+            setAt(index, widget, layoutSettings) { w, width, height -> w.setDimensions(width, height) }
         } else {
-            setAt(index, widget, positioner) { w, width, height -> }
+            setAt(index, widget, layoutSettings) { w, width, height -> }
         }
     }
 
-    fun clear() = elements.map { it.widget }.also { elements.clear() }
+    fun clear() = elements.map { it.child }.also { elements.clear() }
 
     override fun setDimensions(width: Int, height: Int) {
         this.width = width
@@ -129,7 +129,7 @@ class LinearLayout(
         }
     }
 
-    override fun refreshPositions() {
+    override fun arrangeElements() {
         val sizes = elements.map {
             when (direction) {
                 Direction.HORIZONTAL -> it.width
@@ -169,19 +169,19 @@ class LinearLayout(
             }
             pos += size + gap
         }
-        super.refreshPositions()
+        super.arrangeElements()
     }
 
-    override fun forEachElement(consumer: Consumer<Widget>) {
-        elements.forEach { consumer.accept(it.widget) }
+    override fun visitChildren(consumer: Consumer<LayoutElement>) {
+        elements.forEach { consumer.accept(it.child) }
     }
 
     override fun render(
-        context: DrawContext,
+        graphics: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
-        surface.draw(context, this@LinearLayout.x, this@LinearLayout.y, width, height)
+        surface.draw(graphics, this@LinearLayout.x, this@LinearLayout.y, width, height)
     }
 }

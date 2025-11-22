@@ -1,25 +1,25 @@
 package top.fifthlight.blazerod.systems;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.textures.TextureFormat;
-import net.minecraft.client.gl.Defines;
-import net.minecraft.client.gl.UniformType;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.ShaderDefines;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
 
 public class ComputePipeline {
-    private final Identifier location;
-    private final Identifier computeShader;
-    private final Defines shaderDefines;
+    private final ResourceLocation location;
+    private final ResourceLocation computeShader;
+    private final ShaderDefines shaderDefines;
     private final List<String> samplers;
     private final List<RenderPipeline.UniformDescription> uniforms;
     private final Set<String> storageBuffers;
 
     protected ComputePipeline(
-            Identifier location,
-            Identifier computeShader,
-            Defines shaderdefines,
+            ResourceLocation location,
+            ResourceLocation computeShader,
+            ShaderDefines shaderdefines,
             List<String> samplers,
             List<RenderPipeline.UniformDescription> uniforms,
             Set<String> storageBuffers
@@ -47,15 +47,15 @@ public class ComputePipeline {
         return this.location.toString();
     }
 
-    public Identifier getLocation() {
+    public ResourceLocation getLocation() {
         return this.location;
     }
 
-    public Identifier getComputeShader() {
+    public ResourceLocation getComputeShader() {
         return this.computeShader;
     }
 
-    public Defines getShaderDefines() {
+    public ShaderDefines getShaderDefines() {
         return this.shaderDefines;
     }
 
@@ -73,9 +73,9 @@ public class ComputePipeline {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class Builder {
-        private Optional<Identifier> location = Optional.empty();
-        private Optional<Identifier> computeShader = Optional.empty();
-        private Optional<Defines.Builder> definesBuilder = Optional.empty();
+        private Optional<ResourceLocation> location = Optional.empty();
+        private Optional<ResourceLocation> computeShader = Optional.empty();
+        private Optional<ShaderDefines.Builder> definesBuilder = Optional.empty();
         private Optional<List<String>> samplers = Optional.empty();
         private Optional<List<RenderPipeline.UniformDescription>> uniforms = Optional.empty();
         private Optional<Set<String>> storageBuffers = Optional.empty();
@@ -83,28 +83,28 @@ public class ComputePipeline {
         private Builder() {
         }
 
-        public ComputePipeline.Builder withLocation(Identifier Identifier) {
-            this.location = Optional.of(Identifier);
+        public ComputePipeline.Builder withLocation(ResourceLocation resourceLocation) {
+            this.location = Optional.of(resourceLocation);
             return this;
         }
 
-        public ComputePipeline.Builder withComputeShader(Identifier Identifier) {
-            this.computeShader = Optional.of(Identifier);
+        public ComputePipeline.Builder withComputeShader(ResourceLocation resourceLocation) {
+            this.computeShader = Optional.of(resourceLocation);
             return this;
         }
 
         public ComputePipeline.Builder withShaderDefine(String flag) {
             if (this.definesBuilder.isEmpty()) {
-                this.definesBuilder = Optional.of(Defines.builder());
+                this.definesBuilder = Optional.of(ShaderDefines.builder());
             }
 
-            this.definesBuilder.get().flag(flag);
+            this.definesBuilder.get().define(flag);
             return this;
         }
 
         public ComputePipeline.Builder withShaderDefine(String name, int value) {
             if (this.definesBuilder.isEmpty()) {
-                this.definesBuilder = Optional.of(Defines.builder());
+                this.definesBuilder = Optional.of(ShaderDefines.builder());
             }
 
             this.definesBuilder.get().define(name, value);
@@ -113,7 +113,7 @@ public class ComputePipeline {
 
         public ComputePipeline.Builder withShaderDefine(String name, float value) {
             if (this.definesBuilder.isEmpty()) {
-                this.definesBuilder = Optional.of(Defines.builder());
+                this.definesBuilder = Optional.of(ShaderDefines.builder());
             }
 
             this.definesBuilder.get().define(name, value);
@@ -171,7 +171,7 @@ public class ComputePipeline {
 
             if (snippet.shaderDefines.isPresent()) {
                 if (this.definesBuilder.isEmpty()) {
-                    this.definesBuilder = Optional.of(Defines.builder());
+                    this.definesBuilder = Optional.of(ShaderDefines.builder());
                 }
 
                 var shaderdefines = snippet.shaderDefines.get();
@@ -181,7 +181,7 @@ public class ComputePipeline {
                 }
 
                 for (var flag : shaderdefines.flags()) {
-                    this.definesBuilder.get().flag(flag);
+                    this.definesBuilder.get().define(flag);
                 }
             }
 
@@ -211,7 +211,7 @@ public class ComputePipeline {
         public ComputePipeline.Snippet buildSnippet() {
             return new ComputePipeline.Snippet(
                     this.computeShader,
-                    this.definesBuilder.map(Defines.Builder::build),
+                    this.definesBuilder.map(ShaderDefines.Builder::build),
                     this.samplers.map(Collections::unmodifiableList),
                     this.uniforms.map(Collections::unmodifiableList),
                     this.storageBuffers.map(Collections::unmodifiableSet)
@@ -227,7 +227,7 @@ public class ComputePipeline {
                 return new ComputePipeline(
                         this.location.get(),
                         this.computeShader.get(),
-                        this.definesBuilder.orElse(Defines.builder()).build(),
+                        this.definesBuilder.orElse(ShaderDefines.builder()).build(),
                         List.copyOf(this.samplers.orElse(new ArrayList<>())),
                         this.uniforms.orElse(Collections.emptyList()),
                         Set.copyOf(this.storageBuffers.orElse(new HashSet<>()))
@@ -237,8 +237,8 @@ public class ComputePipeline {
     }
 
     public record Snippet(
-            Optional<Identifier> computeShader,
-            Optional<Defines> shaderDefines,
+            Optional<ResourceLocation> computeShader,
+            Optional<ShaderDefines> shaderDefines,
             Optional<List<String>> samplers,
             Optional<List<RenderPipeline.UniformDescription>> uniforms,
             Optional<Set<String>> storageBuffers

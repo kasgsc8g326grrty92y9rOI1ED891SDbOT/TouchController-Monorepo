@@ -2,17 +2,17 @@ package top.fifthlight.blazerod.runtime.renderer
 
 import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.buffers.GpuBufferSlice
+import com.mojang.blaze3d.opengl.GlRenderPass
+import com.mojang.blaze3d.shaders.UniformType
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.textures.GpuTextureView
 import com.mojang.blaze3d.vertex.VertexFormat
 import it.unimi.dsi.fastutil.ints.Int2ReferenceAVLTreeMap
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gl.RenderPassImpl
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gl.UniformType
-import net.minecraft.client.render.OverlayTexture
-import net.minecraft.util.Identifier
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.renderer.texture.OverlayTexture
+import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import org.joml.Vector4f
@@ -139,8 +139,8 @@ class ComputeShaderTransformRenderer private constructor() :
             val materialMap = pipelineCache.getOrPut(material.descriptor) { Int2ReferenceAVLTreeMap() }
             return materialMap.getOrPut(pipelineInfo.bitmap.inner) {
                 ComputePipeline.builder().apply {
-                    withLocation(Identifier.of("blazerod", "vertex_transform" + pipelineInfo.nameSuffix()))
-                    withComputeShader(Identifier.of("blazerod", "compute/vertex_transform"))
+                    withLocation(ResourceLocation.fromNamespaceAndPath("blazerod", "vertex_transform" + pipelineInfo.nameSuffix()))
+                    withComputeShader(ResourceLocation.fromNamespaceAndPath("blazerod", "compute/vertex_transform"))
                     withShaderDefine("SUPPORT_SSBO")
                     withShaderDefine("COMPUTE_SHADER")
                     withStorageBuffer("SourceVertexData")
@@ -209,7 +209,7 @@ class ComputeShaderTransformRenderer private constructor() :
             computeDataUniformBufferSlice = ComputeDataUniformBuffer.write {
                 this.modelNormalMatrix = modelNormalMatrix
                 totalVertices = primitive.vertices.toUInt()
-                uv1 = OverlayTexture.DEFAULT_UV.toUInt()
+                uv1 = OverlayTexture.NO_OVERLAY.toUInt()
                 uv2 = task.light.toUInt()
             }
             skinBuffer?.let { skinBuffer ->
@@ -243,7 +243,7 @@ class ComputeShaderTransformRenderer private constructor() :
             with(computePass) {
                 setPipeline(pipeline)
 
-                if (RenderPassImpl.IS_DEVELOPMENT) {
+                if (GlRenderPass.VALIDATION) {
                     require(material.skinned == (skinBuffer != null)) {
                         "Primitive's skin data ${skinBuffer != null} and material skinned ${material.skinned} not matching"
                     }
@@ -424,7 +424,7 @@ class ComputeShaderTransformRenderer private constructor() :
             modelMatrix.mulLocal(task.modelMatrix)
             modelMatrix.mulLocal(RenderSystem.getModelViewStack())
 
-            val dynamicUniforms = RenderSystem.getDynamicUniforms().write(
+            val dynamicUniforms = RenderSystem.getDynamicUniforms().writeTransform(
                 modelMatrix,
                 material.baseColor.toVector4f(baseColor),
                 RenderSystem.getModelOffset(),
@@ -445,11 +445,11 @@ class ComputeShaderTransformRenderer private constructor() :
                     setUniform("DynamicTransforms", dynamicUniforms)
                     bindSampler(
                         "Sampler2",
-                        MinecraftClient.getInstance().gameRenderer.lightmapTextureManager.glTextureView
+                        Minecraft.getInstance().gameRenderer.lightTexture().textureView
                     )
                     bindSampler(
                         "Sampler1",
-                        MinecraftClient.getInstance().gameRenderer.overlayTexture.texture.glTextureView
+                        Minecraft.getInstance().gameRenderer.overlayTexture().texture.textureView
                     )
                     when (material) {
                         is RenderMaterial.Pbr -> {}
@@ -521,7 +521,7 @@ class ComputeShaderTransformRenderer private constructor() :
 
         commandEncoder.memoryBarrier(CommandEncoderExt.BARRIER_STORAGE_BUFFER_BIT or CommandEncoderExt.BARRIER_VERTEX_BUFFER_BIT)
 
-        val dynamicUniforms = RenderSystem.getDynamicUniforms().write(
+        val dynamicUniforms = RenderSystem.getDynamicUniforms().writeTransform(
             modelMatrix,
             material.baseColor.toVector4f(baseColor),
             RenderSystem.getModelOffset(),
@@ -540,8 +540,8 @@ class ComputeShaderTransformRenderer private constructor() :
                 setPipeline(RenderPipelines.ENTITY_TRANSLUCENT)
                 RenderSystem.bindDefaultUniforms(this)
                 setUniform("DynamicTransforms", dynamicUniforms)
-                bindSampler("Sampler2", MinecraftClient.getInstance().gameRenderer.lightmapTextureManager.glTextureView)
-                bindSampler("Sampler1", MinecraftClient.getInstance().gameRenderer.overlayTexture.texture.glTextureView)
+                bindSampler("Sampler2", Minecraft.getInstance().gameRenderer.lightTexture().textureView)
+                bindSampler("Sampler1", Minecraft.getInstance().gameRenderer.overlayTexture().texture.textureView)
                 when (material) {
                     is RenderMaterial.Pbr -> {}
                     is RenderMaterial.Unlit -> {

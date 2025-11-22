@@ -1,8 +1,8 @@
 package top.fifthlight.blazerod.animation.context
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.render.RenderTickCounter
-import net.minecraft.client.world.ClientWorld
+import net.minecraft.client.Minecraft
+import net.minecraft.client.DeltaTracker
+import net.minecraft.client.multiplayer.ClientLevel
 import org.joml.Vector3d
 import top.fifthlight.blazerod.mixin.MinecraftClientAccessor
 import top.fifthlight.blazerod.model.animation.AnimationContext
@@ -10,15 +10,15 @@ import top.fifthlight.blazerod.model.util.*
 import kotlin.jvm.optionals.getOrNull
 
 open class BaseAnimationContext(
-    protected val client: MinecraftClient = MinecraftClient.getInstance(),
+    protected val client: Minecraft = Minecraft.getInstance(),
 ) : AnimationContext {
-    protected val tickCounter: RenderTickCounter = client.renderTickCounter
-    protected val world: ClientWorld?
-        get() = client.world
+    protected val tickCounter: DeltaTracker = client.deltaTracker
+    protected val world: ClientLevel?
+        get() = client.level
 
-    override fun getGameTick(): Long = (client as MinecraftClientAccessor).uptimeInTicks
+    override fun getGameTick(): Long = (client as MinecraftClientAccessor).clientTickCount
 
-    override fun getDeltaTick(): Float = tickCounter.getTickProgress(false)
+    override fun getDeltaTick(): Float = tickCounter.getGameTimeDeltaPartialTick(false)
 
     protected val vector3dBuffer = Vector3d()
     protected val intBuffer = MutableInt()
@@ -35,13 +35,13 @@ open class BaseAnimationContext(
 
         AnimationContext.Property.WorldTimeOfDay -> world?.let { world ->
             floatBuffer.apply {
-                value = world.timeOfDay.toFloat() / 24000f
+                value = world.dayTime.toFloat() / 24000f
             }
         }
 
         AnimationContext.Property.WorldTimeStamp -> world?.let { world ->
             intBuffer.apply {
-                value = world.timeOfDay.toInt()
+                value = world.dayTime.toInt()
             }
         }
 
@@ -62,11 +62,11 @@ open class BaseAnimationContext(
         }
 
         AnimationContext.Property.WorldDimension -> world?.let { world ->
-            world.dimensionEntry.key?.getOrNull()?.value?.toString()
+            world.dimensionTypeRegistration().unwrapKey().getOrNull().toString()
         }
 
         AnimationContext.Property.GameFps -> intBuffer.apply {
-            value = client.currentFps
+            value = client.fps
         }
 
         else -> null

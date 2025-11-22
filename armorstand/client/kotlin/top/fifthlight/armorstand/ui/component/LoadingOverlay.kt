@@ -1,40 +1,40 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Drawable
-import net.minecraft.client.gui.ScreenRect
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.LayoutWidget
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.Renderable
+import net.minecraft.client.gui.layouts.Layout
+import net.minecraft.client.gui.navigation.ScreenRectangle
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.resources.ResourceLocation
 import java.util.function.Consumer
 
 class LoadingOverlay<T>(
     val inner: T,
     var loading: Boolean = true,
-) : LayoutWidget by inner, ResizableLayout by inner, Drawable where T: LayoutWidget, T: ResizableLayout {
+) : Layout by inner, ResizableLayout by inner, Renderable where T: Layout, T: ResizableLayout {
     companion object {
-        private val LOADING_ICON: Identifier = Identifier.of("armorstand", "loading")
+        private val LOADING_ICON: ResourceLocation = ResourceLocation.fromNamespaceAndPath("armorstand", "loading")
         private const val ICON_WIDTH = 32
         private const val ICON_HEIGHT = 32
     }
 
-    override fun forEachChild(consumer: Consumer<ClickableWidget>) = inner.forEachChild(consumer)
+    override fun visitWidgets(consumer: Consumer<AbstractWidget>) = inner.visitWidgets(consumer)
 
-    override fun refreshPositions() = inner.refreshPositions()
+    override fun arrangeElements() = inner.arrangeElements()
 
-    override fun getNavigationFocus(): ScreenRect = inner.navigationFocus
+    override fun getRectangle(): ScreenRectangle = inner.getRectangle()
 
     override fun setPosition(x: Int, y: Int) = inner.setPosition(x, y)
 
     override fun render(
-        context: DrawContext,
+        context: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
         if (loading) {
-            context.drawGuiTexture(
+            context.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 LOADING_ICON,
                 x + (width - ICON_WIDTH) / 2,

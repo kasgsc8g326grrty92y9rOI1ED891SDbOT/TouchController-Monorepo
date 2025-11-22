@@ -112,6 +112,7 @@ fabric_versions = {
                 "net.fabricmc:sponge-mixin:%s" % entry["mixin"],
                 "io.github.llamalad7:mixinextras-fabric:%s" % entry["mixin_extras"],
                 "eu.pb4:placeholder-api:%s" % entry["placeholder_api"],
+                "net.fabricmc:fabric-language-kotlin:1.13.5+kotlin.2.2.10",
             ],
             repositories = [
                 "https://maven.fabricmc.net/",
@@ -127,8 +128,3 @@ fabric_versions = {
     for version, entry in fabric_versions.items()
 ]
 
-maven.install(
-    artifacts = [
-        "net.fabricmc:fabric-language-kotlin:1.13.5+kotlin.2.2.10",
-    ],
-)

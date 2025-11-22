@@ -1,6 +1,6 @@
 package top.fifthlight.blazerod.util.glsl
 
-import net.minecraft.client.gl.Defines
+import net.minecraft.client.renderer.ShaderDefines
 import kotlin.math.max
 
 object GlslExtensionProcessor {
@@ -10,7 +10,7 @@ object GlslExtensionProcessor {
     data class Context(
         val majorVersion: Int,
         val minorVersion: Int,
-        val defines: Defines,
+        val defines: ShaderDefines,
     )
 
     private fun Context.isMet(conditions: String): Boolean = conditions.split("&&")
@@ -30,7 +30,7 @@ object GlslExtensionProcessor {
                 }
             } ?: definePattern.matchEntire(condition)?.let {
                 val (define) = it.destructured
-                define in defines.flags || define in defines.values.keys
+                define in defines.flags() || define in defines.values().keys
             } ?: throw IllegalArgumentException("Invalid condition $condition")
         }
 

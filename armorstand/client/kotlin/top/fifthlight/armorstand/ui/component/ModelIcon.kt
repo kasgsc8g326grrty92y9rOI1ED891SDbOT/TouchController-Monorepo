@@ -1,21 +1,21 @@
 package top.fifthlight.armorstand.ui.component
 
 import kotlinx.coroutines.*
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.Drawable
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.Widget
-import net.minecraft.client.texture.NativeImage
-import net.minecraft.client.texture.NativeImageBackedTexture
-import net.minecraft.client.texture.TextureManager
-import net.minecraft.util.Identifier
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Renderable
+import net.minecraft.client.gui.layouts.LayoutElement
+import com.mojang.blaze3d.platform.NativeImage
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.renderer.texture.DynamicTexture
+import net.minecraft.client.renderer.texture.TextureManager
+import net.minecraft.resources.ResourceLocation
 import org.slf4j.LoggerFactory
 import top.fifthlight.armorstand.manage.ModelManagerHolder
 import top.fifthlight.armorstand.manage.model.ModelItem
 import top.fifthlight.armorstand.manage.model.ModelThumbnail
-import top.fifthlight.armorstand.util.ThreadExecutorDispatcher
+import top.fifthlight.armorstand.util.BlockableEventLoopDispatcher
 import top.fifthlight.blazerod.model.Texture
 import top.fifthlight.blazerod.model.util.readToBuffer
 import java.nio.channels.FileChannel
@@ -24,10 +24,10 @@ import java.util.function.Consumer
 
 class ModelIcon(
     private val modelItem: ModelItem,
-) : AutoCloseable, Widget, Drawable, ResizableLayout {
+) : AutoCloseable, LayoutElement, Renderable, ResizableLayout {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(ModelIcon::class.java)
-        private val LOADING_ICON: Identifier = Identifier.of("armorstand", "loading")
+        private val LOADING_ICON: ResourceLocation = ResourceLocation.fromNamespaceAndPath("armorstand", "loading")
         private const val ICON_WIDTH = 32
         private const val ICON_HEIGHT = 32
         private const val SMALL_ICON_WIDTH = 16
@@ -58,13 +58,12 @@ class ModelIcon(
         this.width = width
         this.height = height
     }
-
-    override fun forEachChild(consumer: Consumer<ClickableWidget>) = Unit
+    override fun visitWidgets(consumer: Consumer<AbstractWidget>) = Unit
 
     private data class ModelTexture(
         val textureManager: TextureManager,
-        val identifier: Identifier,
-        val texture: NativeImageBackedTexture,
+        val resourceLocation: ResourceLocation,
+        val texture: DynamicTexture,
         val width: Int,
         val height: Int,
     ) : AutoCloseable {
@@ -75,7 +74,7 @@ class ModelIcon(
                 return
             }
             closed = true
-            textureManager.destroyTexture(identifier)
+            textureManager.release(resourceLocation)
         }
     }
 
@@ -92,7 +91,7 @@ class ModelIcon(
         }
     }
 
-    private val scope = CoroutineScope(ThreadExecutorDispatcher(MinecraftClient.getInstance()) + Job())
+    private val scope = CoroutineScope(BlockableEventLoopDispatcher(Minecraft.getInstance()) + Job())
     private var iconState: ModelIconState = ModelIconState.Loading
 
     private suspend fun loadIcon(
@@ -117,22 +116,22 @@ class ModelIcon(
 
         val width: Int
         val height: Int
-        val identifier = Identifier.of("armorstand", "models/${modelItem.hash}")
+        val identifier = ResourceLocation.fromNamespaceAndPath("armorstand", "models/${modelItem.hash}")
         val texture = withContext(Dispatchers.Default) {
             NativeImage.read(buffer)
         }.use { image ->
             width = image.width
             height = image.height
-            NativeImageBackedTexture({ "Model icon for ${modelItem.hash}" }, image)
+            DynamicTexture({ "Model icon for ${modelItem.hash}" }, image)
         }
         texture.setClamp(true)
         texture.setFilter(true, false)
         return try {
-            val textureManager = MinecraftClient.getInstance().textureManager
-            textureManager.registerTexture(identifier, texture)
+            val textureManager = Minecraft.getInstance().textureManager
+            textureManager.register(identifier, texture)
             ModelTexture(
                 textureManager = textureManager,
-                identifier = identifier,
+                resourceLocation = identifier,
                 texture = texture,
                 width = width,
                 height = height,
@@ -182,16 +181,16 @@ class ModelIcon(
     }
 
     override fun render(
-        context: DrawContext,
+        graphics: GuiGraphics,
         mouseX: Int,
         mouseY: Int,
         deltaTicks: Float,
     ) {
-        renderIconInternal(context, x, y, width, height)
+        renderIconInternal(graphics, x, y, width, height)
     }
 
     private fun renderIconInternal(
-        context: DrawContext,
+        graphics: GuiGraphics,
         targetX: Int,
         targetY: Int,
         targetWidth: Int,
@@ -213,9 +212,9 @@ class ModelIcon(
                     val scaledHeight = (imageWidth / iconAspect).toInt()
                     val yOffset = (imageHeight - scaledHeight) / 2
 
-                    context.drawTexture(
+                    graphics.blit(
                         RenderPipelines.GUI_TEXTURED,
-                        icon.identifier,
+                        icon.resourceLocation,
                         left,
                         top + yOffset,
                         0f,
@@ -228,7 +227,7 @@ class ModelIcon(
                         icon.height,
                     )
 
-                    context.drawGuiTexture(
+                    graphics.blitSprite(
                         RenderPipelines.GUI_TEXTURED,
                         modelItem.type.icon,
                         left + imageWidth - SMALL_ICON_WIDTH / 2,
@@ -240,9 +239,9 @@ class ModelIcon(
                     val scaledWidth = (imageHeight * iconAspect).toInt()
                     val xOffset = (imageWidth - scaledWidth) / 2
 
-                    context.drawTexture(
+                    graphics.blit(
                         RenderPipelines.GUI_TEXTURED,
-                        icon.identifier,
+                        icon.resourceLocation,
                         left + xOffset,
                         top,
                         0f,
@@ -255,7 +254,7 @@ class ModelIcon(
                         icon.height,
                     )
 
-                    context.drawGuiTexture(
+                    graphics.blitSprite(
                         RenderPipelines.GUI_TEXTURED,
                         modelItem.type.icon,
                         left + xOffset + scaledWidth - SMALL_ICON_WIDTH / 2,
@@ -267,7 +266,7 @@ class ModelIcon(
             }
 
             ModelIconState.Loading -> {
-                context.drawGuiTexture(
+                graphics.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
                     LOADING_ICON,
                     left + (imageWidth - ICON_WIDTH) / 2,
@@ -278,7 +277,7 @@ class ModelIcon(
             }
 
             ModelIconState.None -> {
-                context.drawGuiTexture(
+                graphics.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
                     modelItem.type.icon,
                     left + (imageWidth - ICON_WIDTH) / 2,

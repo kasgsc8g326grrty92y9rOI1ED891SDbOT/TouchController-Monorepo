@@ -11,7 +11,7 @@ import java.nio.ByteBuffer
 
 class RenderPrimitive(
     val vertices: Int,
-    val vertexFormatMode: VertexFormat.DrawMode,
+    val vertexFormatMode: VertexFormat.Mode,
     val gpuVertexBuffer: RefCountedGpuBuffer?,
     val cpuVertexBuffer: ByteBuffer?,
     val indexBuffer: GpuIndexBuffer?,

@@ -2,10 +2,10 @@ package top.fifthlight.blazerod.render
 
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
-import net.minecraft.client.render.VertexFormats
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
 
 object BlazerodVertexFormats {
-    val POSITION: VertexFormat = VertexFormats.POSITION                   // 12 12
+    val POSITION: VertexFormat = DefaultVertexFormat.POSITION             // 12 12
 
     val POSITION_COLOR_TEXTURE: VertexFormat = VertexFormat.builder()
         .add("Position", VertexFormatElement.POSITION)                    // 12 12

@@ -28,12 +28,20 @@ rust_host_tools.host_tools(name = "rust_host_tools_nightly", version = "nightly"
 use_repo(rust_host_tools, "rust_host_tools_nightly")
 
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
+crate.spec(package = "jni", version = "0.21.1")
+crate.spec(package = "bytemuck", version = "1.21.0")
+crate.spec(package = "tokio", version = "1.43.0", features = [
+    "macros",
+    "sync",
+    "rt-multi-thread",
+    "net",
+    "io-util",
+])
+crate.spec(package = "log", version = "0.4.25")
+crate.spec(package = "android_logger", version = "0.14.1")
+crate.spec(package = "binrw", version = "0.14.1")
 crate.from_specs(supported_platform_triples = [
     "aarch64-linux-android",
     "x86_64-linux-android",
-    "aarch64-unknown-linux-gnu",
-    "x86_64-unknown-linux-gnu",
-    "aarch64-pc-windows-msvc",
-    "x86_64-pc-windows-msvc",
 ])
 use_repo(crate, "crates")

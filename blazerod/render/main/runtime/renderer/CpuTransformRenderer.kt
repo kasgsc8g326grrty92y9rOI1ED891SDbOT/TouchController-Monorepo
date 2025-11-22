@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.runBlocking
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.render.OverlayTexture
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.renderer.texture.OverlayTexture
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import org.joml.Vector2f
@@ -236,11 +236,11 @@ class CpuTransformRenderer private constructor() :
                         }
                         transformedBuffer.putShort(
                             targetOffset + targetOverlayOffset + 0,
-                            (OverlayTexture.DEFAULT_UV and 0xFFFF).toShort()
+                            (OverlayTexture.NO_OVERLAY and 0xFFFF).toShort()
                         )
                         transformedBuffer.putShort(
                             targetOffset + targetOverlayOffset + 2,
-                            ((OverlayTexture.DEFAULT_UV shr 16) and 0xFFFF).toShort()
+                            ((OverlayTexture.NO_OVERLAY shr 16) and 0xFFFF).toShort()
                         )
                         transformedBuffer.putShort(targetOffset + targetLightOffset + 0, lightU)
                         transformedBuffer.putShort(targetOffset + targetLightOffset + 2, lightV)
@@ -311,7 +311,7 @@ class CpuTransformRenderer private constructor() :
         val device = RenderSystem.getDevice()
         val commandEncoder = device.createCommandEncoder()
 
-        val dynamicUniforms = RenderSystem.getDynamicUniforms().write(
+        val dynamicUniforms = RenderSystem.getDynamicUniforms().writeTransform(
             modelMatrix,
             material.baseColor.toVector4f(baseColor),
             RenderSystem.getModelOffset(),
@@ -332,8 +332,8 @@ class CpuTransformRenderer private constructor() :
                 setPipeline(RenderPipelines.ENTITY_TRANSLUCENT)
                 RenderSystem.bindDefaultUniforms(this)
                 setUniform("DynamicTransforms", dynamicUniforms)
-                bindSampler("Sampler2", MinecraftClient.getInstance().gameRenderer.lightmapTextureManager.glTextureView)
-                bindSampler("Sampler1", MinecraftClient.getInstance().gameRenderer.overlayTexture.texture.glTextureView)
+                bindSampler("Sampler2", Minecraft.getInstance().gameRenderer.lightTexture().textureView)
+                bindSampler("Sampler1", Minecraft.getInstance().gameRenderer.overlayTexture().texture.textureView)
                 when (material) {
                     is RenderMaterial.Pbr -> {}
                     is RenderMaterial.Unlit -> {

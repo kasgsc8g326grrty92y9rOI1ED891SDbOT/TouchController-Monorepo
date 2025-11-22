@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.Minecraft
 import org.slf4j.LoggerFactory
 import top.fifthlight.armorstand.PlayerRenderer
 import top.fifthlight.armorstand.manage.ModelManagerHolder
@@ -48,8 +48,8 @@ class AnimationViewModel(scope: CoroutineScope) : ViewModel(scope) {
     }
 
     private fun getInstanceItem(): ModelInstanceManager.ModelInstanceItem.Model? {
-        val client = MinecraftClient.getInstance()
-        val player = client.player ?: return null
+        val minecraft = Minecraft.getInstance()
+        val player = minecraft.player ?: return null
         val item = ModelInstanceManager.get(player.uuid, null)
         return item as? ModelInstanceManager.ModelInstanceItem.Model
     }

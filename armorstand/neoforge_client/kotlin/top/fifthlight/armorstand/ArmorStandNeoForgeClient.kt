@@ -2,7 +2,7 @@ package top.fifthlight.armorstand
 
 import com.mojang.logging.LogUtils
 import kotlinx.coroutines.*
-import net.minecraft.client.MinecraftClient
+import net.minecraft.client.Minecraft
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
@@ -30,7 +30,7 @@ import top.fifthlight.armorstand.ui.screen.AnimationScreen
 import top.fifthlight.armorstand.ui.screen.ConfigScreen
 import top.fifthlight.armorstand.ui.screen.ModelSwitchScreen
 import top.fifthlight.armorstand.util.RendererManager
-import top.fifthlight.armorstand.util.ThreadExecutorDispatcher
+import top.fifthlight.armorstand.util.BlockableEventLoopDispatcher
 import top.fifthlight.blazerod.api.event.RenderEvents
 import top.fifthlight.blazerod.model.formats.ModelFileLoaders
 import javax.swing.SwingUtilities
@@ -100,21 +100,21 @@ object ArmorStandNeoForgeClient : ArmorStandNeoForge(), ArmorStandClient {
 
             @SubscribeEvent
             fun onStartClientTick(event: ClientTickEvent.Pre) {
-                val client = MinecraftClient.getInstance()
-                if (client.player == null) {
+                val minecraft = Minecraft.getInstance()
+                if (minecraft.player == null) {
                     return
                 }
-                if (client.currentScreen != null) {
+                if (minecraft.screen != null) {
                     return
                 }
-                if (configKeyBinding.isPressed) {
-                    client.setScreen(ConfigScreen(null))
+                if (configKeyBinding.isDown) {
+                    minecraft.setScreen(ConfigScreen(null))
                 }
-                if (animationKeyBinding.isPressed) {
-                    client.setScreen(AnimationScreen(null))
+                if (animationKeyBinding.isDown) {
+                    minecraft.setScreen(AnimationScreen(null))
                 }
-                if (modelSwitchKeyBinding.isPressed) {
-                    client.setScreen(ModelSwitchScreen(null))
+                if (modelSwitchKeyBinding.isDown) {
+                    minecraft.setScreen(ModelSwitchScreen(null))
                 }
             }
 
@@ -138,8 +138,8 @@ object ArmorStandNeoForgeClient : ArmorStandNeoForge(), ArmorStandClient {
         }
 
         event.enqueueWork {
-            val client = MinecraftClient.getInstance()
-            mainDispatcher = ThreadExecutorDispatcher(client)
+            val client = Minecraft.getInstance()
+            mainDispatcher = BlockableEventLoopDispatcher(client)
             scope = CoroutineScope(SupervisorJob() + mainDispatcher)
 
             RenderEvents.FLIP_FRAME.register {
@@ -168,7 +168,7 @@ object ArmorStandNeoForgeClient : ArmorStandNeoForge(), ArmorStandClient {
         event.registrar("armorstand")
             .versioned(ModInfo.MOD_VERSION)
             .optional()
-            .playToClient(PlayerModelUpdateS2CPayload.ID, PlayerModelUpdateS2CPayload.CODEC) { payload, context ->
+            .playToClient(PlayerModelUpdateS2CPayload.ID, PlayerModelUpdateS2CPayload.STREAM_CODEC) { payload, context ->
                 scope.launch {
                     ModelHashManager.putModelHash(payload.uuid, payload.modelHash)
                 }

@@ -16,8 +16,8 @@ abstract class ArmorStandFabric : ArmorStand, ModInitializer {
 
     override fun onInitialize() {
         ArmorStand.instance = this
-        PayloadTypeRegistry.playS2C().register(PlayerModelUpdateS2CPayload.ID, PlayerModelUpdateS2CPayload.CODEC)
-        PayloadTypeRegistry.playC2S().register(ModelUpdateC2SPayload.ID, ModelUpdateC2SPayload.CODEC)
+        PayloadTypeRegistry.playS2C().register(PlayerModelUpdateS2CPayload.ID, PlayerModelUpdateS2CPayload.STREAM_CODEC)
+        PayloadTypeRegistry.playC2S().register(ModelUpdateC2SPayload.ID, ModelUpdateC2SPayload.STREAM_CODEC)
 
         ServerModelPathManager.onUpdateListener = { uuid, hash ->
             server?.let { server ->

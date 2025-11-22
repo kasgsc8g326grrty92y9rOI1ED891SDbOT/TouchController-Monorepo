@@ -10,6 +10,6 @@ java_library(
     ],
     deps = [
         "@maven//:org_jetbrains_annotations",
-        "@maven//:org_javassist_javassist",
+        "@maven_blazerod//:org_javassist_javassist",
     ],
 )

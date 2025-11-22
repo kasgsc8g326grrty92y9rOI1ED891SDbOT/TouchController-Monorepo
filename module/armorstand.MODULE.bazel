@@ -2,8 +2,26 @@
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
+    name = "maven_armorstand",
     artifacts = [
         "com.h2database:h2:2.3.232",
         "com.illposed.osc:javaosc-core:0.9",
+        "org.antlr:antlr4-runtime:4.13.1",
+        "io.github.douira:glsl-transformer:2.0.1",
+        "org.anarres:jcpp:1.4.14",
     ],
+    repositories = [
+        "https://repo1.maven.org/maven2/",
+    ],
+    lock_file = "//armorstand:maven_install.json",
+    fetch_sources = True,
 )
+use_repo(maven, "maven_armorstand")
+
+# For dev client
+modrinth = use_extension("//repo:modrinth.bzl", "modrinth")
+modrinth.version(
+    name = "makeup_ultra_fast",
+    version_id = "jIWDGbU5",
+)
+use_repo(modrinth, "makeup_ultra_fast")

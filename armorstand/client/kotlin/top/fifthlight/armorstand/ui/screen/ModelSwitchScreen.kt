@@ -3,14 +3,14 @@ package top.fifthlight.armorstand.ui.screen
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
-import net.minecraft.client.gl.RenderPipelines
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.sound.PositionedSoundInstance
-import net.minecraft.sound.SoundEvents
-import net.minecraft.text.Text
-import net.minecraft.util.Colors
-import net.minecraft.util.Identifier
+import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.resources.sounds.SimpleSoundInstance
+import net.minecraft.network.chat.Component
+import net.minecraft.util.CommonColors
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.sounds.SoundEvents
 import top.fifthlight.armorstand.ArmorStandClient
 import top.fifthlight.armorstand.config.ConfigHolder
 import top.fifthlight.armorstand.manage.model.ModelItem
@@ -23,11 +23,11 @@ import top.fifthlight.armorstand.ui.state.ModelSwitchScreenState
 class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchScreen, ModelSwitchViewModel>(
     parent = parent,
     viewModelFactory = ::ModelSwitchViewModel,
-    title = Text.translatable("armorstand.model_switch"),
+    title = Component.translatable("armorstand.model_switch"),
 ) {
 
     companion object {
-        private val LOADING_ICON: Identifier = Identifier.of("armorstand", "loading")
+        private val LOADING_ICON: ResourceLocation = ResourceLocation.fromNamespaceAndPath("armorstand", "loading")
         private const val LOADING_ICON_WIDTH = 32
         private const val LOADING_ICON_HEIGHT = 32
         private const val ITEM_SIZE = 72
@@ -46,13 +46,13 @@ class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchSc
         private const val MODEL_NAME_LABEL_WIDTH = 320
         private const val MODEL_NAME_LABEL_HEIGHT = 32
         private const val MODEL_ICON_CACHE_SIZE = 32
-        private val EMPTY_MESSAGE = Text.translatable("armorstand.model_switch.empty")
-        private val NO_SELECTION_MESSAGE = Text.translatable("armorstand.model_switch.no_selection")
+        private val EMPTY_MESSAGE = Component.translatable("armorstand.model_switch.empty")
+        private val NO_SELECTION_MESSAGE = Component.translatable("armorstand.model_switch.no_selection")
     }
 
-    override fun shouldPause() = false
-    override fun applyBlur(context: DrawContext) {}
-    override fun renderDarkening(context: DrawContext) {}
+    override fun isPauseScreen() = false
+    override fun renderBlurredBackground(context: GuiGraphics) {}
+    override fun renderMenuBackground(context: GuiGraphics) {}
 
     private val modelIconCache = LinkedHashMap<Int, Pair<ModelIcon, ModelItem>>()
     private var modelIcons = listOf<Pair<ModelIcon, ModelItem>>()
@@ -107,8 +107,8 @@ class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchSc
         viewModel.clientTick()
         val uiState = viewModel.uiState.value
         if (uiState.content == ModelSwitchScreenState.Content.Empty) {
-            currentClient.player?.sendMessage(EMPTY_MESSAGE, true)
-            close()
+            currentMinecraft.player?.displayClientMessage(EMPTY_MESSAGE, true)
+            onClose()
             return
         }
         if (uiState.needToBeClosed) {
@@ -120,7 +120,7 @@ class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchSc
                     copy(model = item.path.toString())
                 }
             }
-            close()
+            onClose()
             return
         }
     }
@@ -151,8 +151,8 @@ class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchSc
 
     private var totalMoveDelta = 0.0
     override fun mouseMoved(mouseX: Double, mouseY: Double) {
-        val mouse = currentClient.mouse
-        totalMoveDelta += mouse.cursorDeltaX
+        val mouseHandler = currentMinecraft.mouseHandler
+        totalMoveDelta += mouseHandler.accumulatedDX
         when {
             totalMoveDelta > ITEM_SIZE -> {
                 switchModel(true)
@@ -167,7 +167,7 @@ class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchSc
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-        if (ArmorStandClient.modelSwitchKeyBinding.matchesKey(keyCode, scanCode)) {
+        if (ArmorStandClient.modelSwitchKeyBinding.matches(keyCode, scanCode)) {
             switchModel(true)
             return true
         }
@@ -175,15 +175,15 @@ class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchSc
     }
 
     private fun switchModel(next: Boolean) {
-        currentClient.soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F))
+        currentMinecraft.soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F))
         viewModel.switchModel(next)
     }
 
-    override fun render(context: DrawContext, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+    override fun render(graphics: GuiGraphics, mouseX: Int, mouseY: Int, deltaTicks: Float) {
         val uiState = viewModel.uiState.value
         when (uiState.content) {
             ModelSwitchScreenState.Content.Loading -> {
-                context.drawGuiTexture(
+                graphics.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
                     LOADING_ICON,
                     (width - LOADING_ICON_WIDTH) / 2,
@@ -204,16 +204,16 @@ class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchSc
                         SELECTED_BACKGROUND
                     } else {
                         UNSELECTED_BACKGROUND
-                    }.draw(context, itemLeft, top, ITEM_SIZE, ITEM_SIZE)
+                    }.draw(graphics, itemLeft, top, ITEM_SIZE, ITEM_SIZE)
                     val (icon) = modelIcons.getOrNull(index) ?: continue
                     icon.setPosition(itemLeft + ICON_PADDING, top + ICON_PADDING)
-                    icon.render(context, mouseX, mouseY, deltaTicks)
+                    icon.render(graphics, mouseX, mouseY, deltaTicks)
                 }
 
                 val labelLeft = (width - MODEL_NAME_LABEL_WIDTH) / 2
                 val labelTop = top + ITEM_SIZE + ITEM_GAP
                 MODEL_NAME_LABEL_BACKGROUND.draw(
-                    context,
+                    graphics,
                     labelLeft,
                     labelTop,
                     MODEL_NAME_LABEL_WIDTH,
@@ -222,39 +222,39 @@ class ModelSwitchScreen(parent: Screen? = null) : ArmorStandScreen<ModelSwitchSc
                 val currentModel = modelIcons.getOrNull(TOTAL_ITEMS / 2)
                 val labelTextLeft = labelLeft + MODEL_NAME_LABEL_PADDING
                 val labelTextWidth = MODEL_NAME_LABEL_WIDTH - MODEL_NAME_LABEL_PADDING * 2
-                val textRenderer = currentClient.textRenderer
+                val font = currentMinecraft.font
                 if (currentModel != null) {
                     val (_, item) = currentModel
-                    val text = Text.literal(item.name)
-                    val textLines = textRenderer.wrapLines(text, labelTextWidth)
-                    val textHeight = textRenderer.fontHeight * textLines.size
-                    val textWidth = textLines.maxOf { textRenderer.getWidth(it) }
+                    val text = Component.literal(item.name)
+                    val textLines = font.split(text, labelTextWidth)
+                    val textHeight = font.lineHeight * textLines.size
+                    val textWidth = textLines.maxOf { font.width(it) }
                     var textTextTop = labelTop + (MODEL_NAME_LABEL_HEIGHT - textHeight) / 2
                     for (line in textLines) {
-                        context.drawTextWithShadow(
-                            textRenderer,
+                        graphics.drawString(
+                            font,
                             line,
                             labelTextLeft + (labelTextWidth - textWidth) / 2,
                             textTextTop,
-                            Colors.WHITE,
+                            CommonColors.WHITE,
                         )
-                        textTextTop += textRenderer.fontHeight
+                        textTextTop += font.lineHeight
                     }
                 } else {
                     val text = NO_SELECTION_MESSAGE
-                    val textWidth = textRenderer.getWidth(text)
-                    val textTextTop = labelTop + (MODEL_NAME_LABEL_HEIGHT - textRenderer.fontHeight) / 2
-                    context.drawTextWithShadow(
-                        textRenderer,
+                    val textWidth = font.width(text)
+                    val textTextTop = labelTop + (MODEL_NAME_LABEL_HEIGHT - font.lineHeight) / 2
+                    graphics.drawString(
+                        font,
                         text,
                         labelTextLeft + (labelTextWidth - textWidth) / 2,
                         textTextTop,
-                        Colors.WHITE,
+                        CommonColors.WHITE,
                     )
                 }
             }
         }
 
-        super.render(context, mouseX, mouseY, deltaTicks)
+        super.render(graphics, mouseX, mouseY, deltaTicks)
     }
 }

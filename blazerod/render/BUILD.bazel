@@ -30,28 +30,14 @@ alias(
 )
 
 alias(
-    name = "render_neoforge_unmapped",
-    actual = "//blazerod/render/neoforge:neoforge_unmapped",
+    name = "render_neoforge",
+    actual = "//blazerod/render/neoforge",
     visibility = ["//visibility:public"],
 )
 
 alias(
-    name = "render_neoforge_unmapped_merged",
-    actual = "//blazerod/render/neoforge:neoforge_unmapped_merged",
-    visibility = ["//visibility:public"],
-)
-
-remap_jar(
     name = "render_neoforge_merged",
-    classpath = [
-        "//game/1.21.8:game_client_neoforge",
-        "@neoforge_1_21_8//:neoforge_deps",
-    ],
-    from_namespace = "named",
-    inputs = [":render_neoforge_unmapped_merged"],
-    mapping = "//game/1.21.8:game_merged_mapping",
-    mixin = True,
-    to_namespace = "mojang",
+    actual = "//blazerod/render/neoforge:neoforge_merged",
     visibility = ["//visibility:public"],
 )
 

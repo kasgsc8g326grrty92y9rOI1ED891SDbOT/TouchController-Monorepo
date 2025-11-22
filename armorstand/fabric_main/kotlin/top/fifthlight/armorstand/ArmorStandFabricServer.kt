@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import top.fifthlight.armorstand.util.ThreadExecutorDispatcher
+import top.fifthlight.armorstand.util.BlockableEventLoopDispatcher
 
 object ArmorStandFabricServer : ArmorStandFabric(), DedicatedServerModInitializer {
     override lateinit var mainDispatcher: CoroutineDispatcher
@@ -16,7 +16,7 @@ object ArmorStandFabricServer : ArmorStandFabric(), DedicatedServerModInitialize
     override fun onInitializeServer() {
         super.onInitialize()
         ServerLifecycleEvents.SERVER_STARTING.register { server ->
-            mainDispatcher = ThreadExecutorDispatcher(server)
+            mainDispatcher = BlockableEventLoopDispatcher(server)
             scope = CoroutineScope(SupervisorJob() + mainDispatcher)
         }
     }

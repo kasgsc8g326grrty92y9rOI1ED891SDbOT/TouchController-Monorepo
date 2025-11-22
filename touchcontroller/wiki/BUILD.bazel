@@ -10,7 +10,11 @@ copy_file(
 
 mdbook(
     name = "wiki",
-    srcs = glob(["src/**/*.md"]),
+    srcs = glob([
+        "src/**/*.md",
+        "src/**/assets/**",
+        "theme/**",
+    ]),
     book = "book.toml",
     plugins = [":plugin-mdbook-alerts"],
 )

@@ -1,7 +1,7 @@
 package top.fifthlight.blazerod.animation.context
 
-import net.minecraft.entity.EquipmentSlot
-import net.minecraft.entity.LivingEntity
+import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.LivingEntity
 import top.fifthlight.blazerod.model.animation.AnimationContext
 import top.fifthlight.blazerod.model.animation.AnimationContext.Property.*
 
@@ -32,7 +32,7 @@ open class LivingEntityAnimationContext(
         LivingEntityIsDead -> booleanBuffer.apply { value = !entity.isAlive }
 
         LivingEntityEquipmentCount -> intBuffer.apply {
-            value = EquipmentSlot.entries.count { entity.hasStackEquipped(it) }
+            value = EquipmentSlot.entries.count { entity.hasItemInSlot(it) }
         }
 
         else -> super.getProperty(type)

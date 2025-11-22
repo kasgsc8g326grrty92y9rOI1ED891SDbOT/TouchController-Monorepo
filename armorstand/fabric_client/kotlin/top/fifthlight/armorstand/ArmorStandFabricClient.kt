@@ -25,7 +25,7 @@ import top.fifthlight.armorstand.ui.screen.AnimationScreen
 import top.fifthlight.armorstand.ui.screen.ConfigScreen
 import top.fifthlight.armorstand.ui.screen.ModelSwitchScreen
 import top.fifthlight.armorstand.util.RendererManager
-import top.fifthlight.armorstand.util.ThreadExecutorDispatcher
+import top.fifthlight.armorstand.util.BlockableEventLoopDispatcher
 import top.fifthlight.blazerod.api.event.RenderEvents
 import top.fifthlight.blazerod.model.formats.ModelFileLoaders
 import javax.swing.SwingUtilities
@@ -96,7 +96,7 @@ object ArmorStandFabricClient : ArmorStandFabric(), ArmorStandClient, ClientModI
         }
 
         ClientLifecycleEvents.CLIENT_STARTED.register { client ->
-            mainDispatcher = ThreadExecutorDispatcher(client)
+            mainDispatcher = BlockableEventLoopDispatcher(client)
             scope = CoroutineScope(SupervisorJob() + mainDispatcher)
             runBlocking {
                 ModelManagerHolder.initialize()
@@ -125,16 +125,16 @@ object ArmorStandFabricClient : ArmorStandFabric(), ArmorStandClient, ClientModI
             if (client.player == null) {
                 return@register
             }
-            if (client.currentScreen != null) {
+            if (client.screen != null) {
                 return@register
             }
-            if (configKeyBinding.isPressed) {
+            if (configKeyBinding.isDown) {
                 client.setScreen(ConfigScreen(null))
             }
-            if (animationKeyBinding.isPressed) {
+            if (animationKeyBinding.isDown) {
                 client.setScreen(AnimationScreen(null))
             }
-            if (modelSwitchKeyBinding.isPressed) {
+            if (modelSwitchKeyBinding.isDown) {
                 client.setScreen(ModelSwitchScreen(null))
             }
         }

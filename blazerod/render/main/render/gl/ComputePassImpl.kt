@@ -3,7 +3,7 @@ package top.fifthlight.blazerod.render.gl
 import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.textures.GpuTextureView
-import net.minecraft.client.gl.GlCommandEncoder
+import com.mojang.blaze3d.opengl.GlCommandEncoder
 import top.fifthlight.blazerod.extension.internal.CommandEncoderExtInternal
 import top.fifthlight.blazerod.extension.internal.gl.GpuDeviceExtInternal
 import top.fifthlight.blazerod.systems.ComputePass
@@ -16,8 +16,8 @@ class ComputePassImpl(
 ) : ComputePass {
     private val resourceManagerExt
         get() = resourceManager as CommandEncoderExtInternal
-    private val backend
-        get() = resourceManagerExt.`blazerod$getBackend`()
+    private val device
+        get() = resourceManagerExt.`blazerod$getDevice`()
 
     private var closed = false
     private var debugGroupPushCount = 0
@@ -38,12 +38,12 @@ class ComputePassImpl(
 
     override fun pushDebugGroup(label: Supplier<String>) {
         debugGroupPushCount++
-        backend.debugLabelManager.pushDebugGroup(label)
+        device.debugLabels().pushDebugGroup(label)
     }
 
     override fun popDebugGroup() {
         debugGroupPushCount--
-        backend.debugLabelManager.popDebugGroup()
+        device.debugLabels().popDebugGroup()
     }
 
     override fun setPipeline(pipeline: ComputePipeline) {
@@ -52,7 +52,7 @@ class ComputePassImpl(
             this.setSimpleUniforms.addAll(this.samplerUniforms.keys)
         }
 
-        val backendExt = backend as GpuDeviceExtInternal
+        val backendExt = device as GpuDeviceExtInternal
         this.pipeline = backendExt.`blazerod$compilePipelineCached`(pipeline)
     }
 
@@ -72,7 +72,7 @@ class ComputePassImpl(
     }
 
     override fun setUniform(name: String, slice: GpuBufferSlice) {
-        val alignment = backend.uniformOffsetAlignment
+        val alignment = device.uniformOffsetAlignment
         require(slice.offset() % alignment == 0) { "Uniform buffer offset must be aligned to $alignment" }
         simpleUniforms.put(name, slice)
         setSimpleUniforms.add(name)
@@ -96,6 +96,6 @@ class ComputePassImpl(
 
         require(debugGroupPushCount == 0) { "Compute pass had debug groups left open!" }
         closed = true
-        resourceManager.closePass()
+        resourceManager.finishRenderPass()
     }
 }

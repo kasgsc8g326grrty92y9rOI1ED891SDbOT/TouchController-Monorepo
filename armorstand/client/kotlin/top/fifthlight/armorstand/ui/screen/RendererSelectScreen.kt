@@ -1,20 +1,20 @@
 package top.fifthlight.armorstand.ui.screen
 
 import kotlinx.coroutines.flow.map
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.TextWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
 import top.fifthlight.armorstand.config.GlobalConfig
 import top.fifthlight.armorstand.ui.component.*
 import top.fifthlight.armorstand.ui.model.RendererSelectViewModel
 import top.fifthlight.armorstand.ui.util.checkbox
 
 class RendererSelectScreen(parent: Screen? = null) : ArmorStandScreen<RendererSelectScreen, RendererSelectViewModel>(
-    title = Text.translatable("armorstand.renderer"),
+    title = Component.translatable("armorstand.renderer"),
     viewModelFactory = ::RendererSelectViewModel,
     parent = parent,
 ) {
@@ -47,14 +47,14 @@ class RendererSelectScreen(parent: Screen? = null) : ArmorStandScreen<RendererSe
     }
 
     private val topBar by lazy {
-        TextWidget(width, 32, title, currentClient.textRenderer)
+        StringWidget(width, 32, title, currentMinecraft.font)
     }
     private val dataTable by lazy {
         GridLayout(
             surface = Surface.listBackgroundWithSeparator(),
             gridPadding = Insets(8),
         ).apply {
-            val textRenderer = currentClient.textRenderer
+            val font = currentMinecraft.font
             var row = 0
             listOf(
                 "armorstand.renderer.name",
@@ -66,7 +66,7 @@ class RendererSelectScreen(parent: Screen? = null) : ArmorStandScreen<RendererSe
                 add(
                     column = column,
                     row = row,
-                    widget = TextWidget(Text.translatable(value), textRenderer),
+                    widget = StringWidget(Component.translatable(value), font),
                 )
             }
             row++
@@ -74,27 +74,27 @@ class RendererSelectScreen(parent: Screen? = null) : ArmorStandScreen<RendererSe
                 add(
                     column = 0,
                     row = row,
-                    widget = TextWidget(Text.translatable(key.nameKey), textRenderer),
+                    widget = StringWidget(Component.translatable(key.nameKey), font),
                 )
                 add(
                     column = 1,
                     row = row,
-                    widget = TextWidget(Text.translatable(value.speed.nameKey), textRenderer),
+                    widget = StringWidget(Component.translatable(value.speed.nameKey), font),
                 )
                 add(
                     column = 2,
                     row = row,
-                    widget = TextWidget(
-                        if (value.isShaderCompatible) ScreenTexts.YES else ScreenTexts.NO,
-                        textRenderer,
+                    widget = StringWidget(
+                        if (value.isShaderCompatible) CommonComponents.GUI_YES else CommonComponents.GUI_NO,
+                        font,
                     ),
                 )
                 add(
                     column = 3,
                     row = row,
-                    widget = TextWidget(
-                        if (value.isAvailable) ScreenTexts.YES else ScreenTexts.NO,
-                        textRenderer,
+                    widget = StringWidget(
+                        if (value.isAvailable) CommonComponents.GUI_YES else CommonComponents.GUI_NO,
+                        font,
                     ),
                 )
                 add(
@@ -112,7 +112,7 @@ class RendererSelectScreen(parent: Screen? = null) : ArmorStandScreen<RendererSe
             pack()
         }
     }
-    private val closeButton = ButtonWidget.builder(ScreenTexts.BACK) { close() }.build()
+    private val closeButton = Button.builder(CommonComponents.GUI_BACK) { onClose() }.build()
 
     override fun init() {
         val rootLayout = BorderLayout(
@@ -127,10 +127,9 @@ class RendererSelectScreen(parent: Screen? = null) : ArmorStandScreen<RendererSe
                 direction = LinearLayout.Direction.VERTICAL,
                 align = LinearLayout.Align.CENTER,
             ).apply {
-                add(dataTable, Positioner.create().apply { alignHorizontalCenter() })
+                add(dataTable, LayoutSettings.defaults().alignHorizontallyCenter())
             },
         )
-        addDrawable(dataTable)
         rootLayout.setSecondElement(
             LinearLayout(
                 width = width,
@@ -139,16 +138,16 @@ class RendererSelectScreen(parent: Screen? = null) : ArmorStandScreen<RendererSe
                 align = LinearLayout.Align.CENTER,
                 gap = 8,
             ).apply {
-                add(closeButton, Positioner.create().apply { alignVerticalCenter() })
+                add(closeButton, LayoutSettings.defaults().alignVerticallyMiddle())
             }
         )
-        rootLayout.refreshPositions()
-        rootLayout.forEachChild { addDrawableChild(it) }
+        rootLayout.arrangeElements()
+        rootLayout.visitWidgets { addRenderableWidget(it) }
     }
 
-    override fun applyBlur(context: DrawContext) {
-        if (client?.world == null) {
-            super.applyBlur(context)
+    override fun renderBlurredBackground(graphics: GuiGraphics) {
+        if (minecraft?.level == null) {
+            super.renderBlurredBackground(graphics)
         }
     }
 }

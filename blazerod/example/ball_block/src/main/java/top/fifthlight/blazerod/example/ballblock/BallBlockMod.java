@@ -2,8 +2,8 @@ package top.fifthlight.blazerod.example.ballblock;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import top.fifthlight.blazerod.api.loader.ModelLoaderFactory;
 import top.fifthlight.blazerod.api.render.Renderer;
 import top.fifthlight.blazerod.api.render.RendererFactory;
@@ -76,7 +76,7 @@ public class BallBlockMod implements ClientModInitializer {
             });
             BALL_INSTANCE.updateRenderData();
         }).exceptionally(throwable -> {
-            MinecraftClient.getInstance().execute(() -> {
+            Minecraft.getInstance().execute(() -> {
                 throw new RuntimeException("Failed to load model: ", throwable);
             });
             return null;
@@ -95,7 +95,7 @@ public class BallBlockMod implements ClientModInitializer {
     public void onInitializeClient() {
         ModBlocks.initialize();
         ModelFileLoaders.initialize();
-        BlockEntityRendererFactories.register(ModBlockEntities.BALL_BLOCK_ENTITY, BallBlockEntityRenderer::new);
+        BlockEntityRenderers.register(ModBlockEntities.BALL_BLOCK_ENTITY, BallBlockEntityRenderer::new);
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> loadModel());
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
             BALL_INSTANCE.decreaseReferenceCount();

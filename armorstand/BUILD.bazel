@@ -3,7 +3,6 @@ load("@rules_java//java:defs.bzl", "java_binary")
 load("//armorstand:properties.bzl", "armorstand_version")
 load("//blazerod:properties.bzl", "blazerod_version")
 load("//rule:extract_update_log.bzl", "extract_update_log")
-load("//rule:generate_remap_classpath.bzl", "generate_remap_classpath")
 load("//rule:remap_jar.bzl", "remap_jar")
 load("//rule/fabric:merge_jij.bzl", "fabric_merge_jij")
 load("//rule/neoforge:merge_jij.bzl", "neoforge_merge_jij")
@@ -24,20 +23,14 @@ alias(
 )
 
 alias(
-    name = "mod_neoforge_unmapped",
-    actual = "//armorstand/neoforge_client:neoforge_unmapped",
+    name = "mod_neoforge_merged",
+    actual = "//armorstand/neoforge_client:neoforge_merged",
     visibility = ["//visibility:public"],
 )
 
 alias(
     name = "mod_fabric_unmapped_merged",
     actual = "//armorstand/fabric_client:fabric_unmapped_merged",
-    visibility = ["//visibility:public"],
-)
-
-alias(
-    name = "mod_neoforge_unmapped_merged",
-    actual = "//armorstand/neoforge_client:neoforge_unmapped_merged",
     visibility = ["//visibility:public"],
 )
 
@@ -52,26 +45,15 @@ remap_jar(
     visibility = ["//visibility:public"],
 )
 
-remap_jar(
-    name = "mod_neoforge_merged",
-    classpath = ["//game/1.21.8:game_client_named"],
-    from_namespace = "named",
-    inputs = [":mod_neoforge_unmapped_merged"],
-    mapping = "//game/1.21.8:game_merged_mapping",
-    mixin = True,
-    to_namespace = "mojang",
-    visibility = ["//visibility:public"],
-)
-
 fabric_merge_jij(
     name = "mod_fabric",
     input = ":mod_fabric_merged",
     visibility = ["//visibility:public"],
     deps = {
-        "@maven//:com_h2database_h2": "com_h2database_h2:2.3.232",
-        "@maven//:com_illposed_osc_javaosc_core": "com_illposed_osc_javaosc_core:0.9",
+        "@maven_armorstand//:com_h2database_h2": "com_h2database_h2:2.3.232",
+        "@maven_armorstand//:com_illposed_osc_javaosc_core": "com_illposed_osc_javaosc_core:0.9",
         "@mocha//:mocha": "team_unnamed_mocha:3.0.1",
-        "@maven//:org_javassist_javassist": "org_javassist_javassist:3.30.2-GA",
+        "@maven_blazerod//:org_javassist_javassist": "org_javassist_javassist:3.30.2-GA",
         "//blazerod/model/model-base": "blazerod-model-base:=",
         "//blazerod/model/model-formats": "blazerod-model-formats:=",
         "//blazerod/model/model-gltf": "blazerod-model-formats-gltf:=",
@@ -89,10 +71,10 @@ neoforge_merge_jij(
     input = ":mod_neoforge_merged",
     visibility = ["//visibility:public"],
     deps = {
-        "@maven//:com_h2database_h2": "com.h2database:h2:2.3.232:LIBRARY",
-        "@maven//:com_illposed_osc_javaosc_core": "com.illposed.osc:javaosc.core:0.9:LIBRARY",
+        "@maven_armorstand//:com_h2database_h2": "com.h2database:h2:2.3.232:LIBRARY",
+        "@maven_armorstand//:com_illposed_osc_javaosc_core": "com.illposed.osc:javaosc.core:0.9:LIBRARY",
         "@mocha//:mocha": "team.unnamed:mocha:3.0.1:LIBRARY",
-        "@maven//:org_javassist_javassist": "org.javassist:javassist:3.30.2-GA:LIBRARY",
+        "@maven_blazerod//:org_javassist_javassist": "org.javassist:javassist:3.30.2-GA:LIBRARY",
         "//blazerod/model/model-base": "top.fifthlight.blazerod:blazerod-model-base:%s:" % blazerod_version,
         "//blazerod/model/model-formats": "top.fifthlight.blazerod:blazerod-model-formats:%s:" % blazerod_version,
         "//blazerod/model/model-gltf": "top.fifthlight.blazerod:blazerod-model-formats-gltf:%s:" % blazerod_version,
@@ -103,6 +85,83 @@ neoforge_merge_jij(
         "//blazerod/render:render_neoforge_merged": "top.fifthlight.blazerod:blazerod-render:%s:" % blazerod_version,
         "//blazerod:blazerod_neoforge_without_jij": "top.fifthlight.blazerod:blazerod:%s:" % blazerod_version,
     },
+)
+
+java_binary(
+    name = "dev_client",
+    srcs = [],
+    data = [
+        "@minecraft_assets//:assets_1.21.8",
+        "@minecraft_assets//:assets",
+        "@makeup_ultra_fast//:primary",
+        "//blazerod/model/example-models:example-models",
+    ],
+    env = {
+        "LANG": "en_US.UTF8",
+    },
+    jvm_flags = [
+        "-Dkotlinx.coroutines.debug=on",
+        "-Dfabric.development=true",
+        "-Ddev.launch.version=1.21.8",
+        "-Ddev.launch.type=client",
+        "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
+        "-Ddev.launch.mainClass=net.fabricmc.loader.impl.launch.knot.KnotClient",
+        "-Ddev.launch.copyFiles=" +
+            "$(rlocationpath @makeup_ultra_fast//:primary):shaderpacks/MakeUp-UltraFast-9.2.zip," +
+            "$(rlocationpath //blazerod/model/example-models:example-models):models",
+        "-Dblazerod.debug=true",
+        "-Dblazerod.debug.gui=true",
+        "-Darmorstand.debug=true",
+        "-Darmorstand.debug.bone=false",
+        "-Darmorstand.debug.gui=false",
+        "-Xmx4G",
+    ],
+    main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
+    runtime_deps = [
+        "//rule/dev_launch_wrapper",
+        "@minecraft//1.21.8:client_libraries",
+        ":mod_fabric_unmapped",
+        "//armorstand/fabric_client:remapped_deps",
+        "//blazerod:blazerod_fabric_without_jij",
+        "//game/1.21.8:game_mapping_jar",
+        "//game/1.21.8:game_client_named",
+        "//game/1.21.8:game_iris_named",
+        "//game/1.21.8:game_sodium_named",
+        "@maven_armorstand//:com_h2database_h2",
+        "@maven_armorstand//:com_illposed_osc_javaosc_core",
+        "@maven_armorstand//:io_github_douira_glsl_transformer",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_language_kotlin",
+        "@maven_fabric_1_21_8//:io_github_llamalad7_mixinextras_fabric",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
+        "@maven_fabric_1_21_8//:net_fabricmc_sponge_mixin",
+        "@maven_armorstand//:org_anarres_jcpp",
+        "@maven_armorstand//:org_antlr_antlr4_runtime",
+    ],
+)
+
+java_binary(
+    name = "dev_server",
+    srcs = [],
+    jvm_flags = [
+        "-Dfabric.development=true",
+        "-Ddev.launch.version=1.21.8",
+        "-Ddev.launch.type=server",
+        "-Ddev.launch.mainClass=net.fabricmc.loader.impl.launch.knot.KnotServer",
+        "-Xmx4G",
+    ],
+    main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
+    runtime_deps = [
+        "//rule/dev_launch_wrapper",
+        "@minecraft//1.21.8:client_libraries",
+        ":mod_fabric_unmapped",
+        "//armorstand/fabric_main:remapped_deps",
+        "//game/1.21.8:game_mapping_jar",
+        "//game/1.21.8:game_server_named",
+        "@maven_fabric_1_21_8//:io_github_llamalad7_mixinextras_fabric",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_language_kotlin",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
+        "@maven_fabric_1_21_8//:net_fabricmc_sponge_mixin",
+    ],
 )
 
 modrinth_dependency(

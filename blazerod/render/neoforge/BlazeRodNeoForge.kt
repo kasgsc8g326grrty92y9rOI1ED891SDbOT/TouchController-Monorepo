@@ -1,7 +1,7 @@
 package top.fifthlight.blazerod
 
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gl.RenderPassImpl
+import com.mojang.blaze3d.opengl.GlRenderPass
+import net.minecraft.client.Minecraft
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.ModContainer
@@ -15,7 +15,7 @@ import top.fifthlight.blazerod.api.event.RenderEvents
 import top.fifthlight.blazerod.debug.*
 import top.fifthlight.blazerod.runtime.resource.RenderTexture
 import top.fifthlight.blazerod.runtime.uniform.UniformBuffer
-import top.fifthlight.blazerod.util.dispatchers.ThreadExecutorDispatcher
+import top.fifthlight.blazerod.util.dispatchers.BlockableEventLoopDispatcher
 import top.fifthlight.blazerod.util.objectpool.cleanupObjectPools
 import javax.swing.SwingUtilities
 
@@ -28,14 +28,14 @@ class BlazeRodNeoForge(private val container: ModContainer) {
         @SubscribeEvent
         @JvmStatic
         fun onClientSetup(event: FMLClientSetupEvent) {
-            BlazeRod.mainDispatcher = ThreadExecutorDispatcher(MinecraftClient.getInstance())
+            BlazeRod.mainDispatcher = BlockableEventLoopDispatcher(Minecraft.getInstance())
 
             // NeoForge initialize device before us, so no RenderEvents.INITIALIZE_DEVICE here
             event.enqueueWork {
                 // GO MAIN THREAD!
                 if (System.getProperty("blazerod.debug") == "true") {
                     BlazeRod.debug = true
-                    RenderPassImpl.IS_DEVELOPMENT = true
+                    GlRenderPass.VALIDATION = true
                     if (System.getProperty("blazerod.debug.gui") == "true") {
                         ResourceCountTracker.initialize()
                         ObjectPoolTracker.initialize()

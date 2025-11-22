@@ -2,12 +2,13 @@ package top.fifthlight.armorstand.ui.screen
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.TextWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
 import top.fifthlight.armorstand.config.ConfigHolder
 import top.fifthlight.armorstand.ui.component.BorderLayout
 import top.fifthlight.armorstand.ui.component.Insets
@@ -18,28 +19,28 @@ import top.fifthlight.armorstand.ui.util.textField
 import top.fifthlight.armorstand.vmc.VmcMarionetteManager
 
 class VmcConfigScreen(parent: Screen? = null) : ArmorStandScreen<VmcConfigScreen, VmcConfigScreenModel>(
-    title = Text.translatable("armorstand.vmc"),
+    title = Component.translatable("armorstand.vmc"),
     parent = parent,
     viewModelFactory = ::VmcConfigScreenModel,
 ) {
     private val topBar by lazy {
-        TextWidget(width, 32, title, currentClient.textRenderer)
+        StringWidget(width, 32, title, currentMinecraft.font)
     }
-    private val closeButton = ButtonWidget.builder(ScreenTexts.BACK) { close() }.build()
+    private val closeButton = Button.builder(CommonComponents.GUI_BACK) { onClose() }.build()
 
     private val statusLabel by lazy {
-        TextWidget(Text.empty(), currentClient.textRenderer).apply {
+        StringWidget(Component.empty(), currentMinecraft.font).apply {
             scope.launch {
                 viewModel.uiState.collect {
                     message = when (it.state) {
-                        is VmcMarionetteManager.State.Running -> Text.translatable(
+                        is VmcMarionetteManager.State.Running -> Component.translatable(
                             "armorstand.vmc.running",
                             it.state.port
                         )
 
-                        is VmcMarionetteManager.State.Stopped -> Text.translatable("armorstand.vmc.stopped")
+                        is VmcMarionetteManager.State.Stopped -> Component.translatable("armorstand.vmc.stopped")
 
-                        is VmcMarionetteManager.State.Failed -> Text.translatable(
+                        is VmcMarionetteManager.State.Failed -> Component.translatable(
                             "armorstand.vmc.failed",
                             it.state.exception.message
                         )
@@ -50,7 +51,7 @@ class VmcConfigScreen(parent: Screen? = null) : ArmorStandScreen<VmcConfigScreen
     }
 
     private val portLabel by lazy {
-        TextWidget(Text.translatable("armorstand.vmc.port"), currentClient.textRenderer)
+        StringWidget(Component.translatable("armorstand.vmc.port"), currentMinecraft.font)
     }
 
     private val portField by lazy {
@@ -72,7 +73,7 @@ class VmcConfigScreen(parent: Screen? = null) : ArmorStandScreen<VmcConfigScreen
         )
     }
 
-    private val startButton = ButtonWidget.builder(Text.translatable("armorstand.vmc.start")) {
+    private val startButton = Button.builder(Component.translatable("armorstand.vmc.start")) {
         when (viewModel.uiState.value.state) {
             VmcMarionetteManager.State.Stopped, is VmcMarionetteManager.State.Failed -> viewModel.startVmcClient()
             is VmcMarionetteManager.State.Running -> viewModel.stopVmcClient()
@@ -82,9 +83,9 @@ class VmcConfigScreen(parent: Screen? = null) : ArmorStandScreen<VmcConfigScreen
             viewModel.uiState.collect {
                 message = when (it.state) {
                     VmcMarionetteManager.State.Stopped, is VmcMarionetteManager.State.Failed ->
-                        Text.translatable("armorstand.vmc.start")
+                        Component.translatable("armorstand.vmc.start")
 
-                    is VmcMarionetteManager.State.Running -> Text.translatable("armorstand.vmc.stop")
+                    is VmcMarionetteManager.State.Running -> Component.translatable("armorstand.vmc.stop")
                 }
             }
         }
@@ -112,16 +113,16 @@ class VmcConfigScreen(parent: Screen? = null) : ArmorStandScreen<VmcConfigScreen
                         height = portField.height,
                         direction = BorderLayout.Direction.HORIZONTAL,
                     ).apply {
-                        setFirstElement(portLabel, Positioner.create().marginRight(8))
+                        setFirstElement(portLabel, LayoutSettings.defaults().paddingRight(8))
                         setCenterElement(portField)
                     },
                     expand = true,
                 )
                 add(startButton, expand = true)
                 pack()
-                addDrawable(this)
+                addRenderableOnly(this)
             },
-            positioner = Positioner.create().alignVerticalCenter().alignHorizontalCenter(),
+            layoutSettings = LayoutSettings.defaults().alignVerticallyMiddle().alignHorizontallyCenter(),
             onSizeChanged = { _, _, _ -> },
         )
         rootLayout.setSecondElement(
@@ -132,9 +133,9 @@ class VmcConfigScreen(parent: Screen? = null) : ArmorStandScreen<VmcConfigScreen
                 align = LinearLayout.Align.CENTER,
                 gap = 8,
             ).apply {
-                add(closeButton, Positioner.create().apply { alignVerticalCenter() })
+                add(closeButton, LayoutSettings.defaults().alignVerticallyMiddle())
             })
-        rootLayout.refreshPositions()
-        rootLayout.forEachChild { addDrawableChild(it) }
+        rootLayout.arrangeElements()
+        rootLayout.visitWidgets { addRenderableWidget(it) }
     }
 }

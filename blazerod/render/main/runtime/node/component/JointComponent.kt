@@ -1,6 +1,6 @@
 package top.fifthlight.blazerod.runtime.node.component
 
-import net.minecraft.util.Colors
+import net.minecraft.util.CommonColors
 import org.joml.Matrix4f
 import top.fifthlight.blazerod.runtime.ModelInstanceImpl
 import top.fifthlight.blazerod.runtime.node.RenderNodeImpl
@@ -43,16 +43,16 @@ class JointComponent(
                 if (node.hasComponentOfType(Type.InfluenceSource)) {
                     return
                 }
-                val consumers = phase.vertexConsumerProvider
+                val consumers = phase.multiBufferSource
                 // TODO: find the real parent joint
                 node.parent?.let { parentJoint ->
                     val buffer = consumers.getBuffer(DEBUG_RENDER_LAYER)
 
                     val parent =
                         phase.viewProjectionMatrix.mul(instance.getWorldTransform(parentJoint), phase.cacheMatrix)
-                    buffer.vertex(parent, 0f, 0f, 0f).color(Colors.YELLOW).normal(0f, 1f, 0f)
+                    buffer.addVertex(parent, 0f, 0f, 0f).setColor(CommonColors.YELLOW).setNormal(0f, 1f, 0f)
                     val self = phase.viewProjectionMatrix.mul(instance.getWorldTransform(node), phase.cacheMatrix)
-                    buffer.vertex(self, 0f, 0f, 0f).color(Colors.RED).normal(0f, 1f, 0f)
+                    buffer.addVertex(self, 0f, 0f, 0f).setColor(CommonColors.RED).setNormal(0f, 1f, 0f)
                 }
             }
 

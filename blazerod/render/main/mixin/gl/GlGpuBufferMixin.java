@@ -1,11 +1,11 @@
 package top.fifthlight.blazerod.mixin.gl;
 
-import net.minecraft.client.gl.GlGpuBuffer;
+import com.mojang.blaze3d.opengl.GlBuffer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import top.fifthlight.blazerod.extension.internal.GpuBufferExtInternal;
 
-@Mixin(GlGpuBuffer.class)
+@Mixin(GlBuffer.class)
 public abstract class GlGpuBufferMixin implements GpuBufferExtInternal {
     @Unique
     private int extraUsage;

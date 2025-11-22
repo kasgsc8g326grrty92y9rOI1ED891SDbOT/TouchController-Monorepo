@@ -1,36 +1,36 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gui.ScreenRect
-import net.minecraft.client.gui.tab.Tab
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.LayoutWidget
-import net.minecraft.text.Text
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.tabs.Tab
+import net.minecraft.client.gui.layouts.Layout
+import net.minecraft.client.gui.navigation.ScreenRectangle
+import net.minecraft.network.chat.Component
 import java.util.function.Consumer
 
 class LayoutScreenTab<T>(
-    private val title: Text,
+    private val title: Component,
     val padding: Insets = Insets.ZERO,
     private val layoutFactory: () -> T,
-) : Tab where T : ResizableLayout, T : LayoutWidget {
-    override fun getTitle(): Text = this.title
+) : Tab where T : ResizableLayout, T : Layout {
+    override fun getTabTitle(): Component = this.title
 
-    override fun getNarratedHint(): Text = Text.empty()
+    override fun getTabExtraNarration(): Component = Component.empty()
 
     val layout by lazy {
         layoutFactory()
     }
 
-    override fun forEachChild(consumer: Consumer<ClickableWidget>) = layout.forEachChild(consumer)
+    override fun visitChildren(consumer: Consumer<AbstractWidget>) = layout.visitWidgets(consumer)
 
-    override fun refreshGrid(tabArea: ScreenRect) {
+    override fun doLayout(tabArea: ScreenRectangle) {
         layout.setPosition(
-            tabArea.left + padding.left,
-            tabArea.top + padding.top,
+            tabArea.position.x + padding.left,
+            tabArea.position.y + padding.top,
         )
         layout.setDimensions(
             width = tabArea.width - padding.left - padding.right,
             height = tabArea.height - padding.top - padding.bottom,
         )
-        layout.refreshPositions()
+        layout.arrangeElements()
     }
 }

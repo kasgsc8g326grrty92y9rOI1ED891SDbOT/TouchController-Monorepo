@@ -2,23 +2,23 @@ package top.fifthlight.armorstand.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import top.fifthlight.armorstand.event.ScreenEvents;
 
-@Mixin(Mouse.class)
-public abstract class MouseMixin {
+@Mixin(MouseHandler.class)
+public abstract class MouseHandlerMixin {
     @Shadow
     @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
 
-    @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Mouse;isCursorLocked()Z"))
-    public boolean isCursorLocked(Mouse instance, Operation<Boolean> original) {
-        var screen = client.currentScreen;
+    @WrapOperation(method = "handleAccumulatedMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MouseHandler;isMouseGrabbed()Z"))
+    public boolean isCursorLocked(MouseHandler instance, Operation<Boolean> original) {
+        var screen = minecraft.screen;
         return original.call(instance) && ScreenEvents.MOVE_VIEW.getInvoker().onViewMoved(screen);
     }
 }

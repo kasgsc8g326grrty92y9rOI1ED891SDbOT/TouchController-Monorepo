@@ -11,9 +11,9 @@
     "EntityRenderDispatcherMixin",
     "FrustumMixin",
     "GameRendererMixin",
-    "MinecraftClientMixin",
-    "MouseMixin",
-    "PlayerEntityRendererMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin",
+    "PlayerRendererMixin",
     "PlayerEntityRenderStateMixin",
     "PlayerModelMixin"
   ]

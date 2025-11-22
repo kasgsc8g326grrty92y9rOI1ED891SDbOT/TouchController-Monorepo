@@ -1,8 +1,8 @@
 package top.fifthlight.blazerod.animation.context
 
-import net.minecraft.entity.Entity
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import top.fifthlight.blazerod.api.animation.AnimationContexts
 import top.fifthlight.mergetools.api.ActualConstructor
 import top.fifthlight.mergetools.api.ActualImpl
@@ -19,5 +19,5 @@ object AnimationContextsImpl : AnimationContexts {
 
     override fun livingEntity(entity: LivingEntity) = LivingEntityAnimationContext(entity)
 
-    override fun player(player: PlayerEntity) = PlayerEntityAnimationContext(player)
+    override fun player(player: Player) = PlayerEntityAnimationContext(player)
 }

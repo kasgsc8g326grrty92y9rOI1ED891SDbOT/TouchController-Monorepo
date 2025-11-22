@@ -1,7 +1,7 @@
 package top.fifthlight.blazerod.runtime
 
 import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap
-import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.renderer.MultiBufferSource
 import org.joml.Matrix4fc
 import top.fifthlight.blazerod.api.refcount.AbstractRefCount
 import top.fifthlight.blazerod.api.resource.RenderExpression
@@ -112,7 +112,7 @@ class RenderSceneImpl(
         executePhase(instance, UpdatePhase.CameraUpdate)
     }
 
-    fun debugRender(instance: ModelInstanceImpl, viewProjectionMatrix: Matrix4fc, consumers: VertexConsumerProvider) {
+    fun debugRender(instance: ModelInstanceImpl, viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource) {
         if (debugRenderNodes.isEmpty()) {
             return
         }
@@ -122,7 +122,7 @@ class RenderSceneImpl(
             executePhase(instance, UpdatePhase.InfluenceTransformUpdate)
             executePhase(instance, UpdatePhase.GlobalTransformPropagation)
         }
-        UpdatePhase.DebugRender.acquire(viewProjectionMatrix, consumers).use {
+        UpdatePhase.DebugRender.acquire(viewProjectionMatrix, bufferSource).use {
             executePhase(instance, it)
         }
     }

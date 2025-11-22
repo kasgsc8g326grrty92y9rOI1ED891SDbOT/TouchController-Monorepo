@@ -1,7 +1,7 @@
 package top.fifthlight.armorstand
 
 import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
@@ -27,7 +27,7 @@ abstract class ArmorStandNeoForge : ArmorStand {
         ServerModelPathManager.onUpdateListener = { uuid, hash ->
             server?.let { server ->
                 val payload = PlayerModelUpdateS2CPayload(uuid, hash)
-                server.playerManager.playerList.forEach { player ->
+                server.playerList.players.forEach { player ->
                     if (player.uuid == uuid) {
                         return@let
                     }
@@ -50,7 +50,7 @@ abstract class ArmorStandNeoForge : ArmorStand {
             @SubscribeEvent
             fun onPlayerJoined(event: PlayerEvent.PlayerLoggedInEvent) {
                 val player = event.entity
-                if (player !is ServerPlayerEntity) {
+                if (player !is ServerPlayer) {
                     return
                 }
                 for ((uuid, hash) in ServerModelPathManager.getModels()) {
@@ -64,7 +64,7 @@ abstract class ArmorStandNeoForge : ArmorStand {
             @SubscribeEvent
             fun onPlayerDisconnected(event: PlayerEvent.PlayerLoggedOutEvent) {
                 val player = event.entity
-                if (player !is ServerPlayerEntity) {
+                if (player !is ServerPlayer) {
                     return
                 }
                 ServerModelPathManager.update(player.uuid, null)
@@ -76,8 +76,8 @@ abstract class ArmorStandNeoForge : ArmorStand {
         event.registrar("armorstand")
             .versioned(ModInfo.MOD_VERSION)
             .optional()
-            .playToClient(PlayerModelUpdateS2CPayload.ID, PlayerModelUpdateS2CPayload.CODEC)
-            .playToServer(ModelUpdateC2SPayload.ID, ModelUpdateC2SPayload.CODEC) { payload, context ->
+            .playToClient(PlayerModelUpdateS2CPayload.ID, PlayerModelUpdateS2CPayload.STREAM_CODEC)
+            .playToServer(ModelUpdateC2SPayload.ID, ModelUpdateC2SPayload.STREAM_CODEC) { payload, context ->
                 ServerModelPathManager.update(context.player().uuid, payload.modelHash)
             }
     }

@@ -4,13 +4,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.TextWidget
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
+import net.minecraft.ChatFormatting
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.network.chat.Component
 import top.fifthlight.armorstand.PlayerRenderer
 import top.fifthlight.armorstand.ui.component.*
 import top.fifthlight.armorstand.ui.model.AnimationViewModel
@@ -18,7 +18,7 @@ import top.fifthlight.armorstand.ui.state.AnimationScreenState
 import top.fifthlight.armorstand.ui.util.slider
 
 class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen, AnimationViewModel>(
-    title = Text.translatable("armorstand.animation"),
+    title = Component.translatable("armorstand.animation"),
     viewModelFactory = ::AnimationViewModel,
     parent = parent,
 ) {
@@ -53,7 +53,7 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
 
     private val speedSlider = slider(
         textFactory = { slider, value ->
-            Text.translatable("armorstand.animation.speed", value)
+            Component.translatable("armorstand.animation.speed", value)
         },
         width = 100,
         height = 20,
@@ -99,7 +99,7 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
                 val seconds = (this % 60).toInt().toString().padStart(2, '0')
                 return "$minutes:$seconds"
             }
-            Text.translatable(
+            Component.translatable(
                 "armorstand.animation.progress",
                 slider.realValue.toTime(),
                 slider.max.toTime(),
@@ -146,7 +146,7 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
     }
 
     private val animationList = AnimationList(
-        client = currentClient,
+        client = currentMinecraft,
         width = 150,
         onClicked = { item ->
             viewModel.switchAnimation(item)
@@ -162,7 +162,7 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
     }
 
     private val ikList = IkList(
-        client = currentClient,
+        client = currentMinecraft,
         width = 128,
         onClicked = viewModel::setIkEnabled,
     ).also {
@@ -175,25 +175,25 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
         }
     }
 
-    private val refreshAnimationButton = ButtonWidget.builder(Text.translatable("armorstand.animation.refresh")) {
+    private val refreshAnimationButton = Button.builder(Component.translatable("armorstand.animation.refresh")) {
         viewModel.refreshAnimations()
     }.build()
 
-    private val switchCameraButton = ButtonWidget.builder(Text.translatable("armorstand.animation.no_camera")) {
+    private val switchCameraButton = Button.builder(Component.translatable("armorstand.animation.no_camera")) {
         viewModel.switchCamera()
     }.width(100).build().also {
         scope.launch {
             PlayerRenderer.totalCameras.combine(PlayerRenderer.selectedCameraIndex, ::Pair).collect { (total, index) ->
                 if (total?.isEmpty() ?: true) {
                     it.active = false
-                    it.message = Text.translatable("armorstand.animation.no_camera")
+                    it.message = Component.translatable("armorstand.animation.no_camera")
                 } else {
                     it.active = true
                     val current = index?.let { index -> total.getOrNull(index) }
                     it.message = if (current == null) {
-                        Text.translatable("armorstand.animation.no_camera")
+                        Component.translatable("armorstand.animation.no_camera")
                     } else {
-                        Text.translatable("armorstand.animation.current_camera_name", current.name ?: "#$index")
+                        Component.translatable("armorstand.animation.current_camera_name", current.name ?: "#$index")
                     }
                 }
             }
@@ -227,16 +227,16 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
         )
         controlBar.setCenterElement(
             widget = progressSlider,
-            positioner = Positioner.create().margin(0, 8, 8, 8),
+            layoutSettings = LayoutSettings.defaults().padding(0, 8, 8, 8),
         )
         controlBar.setSecondElement(
             widget = switchCameraButton,
-            positioner = Positioner.create().margin(0, 8, 8, 8),
+            layoutSettings = LayoutSettings.defaults().padding(0, 8, 8, 8),
         )
 
-        controlBar.refreshPositions()
-        addDrawable(controlBar)
-        controlBar.forEachChild { addDrawableChild(it) }
+        controlBar.arrangeElements()
+        addRenderableOnly(controlBar)
+        controlBar.visitWidgets { addRenderableWidget(it) }
 
         val animationPanel = BorderLayout(
             x = width - animationPanelWidth - 16,
@@ -247,28 +247,28 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
             direction = BorderLayout.Direction.VERTICAL,
         ).apply {
             setFirstElement(
-                widget = TextWidget(
+                widget = StringWidget(
                     animationPanelWidth - 16,
-                    textRenderer.fontHeight,
-                    Text.translatable("armorstand.animation.title").formatted(Formatting.BOLD)
-                        .formatted(Formatting.UNDERLINE),
-                    textRenderer,
+                    font.lineHeight,
+                    Component.translatable("armorstand.animation.title").withStyle(ChatFormatting.BOLD)
+                        .withStyle(ChatFormatting.UNDERLINE),
+                    font,
                 ),
-                positioner = Positioner.create().margin(8, 8),
+                layoutSettings = LayoutSettings.defaults().padding(8, 8),
             )
             animationList.width = animationPanelWidth - 16
             setCenterElement(
                 widget = animationList,
-                positioner = Positioner.create().margin(8, 0, 8, 8),
+                layoutSettings = LayoutSettings.defaults().padding(8, 0, 8, 8),
             )
             setSecondElement(
                 widget = refreshAnimationButton,
-                positioner = Positioner.create().margin(8),
+                layoutSettings = LayoutSettings.defaults().padding(8),
             )
         }
-        animationPanel.refreshPositions()
-        addDrawable(animationPanel)
-        animationPanel.forEachChild { addDrawableChild(it) }
+        animationPanel.arrangeElements()
+        addRenderableOnly(animationPanel)
+        animationPanel.visitWidgets { addRenderableWidget(it) }
 
         val ikPanel = BorderLayout(
             x = 16,
@@ -279,31 +279,31 @@ class AnimationScreen(parent: Screen? = null) : ArmorStandScreen<AnimationScreen
             direction = BorderLayout.Direction.VERTICAL,
         ).apply {
             setFirstElement(
-                widget = TextWidget(
+                widget = StringWidget(
                     ikPanelWidth - 16,
-                    textRenderer.fontHeight,
-                    Text.translatable("armorstand.animation.ik_title").formatted(Formatting.BOLD)
-                        .formatted(Formatting.UNDERLINE),
-                    textRenderer,
+                    font.lineHeight,
+                    Component.translatable("armorstand.animation.ik_title").withStyle(ChatFormatting.BOLD)
+                        .withStyle(ChatFormatting.UNDERLINE),
+                    font,
                 ),
-                positioner = Positioner.create().margin(8, 8),
+                layoutSettings = LayoutSettings.defaults().padding(8, 8),
             )
             animationList.width = ikPanelWidth - 16
             setCenterElement(
                 widget = ikList,
-                positioner = Positioner.create().margin(8, 0, 8, 8),
+                layoutSettings = LayoutSettings.defaults().padding(8, 0, 8, 8),
             )
         }
-        ikPanel.refreshPositions()
-        addDrawable(ikPanel)
-        ikPanel.forEachChild { addDrawableChild(it) }
+        ikPanel.arrangeElements()
+        addRenderableOnly(ikPanel)
+        ikPanel.visitWidgets { addRenderableWidget(it) }
     }
 
     override fun tick() {
         viewModel.tick()
     }
 
-    override fun shouldPause() = false
-    override fun applyBlur(context: DrawContext) {}
-    override fun renderDarkening(context: DrawContext) {}
+    override fun isPauseScreen() = false
+    override fun renderBlurredBackground(context: GuiGraphics) {}
+    override fun renderMenuBackground(context: GuiGraphics) {}
 }

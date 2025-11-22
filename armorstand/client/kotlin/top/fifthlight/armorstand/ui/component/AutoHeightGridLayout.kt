@@ -1,9 +1,9 @@
 package top.fifthlight.armorstand.ui.component
 
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.Widget
-import net.minecraft.client.gui.widget.WrapperWidget
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.client.gui.layouts.LayoutElement
+import net.minecraft.client.gui.layouts.AbstractLayout
 import java.util.function.Consumer
 
 class AutoHeightGridLayout(
@@ -16,23 +16,23 @@ class AutoHeightGridLayout(
     private val forceAtLeastOneRow: Boolean = true,
     private val verticalGap: Int = 0,
     private val padding: Insets = Insets.ZERO,
-) : WrapperWidget(x, y, width, height), ResizableLayout {
-    private class Element<T : Widget>(
+) : AbstractLayout(x, y, width, height), ResizableLayout {
+    private class Element<T : LayoutElement>(
         private val inner: T,
-        positioner: Positioner,
+        positioner: LayoutSettings,
         private val onSizeChanged: (widget: T, width: Int, height: Int) -> Unit = { _, _, _ -> },
-    ) : WrappedElement(inner, positioner) {
+    ) : AbstractChildWrapper(inner, positioner) {
         fun setSize(width: Int, height: Int) = onSizeChanged(
             inner,
-            width - positioner.marginLeft - positioner.marginRight,
-            height - positioner.marginTop - positioner.marginBottom
+            width - layoutSettings.paddingLeft - layoutSettings.paddingRight,
+            height - layoutSettings.paddingTop - layoutSettings.paddingBottom
         )
     }
 
     private val elements = mutableListOf<Element<*>>()
 
-    override fun forEachElement(consumer: Consumer<Widget>) {
-        elements.forEach { consumer.accept(it.widget) }
+    override fun visitChildren(consumer: Consumer<LayoutElement>) {
+        elements.forEach { consumer.accept(it.child) }
     }
 
     private var cellHeight = (cellHeightRange.first + cellHeightRange.last) / 2
@@ -59,21 +59,21 @@ class AutoHeightGridLayout(
 
     fun clear() = elements.clear()
 
-    fun <T : Widget> add(
+    fun <T : LayoutElement> add(
         widget: T,
-        positioner: Positioner = Positioner.create(),
+        layoutSettings: LayoutSettings = LayoutSettings.defaults(),
         onSizeChanged: (widget: T, width: Int, height: Int) -> Unit,
     ) {
-        elements.add(Element(widget, positioner, onSizeChanged))
+        elements.add(Element(widget, layoutSettings, onSizeChanged))
     }
 
-    fun <T : ClickableWidget> add(widget: T, positioner: Positioner = Positioner.create()) {
-        add(widget, positioner) { w, width, height -> w.setDimensions(width, height) }
+    fun <T : AbstractWidget> add(widget: T, layoutSettings: LayoutSettings = LayoutSettings.defaults()) {
+        add(widget, layoutSettings) { w, width, height -> w.setSize(width, height) }
     }
 
-    fun <T> add(widget: T, positioner: Positioner = Positioner.create())
-            where T : ResizableLayout, T : Widget {
-        add(widget, positioner) { w, width, height -> w.setDimensions(width, height) }
+    fun <T> add(widget: T, layoutSettings: LayoutSettings = LayoutSettings.defaults())
+            where T : ResizableLayout, T : LayoutElement {
+        add(widget, layoutSettings) { w, width, height -> w.setDimensions(width, height) }
     }
 
     fun contentSize() = Pair(
@@ -93,7 +93,7 @@ class AutoHeightGridLayout(
         return Pair(rows, columns)
     }
 
-    override fun refreshPositions() {
+    override fun arrangeElements() {
         if (elements.isEmpty()) return
 
         val (availableWidth, availableHeight) = contentSize()
@@ -129,6 +129,6 @@ class AutoHeightGridLayout(
             currentRow++
         }
 
-        super.refreshPositions()
+        super.arrangeElements()
     }
 }

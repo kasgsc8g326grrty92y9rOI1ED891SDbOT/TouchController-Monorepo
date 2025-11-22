@@ -2,22 +2,22 @@ package top.fifthlight.armorstand.ui.util
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.widget.CheckboxWidget
-import net.minecraft.text.Text
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.components.Checkbox
+import net.minecraft.network.chat.Component
 import top.fifthlight.armorstand.ui.component.CheckBoxButton
 import top.fifthlight.armorstand.ui.model.ViewModel
 import top.fifthlight.armorstand.ui.screen.ArmorStandScreen
 
 fun <T : ArmorStandScreen<T, M>, M : ViewModel> ArmorStandScreen<T, M>.checkbox(
-    text: Text,
+    text: Component,
     value: Flow<Boolean>,
     enabled: Boolean = true,
     maxWidth: Int? = null,
     onValueChanged: (Boolean) -> Unit,
-): CheckboxWidget = CheckboxWidget.builder(text, MinecraftClient.getInstance().textRenderer)
+): Checkbox = Checkbox.builder(text, Minecraft.getInstance().font)
     .apply {
-        callback { checkbox, checked -> onValueChanged(checked) }
+        onValueChange { checkbox, checked -> onValueChanged(checked) }
         maxWidth?.let { maxWidth(it) }
     }
     .build()
@@ -25,7 +25,7 @@ fun <T : ArmorStandScreen<T, M>, M : ViewModel> ArmorStandScreen<T, M>.checkbox(
         active = enabled
         scope.launch {
             value.collect {
-                checked = it
+                selected = it
             }
         }
     }

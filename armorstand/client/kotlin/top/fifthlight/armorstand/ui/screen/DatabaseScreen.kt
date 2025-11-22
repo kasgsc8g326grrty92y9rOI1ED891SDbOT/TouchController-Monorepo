@@ -3,13 +3,13 @@ package top.fifthlight.armorstand.ui.screen
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import net.minecraft.client.gui.screen.Screen
-import net.minecraft.client.gui.widget.ButtonWidget
-import net.minecraft.client.gui.widget.Positioner
-import net.minecraft.client.gui.widget.TextWidget
-import net.minecraft.screen.ScreenTexts
-import net.minecraft.text.Text
-import net.minecraft.util.Formatting
+import net.minecraft.ChatFormatting
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.gui.components.Button
+import net.minecraft.client.gui.components.StringWidget
+import net.minecraft.client.gui.layouts.LayoutSettings
+import net.minecraft.network.chat.CommonComponents
+import net.minecraft.network.chat.Component
 import top.fifthlight.armorstand.ui.component.BorderLayout
 import top.fifthlight.armorstand.ui.component.LinearLayout
 import top.fifthlight.armorstand.ui.component.ResultTable
@@ -20,28 +20,28 @@ import top.fifthlight.armorstand.ui.util.textField
 class DatabaseScreen(parent: Screen? = null) : ArmorStandScreen<DatabaseScreen, DatabaseViewModel>(
     parent = parent,
     viewModelFactory = ::DatabaseViewModel,
-    title = Text.translatable("armorstand.debug_screen.database")
+    title = Component.translatable("armorstand.debug_screen.database")
 ) {
     private val topBar by lazy {
-        TextWidget(width, 32, title, currentClient.textRenderer)
+        StringWidget(width, 32, title, currentMinecraft.font)
     }
-    private val closeButton = ButtonWidget.builder(ScreenTexts.BACK) { close() }.build()
+    private val closeButton = Button.builder(CommonComponents.GUI_BACK) { onClose() }.build()
     private val queryInput by lazy {
         textField(
-            placeHolder = Text.literal("Enter SQL…").formatted(Formatting.ITALIC).formatted(Formatting.GRAY),
+            placeHolder = Component.literal("Enter SQL…").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY),
             text = viewModel.uiState.map { it.query }.distinctUntilChanged(),
             onChanged = viewModel::updateQuery,
         )
     }
     private val executeButton by lazy {
         autoWidthButton(
-            text = Text.translatable("armorstand.debug_database.execute_query"),
+            text = Component.translatable("armorstand.debug_database.execute_query"),
         ) {
             viewModel.submitQuery()
         }
     }
     private val resultTable by lazy {
-        ResultTable(textRenderer = currentClient.textRenderer).also {
+        ResultTable(textRenderer = currentMinecraft.font).also {
             scope.launch {
                 viewModel.uiState.collect { state ->
                     it.setContent(state.state)
@@ -70,19 +70,19 @@ class DatabaseScreen(parent: Screen? = null) : ArmorStandScreen<DatabaseScreen, 
                     ).apply {
                         setCenterElement(
                             widget = queryInput,
-                            positioner = Positioner.create().apply { margin(8) },
+                            layoutSettings = LayoutSettings.defaults().apply { padding(8) },
                         )
                         setSecondElement(
                             widget = executeButton,
-                            positioner = Positioner.create().apply {
-                                margin(0, 8, 8, 8)
+                            layoutSettings = LayoutSettings.defaults().apply {
+                                padding(0, 8, 8, 8)
                             },
                         )
                     },
                 )
                 setCenterElement(
                     widget = resultTable,
-                    positioner = Positioner.create().apply { margin(8, 0, 8, 8) },
+                    layoutSettings = LayoutSettings.defaults().apply { padding(8, 0, 8, 8) },
                 )
             }
         )
@@ -94,10 +94,10 @@ class DatabaseScreen(parent: Screen? = null) : ArmorStandScreen<DatabaseScreen, 
                 align = LinearLayout.Align.CENTER,
                 gap = 8,
             ).apply {
-                add(closeButton, Positioner.create().apply { alignVerticalCenter() })
+                add(closeButton, LayoutSettings.defaults().apply { alignVerticallyMiddle() })
             }
         )
-        rootLayout.refreshPositions()
-        rootLayout.forEachChild { addDrawableChild(it) }
+        rootLayout.arrangeElements()
+        rootLayout.visitWidgets { addRenderableWidget(it) }
     }
 }

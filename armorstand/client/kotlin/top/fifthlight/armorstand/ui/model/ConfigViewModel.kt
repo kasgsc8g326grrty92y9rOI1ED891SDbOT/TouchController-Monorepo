@@ -3,8 +3,8 @@ package top.fifthlight.armorstand.ui.model
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import net.minecraft.client.MinecraftClient
-import net.minecraft.util.Util
+import net.minecraft.Util
+import net.minecraft.client.Minecraft
 import top.fifthlight.armorstand.config.ConfigHolder
 import top.fifthlight.armorstand.manage.ModelManager
 import top.fifthlight.armorstand.manage.ModelManagerHolder
@@ -97,8 +97,8 @@ class ConfigViewModel(scope: CoroutineScope) : ViewModel(scope) {
     }
 
     fun tick() {
-        val client = MinecraftClient.getInstance()
-        val player = client.player ?: return
+        val minecraft = Minecraft.getInstance()
+        val player = minecraft.player ?: return
         val item = ModelInstanceManager.get(player.uuid, null)
         val modelItem = item as? ModelInstanceManager.ModelInstanceItem.Model ?: return
         val currentMetadata = uiState.value.currentMetadata
@@ -212,6 +212,6 @@ class ConfigViewModel(scope: CoroutineScope) : ViewModel(scope) {
     }
 
     fun openModelDir() {
-        Util.getOperatingSystem().open(ModelManagerHolder.modelDir.toUri())
+        Util.getPlatform().openPath(ModelManagerHolder.modelDir)
     }
 }
