@@ -19,12 +19,9 @@
     - [切换模式](./mechanism/custom-layout/mode-switch.md)
     - [自定义控件](./mechanism/custom-layout/custom-widget.md)
 	- [自定义图层条件](./mechanism/custom-layout/custom-conditions.md)
-
-# 特性
-
-- [触控圈](./feature/touch-ring.md)
-- [自定义布局](./feature/custom-layout.md)
-- [管理预设](./feature/manage-widget-preset.md)
+- [触控圈](./mechanism/touch-ring.md)
+- [管理预设](./mechanism/manage-widget-preset.md)
+- [物品列表](mechanism/item-list.md)
 
 # GUI
 

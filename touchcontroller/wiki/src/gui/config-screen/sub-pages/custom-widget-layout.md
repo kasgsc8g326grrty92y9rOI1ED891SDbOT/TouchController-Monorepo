@@ -2,7 +2,7 @@
 
 - 相关页面：[图层系统](../../../mechanism/custom-layout/layer-system.md)、[预设系统](../../../mechanism/custom-layout/preset-system.md)
 - 这个页面可以自定义控件的布局
-- 参见：[自定义布局的特性](../../../feature/custom-layout.md)
+- 参见：[自定义布局的特性](../../../mechanism/custom-layout/custom-layout.md)
 
 ![](assets/custom-widget-layout/file-20251116213404378.png)
 

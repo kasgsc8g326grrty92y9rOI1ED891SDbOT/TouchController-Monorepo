@@ -1,5 +1,9 @@
 # TouchControllerWiki
 
+> 欢迎来到新 TouchControllerWiki！
+> 
+> 引用本Wiki内容时务必注明出处。
+
 这里是 TouchController 的官方维基，我们欢迎任何形式的贡献！
 
 The official wiki for TouchController, welcomes contributions in any form.
