@@ -25,6 +25,7 @@
 - [触控圈](./feature/touch-ring.md)
 - [自定义布局](./feature/custom-layout.md)
 - [管理预设](./feature/manage-widget-preset.md)
+- [物品列表](feature/item-list.md)
 
 # GUI
 
