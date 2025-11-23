@@ -1,11 +1,9 @@
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("//rule:merge_library.bzl", "kt_merge_library")
 
-kt_jvm_library(
+kt_merge_library(
     name = "widget",
     srcs = glob(["*.kt"]),
-    visibility = ["//visibility:public"],
-    deps = [
-        "//:compose",
+    merge_deps = [
         "//combine/core/data",
         "//combine/core/input/interaction",
         "//combine/core/layout",
@@ -22,5 +20,9 @@ kt_jvm_library(
         "//combine/core/widget/layout",
         "//combine/style",
         "//combine/theme/base",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:compose",
     ],
 )

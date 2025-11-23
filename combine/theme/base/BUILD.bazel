@@ -1,12 +1,14 @@
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("//rule:merge_library.bzl", "kt_merge_library")
 
-kt_jvm_library(
+kt_merge_library(
     name = "base",
     srcs = glob(["*.kt"]),
-    visibility = ["//visibility:public"],
-    deps = [
+    merge_deps = [
         "//combine/core/paint",
         "//combine/style",
-        "@maven//:androidx_compose_runtime_runtime",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:compose",
     ],
 )

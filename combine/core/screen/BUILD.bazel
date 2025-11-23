@@ -1,11 +1,13 @@
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("//rule:merge_library.bzl", "kt_merge_library")
 
-kt_jvm_library(
+kt_merge_library(
     name = "screen",
     srcs = glob(["*.kt"]),
+    merge_deps = [
+        "//combine/core/data",
+    ],
     visibility = ["//combine:__subpackages__"],
     deps = [
         "//:compose",
-        "//combine/core/data",
     ],
 )

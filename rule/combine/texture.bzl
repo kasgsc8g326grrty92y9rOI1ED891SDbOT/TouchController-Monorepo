@@ -4,6 +4,16 @@ TextureInfo = provider(fields = ["identifier", "metadata", "texture", "backgroun
 NinePatchTextureInfo = provider(fields = ["identifier", "metadata", "texture"])
 TextureGroupInfo = provider(fields = ["textures", "ninepatch_textures", "files"])
 
+def _path_to_identifier(path):
+    # Strip leading "/" if present
+    path = path.removeprefix("/")
+    # Remove extension
+    path = path.split(".")[0]
+    # Replace all non-alphanumeric characters with underscores
+    path = "".join([path[index] if path[index].isalnum() else "_" for index in range(len(path))])
+    # Make all letters uppercase
+    return path.upper()
+
 def _ninepatch_texture_impl(ctx):
     strip_prefix = ctx.attr.strip_prefix
     if strip_prefix == ".":
@@ -20,7 +30,7 @@ def _ninepatch_texture_impl(ctx):
 
         if not src.short_path.startswith(strip_prefix):
             fail("Bad strip_prefix: want to strip %s from %s" % (strip_prefix, src.short_path))
-        identifier = src.short_path.removeprefix(strip_prefix).replace("/", "_").upper()
+        identifier = _path_to_identifier(src.short_path.removeprefix(strip_prefix))
 
         args = ctx.actions.args()
         args.add("ninepatch")
@@ -92,7 +102,7 @@ def _texture_impl(ctx):
 
         if not src.short_path.startswith(strip_prefix):
             fail("Bad strip_prefix: want to strip %s from %s" % (strip_prefix, src.short_path))
-        identifier = src.short_path.removeprefix(strip_prefix).replace("/", "_").upper()
+        identifier = _path_to_identifier(src.short_path.removeprefix(strip_prefix))
 
         args = ctx.actions.args()
         args.add("texture")

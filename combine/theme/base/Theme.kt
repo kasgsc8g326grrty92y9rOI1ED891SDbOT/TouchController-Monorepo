@@ -1,5 +1,7 @@
 package top.fifthlight.combine.theme
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import top.fifthlight.combine.paint.BackgroundTexture
 import top.fifthlight.combine.paint.Drawable
@@ -57,3 +59,6 @@ data class Theme(
         val itemGridBackground: BackgroundTexture? = null,
     )
 }
+
+@Composable
+operator fun Theme.invoke(block: @Composable () -> Unit): Unit = CompositionLocalProvider(LocalTheme provides this, block)

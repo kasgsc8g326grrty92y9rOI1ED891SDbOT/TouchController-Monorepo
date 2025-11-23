@@ -1,12 +1,9 @@
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("//rule:merge_library.bzl", "kt_merge_library")
 
-kt_jvm_library(
+kt_merge_library(
     name = "node",
     srcs = glob(["*.kt"]),
-    visibility = ["//combine:__subpackages__"],
-    deps = [
-        "//:compose",
-        "//:kotlin_serialization",
+    merge_deps = [
         "//combine/core/animation",
         "//combine/core/data",
         "//combine/core/input/focus",
@@ -18,7 +15,13 @@ kt_jvm_library(
         "//combine/core/modifier",
         "//combine/core/paint",
         "//combine/data",
+    ],
+    visibility = ["//combine:__subpackages__"],
+    deps = [
+        "//:compose",
+        "//:kotlin_serialization",
         "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_core_jvm",
         "@maven//:org_mini2Dx_universal_tween_engine",
     ],

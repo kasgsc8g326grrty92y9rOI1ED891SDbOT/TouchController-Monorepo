@@ -1,13 +1,15 @@
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("//rule:merge_library.bzl", "kt_merge_library")
 
-kt_jvm_library(
+kt_merge_library(
     name = "paint",
     srcs = glob(["*.kt"]),
-    visibility = ["//combine:__subpackages__"],
-    deps = [
-        "//:kotlin_serialization",
+    merge_deps = [
         "//combine/core/data",
         "//combine/data",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:kotlin_serialization",
         "@maven//:androidx_compose_runtime_runtime",
         "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_core_jvm",

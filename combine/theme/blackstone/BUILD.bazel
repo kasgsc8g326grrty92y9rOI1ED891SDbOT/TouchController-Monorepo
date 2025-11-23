@@ -1,4 +1,4 @@
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("//rule:merge_library.bzl", "kt_merge_library")
 load("//rule/combine:library.bzl", "kt_texture_lib")
 
 kt_texture_lib(
@@ -6,14 +6,14 @@ kt_texture_lib(
     dep = "//combine/theme/blackstone/texture",
 )
 
-kt_jvm_library(
+kt_merge_library(
     name = "texture",
     srcs = glob(["*.kt"]),
-    visibility = ["//visibility:public"],
-    deps = [
+    merge_deps = [
         ":texture_lib",
         "//combine/core/paint",
         "//combine/style",
         "//combine/theme/base",
     ],
+    visibility = ["//visibility:public"],
 )

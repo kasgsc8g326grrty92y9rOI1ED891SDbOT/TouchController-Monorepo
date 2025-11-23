@@ -7,10 +7,11 @@ kt_jvm_library(
     deps = [
         "//:kotlin_serialization",
         "//combine/data",
-        "//rule/combine/metadata",
         "//rule/worker_api",
-        "@maven//:com_squareup_kotlinpoet",
+        "@maven//:com_squareup_kotlinpoet_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_json_jvm",
+        "@maven//:com_github_ajalt_clikt_clikt_jvm",
+        "@maven//:com_github_ajalt_clikt_clikt_core_jvm",
     ],
 )
 

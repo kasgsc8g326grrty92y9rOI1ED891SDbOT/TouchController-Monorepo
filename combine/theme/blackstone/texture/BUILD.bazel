@@ -6,8 +6,16 @@ texture(
     background = True,
 )
 
-ninepatch_texture(
+texture(
     name = "widget",
+    srcs = glob(
+        include = ["widget/*/*.png"],
+        exclude = ["**/*.9.png"],
+    ),
+)
+
+ninepatch_texture(
+    name = "widget_ninepatch",
     srcs = glob(["widget/*/*.9.png"]),
 )
 
@@ -16,6 +24,7 @@ texture_group(
     deps = [
         ":background",
         ":widget",
+        ":widget_ninepatch",
     ],
 )
 

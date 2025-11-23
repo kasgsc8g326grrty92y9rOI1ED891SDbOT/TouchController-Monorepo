@@ -61,6 +61,7 @@ include("//module/third_party:wayland.MODULE.bazel")
 # projects
 include("//module:blazerod.MODULE.bazel")
 include("//module:armorstand.MODULE.bazel")
+include("//module:combine.MODULE.bazel")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
@@ -70,12 +71,6 @@ maven.install(
         "org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.0",
         "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0",
         "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.4.0",
-
-        # Combine
-        "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:2.1.20",
-        "org.jetbrains.compose.runtime:runtime:1.7.1",
-        "org.jetbrains.compose.runtime:runtime-saveable:1.7.1",
-        "org.mini2Dx:universal-tween-engine:6.3.3",
 
         # Graphics
         "org.joml:joml:1.10.5",

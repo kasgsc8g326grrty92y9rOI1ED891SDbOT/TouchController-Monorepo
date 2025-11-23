@@ -1,15 +1,17 @@
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("//rule:merge_library.bzl", "kt_merge_library")
 
-kt_jvm_library(
+kt_merge_library(
     name = "item",
     srcs = glob(["*.kt"]),
+    merge_deps = [
+        "//combine/core/data",
+        "//combine/core/paint",
+        "//combine/data",
+    ],
     visibility = ["//combine:__subpackages__"],
     deps = [
         "//:compose",
         "//:kotlin_serialization",
-        "//combine/core/data",
-        "//combine/core/paint",
-        "//combine/data",
         "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_core_jvm",
     ],
