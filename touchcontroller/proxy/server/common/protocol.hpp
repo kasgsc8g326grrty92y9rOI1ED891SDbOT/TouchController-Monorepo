@@ -1,9 +1,8 @@
 #pragma once
 #include <cstdint>
-#include <vector>
-#include <iostream>
-#include <string>
+#include <cstdlib>
 #include <cstring>
+#include <vector>
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -11,7 +10,8 @@
 #include <arpa/inet.h>
 #endif
 
-#if defined(__MINGW32__) || not(defined(WIN32)) || (defined(WINVER) && WINVER < 0x0602)
+#if defined(__MINGW32__) || not(defined(WIN32)) || \
+    (defined(WINVER) && WINVER < 0x0602)
 static uint32_t htonf(float value) {
     uint32_t int_value = *(uint32_t*)(&value);
     return htonl(int_value);
@@ -126,7 +126,8 @@ struct ProxyMessage {
             case Initialize:
                 break;
             case Vibrate: {
-                uint32_t kind = htonl(static_cast<uint32_t>(static_cast<int32_t>(vibrate.kind)));
+                uint32_t kind = htonl(
+                    static_cast<uint32_t>(static_cast<int32_t>(vibrate.kind)));
                 append(buffer, kind);
                 break;
             }
@@ -141,18 +142,20 @@ struct ProxyMessage {
                 uint8_t str_length =
                     static_cast<uint8_t>(strlen(capability.name));
                 buffer.push_back(str_length);
-                buffer.insert(buffer.end(), capability.name, capability.name + str_length);
+                buffer.insert(buffer.end(), capability.name,
+                              capability.name + str_length);
                 buffer.push_back(capability.enabled ? 1 : 0);
                 break;
             }
             case InputStatus: {
                 if (input_status.has_status) {
                     buffer.push_back(1);
-                    uint32_t text_length = static_cast<uint32_t>(strlen(input_status.text));
+                    uint32_t text_length =
+                        static_cast<uint32_t>(strlen(input_status.text));
                     append(buffer, htonl(text_length));
                     buffer.insert(buffer.end(), input_status.text,
                                   input_status.text + text_length);
-                    std::free((void*) input_status.text);
+                    std::free((void*)input_status.text);
                     append(buffer, htonl(input_status.composition_start));
                     append(buffer, htonl(input_status.composition_length));
                     append(buffer, htonl(input_status.selection_start));
@@ -202,6 +205,6 @@ namespace touchcontroller {
 namespace protocol {
 
 bool deserialize_event(ProxyMessage& message, const std::vector<uint8_t> data);
-    
+
 }
-}
+}  // namespace touchcontroller

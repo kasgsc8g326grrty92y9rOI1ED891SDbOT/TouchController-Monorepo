@@ -1,16 +1,18 @@
-#include "touchcontroller/proxy/server/common/cpp/event.hpp"
-#include "touchcontroller/proxy/server/common/cpp/protocol.hpp"
 #include "lib.hpp"
-#include "input.hpp"
+
+#include <inputpaneinterop.h>
+#include <roapi.h>
+#include <winstring.h>
 
 #include <cstring>
 #include <deque>
+#include <iostream>
 #include <mutex>
 #include <vector>
 
-#include <winstring.h>
-#include <roapi.h>
-#include <inputpaneinterop.h>
+#include "input.hpp"
+#include "touchcontroller/proxy/server/common/event.hpp"
+#include "touchcontroller/proxy/server/common/protocol.hpp"
 // Gross hack to work around MINGW-packages#22160
 #define ____FIReference_1_boolean_INTERFACE_DEFINED__
 #include <windows.ui.viewmanagement.h>
@@ -72,7 +74,7 @@ static bool toggle_keyboard(boolean show) {
     return true;
 }
 
-}
+}  // namespace
 
 extern "C" {
 
@@ -126,13 +128,16 @@ Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_pushEvent(
             }
             case ProxyMessage::KeyboardShow: {
                 if (!toggle_keyboard(message.keyboard_show.show)) {
-                    std::cerr << "Failed to " << (message.keyboard_show.show ? "show" : "hide") << " keyboard" << std::endl;
+                    std::cerr << "Failed to "
+                              << (message.keyboard_show.show ? "show" : "hide")
+                              << " keyboard" << std::endl;
                 }
                 break;
             }
             case ProxyMessage::Initialize: {
-                touchcontroller::event::push_event(ProxyMessage{
-                    ProxyMessage::Capability, {.capability = {"keyboard_show", true}}});
+                touchcontroller::event::push_event(
+                    ProxyMessage{ProxyMessage::Capability,
+                                 {.capability = {"keyboard_show", true}}});
                 break;
             }
             default:

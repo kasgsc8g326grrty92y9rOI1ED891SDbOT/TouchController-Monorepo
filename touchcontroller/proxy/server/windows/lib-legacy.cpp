@@ -1,18 +1,21 @@
-#include "touchcontroller/proxy/server/common/cpp/event.hpp"
-#include "touchcontroller/proxy/server/common/cpp/protocol.hpp"
 #include "lib-legacy.hpp"
-#include "input.hpp"
 
+// clang-format off
+#include <windows.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <wchar.h>
+// clang-format on
+
+#include <algorithm>
 #include <cstring>
 #include <deque>
 #include <mutex>
-#include <vector>
-#include <algorithm>
-#include <wchar.h>
 #include <string>
-#include <shlobj.h>
-#include <windows.h>
-#include <shellapi.h>
+
+#include "input.hpp"
+#include "touchcontroller/proxy/server/common/event.hpp"
+#include "touchcontroller/proxy/server/common/protocol.hpp"
 
 extern std::mutex g_event_queue_mutex;
 extern std::deque<ProxyMessage> g_event_queue;
@@ -39,7 +42,8 @@ static bool get_tab_tip_path(std::wstring& out_path) {
     if (result != ERROR_SUCCESS) return false;
 
     std::wstring raw_path(path_buf);
-    std::transform(raw_path.begin(), raw_path.end(), raw_path.begin(), towlower);
+    std::transform(raw_path.begin(), raw_path.end(), raw_path.begin(),
+                   towlower);
 
     const std::wstring var = L"%commonprogramfiles%";
     size_t pos = raw_path.find(var);
@@ -91,7 +95,7 @@ static void hide_keyboard() {
     }
 }
 
-}
+}  // namespace
 
 extern "C" {
 JNIEXPORT void JNICALL
@@ -150,8 +154,9 @@ Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_pushEvent(
                 break;
             }
             case ProxyMessage::Initialize: {
-                touchcontroller::event::push_event(ProxyMessage{
-                    ProxyMessage::Capability, {.capability = {"keyboard_show", true}}});
+                touchcontroller::event::push_event(
+                    ProxyMessage{ProxyMessage::Capability,
+                                 {.capability = {"keyboard_show", true}}});
                 break;
             }
             default:

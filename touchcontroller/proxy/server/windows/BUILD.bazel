@@ -1,32 +1,33 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
     name = "input",
     srcs = ["input.cpp"],
     hdrs = ["input.hpp"],
-    target_compatible_with = ["@platforms//os:windows"],
-    deps = ["//touchcontroller/proxy/server/common/cpp"],
     defines = [
         "WIN32_LEAN_AND_MEAN",
     ],
+    target_compatible_with = ["@platforms//os:windows"],
+    deps = ["//touchcontroller/proxy/server/common"],
 )
 
 cc_library(
     name = "lib",
     srcs = [
         "lib.cpp",
-        "lib.hpp"
+        "lib.hpp",
     ],
-    target_compatible_with = ["@platforms//os:windows"],
     # Target Windows 10.
     defines = [
+        "WIN32_LEAN_AND_MEAN",
         "WINVER=0x0A00",
         "_WIN32_WINNT=0x0A00",
     ],
+    target_compatible_with = ["@platforms//os:windows"],
     deps = [
-        "@rules_jni//jni",
-        "//touchcontroller/proxy/server/common/cpp",
         ":input",
+        "//touchcontroller/proxy/server/common",
+        "@rules_jni//jni",
     ],
 )
 
@@ -34,17 +35,18 @@ cc_library(
     name = "lib-legacy",
     srcs = [
         "lib-legacy.cpp",
-        "lib-legacy.hpp"
+        "lib-legacy.hpp",
     ],
-    target_compatible_with = ["@platforms//os:windows"],
     # Target Windows 7.
     defines = [
+        "WIN32_LEAN_AND_MEAN",
         "WINVER=0x0601",
         "_WIN32_WINNT=0x0601",
     ],
+    target_compatible_with = ["@platforms//os:windows"],
     deps = [
-        "@rules_jni//jni",
-        "//touchcontroller/proxy/server/common",
         ":input",
+        "//touchcontroller/proxy/server/common",
+        "@rules_jni//jni",
     ],
 )

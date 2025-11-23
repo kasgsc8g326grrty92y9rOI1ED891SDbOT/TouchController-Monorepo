@@ -2,11 +2,9 @@
 
 #include <windows.h>
 
-#include <map>
-#include <memory>
-#include <vector>
+#include <unordered_map>
 
-#include "touchcontroller/proxy/server/common/cpp/event.hpp"
+#include "touchcontroller/proxy/server/common/event.hpp"
 
 std::mutex g_event_queue_mutex;
 std::deque<ProxyMessage> g_event_queue;
@@ -15,7 +13,8 @@ namespace {
 #if WINVER >= 0x0602
 void disable_feedback(HWND handle, FEEDBACK_TYPE feedback) {
     BOOL enabled = FALSE;
-    if (!SetWindowFeedbackSetting(handle, feedback, 0, sizeof(BOOL), &enabled)) {
+    if (!SetWindowFeedbackSetting(handle, feedback, 0, sizeof(BOOL),
+                                  &enabled)) {
         throw InitializeError("SetWindowFeedbackSetting failed");
     }
 }

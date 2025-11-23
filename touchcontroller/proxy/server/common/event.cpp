@@ -1,5 +1,8 @@
 #include "event.hpp"
 
+#include <deque>
+#include <mutex>
+
 static std::mutex g_event_queue_mutex;
 static std::deque<ProxyMessage> g_event_queue;
 
