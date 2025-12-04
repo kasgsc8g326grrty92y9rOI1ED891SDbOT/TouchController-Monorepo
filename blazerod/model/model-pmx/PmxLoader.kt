@@ -7,11 +7,14 @@ import org.joml.Vector3fc
 import org.slf4j.LoggerFactory
 import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.*
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
+import top.fifthlight.blazerod.model.loader.LoadResult
+import top.fifthlight.blazerod.model.loader.util.openChannelCaseInsensitive
 import top.fifthlight.blazerod.model.pmx.format.*
 import top.fifthlight.blazerod.model.pmx.format.PmxMorphGroup.MorphItem
-import top.fifthlight.blazerod.model.util.MMD_SCALE
-import top.fifthlight.blazerod.model.util.openChannelCaseInsensitive
-import top.fifthlight.blazerod.model.util.readAll
+import top.fifthlight.blazerod.model.loader.util.MMD_SCALE
+import top.fifthlight.blazerod.model.loader.util.readAll
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.IntBuffer
@@ -59,7 +62,8 @@ class PmxLoader : ModelFileLoader {
     )
 
     private class Context(
-        private val basePath: Path,
+        private val context: LoadContext,
+        private val param: LoadParam,
     ) {
         private lateinit var globals: PmxGlobals
         private val decoder by lazy {
@@ -523,29 +527,12 @@ class PmxLoader : ModelFileLoader {
             textures = (0 until textureCount).map {
                 try {
                     val pathString = loadString(buffer)
-                    // For Windows & Unix-like path support
-                    val pathParts = pathString.split('/', '\\')
-                    val relativePath = if (pathParts.size == 1) {
-                        basePath.fileSystem.getPath(pathParts[0])
-                    } else {
-                        basePath.fileSystem.getPath(pathParts[0], *pathParts.subList(1, pathParts.size).toTypedArray())
-                    }
-                    val path = basePath.resolve(relativePath)
-                    val buffer = path.openChannelCaseInsensitive(StandardOpenOption.READ).use { channel ->
-                        val size = channel.size()
-                        runCatching {
-                            channel.map(FileChannel.MapMode.READ_ONLY, 0, size)
-                        }.getOrNull() ?: run {
-                            if (size > 256 * 1024 * 1024) {
-                                throw PmxLoadException("Texture too large! Maximum supported is 256M.")
-                            }
-                            val size = size.toInt()
-                            val buffer = ByteBuffer.allocateDirect(size)
-                            channel.readAll(buffer)
-                            buffer.flip()
-                            buffer
-                        }
-                    }
+                    val buffer = context.loadExternalResource(
+                        path = pathString,
+                        type = LoadContext.ResourceType.TEXTURE,
+                        caseInsensitive = true,
+                        maxSize = 256 * 1024 * 1024,
+                    )
                     Texture(
                         name = pathString,
                         bufferView = BufferView(
@@ -557,7 +544,10 @@ class PmxLoader : ModelFileLoader {
                             byteOffset = 0,
                             byteStride = 0,
                         ),
-                        sampler = Texture.Sampler(),
+                        sampler = Texture.Sampler(
+                            magFilter = param.samplerMagFilter ?: Texture.Sampler.MagFilter.LINEAR,
+                            minFilter = param.samplerMinFilter ?: Texture.Sampler.MinFilter.LINEAR,
+                        ),
                     )
                 } catch (ex: Exception) {
                     logger.warn("Failed to load PMX texture", ex)
@@ -951,7 +941,7 @@ class PmxLoader : ModelFileLoader {
             val morphIndex: Int,
         )
 
-        fun load(buffer: ByteBuffer): ModelFileLoader.LoadResult {
+        fun load(buffer: ByteBuffer): LoadResult {
             val header = loadHeader(buffer)
             loadVertices(buffer)
             loadSurfaces(buffer)
@@ -1156,7 +1146,7 @@ class PmxLoader : ModelFileLoader {
             val scene = Scene(nodes = rootNodes)
 
             val pmxIndexToExpressions = mutableMapOf<Int, Expression.Target>()
-            return ModelFileLoader.LoadResult(
+            return LoadResult(
                 metadata = Metadata(
                     title = header.modelNameLocal,
                     titleUniversal = header.modelNameUniversal,
@@ -1207,7 +1197,7 @@ class PmxLoader : ModelFileLoader {
         }
     }
 
-    override fun load(path: Path, basePath: Path) =
+    override fun load(path: Path, context: LoadContext, param: LoadParam) =
         FileChannel.open(path, StandardOpenOption.READ).use { channel ->
             val fileSize = channel.size()
             val buffer = runCatching {
@@ -1222,7 +1212,7 @@ class PmxLoader : ModelFileLoader {
                 buffer.flip()
                 buffer
             }
-            val context = Context(basePath)
+            val context = Context(context, param)
             buffer.order(ByteOrder.LITTLE_ENDIAN)
             context.load(buffer)
         }

@@ -27,6 +27,7 @@ kt_junit_test(
     deps = [
         ":runfile_dummy_lib",
         "//blazerod/model/model-base",
+        "//blazerod/model/model-loader",
         "//blazerod/model/model-pmx",
         "@maven//:org_jetbrains_kotlin_kotlin_test",
     ],

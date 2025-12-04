@@ -1,5 +1,6 @@
 package top.fifthlight.blazerod.model.bedrock
 
+import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import it.unimi.dsi.fastutil.bytes.ByteArrayList
@@ -15,20 +16,19 @@ import top.fifthlight.blazerod.model.bedrock.animation.*
 import top.fifthlight.blazerod.model.bedrock.metadata.ModelMetadata
 import top.fifthlight.blazerod.model.bedrock.molang.value.MolangValue
 import top.fifthlight.blazerod.model.bedrock.molang.value.MolangVector3f
-import top.fifthlight.blazerod.model.util.readToBuffer
-import top.fifthlight.blazerod.model.util.toRadian
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.util.toRadian
+import java.io.StringReader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.channels.FileChannel
 import java.nio.file.Path
-import java.nio.file.StandardOpenOption
 import java.util.*
 import kotlin.io.path.bufferedReader
 import kotlin.math.floor
 
 internal class BedrockModelJsonLoader(
     private val properties: ModelMetadata.Properties?,
-    private val basePath: Path,
+    private val context: LoadContext,
     private val file: ModelMetadata.Files.File,
 ) {
     companion object {
@@ -85,26 +85,26 @@ internal class BedrockModelJsonLoader(
                 is ModelMetadata.Files.Texture.Path -> material.path
                 is ModelMetadata.Files.Texture.Pbr -> material.uv
             }
-            val baseColorPath = basePath.resolve(baseColorPathStr)
-            val baseColorTexture = FileChannel.open(baseColorPath, StandardOpenOption.READ).use { channel ->
-                val buffer = channel.readToBuffer(
-                    readSizeLimit = 16 * 1024 * 1024,
-                )
-                Texture(
-                    name = baseColorPathStr,
-                    bufferView = BufferView(
-                        buffer = Buffer(buffer = buffer),
-                        byteOffset = 0,
-                        byteLength = buffer.remaining(),
-                        byteStride = 0,
-                    ),
-                    type = null,
-                    sampler = Texture.Sampler(
-                        magFilter = Texture.Sampler.MagFilter.NEAREST,
-                        minFilter = Texture.Sampler.MinFilter.NEAREST,
-                    ),
-                )
-            }
+            val buffer = context.loadExternalResource(
+                baseColorPathStr,
+                LoadContext.ResourceType.TEXTURE,
+                false,
+                16 * 1024 * 1024
+            )
+            val baseColorTexture = Texture(
+                name = baseColorPathStr,
+                bufferView = BufferView(
+                    buffer = Buffer(buffer = buffer),
+                    byteOffset = 0,
+                    byteLength = buffer.remaining(),
+                    byteStride = 0,
+                ),
+                type = null,
+                sampler = Texture.Sampler(
+                    magFilter = Texture.Sampler.MagFilter.NEAREST,
+                    minFilter = Texture.Sampler.MinFilter.NEAREST,
+                ),
+            )
             Material.Vanilla(
                 name = baseColorPathStr,
                 baseColorTexture = Material.TextureInfo(baseColorTexture),
@@ -151,100 +151,97 @@ internal class BedrockModelJsonLoader(
         }
     }
 
-    private fun preprocess(path: Path): ParseContext = path
-        .bufferedReader()
-        .let(::JsonReader)
-        .with {
-            var formatVersion: String? = null
-            val geometries = mutableListOf<ParseContext.GeometryContext>()
-            obj { key ->
-                when (key) {
-                    "format_version" -> formatVersion = nextString()
-                    "minecraft:geometry" -> {
-                        array {
-                            var identifier: String? = null
-                            var textureWidth = 64
-                            var textureHeight = 64
-                            var cubeCount = 0
-                            val bones = mutableListOf<ParseContext.BoneContext>()
-                            obj { key ->
-                                when (key) {
-                                    "description" -> obj { key ->
-                                        when (key) {
-                                            "identifier" -> identifier = nextString()
-                                            "texture_width" -> textureWidth = nextInt()
-                                            "texture_height" -> textureHeight = nextInt()
-                                            else -> skipValue()
-                                        }
+    private fun preprocess(string: String): ParseContext = JsonReader(StringReader(string)).with {
+        var formatVersion: String? = null
+        val geometries = mutableListOf<ParseContext.GeometryContext>()
+        obj { key ->
+            when (key) {
+                "format_version" -> formatVersion = nextString()
+                "minecraft:geometry" -> {
+                    array {
+                        var identifier: String? = null
+                        var textureWidth = 64
+                        var textureHeight = 64
+                        var cubeCount = 0
+                        val bones = mutableListOf<ParseContext.BoneContext>()
+                        obj { key ->
+                            when (key) {
+                                "description" -> obj { key ->
+                                    when (key) {
+                                        "identifier" -> identifier = nextString()
+                                        "texture_width" -> textureWidth = nextInt()
+                                        "texture_height" -> textureHeight = nextInt()
+                                        else -> skipValue()
                                     }
-
-                                    "bones" -> {
-                                        val boneNames = mutableSetOf<String>()
-                                        var boneIndex = 0
-                                        array {
-                                            val boneIndex = boneIndex++
-                                            var boneName: String? = null
-                                            var parentName: String? = null
-                                            val bonePivot = Vector3f()
-                                            val boneRotation = Vector3f()
-                                            var boneMirror = false
-                                            var boneInflate = 0f
-                                            obj { key ->
-                                                when (key) {
-                                                    "name" -> boneName = nextString()
-                                                    "parent" -> parentName = nextString()
-                                                    "pivot" -> vec3(bonePivot).apply { x = -x }
-                                                    "rotation" -> vec3(boneRotation).apply { x = -x; y = -y }
-                                                    "mirror" -> boneMirror = nextBoolean()
-                                                    "inflate" -> boneInflate = nextDouble().toFloat()
-                                                    "cubes" -> array {
-                                                        cubeCount++
-                                                        skipValue()
-                                                    }
-
-                                                    else -> skipValue()
-                                                }
-                                            }
-                                            if (boneName in boneNames) {
-                                                throw BedrockModelLoadException("Duplicate bone name: $boneName")
-                                            }
-                                            boneName ?: throw BedrockModelLoadException("No bone name")
-                                            boneNames += boneName
-                                            bones += ParseContext.BoneContext(
-                                                index = boneIndex,
-                                                name = boneName,
-                                                parent = parentName,
-                                                pivot = bonePivot,
-                                                rotation = boneRotation,
-                                                mirror = boneMirror,
-                                                inflate = boneInflate,
-                                            )
-                                        }
-                                    }
-
-                                    else -> skipValue()
                                 }
-                            }
-                            geometries += ParseContext.GeometryContext(
-                                identifier = identifier ?: throw BedrockModelLoadException("No identifier"),
-                                textureWidth = textureWidth,
-                                textureHeight = textureHeight,
-                                cubeCount = cubeCount,
-                                bones = bones,
-                                nameBoneMap = bones.associateBy { it.name },
-                            )
-                        }
-                    }
 
-                    else -> skipValue()
+                                "bones" -> {
+                                    val boneNames = mutableSetOf<String>()
+                                    var boneIndex = 0
+                                    array {
+                                        val boneIndex = boneIndex++
+                                        var boneName: String? = null
+                                        var parentName: String? = null
+                                        val bonePivot = Vector3f()
+                                        val boneRotation = Vector3f()
+                                        var boneMirror = false
+                                        var boneInflate = 0f
+                                        obj { key ->
+                                            when (key) {
+                                                "name" -> boneName = nextString()
+                                                "parent" -> parentName = nextString()
+                                                "pivot" -> vec3(bonePivot).apply { x = -x }
+                                                "rotation" -> vec3(boneRotation).apply { x = -x; y = -y }
+                                                "mirror" -> boneMirror = nextBoolean()
+                                                "inflate" -> boneInflate = nextDouble().toFloat()
+                                                "cubes" -> array {
+                                                    cubeCount++
+                                                    skipValue()
+                                                }
+
+                                                else -> skipValue()
+                                            }
+                                        }
+                                        if (boneName in boneNames) {
+                                            throw BedrockModelLoadException("Duplicate bone name: $boneName")
+                                        }
+                                        boneName ?: throw BedrockModelLoadException("No bone name")
+                                        boneNames += boneName
+                                        bones += ParseContext.BoneContext(
+                                            index = boneIndex,
+                                            name = boneName,
+                                            parent = parentName,
+                                            pivot = bonePivot,
+                                            rotation = boneRotation,
+                                            mirror = boneMirror,
+                                            inflate = boneInflate,
+                                        )
+                                    }
+                                }
+
+                                else -> skipValue()
+                            }
+                        }
+                        geometries += ParseContext.GeometryContext(
+                            identifier = identifier ?: throw BedrockModelLoadException("No identifier"),
+                            textureWidth = textureWidth,
+                            textureHeight = textureHeight,
+                            cubeCount = cubeCount,
+                            bones = bones,
+                            nameBoneMap = bones.associateBy { it.name },
+                        )
+                    }
                 }
+
+                else -> skipValue()
             }
-            ParseContext(
-                formatVersion = formatVersion ?: throw BedrockModelLoadException("No format version"),
-                geometries = geometries,
-                nameGeometryMap = geometries.associateBy { it.identifier },
-            )
         }
+        ParseContext(
+            formatVersion = formatVersion ?: throw BedrockModelLoadException("No format version"),
+            geometries = geometries,
+            nameGeometryMap = geometries.associateBy { it.identifier },
+        )
+    }
 
     private fun populateStructure(parseContext: ParseContext) {
         val bonePivot = Vector3f()
@@ -365,10 +362,8 @@ internal class BedrockModelJsonLoader(
         }
     }
 
-    private fun loadGeometries(parseContext: ParseContext, path: Path): List<ByteBuffer> = path
-        .bufferedReader()
-        .let(::JsonReader)
-        .with {
+    private fun loadGeometries(parseContext: ParseContext, string: String): List<ByteBuffer> =
+        JsonReader(StringReader(string)).with {
             val vertexBufferList = mutableListOf<ByteBuffer>()
             var geometryArrayIndex = 0
 
@@ -1064,133 +1059,84 @@ internal class BedrockModelJsonLoader(
         )
     }
 
-    private fun loadAnimation(path: Path): List<Animation> = path
-        .bufferedReader()
-        .let(::JsonReader)
-        .with {
-            var formatVersion: String? = null
-            val animations = mutableListOf<Animation>()
-            obj { key ->
-                when (key) {
-                    "format_version" -> formatVersion = nextString()
+    private fun loadAnimation(string: String): List<Animation> = JsonReader(StringReader(string)).with {
+        var formatVersion: String? = null
+        val animations = mutableListOf<Animation>()
+        obj { key ->
+            when (key) {
+                "format_version" -> formatVersion = nextString()
 
-                    "animations" -> obj { animationKey ->
-                        val animationChannels = mutableListOf<AnimationChannel<*, *>>()
-                        var animationLength: Float? = null
-                        var loop = AnimationLoopMode.NO_LOOP
-                        var startDelay: MolangValue = MolangValue.ZERO
-                        var loopDelay: MolangValue = MolangValue.ZERO
-                        var animTimeUpdate: MolangValue? = null
-                        var blendWeight: MolangValue = MolangValue.ZERO
-                        var overridePreviousAnimation: Boolean = false
-                        obj { key ->
-                            when (key) {
-                                "animation_length" -> animationLength = nextDouble().toFloat()
-                                "override_previous_animation" -> overridePreviousAnimation = nextBoolean()
-                                "start_delay" -> startDelay = nextMolangValue()
-                                "loop_delay" -> loopDelay = nextMolangValue()
-                                "anim_time_update" -> animTimeUpdate = nextMolangValue()
-                                "blend_weight" -> blendWeight = nextMolangValue()
+                "animations" -> obj { animationKey ->
+                    val animationChannels = mutableListOf<AnimationChannel<*, *>>()
+                    var animationLength: Float? = null
+                    var loop = AnimationLoopMode.NO_LOOP
+                    var startDelay: MolangValue = MolangValue.ZERO
+                    var loopDelay: MolangValue = MolangValue.ZERO
+                    var animTimeUpdate: MolangValue? = null
+                    var blendWeight: MolangValue = MolangValue.ZERO
+                    var overridePreviousAnimation: Boolean = false
+                    obj { key ->
+                        when (key) {
+                            "animation_length" -> animationLength = nextDouble().toFloat()
+                            "override_previous_animation" -> overridePreviousAnimation = nextBoolean()
+                            "start_delay" -> startDelay = nextMolangValue()
+                            "loop_delay" -> loopDelay = nextMolangValue()
+                            "anim_time_update" -> animTimeUpdate = nextMolangValue()
+                            "blend_weight" -> blendWeight = nextMolangValue()
 
-                                "loop" -> loop = when (val token = peek()) {
-                                    JsonToken.STRING -> when (val mode = nextString()) {
-                                        "false" -> AnimationLoopMode.NO_LOOP
-                                        "true" -> AnimationLoopMode.LOOP
-                                        "hold_on_last_frame" -> AnimationLoopMode.HOLD_ON_LAST_FRAME
-                                        else -> throw BedrockModelLoadException("Unknown animation loop mode $mode in animation key $animationKey")
-                                    }
-
-                                    JsonToken.BOOLEAN -> when (nextBoolean()) {
-                                        true -> AnimationLoopMode.LOOP
-                                        false -> AnimationLoopMode.NO_LOOP
-                                    }
-
-                                    else -> throw BedrockModelLoadException("Unknown animation loop token $token in animation key $animationKey")
+                            "loop" -> loop = when (val token = peek()) {
+                                JsonToken.STRING -> when (val mode = nextString()) {
+                                    "false" -> AnimationLoopMode.NO_LOOP
+                                    "true" -> AnimationLoopMode.LOOP
+                                    "hold_on_last_frame" -> AnimationLoopMode.HOLD_ON_LAST_FRAME
+                                    else -> throw BedrockModelLoadException("Unknown animation loop mode $mode in animation key $animationKey")
                                 }
 
-                                "bones" -> obj { boneName ->
-                                    val nodeData = AnimationChannel.Type.NodeData(
-                                        targetNode = null,
-                                        targetNodeName = boneName,
-                                        targetHumanoidTag = null,
-                                    )
-                                    val typeData = AnimationChannel.Type.TransformData(
-                                        node = nodeData,
-                                        transformId = TransformId.RELATIVE_ANIMATION,
-                                    )
+                                JsonToken.BOOLEAN -> when (nextBoolean()) {
+                                    true -> AnimationLoopMode.LOOP
+                                    false -> AnimationLoopMode.NO_LOOP
+                                }
 
-                                    obj { key ->
-                                        when (key) {
-                                            "rotation" -> {
-                                                when (val token = peek()) {
-                                                    // Single frame
-                                                    JsonToken.NUMBER, JsonToken.BEGIN_ARRAY, JsonToken.STRING -> {
-                                                        when (val value = nextMolangVec3()) {
-                                                            is MolangVector3f.Plain -> SingleFrameAnimationChannel(
-                                                                type = AnimationChannel.Type.BedrockRotation,
-                                                                typeData = typeData,
-                                                                value = Quaternionf().rotateZYX(
-                                                                    value.value.z().toRadian(),
-                                                                    -value.value.y().toRadian(),
-                                                                    -value.value.x().toRadian(),
-                                                                ),
-                                                            )
+                                else -> throw BedrockModelLoadException("Unknown animation loop token $token in animation key $animationKey")
+                            }
 
-                                                            is MolangVector3f.Molang -> MolangAnimationChannel(
-                                                                type = AnimationChannel.Type.BedrockRotation,
-                                                                typeData = typeData,
-                                                                valueMapper = { src, dst ->
-                                                                    dst.rotationZYX(
-                                                                        src.z().toRadian(),
-                                                                        -src.y().toRadian(),
-                                                                        -src.x().toRadian(),
-                                                                    )
-                                                                },
-                                                                molangValue = value,
-                                                            )
-                                                        }
-                                                    }
+                            "bones" -> obj { boneName ->
+                                val nodeData = AnimationChannel.Type.NodeData(
+                                    targetNode = null,
+                                    targetNodeName = boneName,
+                                    targetHumanoidTag = null,
+                                )
+                                val typeData = AnimationChannel.Type.TransformData(
+                                    node = nodeData,
+                                    transformId = TransformId.RELATIVE_ANIMATION,
+                                )
 
-                                                    // Multiple frames
-                                                    JsonToken.BEGIN_OBJECT -> {
-                                                        val channel = readChannel(animationKey, key)
-                                                        KeyFrameAnimationChannel(
-                                                            type = AnimationChannel.Type.BedrockRotation,
-                                                            typeData = typeData,
-                                                            components = channel.components,
-                                                            indexer = channel.indexer,
-                                                            keyframeData = channel.keyFrameData.map { vec, quat ->
-                                                                quat.rotationZYX(
-                                                                    vec.z().toRadian(),
-                                                                    -vec.y().toRadian(),
-                                                                    -vec.x().toRadian(),
-                                                                )
-                                                            },
-                                                            interpolation = channel.interpolation,
-                                                        )
-                                                    }
-
-                                                    else -> throw BedrockModelLoadException("Unknown animation token $token in animation $animationKey channel $key")
-                                                }.let {
-                                                    animationChannels += it
-                                                }
-                                            }
-
-                                            "position" -> when (val token = peek()) {
+                                obj { key ->
+                                    when (key) {
+                                        "rotation" -> {
+                                            when (val token = peek()) {
                                                 // Single frame
                                                 JsonToken.NUMBER, JsonToken.BEGIN_ARRAY, JsonToken.STRING -> {
                                                     when (val value = nextMolangVec3()) {
                                                         is MolangVector3f.Plain -> SingleFrameAnimationChannel(
-                                                            type = AnimationChannel.Type.BedrockTranslation,
+                                                            type = AnimationChannel.Type.BedrockRotation,
                                                             typeData = typeData,
-                                                            value = value.value.div(16f, Vector3f()),
+                                                            value = Quaternionf().rotateZYX(
+                                                                value.value.z().toRadian(),
+                                                                -value.value.y().toRadian(),
+                                                                -value.value.x().toRadian(),
+                                                            ),
                                                         )
 
                                                         is MolangVector3f.Molang -> MolangAnimationChannel(
-                                                            type = AnimationChannel.Type.BedrockTranslation,
+                                                            type = AnimationChannel.Type.BedrockRotation,
                                                             typeData = typeData,
                                                             valueMapper = { src, dst ->
-                                                                src.div(16f, dst)
+                                                                dst.rotationZYX(
+                                                                    src.z().toRadian(),
+                                                                    -src.y().toRadian(),
+                                                                    -src.x().toRadian(),
+                                                                )
                                                             },
                                                             molangValue = value,
                                                         )
@@ -1201,12 +1147,16 @@ internal class BedrockModelJsonLoader(
                                                 JsonToken.BEGIN_OBJECT -> {
                                                     val channel = readChannel(animationKey, key)
                                                     KeyFrameAnimationChannel(
-                                                        type = AnimationChannel.Type.BedrockTranslation,
+                                                        type = AnimationChannel.Type.BedrockRotation,
                                                         typeData = typeData,
                                                         components = channel.components,
                                                         indexer = channel.indexer,
-                                                        keyframeData = channel.keyFrameData.map { src, dst ->
-                                                            src.div(16f, dst)
+                                                        keyframeData = channel.keyFrameData.map { vec, quat ->
+                                                            quat.rotationZYX(
+                                                                vec.z().toRadian(),
+                                                                -vec.y().toRadian(),
+                                                                -vec.x().toRadian(),
+                                                            )
                                                         },
                                                         interpolation = channel.interpolation,
                                                     )
@@ -1216,78 +1166,122 @@ internal class BedrockModelJsonLoader(
                                             }.let {
                                                 animationChannels += it
                                             }
+                                        }
 
-                                            "scale" -> when (val token = peek()) {
-                                                // Single frame
-                                                JsonToken.NUMBER, JsonToken.BEGIN_ARRAY, JsonToken.STRING -> {
-                                                    when (val value = nextMolangVec3()) {
-                                                        is MolangVector3f.Plain -> SingleFrameAnimationChannel(
-                                                            type = AnimationChannel.Type.BedrockScale,
-                                                            typeData = typeData,
-                                                            value = value.value,
-                                                        )
-
-                                                        is MolangVector3f.Molang -> MolangAnimationChannel(
-                                                            type = AnimationChannel.Type.BedrockScale,
-                                                            typeData = typeData,
-                                                            valueMapper = { src, dst ->
-                                                                src.div(16f, dst)
-                                                            },
-                                                            molangValue = value,
-                                                        )
-                                                    }
-                                                }
-
-                                                // Multiple frames
-                                                JsonToken.BEGIN_OBJECT -> {
-                                                    val channel = readChannel(animationKey, key)
-                                                    KeyFrameAnimationChannel(
-                                                        type = AnimationChannel.Type.BedrockScale,
+                                        "position" -> when (val token = peek()) {
+                                            // Single frame
+                                            JsonToken.NUMBER, JsonToken.BEGIN_ARRAY, JsonToken.STRING -> {
+                                                when (val value = nextMolangVec3()) {
+                                                    is MolangVector3f.Plain -> SingleFrameAnimationChannel(
+                                                        type = AnimationChannel.Type.BedrockTranslation,
                                                         typeData = typeData,
-                                                        components = channel.components,
-                                                        indexer = channel.indexer,
-                                                        keyframeData = channel.keyFrameData,
-                                                        interpolation = channel.interpolation,
+                                                        value = value.value.div(16f, Vector3f()),
+                                                    )
+
+                                                    is MolangVector3f.Molang -> MolangAnimationChannel(
+                                                        type = AnimationChannel.Type.BedrockTranslation,
+                                                        typeData = typeData,
+                                                        valueMapper = { src, dst ->
+                                                            src.div(16f, dst)
+                                                        },
+                                                        molangValue = value,
                                                     )
                                                 }
-
-                                                else -> throw BedrockModelLoadException("Unknown animation token $token in animation $animationKey channel $key")
-                                            }.let {
-                                                animationChannels += it
                                             }
 
-                                            else -> skipValue()
+                                            // Multiple frames
+                                            JsonToken.BEGIN_OBJECT -> {
+                                                val channel = readChannel(animationKey, key)
+                                                KeyFrameAnimationChannel(
+                                                    type = AnimationChannel.Type.BedrockTranslation,
+                                                    typeData = typeData,
+                                                    components = channel.components,
+                                                    indexer = channel.indexer,
+                                                    keyframeData = channel.keyFrameData.map { src, dst ->
+                                                        src.div(16f, dst)
+                                                    },
+                                                    interpolation = channel.interpolation,
+                                                )
+                                            }
+
+                                            else -> throw BedrockModelLoadException("Unknown animation token $token in animation $animationKey channel $key")
+                                        }.let {
+                                            animationChannels += it
                                         }
+
+                                        "scale" -> when (val token = peek()) {
+                                            // Single frame
+                                            JsonToken.NUMBER, JsonToken.BEGIN_ARRAY, JsonToken.STRING -> {
+                                                when (val value = nextMolangVec3()) {
+                                                    is MolangVector3f.Plain -> SingleFrameAnimationChannel(
+                                                        type = AnimationChannel.Type.BedrockScale,
+                                                        typeData = typeData,
+                                                        value = value.value,
+                                                    )
+
+                                                    is MolangVector3f.Molang -> MolangAnimationChannel(
+                                                        type = AnimationChannel.Type.BedrockScale,
+                                                        typeData = typeData,
+                                                        valueMapper = { src, dst ->
+                                                            src.div(16f, dst)
+                                                        },
+                                                        molangValue = value,
+                                                    )
+                                                }
+                                            }
+
+                                            // Multiple frames
+                                            JsonToken.BEGIN_OBJECT -> {
+                                                val channel = readChannel(animationKey, key)
+                                                KeyFrameAnimationChannel(
+                                                    type = AnimationChannel.Type.BedrockScale,
+                                                    typeData = typeData,
+                                                    components = channel.components,
+                                                    indexer = channel.indexer,
+                                                    keyframeData = channel.keyFrameData,
+                                                    interpolation = channel.interpolation,
+                                                )
+                                            }
+
+                                            else -> throw BedrockModelLoadException("Unknown animation token $token in animation $animationKey channel $key")
+                                        }.let {
+                                            animationChannels += it
+                                        }
+
+                                        else -> skipValue()
                                     }
                                 }
-
-                                else -> skipValue()
                             }
-                        }
-                        animations += BedrockAnimation(
-                            name = animationKey,
-                            channels = animationChannels,
-                            duration = animationLength,
-                            startDelay = startDelay,
-                            loopDelay = loopDelay,
-                            animTimeUpdate = animTimeUpdate,
-                            loopMode = loop,
-                        )
-                    }
 
-                    else -> skipValue()
+                            else -> skipValue()
+                        }
+                    }
+                    animations += BedrockAnimation(
+                        name = animationKey,
+                        channels = animationChannels,
+                        duration = animationLength,
+                        startDelay = startDelay,
+                        loopDelay = loopDelay,
+                        animTimeUpdate = animTimeUpdate,
+                        loopMode = loop,
+                    )
                 }
+
+                else -> skipValue()
             }
-            animations
         }
+        animations
+    }
 
     fun load(id: String): Pair<Model, List<Animation>>? {
         val modelItem = file.model[id] ?: return null
-        val modelPath = basePath.resolve(modelItem)
+        val modelBuffer =
+            context.loadExternalResource(modelItem, LoadContext.ResourceType.PLAIN_DATA, false, 16 * 1024 * 1024)
+        val modelString = Charsets.UTF_8.decode(modelBuffer).toString()
         loadTextures()
-        val parseContext = preprocess(modelPath)
+        val parseContext = preprocess(modelString)
         populateStructure(parseContext)
-        val vertexBuffers = loadGeometries(parseContext, modelPath)
+        val vertexBuffers = loadGeometries(parseContext, modelString)
         val indexBuffer = buildIndexBuffer(parseContext)
         val sceneData = assembleScenes(
             parseContext = parseContext,
@@ -1295,8 +1289,11 @@ internal class BedrockModelJsonLoader(
             vertexBuffers = vertexBuffers,
         )
 
-        val animationPath = file.animation?.get(id)?.let { basePath.resolve(it) }
-        val animation = animationPath?.let { loadAnimation(it) } ?: listOf()
+        val animation = file.animation?.get(id)?.let {
+            val buffer = context.loadExternalResource(it, LoadContext.ResourceType.PLAIN_DATA, false, 16 * 1024 * 1024)
+            val animationString = Charsets.UTF_8.decode(buffer).toString()
+            loadAnimation(animationString)
+        } ?: listOf()
 
         return Pair(
             Model(

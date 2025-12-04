@@ -4,10 +4,13 @@ import kotlinx.serialization.json.Json
 import org.joml.Matrix4f
 import org.joml.Quaternionf
 import org.joml.Vector3f
-import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.*
 import top.fifthlight.blazerod.model.animation.*
 import top.fifthlight.blazerod.model.gltf.format.*
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
+import top.fifthlight.blazerod.model.loader.LoadResult
+import top.fifthlight.blazerod.model.loader.ThumbnailResult
 import top.fifthlight.blazerod.model.util.getSByteNormalized
 import top.fifthlight.blazerod.model.util.getSShortNormalized
 import top.fifthlight.blazerod.model.util.getUByteNormalized
@@ -22,19 +25,21 @@ class GltfLoadException(message: String, cause: Throwable? = null) : Exception(m
 internal class GltfLoader(
     private val buffer: ByteBuffer?,
     private val filePath: Path,
-    private val basePath: Path,
+    private val context: LoadContext,
+    private val param: LoadParam,
 ) {
     companion object {
-        private val defaultSampler = Texture.Sampler(
-            magFilter = Texture.Sampler.MagFilter.LINEAR,
-            minFilter = Texture.Sampler.MinFilter.LINEAR,
-            wrapS = Texture.Sampler.WrapMode.REPEAT,
-            wrapT = Texture.Sampler.WrapMode.REPEAT,
-        )
         private val format = Json {
             ignoreUnknownKeys = true
         }
     }
+
+    private val defaultSampler = Texture.Sampler(
+        magFilter = param.samplerMagFilter ?: Texture.Sampler.MagFilter.LINEAR,
+        minFilter = param.samplerMinFilter ?: Texture.Sampler.MinFilter.LINEAR,
+        wrapS = Texture.Sampler.WrapMode.REPEAT,
+        wrapT = Texture.Sampler.WrapMode.REPEAT,
+    )
 
     private val uuid = UUID.randomUUID()
     private var loaded = false
@@ -171,8 +176,12 @@ internal class GltfLoader(
             Texture(
                 name = texture.name,
                 sampler = texture.sampler?.let { index ->
-                    samplers.getOrNull(index)
-                        ?: throw GltfLoadException("Bad texture: sampler $index not found")
+                    samplers.getOrNull(index)?.let {
+                        it.copy(
+                            magFilter = param.samplerMagFilter ?: it.magFilter,
+                            minFilter = param.samplerMinFilter ?: it.minFilter,
+                        )
+                    } ?: throw GltfLoadException("Bad texture: sampler $index not found")
                 } ?: defaultSampler,
                 bufferView = bufferView,
                 type = image?.mimeType?.let { mime -> parseMimeType(mime) },
@@ -597,7 +606,7 @@ internal class GltfLoader(
         expressions = listOf()
     }
 
-    fun load(json: String): ModelFileLoader.LoadResult {
+    fun load(json: String): LoadResult {
         if (loaded) {
             throw GltfLoadException("Already loaded. Please don't load again.")
         }
@@ -630,14 +639,14 @@ internal class GltfLoader(
             expressions = expressions,
         )
 
-        return ModelFileLoader.LoadResult(
+        return LoadResult(
             metadata = metadata,
             model = model,
             animations = animations,
         )
     }
 
-    fun getThumbnail(json: String, binaryChunkData: GltfBinaryLoader.ChunkData): ModelFileLoader.ThumbnailResult {
+    fun getThumbnail(json: String, binaryChunkData: GltfBinaryLoader.ChunkData): ThumbnailResult {
         if (loaded) {
             throw GltfLoadException("Already loaded. Please don't load again.")
         }
@@ -655,11 +664,11 @@ internal class GltfLoader(
                 return@run vrmV1Meta.thumbnailImage
             }
             null
-        } ?: return ModelFileLoader.ThumbnailResult.None
+        } ?: return ThumbnailResult.None
 
         val texture =
             gltf.textures?.getOrNull(textureIndex) ?: throw GltfLoadException("No texture index $textureIndex")
-        val imageIndex = texture.source ?: return ModelFileLoader.ThumbnailResult.None
+        val imageIndex = texture.source ?: return ThumbnailResult.None
         val image = gltf.images?.getOrNull(texture.source) ?: throw GltfLoadException("No image index $imageIndex")
         // All images should be embed in VRM
         return if (image.bufferView != null) {
@@ -667,7 +676,7 @@ internal class GltfLoader(
                 ?: throw GltfLoadException("No bufferView index ${image.bufferView}")
             if (bufferView.buffer != 0) {
                 // External buffer? Not in VRM.
-                return ModelFileLoader.ThumbnailResult.None
+                return ThumbnailResult.None
             }
             val bufferViewOffset = bufferView.byteOffset ?: 0
             if (bufferViewOffset < 0) {
@@ -680,13 +689,13 @@ internal class GltfLoader(
                 throw GltfLoadException("Bad offset: total ${binaryChunkData.length}, but offset $bufferViewOffset length ${bufferView.byteLength}")
             }
             val finalOffset = binaryChunkData.offset + bufferViewOffset
-            ModelFileLoader.ThumbnailResult.Embed(
+            ThumbnailResult.Embed(
                 offset = finalOffset,
                 length = bufferView.byteLength.toLong(),
                 type = image.mimeType?.let { mime -> parseMimeType(mime) },
             )
         } else {
-            ModelFileLoader.ThumbnailResult.None
+            ThumbnailResult.None
         }
     }
 }

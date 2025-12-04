@@ -9,6 +9,7 @@ import top.fifthlight.blazerod.api.animation.AnimationItemInstance
 import top.fifthlight.blazerod.api.animation.AnimationItemInstanceFactory
 import top.fifthlight.blazerod.api.resource.RenderScene
 import top.fifthlight.blazerod.model.formats.ModelFileLoaders
+import top.fifthlight.blazerod.model.loader.LoadContext
 import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
@@ -193,7 +194,7 @@ data object AnimationSetLoader {
                 }
 
                 fun load() = try {
-                    val result = ModelFileLoaders.probeAndLoad(file, directory)
+                    val result = ModelFileLoaders.probeAndLoad(file, LoadContext.File(directory))
                     val animation = result?.animations?.firstOrNull() ?: return null
                     AnimationItemFactory.load(scene, animation)
                 } catch (ex: Exception) {

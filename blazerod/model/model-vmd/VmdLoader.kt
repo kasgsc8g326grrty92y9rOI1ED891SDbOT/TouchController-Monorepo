@@ -10,10 +10,13 @@ import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.HumanoidTag
 import top.fifthlight.blazerod.model.TransformId
 import top.fifthlight.blazerod.model.animation.*
-import top.fifthlight.blazerod.model.util.MMD_SCALE
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
+import top.fifthlight.blazerod.model.loader.LoadResult
+import top.fifthlight.blazerod.model.loader.util.MMD_SCALE
 import top.fifthlight.blazerod.model.util.MutableFloat
-import top.fifthlight.blazerod.model.util.readAll
-import top.fifthlight.blazerod.model.util.toRadian
+import top.fifthlight.blazerod.model.loader.util.readAll
+import top.fifthlight.blazerod.model.loader.util.toRadian
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
@@ -446,7 +449,7 @@ class VmdLoader : ModelFileLoader {
         )
     }
 
-    private fun load(buffer: ByteBuffer): ModelFileLoader.LoadResult {
+    private fun load(buffer: ByteBuffer): LoadResult {
         loadHeader(buffer)
         val boneChannels = loadBone(buffer)
         val faceChannels = if (buffer.hasRemaining()) {
@@ -460,31 +463,29 @@ class VmdLoader : ModelFileLoader {
             listOf()
         }
 
-        return ModelFileLoader.LoadResult(
+        return LoadResult(
             metadata = null,
             model = null,
             animations = listOf(SimpleAnimation(channels = boneChannels + faceChannels + cameraChannels)),
         )
     }
 
-    override fun load(
-        path: Path,
-        basePath: Path,
-    ) = FileChannel.open(path, StandardOpenOption.READ).use { channel ->
-        val fileSize = channel.size()
-        val buffer = runCatching {
-            channel.map(FileChannel.MapMode.READ_ONLY, 0, fileSize)
-        }.getOrNull() ?: run {
-            if (fileSize > 32 * 1024 * 1024) {
-                throw VmdLoadException("VMD animation size too large: maximum allowed is 32M, current is $fileSize")
+    override fun load(path: Path, context: LoadContext, param: LoadParam) =
+        FileChannel.open(path, StandardOpenOption.READ).use { channel ->
+            val fileSize = channel.size()
+            val buffer = runCatching {
+                channel.map(FileChannel.MapMode.READ_ONLY, 0, fileSize)
+            }.getOrNull() ?: run {
+                if (fileSize > 32 * 1024 * 1024) {
+                    throw VmdLoadException("VMD animation size too large: maximum allowed is 32M, current is $fileSize")
+                }
+                val fileSize = fileSize.toInt()
+                val buffer = ByteBuffer.allocate(fileSize)
+                channel.readAll(buffer)
+                buffer.flip()
+                buffer
             }
-            val fileSize = fileSize.toInt()
-            val buffer = ByteBuffer.allocate(fileSize)
-            channel.readAll(buffer)
-            buffer.flip()
-            buffer
+            buffer.order(ByteOrder.LITTLE_ENDIAN)
+            load(buffer)
         }
-        buffer.order(ByteOrder.LITTLE_ENDIAN)
-        load(buffer)
-    }
 }

@@ -7,7 +7,8 @@ import top.fifthlight.armorstand.manage.database.TransactionScope
 import top.fifthlight.armorstand.util.ModelHash
 import top.fifthlight.armorstand.util.calculateSha256
 import top.fifthlight.armorstand.util.toHexString
-import top.fifthlight.blazerod.model.loader.ModelFileLoader
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.ThumbnailResult
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.file.FileVisitResult
@@ -128,11 +129,11 @@ class ModelScannerImpl(
                                 val result = withContext(ioDispatcher) {
                                     fileHandler.extractEmbedThumbnail(
                                         file,
-                                        file.toAbsolutePath().parent
+                                        LoadContext.File(file.toAbsolutePath().parent),
                                     )
                                 }
                                 logger.trace("Extracted thumbnail, result: {}", result)
-                                if (result != null && result is ModelFileLoader.ThumbnailResult.Embed) {
+                                if (result != null && result is ThumbnailResult.Embed) {
                                     val (offset, length, type) = result
                                     thumbRepository.insertEmbed(
                                         sha256 = sha256,

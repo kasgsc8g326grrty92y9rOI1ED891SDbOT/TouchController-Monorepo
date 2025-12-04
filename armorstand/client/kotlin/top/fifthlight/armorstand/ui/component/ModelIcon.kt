@@ -17,7 +17,7 @@ import top.fifthlight.armorstand.manage.model.ModelItem
 import top.fifthlight.armorstand.manage.model.ModelThumbnail
 import top.fifthlight.armorstand.util.BlockableEventLoopDispatcher
 import top.fifthlight.blazerod.model.Texture
-import top.fifthlight.blazerod.model.util.readToBuffer
+import top.fifthlight.blazerod.model.loader.util.readToBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.Path
 import java.util.function.Consumer

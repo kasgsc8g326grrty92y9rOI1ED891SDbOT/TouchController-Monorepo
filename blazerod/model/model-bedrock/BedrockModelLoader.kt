@@ -3,7 +3,11 @@ package top.fifthlight.blazerod.model.bedrock
 import kotlinx.serialization.json.Json
 import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.bedrock.metadata.ModelMetadata
-import top.fifthlight.blazerod.model.util.readToBuffer
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
+import top.fifthlight.blazerod.model.loader.LoadResult
+import top.fifthlight.blazerod.model.loader.MetadataResult
+import top.fifthlight.blazerod.model.loader.util.readToBuffer
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.charset.StandardCharsets
@@ -41,26 +45,22 @@ class BedrockModelLoader : ModelFileLoader {
     }
 
     companion object {
-        private val EMPTY_LOAD_RESULT = ModelFileLoader.LoadResult(
+        private val EMPTY_LOAD_RESULT = LoadResult(
             metadata = null,
             model = null,
             animations = listOf(),
         )
     }
 
-    override fun load(
-        path: Path,
-        basePath: Path,
-    ): ModelFileLoader.LoadResult {
+    override fun load(path: Path, context: LoadContext, param: LoadParam): LoadResult {
         val metadata = readMetadataFile(path)
-
         val (mainModel, mainAnimations) = BedrockModelJsonLoader(
             properties = metadata.properties,
-            basePath = basePath,
+            context = context,
             file = metadata.files.player,
         ).load("main") ?: return EMPTY_LOAD_RESULT
 
-        return ModelFileLoader.LoadResult(
+        return LoadResult(
             metadata = metadata.metadata?.toMetadata(),
             model = mainModel,
             animations = mainAnimations,
@@ -80,10 +80,10 @@ class BedrockModelLoader : ModelFileLoader {
         return (playerModelFiles + playerTextureFiles + playerAnimationFiles).map { directory.resolve(it) }.toSet()
     }
 
-    override fun getMetadata(path: Path, basePath: Path?): ModelFileLoader.MetadataResult {
+    override fun getMetadata(path: Path, context: LoadContext): MetadataResult {
         val metadata = readMetadataFile(path)
         return metadata.metadata?.toMetadata()?.let {
-            ModelFileLoader.MetadataResult.Success(it)
-        } ?: ModelFileLoader.MetadataResult.None
+            MetadataResult.Success(it)
+        } ?: MetadataResult.None
     }
 }

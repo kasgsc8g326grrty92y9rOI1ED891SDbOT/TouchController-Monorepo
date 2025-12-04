@@ -6,8 +6,11 @@ import org.lwjgl.system.MemoryUtil
 import org.slf4j.LoggerFactory
 import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.*
-import top.fifthlight.blazerod.model.util.openChannelCaseInsensitive
-import top.fifthlight.blazerod.model.util.readAll
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
+import top.fifthlight.blazerod.model.loader.LoadResult
+import top.fifthlight.blazerod.model.loader.util.openChannelCaseInsensitive
+import top.fifthlight.blazerod.model.loader.util.readAll
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
@@ -84,7 +87,8 @@ class AssimpLoader : ModelFileLoader {
 
     private class Context(
         private val scene: AIScene,
-        private val basePath: Path,
+        private val context: LoadContext,
+        private val param: LoadParam,
     ) : AutoCloseable {
         private val modelUuid = UUID.randomUUID()
         private val skins = mutableListOf<MeshSkinInfo>()
@@ -96,7 +100,7 @@ class AssimpLoader : ModelFileLoader {
         private lateinit var meshes: List<Mesh>
 
         companion object {
-            private val EMPTY_LOAD_RESULT = ModelFileLoader.LoadResult(
+            private val EMPTY_LOAD_RESULT = LoadResult(
                 metadata = null,
                 model = null,
                 animations = listOf(),
@@ -154,29 +158,7 @@ class AssimpLoader : ModelFileLoader {
 
         private fun loadTexture(pathString: String) = textures.getOrPut(pathString) {
             try {
-                // For Windows & Unix-like path support
-                val pathParts = pathString.split('/', '\\')
-                val relativePath = if (pathParts.size == 1) {
-                    basePath.fileSystem.getPath(pathParts[0])
-                } else {
-                    basePath.fileSystem.getPath(pathParts[0], *pathParts.subList(1, pathParts.size).toTypedArray())
-                }
-                val path = basePath.resolve(relativePath)
-                val buffer = path.openChannelCaseInsensitive(StandardOpenOption.READ).use { channel ->
-                    val size = channel.size()
-                    runCatching {
-                        channel.map(FileChannel.MapMode.READ_ONLY, 0, size)
-                    }.getOrNull() ?: run {
-                        if (size > 256 * 1024 * 1024) {
-                            throw AssimpLoadException("Texture too large! Maximum supported is 256M.")
-                        }
-                        val size = size.toInt()
-                        val buffer = ByteBuffer.allocateDirect(size)
-                        channel.readAll(buffer)
-                        buffer.flip()
-                        buffer
-                    }
-                }
+                val buffer = context.loadExternalResource(pathString, LoadContext.ResourceType.TEXTURE, true, 256 * 1024 * 1024)
                 Optional.of(
                     Texture(
                         name = pathString,
@@ -189,7 +171,10 @@ class AssimpLoader : ModelFileLoader {
                             byteOffset = 0,
                             byteStride = 0,
                         ),
-                        sampler = Texture.Sampler(),
+                        sampler = Texture.Sampler(
+                            magFilter = param.samplerMagFilter ?: Texture.Sampler.MagFilter.LINEAR,
+                            minFilter = param.samplerMinFilter ?: Texture.Sampler.MinFilter.LINEAR,
+                        ),
                     )
                 )
             } catch (ex: Exception) {
@@ -487,7 +472,7 @@ class AssimpLoader : ModelFileLoader {
             )
         }
 
-        fun load(): ModelFileLoader.LoadResult {
+        fun load(): LoadResult {
             loadSkins()
             loadMaterials()
             loadMeshes()
@@ -499,7 +484,7 @@ class AssimpLoader : ModelFileLoader {
                 skins = skins.map { it.skin },
                 expressions = listOf(),
             )
-            return ModelFileLoader.LoadResult(
+            return LoadResult(
                 metadata = null,
                 model = model,
                 animations = listOf(),
@@ -509,8 +494,9 @@ class AssimpLoader : ModelFileLoader {
 
     override fun load(
         path: Path,
-        basePath: Path,
-    ): ModelFileLoader.LoadResult {
+        context: LoadContext,
+        param: LoadParam,
+    ): LoadResult {
         val flags = Assimp.aiProcess_Triangulate or
                 Assimp.aiProcess_FlipUVs or
                 Assimp.aiProcess_LimitBoneWeights or
@@ -518,7 +504,8 @@ class AssimpLoader : ModelFileLoader {
         return Context(
             scene = Assimp.aiImportFile(path.toString(), flags)
                 ?: throw AssimpLoadException(Assimp.aiGetErrorString() ?: "Unknown error"),
-            basePath = basePath,
+            context = context,
+            param = param,
         ).use {
             it.load()
         }

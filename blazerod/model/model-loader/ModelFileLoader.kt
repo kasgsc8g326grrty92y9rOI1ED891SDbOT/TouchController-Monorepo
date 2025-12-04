@@ -1,9 +1,5 @@
 package top.fifthlight.blazerod.model.loader
 
-import top.fifthlight.blazerod.model.Metadata
-import top.fifthlight.blazerod.model.Model
-import top.fifthlight.blazerod.model.Texture
-import top.fifthlight.blazerod.model.animation.Animation
 import java.nio.ByteBuffer
 import java.nio.file.Path
 
@@ -30,45 +26,27 @@ interface ModelFileLoader {
     val probeLength: Int?
     fun probe(buffer: ByteBuffer): Boolean
 
-    fun load(path: Path, basePath: Path = path.parent): LoadResult
-
-    data class LoadResult(
-        val metadata: Metadata?,
-        val model: Model? = null,
-        val animations: List<Animation>?,
+    fun load(
+        path: Path,
+        basePath: Path = path.parent,
+        param: LoadParam = LoadParam(),
+    ): LoadResult = load(
+        path = path,
+        context = LoadContext.File(basePath),
+        param = param,
     )
 
-    fun getThumbnail(path: Path, basePath: Path? = path.parent): ThumbnailResult = ThumbnailResult.Unsupported
+    fun load(
+        path: Path,
+        context: LoadContext,
+        param: LoadParam = LoadParam(),
+    ): LoadResult
 
-    sealed class ThumbnailResult {
-        object Unsupported : ThumbnailResult()
-
-        object None : ThumbnailResult()
-
-        data class Embed(
-            val offset: Long,
-            val length: Long,
-            val type: Texture.TextureType? = null,
-        ) : ThumbnailResult() {
-            init {
-                require(offset >= 0) { "Bad offset: $offset" }
-                require(length >= 0) { "Bad length: $length" }
-            }
-        }
-    }
+    fun getThumbnail(path: Path, context: LoadContext): ThumbnailResult = ThumbnailResult.Unsupported
 
     fun getMarkerFileHashes(marker: Path, directory: Path): Set<Path> =
         setOf(marker)
 
-    fun getMetadata(path: Path, basePath: Path? = path.parent): MetadataResult = MetadataResult.Unsupported
+    fun getMetadata(path: Path, context: LoadContext): MetadataResult = MetadataResult.Unsupported
 
-    sealed class MetadataResult {
-        object Unsupported : MetadataResult()
-
-        object None : MetadataResult()
-
-        data class Success(
-            val metadata: Metadata,
-        ) : MetadataResult()
-    }
 }

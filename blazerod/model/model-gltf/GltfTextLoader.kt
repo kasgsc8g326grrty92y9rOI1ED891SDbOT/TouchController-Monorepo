@@ -1,5 +1,8 @@
 package top.fifthlight.blazerod.model.gltf
 
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
+import top.fifthlight.blazerod.model.loader.LoadResult
 import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import java.nio.ByteBuffer
 import java.nio.file.Path
@@ -17,15 +20,13 @@ class GltfTextLoader : ModelFileLoader {
     override val probeLength: Int? = null
     override fun probe(buffer: ByteBuffer) = false
 
-    override fun load(
-        path: Path,
-        basePath: Path,
-    ): ModelFileLoader.LoadResult {
+    override fun load(path: Path, context: LoadContext, param: LoadParam): LoadResult {
         val json = path.readText()
         return GltfLoader(
             buffer = null,
             filePath = path,
-            basePath = basePath
+            context = context,
+            param = LoadParam(),
         ).load(json)
     }
 }

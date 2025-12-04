@@ -1,4 +1,4 @@
-package top.fifthlight.blazerod.model.util
+package top.fifthlight.blazerod.model.loader.util
 
 import java.nio.channels.FileChannel
 import java.nio.file.Files

@@ -6,13 +6,16 @@ import org.joml.Vector3f
 import org.slf4j.LoggerFactory
 import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.*
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
+import top.fifthlight.blazerod.model.loader.LoadResult
 import top.fifthlight.blazerod.model.pmd.format.PmdBone
 import top.fifthlight.blazerod.model.pmd.format.PmdHeader
 import top.fifthlight.blazerod.model.pmd.format.PmdMaterial
-import top.fifthlight.blazerod.model.util.MMD_SCALE
-import top.fifthlight.blazerod.model.util.openChannelCaseInsensitive
+import top.fifthlight.blazerod.model.loader.util.MMD_SCALE
+import top.fifthlight.blazerod.model.loader.util.openChannelCaseInsensitive
 
-import top.fifthlight.blazerod.model.util.readAll
+import top.fifthlight.blazerod.model.loader.util.readAll
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -57,7 +60,8 @@ class PmdLoader : ModelFileLoader {
     }
 
     private class Context(
-        val basePath: Path,
+        private val context: LoadContext,
+        private val param: LoadParam,
     ) {
         private lateinit var vertexBuffer: ByteBuffer
         private var vertices: Int = -1
@@ -246,22 +250,12 @@ class PmdLoader : ModelFileLoader {
 
         private fun loadTexture(name: String): Texture? {
             try {
-                val path = basePath.resolve(name)
-                val buffer = path.openChannelCaseInsensitive(StandardOpenOption.READ).use { channel ->
-                    val size = channel.size()
-                    runCatching {
-                        channel.map(FileChannel.MapMode.READ_ONLY, 0, size)
-                    }.getOrNull() ?: run {
-                        if (size > 256 * 1024 * 1024) {
-                            throw PmdLoadException("Texture too large! Maximum supported is 256M.")
-                        }
-                        val size = size.toInt()
-                        val buffer = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder())
-                        channel.readAll(buffer)
-                        buffer.flip()
-                        buffer
-                    }
-                }
+                val buffer = context.loadExternalResource(
+                    path = name,
+                    type = LoadContext.ResourceType.TEXTURE,
+                    caseInsensitive = true,
+                    maxSize = 256 * 1024 * 1024,
+                )
                 return Texture(
                     name = name,
                     bufferView = BufferView(
@@ -273,7 +267,10 @@ class PmdLoader : ModelFileLoader {
                         byteOffset = 0,
                         byteStride = 0,
                     ),
-                    sampler = Texture.Sampler(),
+                    sampler = Texture.Sampler(
+                        magFilter = param.samplerMagFilter ?: Texture.Sampler.MagFilter.LINEAR,
+                        minFilter = param.samplerMinFilter ?: Texture.Sampler.MinFilter.LINEAR,
+                    ),
                 )
             } catch (ex: Exception) {
                 logger.warn("Failed to load PMD texture", ex)
@@ -312,7 +309,7 @@ class PmdLoader : ModelFileLoader {
             }
         }
 
-        fun load(buffer: ByteBuffer): ModelFileLoader.LoadResult {
+        fun load(buffer: ByteBuffer): LoadResult {
             val header = loadHeader(buffer)
             loadVertices(buffer)
             loadIndices(buffer)
@@ -481,7 +478,7 @@ class PmdLoader : ModelFileLoader {
 
             val scene = Scene(nodes = rootNodes)
 
-            return ModelFileLoader.LoadResult(
+            return LoadResult(
                 metadata = Metadata(
                     title = header.name,
                     comment = header.comment,
@@ -496,7 +493,7 @@ class PmdLoader : ModelFileLoader {
         }
     }
 
-    override fun load(path: Path, basePath: Path) =
+    override fun load(path: Path, context: LoadContext, param: LoadParam) =
         FileChannel.open(path, StandardOpenOption.READ).use { channel ->
             val fileSize = channel.size()
             val buffer = runCatching {
@@ -511,7 +508,7 @@ class PmdLoader : ModelFileLoader {
                 buffer.flip()
                 buffer
             }
-            val context = Context(basePath)
+            val context = Context(context, param)
             buffer.order(ByteOrder.LITTLE_ENDIAN)
             context.load(buffer)
         }

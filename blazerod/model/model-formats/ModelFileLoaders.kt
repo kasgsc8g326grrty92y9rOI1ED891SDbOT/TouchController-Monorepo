@@ -1,7 +1,10 @@
 package top.fifthlight.blazerod.model.formats
 
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadResult
 import top.fifthlight.blazerod.model.loader.ModelFileLoader
-import top.fifthlight.blazerod.model.util.readRemaining
+import top.fifthlight.blazerod.model.loader.ThumbnailResult
+import top.fifthlight.blazerod.model.loader.util.readRemaining
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.Path
@@ -88,14 +91,20 @@ object ModelFileLoaders {
     }
 
     @JvmOverloads
-    fun probeAndLoad(path: Path, basePath: Path = path.parent ?: error("no base path: $path")): ModelFileLoader.LoadResult? {
+    fun probeAndLoad(
+        path: Path,
+        context: LoadContext = LoadContext.File(path.parent ?: error("no base path: $path")),
+    ): LoadResult? {
         val loader = probeLoader(loaders, path)
-        return loader?.load(path, basePath)
+        return loader?.load(path, context)
     }
 
     @JvmOverloads
-    fun getEmbedThumbnail(path: Path, basePath: Path? = path.parent): ModelFileLoader.ThumbnailResult? {
+    fun getEmbedThumbnail(
+        path: Path,
+        context: LoadContext = LoadContext.Empty,
+    ): ThumbnailResult? {
         val loader = probeLoader(embedThumbnailLoaders, path)
-        return loader?.getThumbnail(path, basePath)
+        return loader?.getThumbnail(path, context)
     }
 }

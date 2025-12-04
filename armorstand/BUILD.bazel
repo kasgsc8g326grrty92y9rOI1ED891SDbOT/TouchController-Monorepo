@@ -120,10 +120,12 @@ java_binary(
     ],
     main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
     runtime_deps = [
+        "//game/1.21.8:game_client_named",
+        "@minecraft//1.21.8:client_libraries",
+        # Classpath separator
         ":mod_fabric_unmapped",
         "//armorstand/fabric_client:remapped_deps",
         "//blazerod:blazerod_fabric_without_jij",
-        "//game/1.21.8:game_client_named",
         "//game/1.21.8:game_iris_named",
         "//game/1.21.8:game_mapping_jar",
         "//game/1.21.8:game_sodium_named",
@@ -137,7 +139,6 @@ java_binary(
         "@maven_fabric_1_21_8//:net_fabricmc_fabric_language_kotlin",
         "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
         "@maven_fabric_1_21_8//:net_fabricmc_sponge_mixin",
-        "@minecraft//1.21.8:client_libraries",
     ],
 )
 
@@ -154,6 +155,8 @@ java_binary(
     main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
     runtime_deps = [
         ":mod_fabric_unmapped",
+        "@minecraft//1.21.8:client_libraries",
+        # Classpath separator
         "//armorstand/fabric_main:remapped_deps",
         "//game/1.21.8:game_mapping_jar",
         "//game/1.21.8:game_server_named",
@@ -162,7 +165,6 @@ java_binary(
         "@maven_fabric_1_21_8//:net_fabricmc_fabric_language_kotlin",
         "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
         "@maven_fabric_1_21_8//:net_fabricmc_sponge_mixin",
-        "@minecraft//1.21.8:client_libraries",
     ],
 )
 

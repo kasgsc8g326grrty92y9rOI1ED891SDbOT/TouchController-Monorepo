@@ -1,7 +1,8 @@
 package top.fifthlight.blazerod.model.gltf.test
 
-import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.gltf.GltfBinaryLoader
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.ThumbnailResult
 import java.nio.file.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -38,8 +39,8 @@ class GlbLoadTest {
     fun testVrmThumbnail() {
         val file = loadFilePath("alicia_solid")
         measureTime {
-            val result = GltfBinaryLoader().getThumbnail(file)
-            assertIs<ModelFileLoader.ThumbnailResult.Embed>(result)
+            val result = GltfBinaryLoader().getThumbnail(file, LoadContext.Empty)
+            assertIs<ThumbnailResult.Embed>(result)
             assertEquals(7739784, result.offset)
             assertEquals(138928, result.length)
         }.let { duration ->

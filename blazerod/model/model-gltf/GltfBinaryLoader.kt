@@ -1,8 +1,12 @@
 package top.fifthlight.blazerod.model.gltf
 
+import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
+import top.fifthlight.blazerod.model.loader.LoadResult
 import top.fifthlight.blazerod.model.loader.ModelFileLoader
-import top.fifthlight.blazerod.model.util.readAll
-import top.fifthlight.blazerod.model.util.readToBuffer
+import top.fifthlight.blazerod.model.loader.ThumbnailResult
+import top.fifthlight.blazerod.model.loader.util.readAll
+import top.fifthlight.blazerod.model.loader.util.readToBuffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
@@ -124,7 +128,7 @@ class GltfBinaryLoader : ModelFileLoader {
         )
     }
 
-    override fun load(path: Path, basePath: Path): ModelFileLoader.LoadResult {
+    override fun load(path: Path, context: LoadContext, param: LoadParam): LoadResult {
         val json: String
         val binaryBuffer: ByteBuffer?
         FileChannel.open(path, StandardOpenOption.READ).use { channel ->
@@ -142,23 +146,25 @@ class GltfBinaryLoader : ModelFileLoader {
         val context = GltfLoader(
             buffer = binaryBuffer,
             filePath = path,
-            basePath = path.parent,
+            context = context,
+            param = param,
         )
         return context.load(json)
     }
 
-    override fun getThumbnail(path: Path, basePath: Path?): ModelFileLoader.ThumbnailResult {
+    override fun getThumbnail(path: Path, context: LoadContext): ThumbnailResult {
         val json: String
         val binaryBuffer: ChunkData
         FileChannel.open(path, StandardOpenOption.READ).use { channel ->
             val parsedGltf: ParsedGltfBinary = parseGltfBinary(channel)
             json = parsedGltf.json
-            binaryBuffer = parsedGltf.binaryChunkData ?: return ModelFileLoader.ThumbnailResult.None
+            binaryBuffer = parsedGltf.binaryChunkData ?: return ThumbnailResult.None
         }
         val context = GltfLoader(
             buffer = null,
             filePath = path,
-            basePath = path.parent,
+            context = context,
+            param = LoadParam(),
         )
         return context.getThumbnail(json, binaryBuffer)
     }

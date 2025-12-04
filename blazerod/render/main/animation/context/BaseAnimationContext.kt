@@ -6,7 +6,11 @@ import net.minecraft.client.multiplayer.ClientLevel
 import org.joml.Vector3d
 import top.fifthlight.blazerod.mixin.MinecraftClientAccessor
 import top.fifthlight.blazerod.model.animation.AnimationContext
-import top.fifthlight.blazerod.model.util.*
+import top.fifthlight.blazerod.model.util.MutableBoolean
+import top.fifthlight.blazerod.model.util.MutableDouble
+import top.fifthlight.blazerod.model.util.MutableFloat
+import top.fifthlight.blazerod.model.util.MutableInt
+import top.fifthlight.blazerod.model.util.MutableLong
 import kotlin.jvm.optionals.getOrNull
 
 open class BaseAnimationContext(
