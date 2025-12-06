@@ -29,6 +29,9 @@ git_override(
 # libraries
 bazel_dep(name = "libexpat", version = "2.7.1")
 bazel_dep(name = "libffi", version = "3.4.7.bcr.3")
+bazel_dep(name = "bullet", version = "3.26.0-rc0")
+bazel_dep(name = "glfw", version = "3.4.0.bcr.1")
+bazel_dep(name = "glm", version = "1.0.2")
 
 # toolchain
 include("//module:zig_cc.MODULE.bazel")
@@ -57,6 +60,7 @@ include("//module/third_party:sodium.MODULE.bazel")
 include("//module/third_party:iris.MODULE.bazel")
 include("//module/third_party:mocha.MODULE.bazel")
 include("//module/third_party:wayland.MODULE.bazel")
+include("//module/third_party:saba.MODULE.bazel")
 
 # projects
 include("//module:blazerod.MODULE.bazel")

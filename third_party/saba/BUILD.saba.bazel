@@ -1,0 +1,28 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "spdlog",
+    hdrs = glob([
+        "external/spdlog/include/spdlog/**/*.h",
+        "external/spdlog/include/spdlog/**/*.cc",
+    ]),
+    includes = ["external/spdlog/include"],
+)
+
+cc_library(
+    name = "saba",
+    srcs = glob([
+        "src/Saba/Base/*.cpp",
+        "src/Saba/Model/MMD/*.cpp",
+    ]),
+    hdrs = glob(["src/Saba/**/*.h"]),
+    includes = ["src"],
+    deps = [
+        "@glm",
+        "@glfw",
+        ":spdlog",
+        "@bullet//:BulletCollision",
+        "@bullet//:BulletDynamics",
+        "@bullet//:LinearMath",
+    ],
+)

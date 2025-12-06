@@ -1,0 +1,9 @@
+"MODULE.bazel saba part"
+
+git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+git_repository(
+    name = "saba",
+    remote = "https://github.com/benikabocha/saba.git",
+    commit = "29b8efa8b31c8e746f9a88020fb0ad9dcdcf3332",
+    build_file = "@//third_party/saba:BUILD.saba.bazel",
+)
