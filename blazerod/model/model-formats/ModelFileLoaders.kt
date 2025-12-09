@@ -1,6 +1,7 @@
 package top.fifthlight.blazerod.model.formats
 
 import top.fifthlight.blazerod.model.loader.LoadContext
+import top.fifthlight.blazerod.model.loader.LoadParam
 import top.fifthlight.blazerod.model.loader.LoadResult
 import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.loader.ThumbnailResult
@@ -94,9 +95,20 @@ object ModelFileLoaders {
     fun probeAndLoad(
         path: Path,
         context: LoadContext = LoadContext.File(path.parent ?: error("no base path: $path")),
+        param: LoadParam = LoadParam(),
     ): LoadResult? {
         val loader = probeLoader(loaders, path)
-        return loader?.load(path, context)
+        return loader?.load(path, context, param)
+    }
+
+    @JvmOverloads
+    fun probeAndLoad(
+        path: Path,
+        param: LoadParam = LoadParam(),
+        context: LoadContext = LoadContext.File(path.parent ?: error("no base path: $path")),
+    ): LoadResult? {
+        val loader = probeLoader(loaders, path)
+        return loader?.load(path, context, param)
     }
 
     @JvmOverloads
