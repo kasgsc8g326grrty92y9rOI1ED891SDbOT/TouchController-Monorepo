@@ -1,6 +1,7 @@
 package top.fifthlight.blazerod.model.assimp
 
 import it.unimi.dsi.fastutil.floats.FloatArrayList
+import it.unimi.dsi.fastutil.floats.FloatList
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.file.Path
@@ -19,6 +20,7 @@ import top.fifthlight.blazerod.model.animation.*
 import top.fifthlight.blazerod.model.loader.LoadContext
 import top.fifthlight.blazerod.model.loader.LoadParam
 import top.fifthlight.blazerod.model.loader.LoadResult
+import kotlin.collections.buildList
 
 class AssimpLoadException(message: String) : Exception(message)
 
@@ -99,6 +101,10 @@ class AssimpLoader : ModelFileLoader {
         private val textures = mutableMapOf<String, Optional<Texture>>()
         private lateinit var materials: List<Material>
         private lateinit var meshes: List<Mesh>
+
+        @Suppress("UNCHECKED_CAST")
+        private val keyFrameSplit: List<Pair<String, Int>> =
+            param.loaderParams["keyFrameSplit"] as? List<Pair<String, Int>> ?: listOf()
 
         companion object {
             private val EMPTY_LOAD_RESULT = LoadResult(
@@ -439,53 +445,255 @@ class AssimpLoader : ModelFileLoader {
             }
         }
 
+        private data class ChannelPart(
+            var positionChannel: Pair<FloatList, FloatList>? = null,
+            var scaleChannel: Pair<FloatList, FloatList>? = null,
+            var rotationChannel: Pair<FloatList, FloatList>? = null,
+        )
+
         private fun loadAnimations(): List<Animation> = scene.mAnimations()?.let { animations ->
-            (0 until scene.mNumAnimations()).map { animIndex ->
-                val animation = AIAnimation.create(animations.get(animIndex))
+            if (scene.mNumAnimations() == 1 && keyFrameSplit.isNotEmpty()) {
+                val animation = AIAnimation.create(animations.get(0))
                 val ticksPerSecond = animation.mTicksPerSecond().takeIf { it > 0f }?.toFloat() ?: 30f
-                val channels = buildList {
-                    val nodeAnimations = animation.mChannels()
-                    if (nodeAnimations != null) {
-                        (0 until animation.mNumChannels()).forEach { channelIndex ->
-                            val nodeAnimPtr = nodeAnimations[channelIndex]
-                            val nodeAnimation = AINodeAnim.create(nodeAnimPtr)
-                            nodeAnimation.mPositionKeys()?.let { keys ->
-                                add(loadVector3AnimationChannel(
-                                    nodeAnimation = nodeAnimation,
-                                    keys = keys,
-                                    numKeys = nodeAnimation.mNumPositionKeys(),
-                                    channelType = AnimationChannel.Type.Translation,
-                                    ticksPerSecond = ticksPerSecond,
-                                ))
-                            }
+                val animationChannels = mutableListOf<MutableList<KeyFrameAnimationChannel<*, *>>>()
+                val nodeAnimations = animation.mChannels() ?: return@let emptyList()
+                (0 until animation.mNumChannels()).forEach { channelIndex ->
+                    val nodeAnimPtr = nodeAnimations[channelIndex]
+                    val nodeAnimation = AINodeAnim.create(nodeAnimPtr)
 
-                            nodeAnimation.mScalingKeys()?.let { keys ->
-                                add(loadVector3AnimationChannel(
-                                    nodeAnimation = nodeAnimation,
-                                    keys = keys,
-                                    numKeys = nodeAnimation.mNumScalingKeys(),
-                                    channelType = AnimationChannel.Type.Scale,
-                                    ticksPerSecond = ticksPerSecond,
-                                ))
-                            }
+                    val channelParts = mutableListOf<ChannelPart>()
 
-                            nodeAnimation.mRotationKeys()?.let { keys ->
-                                add(loadQuaternionfAnimationChannel(
-                                    nodeAnimation = nodeAnimation,
-                                    keys = keys,
-                                    numKeys = nodeAnimation.mNumRotationKeys(),
-                                    channelType = AnimationChannel.Type.Rotation,
-                                    ticksPerSecond = ticksPerSecond,
-                                ))
+                    run {
+                        var currentAnimationPart = 0
+                        var currentAnimationStartPoint = 0
+                        var currentAnimationEndPoint = keyFrameSplit.first().second
+                        nodeAnimation.mPositionKeys()?.let { keys ->
+                            val numKeys = nodeAnimation.mNumPositionKeys()
+                            for (i in 0 until numKeys) {
+                                val time =
+                                    AIVectorKey.nmTime(keys.address() + i * AIVectorKey.SIZEOF + AIVectorKey.MTIME)
+                                if (time > currentAnimationEndPoint) {
+                                    currentAnimationStartPoint += keyFrameSplit[currentAnimationPart].second
+                                    currentAnimationPart++
+                                    if (currentAnimationPart in keyFrameSplit.indices) {
+                                        currentAnimationEndPoint += keyFrameSplit[currentAnimationPart].second
+                                    } else {
+                                        break
+                                    }
+                                }
+                                while (channelParts.size <= currentAnimationPart) {
+                                    channelParts += ChannelPart()
+                                }
+
+                                val valueAddress = keys.address() + i * AIVectorKey.SIZEOF + AIVectorKey.MVALUE
+                                val timeInSeconds = (time - currentAnimationStartPoint) / ticksPerSecond.toDouble()
+                                val (timeList, valueList) = channelParts[currentAnimationPart].positionChannel
+                                    ?: Pair(FloatArrayList(), FloatArrayList()).also {
+                                        channelParts[currentAnimationPart].positionChannel = it
+                                    }
+                                timeList.add(timeInSeconds.toFloat())
+                                valueList.add(AIVector3D.nx(valueAddress))
+                                valueList.add(AIVector3D.ny(valueAddress))
+                                valueList.add(AIVector3D.nz(valueAddress))
                             }
                         }
                     }
-                }
 
-                SimpleAnimation(
-                    name = animation.mName().dataString().takeIf { it.isNotEmpty() },
-                    channels = channels
-                )
+                    run {
+                        var currentAnimationPart = 0
+                        var currentAnimationStartPoint = 0
+                        var currentAnimationEndPoint = keyFrameSplit.first().second
+                        nodeAnimation.mScalingKeys()?.let { keys ->
+                            val numKeys = nodeAnimation.mNumScalingKeys()
+                            for (i in 0 until numKeys) {
+                                val time =
+                                    AIVectorKey.nmTime(keys.address() + i * AIVectorKey.SIZEOF + AIVectorKey.MTIME)
+                                if (time > currentAnimationEndPoint) {
+                                    currentAnimationStartPoint += keyFrameSplit[currentAnimationPart].second
+                                    currentAnimationPart++
+                                    if (currentAnimationPart in keyFrameSplit.indices) {
+                                        currentAnimationEndPoint += keyFrameSplit[currentAnimationPart].second
+                                    } else {
+                                        break
+                                    }
+                                }
+                                while (channelParts.size <= currentAnimationPart) {
+                                    channelParts += ChannelPart()
+                                }
+
+                                val valueAddress = keys.address() + i * AIVectorKey.SIZEOF + AIVectorKey.MVALUE
+                                val timeInSeconds = (time - currentAnimationStartPoint) / ticksPerSecond.toDouble()
+                                val (timeList, valueList) = channelParts[currentAnimationPart].scaleChannel
+                                    ?: Pair(FloatArrayList(), FloatArrayList()).also {
+                                        channelParts[currentAnimationPart].scaleChannel = it
+                                    }
+                                timeList.add(timeInSeconds.toFloat())
+                                valueList.add(AIVector3D.nx(valueAddress))
+                                valueList.add(AIVector3D.ny(valueAddress))
+                                valueList.add(AIVector3D.nz(valueAddress))
+                            }
+                        }
+                    }
+
+                    run {
+                        var currentAnimationPart = 0
+                        var currentAnimationStartPoint = 0
+                        var currentAnimationEndPoint = keyFrameSplit.first().second
+                        nodeAnimation.mRotationKeys()?.let { keys ->
+                            val numKeys = nodeAnimation.mNumRotationKeys()
+                            for (i in 0 until numKeys) {
+                                val time =
+                                    AIQuatKey.nmTime(keys.address() + i * AIQuatKey.SIZEOF + AIQuatKey.MTIME)
+                                if (time > currentAnimationEndPoint) {
+                                    currentAnimationStartPoint += keyFrameSplit[currentAnimationPart].second
+                                    currentAnimationPart++
+                                    if (currentAnimationPart in keyFrameSplit.indices) {
+                                        currentAnimationEndPoint += keyFrameSplit[currentAnimationPart].second
+                                    } else {
+                                        break
+                                    }
+                                }
+                                while (channelParts.size <= currentAnimationPart) {
+                                    channelParts += ChannelPart()
+                                }
+
+                                val valueAddress = keys.address() + i * AIQuatKey.SIZEOF + AIQuatKey.MVALUE
+                                val timeInSeconds = (time - currentAnimationStartPoint) / ticksPerSecond.toDouble()
+                                val (timeList, valueList) = channelParts[currentAnimationPart].rotationChannel
+                                    ?: Pair(FloatArrayList(), FloatArrayList()).also {
+                                        channelParts[currentAnimationPart].rotationChannel = it
+                                    }
+                                timeList.add(timeInSeconds.toFloat())
+                                valueList.add(AIQuaternion.nx(valueAddress))
+                                valueList.add(AIQuaternion.ny(valueAddress))
+                                valueList.add(AIQuaternion.nz(valueAddress))
+                                valueList.add(AIQuaternion.nw(valueAddress))
+                            }
+                        }
+                    }
+
+                    channelParts.forEachIndexed { animationIndex, part ->
+                        while (animationChannels.size <= animationIndex) {
+                            animationChannels += mutableListOf<KeyFrameAnimationChannel<*, *>>()
+                        }
+                        val channels = animationChannels[animationIndex]
+                        part.positionChannel?.let { (times, values) ->
+                            channels.add(
+                                KeyFrameAnimationChannel(
+                                    type = AnimationChannel.Type.Translation,
+                                    typeData = AnimationChannel.Type.TransformData(
+                                        node = AnimationChannel.Type.NodeData(
+                                            targetNode = null,
+                                            targetNodeName = nodeAnimation.mNodeName().dataString(),
+                                            targetHumanoidTag = null,
+                                        ),
+                                        transformId = TransformId.ABSOLUTE,
+                                    ),
+                                    indexer = ListAnimationKeyFrameIndexer(times),
+                                    keyframeData = AnimationKeyFrameData.ofVector3f(values, 1),
+                                    interpolation = AnimationInterpolation.linear,
+                                )
+                            )
+                        }
+                        part.scaleChannel?.let { (times, values) ->
+                            channels.add(
+                                KeyFrameAnimationChannel(
+                                    type = AnimationChannel.Type.Scale,
+                                    typeData = AnimationChannel.Type.TransformData(
+                                        node = AnimationChannel.Type.NodeData(
+                                            targetNode = null,
+                                            targetNodeName = nodeAnimation.mNodeName().dataString(),
+                                            targetHumanoidTag = null,
+                                        ),
+                                        transformId = TransformId.ABSOLUTE,
+                                    ),
+                                    indexer = ListAnimationKeyFrameIndexer(times),
+                                    keyframeData = AnimationKeyFrameData.ofVector3f(values, 1),
+                                    interpolation = AnimationInterpolation.linear,
+                                )
+                            )
+                        }
+                        part.rotationChannel?.let { (times, values) ->
+                            channels.add(
+                                KeyFrameAnimationChannel(
+                                    type = AnimationChannel.Type.Rotation,
+                                    typeData = AnimationChannel.Type.TransformData(
+                                        node = AnimationChannel.Type.NodeData(
+                                            targetNode = null,
+                                            targetNodeName = nodeAnimation.mNodeName().dataString(),
+                                            targetHumanoidTag = null,
+                                        ),
+                                        transformId = TransformId.ABSOLUTE,
+                                    ),
+                                    indexer = ListAnimationKeyFrameIndexer(times),
+                                    keyframeData = AnimationKeyFrameData.ofQuaternionf(values, 1),
+                                    interpolation = AnimationInterpolation.linear,
+                                )
+                            )
+                        }
+                    }
+                }
+                animationChannels.mapIndexedNotNull { index, channels ->
+                    val animationName = (keyFrameSplit.getOrNull(index) ?: return@mapIndexedNotNull null).first
+                    SimpleAnimation(
+                        name = animationName.takeIf { it.isNotEmpty() },
+                        channels = channels,
+                    )
+                }
+            } else {
+                (0 until scene.mNumAnimations()).map { animIndex ->
+                    val animation = AIAnimation.create(animations.get(animIndex))
+                    val ticksPerSecond = animation.mTicksPerSecond().takeIf { it > 0f }?.toFloat() ?: 30f
+                    val channels = buildList {
+                        val nodeAnimations = animation.mChannels()
+                        if (nodeAnimations != null) {
+                            (0 until animation.mNumChannels()).forEach { channelIndex ->
+                                val nodeAnimPtr = nodeAnimations[channelIndex]
+                                val nodeAnimation = AINodeAnim.create(nodeAnimPtr)
+                                nodeAnimation.mPositionKeys()?.let { keys ->
+                                    add(
+                                        loadVector3AnimationChannel(
+                                            nodeAnimation = nodeAnimation,
+                                            keys = keys,
+                                            numKeys = nodeAnimation.mNumPositionKeys(),
+                                            channelType = AnimationChannel.Type.Translation,
+                                            ticksPerSecond = ticksPerSecond,
+                                        )
+                                    )
+                                }
+
+                                nodeAnimation.mScalingKeys()?.let { keys ->
+                                    add(
+                                        loadVector3AnimationChannel(
+                                            nodeAnimation = nodeAnimation,
+                                            keys = keys,
+                                            numKeys = nodeAnimation.mNumScalingKeys(),
+                                            channelType = AnimationChannel.Type.Scale,
+                                            ticksPerSecond = ticksPerSecond,
+                                        )
+                                    )
+                                }
+
+                                nodeAnimation.mRotationKeys()?.let { keys ->
+                                    add(
+                                        loadQuaternionfAnimationChannel(
+                                            nodeAnimation = nodeAnimation,
+                                            keys = keys,
+                                            numKeys = nodeAnimation.mNumRotationKeys(),
+                                            channelType = AnimationChannel.Type.Rotation,
+                                            ticksPerSecond = ticksPerSecond,
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    SimpleAnimation(
+                        name = animation.mName().dataString().takeIf { it.isNotEmpty() },
+                        channels = channels,
+                    )
+                }
             }
         } ?: listOf()
 
