@@ -1,0 +1,10 @@
+when:
+  - event: push
+    branch: master
+
+steps:
+  - name: build
+    image: docker.io/peaceiris/mdbook:v0.5.0
+    directory: touchcontroller/wiki
+    commands:
+      - mdbook build
