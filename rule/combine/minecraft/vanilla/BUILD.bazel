@@ -15,7 +15,7 @@ kt_jvm_library(
 
 java_binary(
     name = "vanilla",
-    main_class = "top.fifthlight.combine.resources.vanilla.VanillaTextureGenerator",
+    main_class = "top.fifthlight.combine.resources.vanilla.VanillaTextureGeneratorKt",
     visibility = ["//visibility:public"],
     runtime_deps = [":vanilla_lib"],
 )
