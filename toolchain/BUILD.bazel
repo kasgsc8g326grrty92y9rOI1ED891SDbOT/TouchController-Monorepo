@@ -1,4 +1,5 @@
 load("@rules_rust//rust:toolchain.bzl", "rust_toolchain")
+load("@rules_rust_mdbook//:defs.bzl", "mdbook_toolchain")
 
 rust_toolchain(
     name = "rust_windows_x86_64_impl",
@@ -30,4 +31,15 @@ toolchain(
     ],
     toolchain = ":rust_windows_x86_64_impl",
     toolchain_type = "@rules_rust//rust:toolchain_type",
+)
+
+mdbook_toolchain(
+    name = "mdbook_toolchain_impl",
+    mdbook = "@mdbook_deps//:mdbook__mdbook",
+)
+
+toolchain(
+    name = "mdbook_toolchain",
+    toolchain = ":mdbook_toolchain_impl",
+    toolchain_type = "@rules_rust_mdbook//:toolchain_type",
 )

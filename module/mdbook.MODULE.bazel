@@ -3,11 +3,11 @@
 mdbook_deps = use_extension("@rules_rust//crate_universe:extension.bzl", "crate")
 mdbook_deps.spec(
     artifact = "bin",
-    package = "mdbook-alerts",
-    version = "=0.8.0",
+    package = "mdbook",
+    version = "=0.5.1",
 )
 mdbook_deps.annotation(
-    crate = "mdbook-alerts",
+    crate = "mdbook",
     gen_all_binaries = True,
 )
 mdbook_deps.from_specs(
@@ -15,3 +15,5 @@ mdbook_deps.from_specs(
     host_tools = "@rust_host_tools_nightly",
 )
 use_repo(mdbook_deps, "mdbook_deps")
+
+register_toolchains("//toolchain:mdbook_toolchain")
