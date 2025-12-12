@@ -5,4 +5,5 @@ language = "cmn-hans-cn"
 
 [output.html]
 git-repository-url = "https://github.com/TouchController/TouchController-Monorepo/tree/master/touchcontroller/wiki"
-additional-js = ["custom.js"]
+additional-js = ["footer.js"]
+additional-css = ["footer.css"]

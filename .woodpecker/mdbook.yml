@@ -16,8 +16,23 @@ steps:
     image: docker.io/peaceiris/mdbook:v0.5.0
     directory: touchcontroller/wiki
     commands:
-      - sed -i 's+/*FOOTER TEMPLATE HERE*/+"'"${FOOTER_TEMPLATE}"'"+' "custom.js"
+      - echo "$FOOTER_TEMPLATE" > footer.js
       - mdbook build
     environment:
       FOOTER_TEMPLATE:
         from_secret: FOOTER_TEMPLATE
+  - name: deploy
+    image: drillster/drone-rsync
+    directory: touchcontroller/wiki
+    settings:
+      hosts:
+        from_secret: RSYNC_HOST
+      port: 22
+      source: book/
+      target: /
+      user: tcwiki
+      recursive: true
+      delete: true
+      args: "-av"
+      key:
+        from_secret: RSYNC_KEY
