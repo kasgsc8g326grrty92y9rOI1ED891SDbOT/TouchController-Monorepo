@@ -4,7 +4,7 @@ mdbook_deps = use_extension("@rules_rust//crate_universe:extension.bzl", "crate"
 mdbook_deps.spec(
     artifact = "bin",
     package = "mdbook",
-    version = "=0.5.1",
+    version = "=0.5.2",
 )
 mdbook_deps.annotation(
     crate = "mdbook",

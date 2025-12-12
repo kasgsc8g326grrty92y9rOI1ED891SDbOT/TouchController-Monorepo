@@ -16,4 +16,8 @@ steps:
     image: docker.io/peaceiris/mdbook:v0.5.0
     directory: touchcontroller/wiki
     commands:
+      - sed -i 's+/*FOOTER TEMPLATE HERE*/+"'"${FOOTER_TEMPLATE}"'"+' "custom.js"
       - mdbook build
+    environment:
+      FOOTER_TEMPLATE:
+        from_secret: FOOTER_TEMPLATE
