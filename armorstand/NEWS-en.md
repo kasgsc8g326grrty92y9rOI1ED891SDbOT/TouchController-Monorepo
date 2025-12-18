@@ -1,5 +1,9 @@
 # ArmorStand NEWS - User visible changes.
 
+## 0.0.9
+
+- Fixed the problem that camera is not working
+
 ## 0.0.8
 
 - Fixed the problem that NeoForge version cannot be launched on Windows
