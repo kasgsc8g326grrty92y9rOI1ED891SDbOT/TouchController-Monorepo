@@ -151,7 +151,6 @@ data class VrmV1Extension(
 ) {
     @Serializable
     data class Meta(
-        // 保留顺序的键值对
         val name: String? = null,
         val authors: List<String>? = null,
         val licenseUrl: String? = null,

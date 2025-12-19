@@ -18,6 +18,7 @@ import top.fifthlight.blazerod.model.*
 import top.fifthlight.blazerod.model.animation.AnimationInterpolation
 import top.fifthlight.blazerod.model.gltf.format.extension.VrmV0Extension
 import top.fifthlight.blazerod.model.gltf.format.extension.VrmV1Extension
+import top.fifthlight.blazerod.model.gltf.format.extension.VrmSpringBoneExtension
 import top.fifthlight.blazerod.model.Texture as CommonTexture
 
 private abstract class IntEnumSerializer<T>(
@@ -86,6 +87,8 @@ internal data class GltfExtension(
     val vrmV0: VrmV0Extension? = null,
     @SerialName("VRMC_vrm")
     val vrmV1: VrmV1Extension? = null,
+    @SerialName("VRMC_springBone")
+    val vrmSpringBone: VrmSpringBoneExtension? = null,
 )
 
 @Serializable
