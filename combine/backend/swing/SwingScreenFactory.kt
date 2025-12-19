@@ -32,6 +32,7 @@ private class CombineFrame(title: String): JFrame(title) {
     private val canvas = SwingCanvas(graphics as Graphics2D)
 
     private val owner = CombineOwner(dispatcher = dispatcher, textMeasurer = SwingTextMeasurer(graphics))
+    /*
     override val coroutineContext: CoroutineContext
         get() = owner.coroutineContext
 
@@ -199,9 +200,8 @@ private class CombineFrame(title: String): JFrame(title) {
     override fun dispose() {
         owner.close()
         super.dispose()
-    }
+    }*/
 }
-
 
 object SwingScreenFactory : ScreenFactory {
     override fun openScreen(
@@ -220,9 +220,9 @@ object SwingScreenFactory : ScreenFactory {
         content: @Composable () -> Unit
     ): Any {
         val screen = CombineFrame(title.string)
-        screen.setContent {
+        /*screen.setContent {
             content()
-        }
+        }*/
         return screen
     }
 }

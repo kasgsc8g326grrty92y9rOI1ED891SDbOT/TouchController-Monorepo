@@ -8,7 +8,7 @@ kt_texture_lib(
 )
 
 kt_merge_library(
-    name = "texture",
+    name = "blackstone",
     srcs = glob(["*.kt"]),
     merge_deps = [
         ":texture_lib",

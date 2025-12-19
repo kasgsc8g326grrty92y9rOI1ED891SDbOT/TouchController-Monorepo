@@ -16,6 +16,7 @@ import top.fifthlight.combine.modifier.placement.*
 import top.fifthlight.combine.modifier.pointer.clickable
 import top.fifthlight.combine.paint.Colors
 import top.fifthlight.combine.paint.Drawable
+import top.fifthlight.combine.theme.LocalTheme
 import top.fifthlight.combine.widget.Popup
 import top.fifthlight.combine.widget.layout.Box
 import top.fifthlight.combine.widget.layout.Column
@@ -43,7 +44,7 @@ fun DropdownMenuScope.DropdownItemList(
 @Composable
 fun <T> DropdownMenuScope.DropdownItemList(
     modifier: Modifier = Modifier,
-    drawableSet: SelectDrawableSet = LocalSelectDrawableSet.current,
+    drawableSet: SelectDrawableSet = SelectDrawableSet.current,
     items: List<T>,
     textProvider: (T) -> Text,
     selectedIndex: Int = -1,
@@ -99,7 +100,7 @@ private data class DropdownMenuScopeImpl(
 @Composable
 fun DropDownMenu(
     anchor: IntRect,
-    border: Drawable = LocalSelectDrawableSet.current.floatPanel,
+    border: Drawable = SelectDrawableSet.current.floatPanel,
     expandProgress: Float = 1f,
     onDismissRequest: () -> Unit,
     content: @Composable DropdownMenuScope.() -> Unit,
@@ -149,7 +150,7 @@ fun DropDownMenu(
 @Composable
 fun DropDownMenu(
     anchor: IntRect,
-    border: Drawable = LocalSelectDrawableSet.current.floatPanel,
+    border: Drawable = SelectDrawableSet.current.floatPanel,
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     content: @Composable DropdownMenuScope.() -> Unit,

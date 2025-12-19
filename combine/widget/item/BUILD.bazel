@@ -5,12 +5,21 @@ kt_merge_library(
     srcs = glob(["*.kt"]),
     merge_deps = [
         "//combine/core/data",
+        "//combine/core/input/interaction",
         "//combine/core/item",
+        "//combine/core/layout/constraints",
+        "//combine/core/layout/measure",
         "//combine/core/modifier",
+        "//combine/core/modifier/drawing",
+        "//combine/core/modifier/placement",
+        "//combine/core/modifier/pointer",
         "//combine/core/modifier/scroll",
+        "//combine/core/node",
+        "//combine/core/paint",
         "//combine/core/sound",
         "//combine/core/util/math",
         "//combine/core/widget",
+        "//combine/data",
         "//combine/style",
         "//combine/theme/base",
         "//combine/widget",
@@ -18,5 +27,6 @@ kt_merge_library(
     visibility = ["//visibility:public"],
     deps = [
         "//:compose",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
     ],
 )

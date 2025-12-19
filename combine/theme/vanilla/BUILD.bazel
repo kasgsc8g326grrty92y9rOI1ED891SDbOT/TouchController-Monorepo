@@ -1,0 +1,15 @@
+load("//rule:merge_library.bzl", "kt_merge_library")
+load("//rule/combine:library.bzl", "kt_texture_lib")
+load("//rule/combine:minecraft.bzl", "vanilla_pack")
+
+kt_merge_library(
+    name = "vanilla",
+    srcs = glob(["*.kt"]),
+    expect = True,
+    merge_deps = [
+        "//combine/core/paint",
+        "//combine/style",
+        "//combine/theme/base",
+    ],
+    visibility = ["//visibility:public"],
+)

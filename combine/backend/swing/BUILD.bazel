@@ -8,6 +8,10 @@ kt_merge_library(
         "//combine/core/node",
         "//combine/core/paint",
         "//combine/core/screen",
+        "//combine/core/input/key",
+        "//combine/core/input/pointer",
+        "//combine/core/input/text",
+        "//combine/data",
     ],
     visibility = ["//combine:__subpackages__"],
     deps = [
