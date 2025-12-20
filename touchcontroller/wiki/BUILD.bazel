@@ -6,6 +6,8 @@ mdbook(
         "src/**/*.md",
         "src/**/assets/**",
         "theme/**",
+        "footer.css",
+        "footer.js",
     ]),
     book = "book.toml",
 )
