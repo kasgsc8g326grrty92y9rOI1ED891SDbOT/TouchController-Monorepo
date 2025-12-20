@@ -5,7 +5,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import top.fifthlight.combine.paint.BackgroundTexture
 import top.fifthlight.combine.paint.Drawable
-import top.fifthlight.combine.paint.Texture
+import top.fifthlight.combine.ui.style.ColorTheme
 import top.fifthlight.combine.ui.style.DrawableSet
 import top.fifthlight.combine.ui.style.TextureSet
 
@@ -13,6 +13,7 @@ val LocalTheme = staticCompositionLocalOf { SimpleTheme }
 
 data class Theme(
     val drawables: Drawables = Drawables(),
+    val colors: Colors = Colors(),
 ) {
     data class Drawables(
         val button: DrawableSet = DrawableSet.Empty,
@@ -57,6 +58,10 @@ data class Theme(
         val tab: DrawableSet = DrawableSet.Empty,
 
         val itemGridBackground: BackgroundTexture? = null,
+    )
+
+    data class Colors(
+        val button: ColorTheme = ColorTheme.dark,
     )
 }
 

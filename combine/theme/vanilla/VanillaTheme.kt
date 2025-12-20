@@ -7,6 +7,6 @@ val VanillaTheme by lazy {
     Theme(
         drawables = Theme.Drawables(
             button = drawableProvider.buttonDrawableSet,
-        )
+        ),
     )
 }

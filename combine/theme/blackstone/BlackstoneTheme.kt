@@ -1,6 +1,7 @@
 package top.fifthlight.combine.theme.blackstone
 
 import top.fifthlight.combine.theme.Theme
+import top.fifthlight.combine.ui.style.ColorTheme
 import top.fifthlight.combine.ui.style.DrawableSet
 import top.fifthlight.combine.ui.style.TextureSet
 
@@ -155,6 +156,9 @@ val BlackstoneTheme = run {
             alertDialogBackground = textures.WIDGET_BACKGROUND_FLOAT_WINDOW,
 
             itemGridBackground = textures.BACKGROUND_BACKPACK,
-        )
+        ),
+        colors = Theme.Colors(
+            button = ColorTheme.light,
+        ),
     )
 }

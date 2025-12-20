@@ -27,7 +27,7 @@ fun IconButton(
     } else {
         IconButtonDrawableSet
     },
-    colorTheme: ColorTheme? = ColorTheme.dark,
+    colorTheme: ColorTheme = LocalTheme.current.colors.button,
     minSize: IntSize = IntSize(0, 0),
     padding: IntPadding = IntPadding(1),
     enabled: Boolean = true,

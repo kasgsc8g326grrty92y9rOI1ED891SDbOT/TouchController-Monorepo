@@ -16,7 +16,7 @@ fun CheckBoxButton(
     modifier: Modifier = Modifier,
     drawableSet: DrawableSet = LocalTheme.current.drawables.checkBoxButton,
     checkBoxDrawableSet: CheckBoxDrawableSet = CheckBoxDrawableSet.current,
-    colorTheme: ColorTheme? = null,
+    colorTheme: ColorTheme = LocalTheme.current.colors.button,
     minSize: IntSize = IntSize(48, 20),
     enabled: Boolean = true,
     checked: Boolean = false,

@@ -27,7 +27,7 @@ fun GuideButton(
     modifier: Modifier = Modifier,
     focusable: Boolean = true,
     drawableSet: DrawableSet = LocalTheme.current.drawables.guideButton,
-    colorTheme: ColorTheme? = ColorTheme.dark,
+    colorTheme: ColorTheme = LocalTheme.current.colors.button,
     minSize: IntSize = IntSize(48, 20),
     enabled: Boolean = true,
     onClick: () -> Unit,
@@ -53,7 +53,7 @@ fun WarningButton(
     modifier: Modifier = Modifier,
     focusable: Boolean = true,
     drawableSet: DrawableSet = LocalTheme.current.drawables.warningButton,
-    colorTheme: ColorTheme? = ColorTheme.dark,
+    colorTheme: ColorTheme = LocalTheme.current.colors.button,
     minSize: IntSize = IntSize(48, 20),
     enabled: Boolean = true,
     onClick: () -> Unit,
@@ -78,7 +78,7 @@ fun Button(
     modifier: Modifier = Modifier,
     focusable: Boolean = true,
     drawableSet: DrawableSet = LocalTheme.current.drawables.button,
-    colorTheme: ColorTheme? = null,
+    colorTheme: ColorTheme = LocalTheme.current.colors.button,
     minSize: IntSize = IntSize(48, 20),
     padding: IntPadding = IntPadding(left = 4, right = 4),
     enabled: Boolean = true,
@@ -115,7 +115,7 @@ fun Button(
             .then(modifier),
         alignment = Alignment.Center,
     ) {
-        var colorTheme = colorTheme ?: ColorTheme.light
+        var colorTheme = colorTheme
         if (!enabled) {
             colorTheme = colorTheme.copy(foreground = Colors.SECONDARY_WHITE)
         }

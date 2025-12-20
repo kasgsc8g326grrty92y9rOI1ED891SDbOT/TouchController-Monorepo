@@ -1,6 +1,5 @@
 package top.fifthlight.combine.example.helloworld
 
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +18,7 @@ import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.screen.ScreenFactoryFactory
-import top.fifthlight.combine.theme.LocalTheme
+import top.fifthlight.combine.theme.invoke
 import top.fifthlight.combine.theme.vanilla.VanillaTheme
 import top.fifthlight.combine.widget.layout.Box
 import top.fifthlight.combine.widget.layout.Row
@@ -32,7 +31,7 @@ class HelloWorldMod: ClientModInitializer, ModMenuApi {
     private fun createScreen(parent: Screen? = null) = ScreenFactoryFactory.of().getScreen(
         parent = parent,
         title = TextFactoryFactory.of().literal("Hello world")) {
-        CompositionLocalProvider(LocalTheme provides VanillaTheme) {
+        VanillaTheme {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 alignment = Alignment.Center,
