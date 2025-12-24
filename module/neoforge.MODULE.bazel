@@ -10,6 +10,22 @@ maven.install(
 )
 
 neoforge_versions = {
+    "1.20.4": {
+        "neoform_version": "1.20.4-20240627.114801",
+        "neoform_sha256": "31798da3449d3e296a0761b0a05bbbca1a9d85eaf55302e9a258f6cce7e38fe6",
+        "neoforge_version": "20.4.251",
+        "neoforge_userdev_sha256": "405cbfd509d283aeb58b224691844ef735f737c3a71d0ff1a38ff1773d39650f",
+        "neoforge_sources_sha256": "198df8b25fa20c988459d127ca1f6d3b0c464620009dea2f96a953d22da80612",
+        "neoforge_universal_sha256": "54accb2e09fd75590e5896fcde24b3b7f0068d35fd4bc2437f619988fec649d7",
+    },
+    "1.20.6": {
+        "neoform_version": "1.20.6-20240627.102356",
+        "neoform_sha256": "fc03b4e32b879a109ec78abeebb002df4231cff03fab4f0bffeb03c63cbb590c",
+        "neoforge_version": "20.6.139",
+        "neoforge_userdev_sha256": "fbc6bdfb3328e2d4f68dfae8ee57e31211fab81e4ca55078ab85d272dfb67bc4",
+        "neoforge_sources_sha256": "73e1367eae1b7ec6e8d58bdca4f70906d906d427d536070b2a27756fca13db7f",
+        "neoforge_universal_sha256": "2214ce9640ff694de7f0c8c9eb354439003ae69e33bc7c80139ffd324c5b8a04",
+    },
     "1.21.3": {
         "neoform_version": "1.21.3-20241023.131943",
         "neoform_sha256": "514bfe9d6c7105c90e3fe460833471a4efff09577b9e8b4c4d44a90ad5ca0907",
@@ -45,7 +61,6 @@ neoforge_versions = {
 }
 
 neoform = use_extension("//repo:neoform.bzl", "neoform")
-
 neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
 
 [
@@ -83,8 +98,7 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
 ]
 
 neoform.pin(pin_file = "//:neoform_pin.txt")
-
 neoforge.pin(pin_file = "//:neoforge_pin.txt")
-use_repo(neoforge, "neoforge_pin")
 
+use_repo(neoforge, "neoforge_pin")
 use_repo(neoform, "neoform_pin")
