@@ -1,11 +1,11 @@
 "Macro to declare game versions"
 
 load("@rules_java//java:java_import.bzl", "java_import")
+load("//rule:decompile_jar.bzl", "decompile_jar")
 load("//rule:extract_jar.bzl", "extract_jar")
 load("//rule:jar.bzl", "jar")
 load("//rule:merge_mapping.bzl", "merge_mapping", "merge_mapping_input")
 load("//rule:remap_jar.bzl", "remap_jar")
-load("//rule:decompile_jar.bzl", "decompile_jar")
 
 def _game_version_impl(name, visibility, version, client_mappings, client, server, server_legacy, neoforge, intermediary, sodium_intermediary, iris_intermediary):
     intermediary_mapping = name + "_intermediary_mapping"
@@ -189,6 +189,7 @@ game_version = macro(
             mandatory = False,
             default = False,
             doc = "Mark the version's server JAR as legacy JARs that directly shadows libraries into main JAR",
+            configurable = False,
         ),
         "neoforge": attr.label(
             mandatory = False,
