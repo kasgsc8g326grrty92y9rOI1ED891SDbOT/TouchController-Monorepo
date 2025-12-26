@@ -12,16 +12,16 @@ interface FlowResolver {
         transformers: Set<FlowTransformer<T>>,
         maxSteps: Int,
     ): List<FlowTransformer<T>>?
-
-    fun <T : FlowData<T>> process(
-        input: FlowData<T>,
-        targetFeatures: Set<FlowFeature<T>>,
-        transformers: Set<FlowTransformer<T>>,
-        maxSteps: Int,
-    ): FlowData<T>? = resolve(
-        inputFeatures = input.features,
-        targetFeatures = targetFeatures,
-        transformers = transformers,
-        maxSteps = maxSteps,
-    )?.process(input)
 }
+
+fun <T : FlowData<T>> FlowResolver.process(
+    input: T,
+    targetFeatures: Set<FlowFeature<T>>,
+    transformers: Set<FlowTransformer<T>>,
+    maxSteps: Int,
+): T? = resolve(
+    inputFeatures = input.features,
+    targetFeatures = targetFeatures,
+    transformers = transformers,
+    maxSteps = maxSteps,
+)?.process(input)

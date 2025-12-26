@@ -8,8 +8,8 @@ interface FlowTransformer<T : FlowData<T>> {
     val addFeatures: Set<FlowFeature<T>>
     val requireFeatures: Set<FlowFeature<T>>
 
-    fun process(input: FlowData<T>): FlowData<T>
+    fun process(input: T): T
 }
 
-fun <T : FlowData<T>> List<FlowTransformer<T>>.process(input: FlowData<T>): FlowData<T> =
+fun <T : FlowData<T>> List<FlowTransformer<T>>.process(input: T): T =
     fold(input) { acc, transformer -> transformer.process(acc) }
