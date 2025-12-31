@@ -35,8 +35,8 @@ fabric_merge_jij(
     input = ":fabric_merged",
     visibility = ["//visibility:public"],
     deps = {
-        "@maven//:org_jetbrains_compose_runtime_runtime_desktop": "org_jetbrains_compose_runtime_runtime_desktop:1.7.1",
-        "@maven//:androidx_collection_collection_jvm": "androidx_collection_collection_jvm:1.4.0",
+        "@maven//:androidx_compose_runtime_runtime_desktop": "androidx_compose_runtime_runtime_desktop:1.10.0",
+        "@maven//:androidx_collection_collection_jvm": "androidx_collection_collection_jvm:1.5.0",
         "@maven//:org_mini2Dx_universal_tween_engine": "org_mini2dx_universal_tween_engine:6.3.3",
     },
 )

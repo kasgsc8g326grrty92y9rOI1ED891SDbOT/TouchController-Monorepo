@@ -4,8 +4,9 @@ maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
     artifacts = [
         "org.jetbrains.kotlin:kotlin-compose-compiler-plugin-embeddable:2.2.21",
-        "org.jetbrains.compose.runtime:runtime-desktop:1.9.3",
-        "org.jetbrains.compose.runtime:runtime-saveable-desktop:1.9.3",
+        "androidx.compose.runtime:runtime-desktop:1.10.0",
+        "androidx.compose.runtime:runtime-saveable-desktop:1.10.0",
+        "androidx.collection:collection-jvm:1.5.0",
         "org.mini2Dx:universal-tween-engine:6.3.3",
     ],
 )
