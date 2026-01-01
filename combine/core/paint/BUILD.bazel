@@ -12,6 +12,7 @@ kt_merge_library(
     deps = [
         "//:kotlin_serialization",
         "@maven//:androidx_compose_runtime_runtime_desktop",
+        "@maven//:androidx_compose_runtime_runtime_annotation_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_core_jvm",
     ],

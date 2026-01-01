@@ -51,3 +51,13 @@ platform(
         "@platforms//cpu:aarch64",
     ]
 )
+
+constraint_value(
+    name = "windows",
+    constraint_setting = ":os",
+)
+
+platform(
+    name = "java21",
+    visibility = ["//visibility:public"],
+)
