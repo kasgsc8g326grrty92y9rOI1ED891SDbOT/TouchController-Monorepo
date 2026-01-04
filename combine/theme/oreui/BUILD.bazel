@@ -13,6 +13,8 @@ kt_merge_library(
     srcs = glob(["*.kt"]),
     merge_deps = [
         ":texture_lib",
+    ],
+    deps = [
         "//combine/data",
         "//combine/core/paint",
         "//combine/style",
