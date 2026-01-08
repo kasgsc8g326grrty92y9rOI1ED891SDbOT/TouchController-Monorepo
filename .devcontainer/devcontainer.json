@@ -1,0 +1,28 @@
+{
+    "name": "Android + Bazel",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "mounts": [
+        "source=${localEnv:HOME}/.cache/bazel,target=/home/vscode/.cache/bazel,type=bind",
+        "source=${localEnv:HOME}/.cache/bazelisk,target=/home/vscode/.cache/bazelisk,type=bind",
+        "source=${localEnv:HOME}/.bazelrc,target=/home/vscode/.bazelrc,type=bind"
+    ],
+    "runArgs": [
+        "--network",
+        "host"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "BazelBuild.vscode-bazel",
+                "llvm-vs-code-extensions.vscode-clangd",
+                "rust-lang.rust-analyzer"
+            ],
+            "settings": {
+                "bazel.buildifierExecutable": "/usr/local/bin/buildifier"
+            }
+        }
+    },
+    "remoteUser": "vscode"
+}
