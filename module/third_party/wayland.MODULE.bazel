@@ -5,12 +5,12 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 http_archive(
     name = "wayland",
     build_file = "@//third_party/wayland:BUILD.wayland.bazel",
-    sha256 = "82892487a01ad67b334eca83b54317a7c86a03a89cfadacfef5211f11a5d0536",
-    url = "https://gitlab.freedesktop.org/wayland/wayland/-/releases/1.24.0/downloads/wayland-1.24.0.tar.xz",
-    strip_prefix = "wayland-1.24.0",
     patch_strip = 1,
     patches = [
         "@//third_party/wayland/patches:version_h.patch",
         "@//third_party/wayland/patches:config_h.patch",
     ],
+    sha256 = "82892487a01ad67b334eca83b54317a7c86a03a89cfadacfef5211f11a5d0536",
+    strip_prefix = "wayland-1.24.0",
+    url = "https://gitlab.freedesktop.org/wayland/wayland/-/releases/1.24.0/downloads/wayland-1.24.0.tar.xz",
 )

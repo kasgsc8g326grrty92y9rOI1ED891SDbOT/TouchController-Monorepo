@@ -1,9 +1,10 @@
 "MODULE.bazel Fabric Loom part"
 
 git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
 git_repository(
     name = "fabric_loom",
-    remote = "https://github.com/FabricMC/fabric-loom.git",
-    commit = "9e3837eedd03935321f4ee99aeb1ac481b76d846",
     build_file = "@//third_party/fabric_loom:BUILD.fabric_loom.bazel",
+    commit = "9e3837eedd03935321f4ee99aeb1ac481b76d846",
+    remote = "https://github.com/FabricMC/fabric-loom.git",
 )
