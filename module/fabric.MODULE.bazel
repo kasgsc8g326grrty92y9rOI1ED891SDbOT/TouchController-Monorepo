@@ -147,7 +147,16 @@ fabric_versions = {
     "1.21.11": {
         "api": "0.140.2+1.21.11",
         "loader": "0.17.3",
+        "placeholder_api": "2.8.1+1.21.10",
         "modmenu": "17.0.0-beta.1",
+        "mixin": "0.16.5+mixin.0.8.7",
+        "mixin_extras": "0.5.0",
+    },
+    "26.1": {
+        "intermediary": False,
+        "api": "0.140.3+26.1",
+        "loader": "0.18.3",
+        "modmenu": "18.0.0-alpha.3",
         "mixin": "0.16.5+mixin.0.8.7",
         "mixin_extras": "0.5.0",
     },
@@ -165,14 +174,14 @@ fabric_versions = {
         maven.install(
             name = "maven_fabric_%s" % version.replace(".", "_"),
             artifacts = [
-                "net.fabricmc:intermediary:%s:v2" % version,
-                "net.fabricmc.fabric-api:fabric-api:%s" % entry["api"],
-                "net.fabricmc:fabric-loader:%s" % entry["loader"],
-                ("io.github.prospector:modmenu:%s" % entry["modmenu"]) if "modmenu_legacy" in entry else ("com.terraformersmc:modmenu:%s" % entry["modmenu"]),
-                "net.fabricmc:sponge-mixin:%s" % entry["mixin"],
-                "net.fabricmc:fabric-language-kotlin:1.13.5+kotlin.2.2.10",
-            ] + (["eu.pb4:placeholder-api:%s" % entry["placeholder_api"]] if "placeholder_api" in entry else [])
-             + (["io.github.llamalad7:mixinextras-fabric:%s" % entry["mixin_extras"]] if "mixin_extras" in entry else []),
+                            "net.fabricmc.fabric-api:fabric-api:%s" % entry["api"],
+                            "net.fabricmc:fabric-loader:%s" % entry["loader"],
+                            ("io.github.prospector:modmenu:%s" % entry["modmenu"]) if "modmenu_legacy" in entry else ("com.terraformersmc:modmenu:%s" % entry["modmenu"]),
+                            "net.fabricmc:sponge-mixin:%s" % entry["mixin"],
+                            "net.fabricmc:fabric-language-kotlin:1.13.5+kotlin.2.2.10",
+                        ] + (["eu.pb4:placeholder-api:%s" % entry["placeholder_api"]] if "placeholder_api" in entry else []) +
+                        (["io.github.llamalad7:mixinextras-fabric:%s" % entry["mixin_extras"]] if "mixin_extras" in entry else []) +
+                        (["net.fabricmc:intermediary:%s:v2" % version] if "intermediary" not in entry or entry["intermediary"] else []),
             fetch_sources = True,
             lock_file = "//game/%s:maven_install_fabric.json" % version,
             repositories = [

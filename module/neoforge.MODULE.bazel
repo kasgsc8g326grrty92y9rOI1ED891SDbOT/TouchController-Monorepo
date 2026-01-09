@@ -10,6 +10,14 @@ maven.install(
 )
 
 lexforge_versions = {
+    "1.14.4": {
+        "mcp_version": "1.14.4-20190829.143755",
+        "mcp_sha256": "49d0b7818ccf385a57feda19fbd88b1fb4bd97c95d98e7044d9cb4c735e37820",
+        "forge_version": "1.14.4-28.2.28",
+        "forge_userdev_sha256": "310a469650ae7600a5ec3c331f390d4b9357a89aa807e521e4f8f6e6e79ce6f5",
+        "forge_sources_sha256": "01c3e270d51c94059118f8c255ca0b19cece2b37515a5765c8cac154225d6898",
+        "forge_universal_sha256": "8daece39153538aaefcedd7edb936c06f1f04de2f157bed07b89fac1c399e7bb",
+    },
     "1.16.5": {
         "mcp_version": "1.16.5-20210115.111550",
         "mcp_sha256": "80216a0f4ae79d81a5e11ceccaa97582a1f6a2cf079b7703b88a99a26547b342",
@@ -17,6 +25,38 @@ lexforge_versions = {
         "forge_userdev_sha256": "7fdf58513f2cff7a5c3007e0dd0ee36fb4dc40a0c68c18f86d9799b0ea382c1f",
         "forge_sources_sha256": "a1c8999617d792843c879c04e49f8658c299e5a423b4f44468f8f70961a68104",
         "forge_universal_sha256": "56d2b1501c74638f07162904e61b6bdd5312f27a3ad1f1f72d40b3818ce08ed7",
+    },
+    "1.17.1": {
+        "mcp_version": "1.17.1-20210706.113038",
+        "mcp_sha256": "507f59441ccdba03c526f5484cd40559cf958340c0d8b7c0d6a0dfc37f511413",
+        "forge_version": "1.17.1-37.1.1",
+        "forge_userdev_sha256": "ab630a994b26e5a7938b5700da7a79aa0e8cb933c101d026feb9a355014bfe0c",
+        "forge_sources_sha256": "58a7ed4c531ac8965bcded899116821e19ac02ec1aabec8942f5fe5aef9da6b8",
+        "forge_universal_sha256": "2cc032ae95d60f03e62be4929f3ecd66354e6ed135fa3cf676ced2b2f7910a6d",
+    },
+    "1.18.1": {
+        "mcp_version": "1.18.1-20211210.034407",
+        "mcp_sha256": "891fd00d1ba9c762d8bcd3a82a65f81d5e9c3a29366d0e31caa9eec4ed3541cb",
+        "forge_version": "1.18.1-39.0.0",
+        "forge_userdev_sha256": "8d44d9b2d7542728370dbd6578bec2786ee7d853079af98ad8192acfad540aa1",
+        "forge_sources_sha256": "e4bf42b6facc245bb0bb6025362d46a1c5935e640288ecc1883424ebeb7d2310",
+        "forge_universal_sha256": "525eee8863ffeb7d2f5a1dd8457ea48301606bacbedd912df07509fca265d8ad",
+    },
+    "1.18.2": {
+        "mcp_version": "1.18.2-20220404.173914",
+        "mcp_sha256": "f60527297dd4e81e3da93dc95981e426a81d3b03457cf2f94af8281e2db5a8f2",
+        "forge_version": "1.18.2-40.3.12",
+        "forge_userdev_sha256": "20d72b0c2847a99aadace09b00f7f3958526008a907bc19da16751de64a96e80",
+        "forge_sources_sha256": "a5d888d75586cfc229c20752cc521d8e011fd2693d4e7114578698520f912872",
+        "forge_universal_sha256": "d699e54a6a7bbe31efb40d39c21cc2425dc0648590350bcc85a39943ff729da0",
+    },
+    "1.19.2": {
+        "mcp_version": "1.19.2-20220805.130853",
+        "mcp_sha256": "fd4cf084b96492de87499b49d1ae5896ef14a3f85b5462d2842d7b193fba9135",
+        "forge_version": "1.19.2-43.5.2",
+        "forge_userdev_sha256": "79118c93b51771351c1add1979a7594734adc5f79300553de9c125d2aed54cc2",
+        "forge_sources_sha256": "30435d534a4d66ddfdf056f6e0d2e48cb548fd447914f50f2306d03e4ecb81fe",
+        "forge_universal_sha256": "c3c92daf8669bf2329af90da3d79f909976e90c728e1a896131ad273cf4b7077",
     },
     "1.20.1": {
         "mcp_version": "1.20.1-20230612.114412",
@@ -45,6 +85,22 @@ neoforge_versions = {
         "neoforge_sources_sha256": "73e1367eae1b7ec6e8d58bdca4f70906d906d427d536070b2a27756fca13db7f",
         "neoforge_universal_sha256": "2214ce9640ff694de7f0c8c9eb354439003ae69e33bc7c80139ffd324c5b8a04",
     },
+    "1.21": {
+        "neoform_version": "1.21-20240613.152323",
+        "neoform_sha256": "fc03b4e32b879a109ec78abeebb002df4231cff03fab4f0bffeb03c63cbb590c",
+        "neoforge_version": "21.0.167",
+        "neoforge_userdev_sha256": "12d1d7536c33a20ab8cd115f23d39842c18206de556cbb15145e3b0ad83ee9bb",
+        "neoforge_sources_sha256": "b5beeac99bf131dd309aaa46e24635bf049618feaff90e5cb83863ce2cf40f6a",
+        "neoforge_universal_sha256": "9c68c9c2c8bb8314fde3f1a3cf890ff4ab74b804561ae6998a4b9308397725a5",
+    },
+    "1.21.1": {
+        "neoform_version": "1.21.1-20240808.144430",
+        "neoform_sha256": "3fcdf0f0d115774cfceaf206a05a6dc964e2189bfd00f5b5f863e37f4b7733c7",
+        "neoforge_version": "21.1.218",
+        "neoforge_userdev_sha256": "08610e4b6a65b5049e52704b4c0182133bc54dd94514ec49c680120801a6aa0d",
+        "neoforge_sources_sha256": "0585399bfe575190f38ce57d33f6e4898384412aacb148c5e59f30c58b7cd783",
+        "neoforge_universal_sha256": "0a7e482f83762b79d42aa0a907f82413b70b178c69237c88c505436b2913fcf2",
+    },
     "1.21.3": {
         "neoform_version": "1.21.3-20241023.131943",
         "neoform_sha256": "514bfe9d6c7105c90e3fe460833471a4efff09577b9e8b4c4d44a90ad5ca0907",
@@ -69,6 +125,22 @@ neoforge_versions = {
         "neoforge_sources_sha256": "ff9d28d640cfcd7f896dd44e4e7d132cdbbf7305ce44117d4aadecbb2c9172a7",
         "neoforge_universal_sha256": "be89e5fc27235ebe3ed25312290d9900a67ea5f2d9edc8f1008c55c8ee3ecdb8",
     },
+    "1.21.6": {
+        "neoform_version": "1.21.6-20250617.151856",
+        "neoform_sha256": "f537eca06638ed23796d094ab9315c6660ebb142b067c791d68bf4e6469df32a",
+        "neoforge_version": "21.6.20-beta",
+        "neoforge_userdev_sha256": "646bf46e7cdbd20dc91d7ba5e181270bbe44b9e1571edf3ff3a85573e98f594f",
+        "neoforge_sources_sha256": "9df12009da9c8fcba87667aa906d88cacd809f37a7d391c58d08c2921bb9cf51",
+        "neoforge_universal_sha256": "250dfe6b489b32c388427bb37a9883d06d679d26e71986055bbd0a5d26047b63",
+    },
+    "1.21.7": {
+        "neoform_version": "1.21.7-20250711.194848",
+        "neoform_sha256": "d37b1aec163eb989f0c08fdd7f2a13a4ae4100102ea1d51ed18b21d69076d481",
+        "neoforge_version": "21.7.25-beta",
+        "neoforge_userdev_sha256": "10b4970427d9a3f080469c4b5e63fffad3b58339dd54ca43662e4bcce9335637",
+        "neoforge_sources_sha256": "a15431b6cdcd5305833757c0fb14f3df9d35768c455add88a18f068a72efcc3c",
+        "neoforge_universal_sha256": "44935718e180f5ef2dfcc79a8628a9b506cdd1b99e9fbab96cf0ce641609df65",
+    },
     "1.21.8": {
         "neoform_version": "1.21.8-20250717.133445",
         "neoform_sha256": "d67401bd0769ee045128fb84142fb660fe49db8ea86538d4dc308c25cd0cdbca",
@@ -79,7 +151,7 @@ neoforge_versions = {
     },
     "1.21.9": {
         "neoform_version": "1.21.9-20250930.151910",
-        "neoform_sha256": "",
+        "neoform_sha256": "36ea1a00d8bc168a9359ee2a8799d797cd9c62512d6e873a0ed3709ae6d14085",
         "neoforge_version": "21.9.16-beta",
         "neoforge_userdev_sha256": "6cf0698ef09fdf96fd33e413dc5a147bfc2a73c1b49ef2553cc5607edde25695",
         "neoforge_sources_sha256": "4c08ad08adcc08aea8cccfba26f36e64efcc4ffe4e3a690aac7a51ba7f305fb3",
@@ -87,7 +159,7 @@ neoforge_versions = {
     },
     "1.21.10": {
         "neoform_version": "1.21.10-20251010.172816",
-        "neoform_sha256": "",
+        "neoform_sha256": "445940ac070d37ec4294d5392de0485bfd2b9245580f7a7b6d8e774d7306de84",
         "neoforge_version": "21.10.64",
         "neoforge_userdev_sha256": "5ef969c95fb13fecbbf43641565cd871c6d92436cf7c28baa480219b26e7364c",
         "neoforge_sources_sha256": "d52d822668b8cb1bfcf2e75c31eacc90b1935e1865d3aa0e720eed9c1b4e49b9",
@@ -95,26 +167,44 @@ neoforge_versions = {
     },
     "1.21.11": {
         "neoform_version": "1.21.11-20251209.172050",
-        "neoform_sha256": "",
+        "neoform_sha256": "f3f65e0aa4926c3c3e9c60834d6e028d15f4815b33a0cb1ef63f524ba5d307ed",
         "neoforge_version": "21.11.13-beta",
         "neoforge_userdev_sha256": "1f26a8c8a28407a92b1369d5187c71246a5994ed4fb06db6a5bee3cf0c573aa8",
         "neoforge_sources_sha256": "ea49161d24f0704a8a9bcaf6ba91d5d9cfeb40d2f05c07d28504886151a868d1",
         "neoforge_universal_sha256": "c8bed692fd007fb2bd7b5f2f3d8e29d17d06dbbb7821278775d22ff90a7a16dc",
     },
+    "26.1": {
+        "version": "26.1-snapshot-2",
+        "mapping": False,
+        "neoform_version": "26.1-snapshot-2-1",
+        "neoform_sha256": "e5a789b397235adad0a5cb9f1157543c71f010448ad322332fd275bdb628b91c",
+        "neoforge_version": "26.1.0.0-alpha.5+snapshot-2",
+        "neoforge_userdev_sha256": "ea43f43233bb06b21049fca4adb9ef8cb88447fe00ed1888f08634630e35d126",
+        "neoforge_sources_sha256": "6e584d0b2e8f066ba4d28be0be33eac4111f21a986365cd185f35daf0d80c391",
+        "neoforge_universal_sha256": "6580181386d8b5cf65528df4b9b2ce90fc60c4b0789684f61ecd7eac944916eb",
+    },
 }
 
 neoform = use_extension("//repo:neoform.bzl", "neoform")
+
 neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
 
 [
     (
         neoform.version(
+            client_jar = "@minecraft//%s:client" % (data["version"] if "version" in data else version),
+            client_libraries = "@minecraft//%s:client_libraries" % (data["version"] if "version" in data else version),
             legacy = True,
-            client_jar = "@minecraft//%s:client" % version,
-            client_libraries = "@minecraft//%s:client_libraries" % version,
-            client_mapping = "@minecraft//%s:client_mappings" % version,
-            server_jar = "@minecraft//%s:server" % version,
-            server_mapping = "@minecraft//%s:server_mappings" % version,
+            server_jar = "@minecraft//%s:server" % (data["version"] if "version" in data else version),
+            sha256 = data["mcp_sha256"],
+            version = data["mcp_version"],
+        ) if "mapping" in data and data["mapping"] else neoform.version(
+            client_jar = "@minecraft//%s:client" % (data["version"] if "version" in data else version),
+            client_libraries = "@minecraft//%s:client_libraries" % (data["version"] if "version" in data else version),
+            client_mapping = "@minecraft//%s:client_mappings" % (data["version"] if "version" in data else version),
+            legacy = True,
+            server_jar = "@minecraft//%s:server" % (data["version"] if "version" in data else version),
+            server_mapping = "@minecraft//%s:server_mappings" % (data["version"] if "version" in data else version),
             sha256 = data["mcp_sha256"],
             version = data["mcp_version"],
         ),
@@ -125,8 +215,8 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
             }
         ),
         neoforge.version(
-            legacy = True,
             joined_patched_sources = "@mcp_%s//tasks/joined_patch" % version.replace(".", "_"),
+            legacy = True,
             sources_sha256 = data["forge_sources_sha256"],
             universal_sha256 = data["forge_universal_sha256"],
             userdev_sha256 = data["forge_userdev_sha256"],
@@ -145,11 +235,17 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
 [
     (
         neoform.version(
-            client_jar = "@minecraft//%s:client" % version,
-            client_libraries = "@minecraft//%s:client_libraries" % version,
-            client_mapping = "@minecraft//%s:client_mappings" % version,
-            server_jar = "@minecraft//%s:server" % version,
-            server_mapping = "@minecraft//%s:server_mappings" % version,
+            client_jar = "@minecraft//%s:client" % (data["version"] if "version" in data else version),
+            client_libraries = "@minecraft//%s:client_libraries" % (data["version"] if "version" in data else version),
+            server_jar = "@minecraft//%s:server" % (data["version"] if "version" in data else version),
+            sha256 = data["neoform_sha256"],
+            version = data["neoform_version"],
+        ) if "mapping" in data and data["mapping"] else neoform.version(
+            client_jar = "@minecraft//%s:client" % (data["version"] if "version" in data else version),
+            client_libraries = "@minecraft//%s:client_libraries" % (data["version"] if "version" in data else version),
+            client_mapping = "@minecraft//%s:client_mappings" % (data["version"] if "version" in data else version),
+            server_jar = "@minecraft//%s:server" % (data["version"] if "version" in data else version),
+            server_mapping = "@minecraft//%s:server_mappings" % (data["version"] if "version" in data else version),
             sha256 = data["neoform_sha256"],
             version = data["neoform_version"],
         ),
@@ -169,7 +265,7 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
         use_repo(
             neoforge,
             **{
-                ("neoforge_%s" % version.replace(".", "_")): ("neoforge_%s" % data["neoforge_version"].replace(".", "_").replace("-", "_")),
+                ("neoforge_%s" % version.replace(".", "_")): ("neoforge_%s" % data["neoforge_version"].replace(".", "_").replace("-", "_").replace("+", "_")),
             }
         ),
     )
@@ -177,7 +273,8 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
 ]
 
 neoform.pin(pin_file = "//:neoform_pin.txt")
-neoforge.pin(pin_file = "//:neoforge_pin.txt")
 
+neoforge.pin(pin_file = "//:neoforge_pin.txt")
 use_repo(neoforge, "neoforge_pin")
+
 use_repo(neoform, "neoform_pin")

@@ -13,7 +13,7 @@ _mojang_repository_url = "https://libraries.minecraft.net"
 
 def _convert_maven_coordinate_to_url_with_repo(repository, maven_coordinate, extension = "jar"):
     # Ugly but works
-    if "mojang" in maven_coordinate:
+    if "mojang" in maven_coordinate or "vecmath" in maven_coordinate:
         return _convert_maven_coordinate_to_url(_mojang_repository_url, maven_coordinate, extension)
     else:
         return _convert_maven_coordinate_to_url(repository, maven_coordinate, extension)
@@ -197,9 +197,10 @@ _neoforge_repo = repository_rule(
 
 def _neoforge_pin_impl(rctx):
     url_lines = ['"%s"' % url for url in rctx.attr.urls]
+    pin_target = str(rctx.path(rctx.attr.pin_file)) if rctx.attr.pin_file else "neoforge_pin.txt"
     rctx.template("PinGenerator.java", rctx.attr._pinner_source, {
         "/*INJECT HERE*/": ", ".join(url_lines),
-        "/*OUTPUT NAME*/": "neoforge_pin",
+        "$PIN_TARGET": pin_target,
     })
 
     build_bazel_contents = [
@@ -219,6 +220,11 @@ neoforge_pin = repository_rule(
     attrs = {
         "urls": attr.string_list(
             doc = "List of URLs to pin",
+        ),
+        "pin_file": attr.label(
+            doc = "Pin file output path",
+            allow_single_file = True,
+            mandatory = False,
         ),
         "_pinner_source": attr.label(
             allow_single_file = [".java"],
@@ -366,6 +372,7 @@ def _neoforge_impl(mctx):
             )
             for library in libraries
         ],
+        pin_file = pin_file,
     )
 
 neoforge = module_extension(

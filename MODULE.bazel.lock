@@ -310,7 +310,7 @@
     "//repo:minecraft.bzl%minecraft": {
       "general": {
         "bzlTransitiveDigest": "iNGV8kraL8UTX3sedv2M+4dWH3t0RTI9qb9r1CNrD08=",
-        "usagesDigest": "MZivYgDGY+pExIaRJG8aldCi8jCwKP9DTHGzi9FRSe4=",
+        "usagesDigest": "xqTjU/aycd1Bjpkd/lgzBVGD+2B7C3sI95z2wxRUtZw=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -455,7 +455,7 @@
                   "client_mappings",
                   "server_mappings"
                 ],
-                "26.1-snapshot-1": [
+                "26.1-snapshot-2": [
                   "client",
                   "server"
                 ]
@@ -549,8 +549,8 @@
                 "1.21.11#server": "https://piston-data.mojang.com/v1/objects/64bb6d763bed0a9f1d632ec347938594144943ed/server.jar",
                 "1.21.11#client_mappings": "https://piston-data.mojang.com/v1/objects/031a68bebf55d824f66d6573d8c752f0e1bf232a/client.txt",
                 "1.21.11#server_mappings": "https://piston-data.mojang.com/v1/objects/5621e9253f05fd57872bbe7f8ddf5f9a7d525955/server.txt",
-                "26.1-snapshot-1#client": "https://piston-data.mojang.com/v1/objects/bd354bbd46835d7c7753e0b19c718777fb2386ba/client.jar",
-                "26.1-snapshot-1#server": "https://piston-data.mojang.com/v1/objects/99786473e61ff6fcf0df4db9e0d6c9012c196116/server.jar"
+                "26.1-snapshot-2#client": "https://piston-data.mojang.com/v1/objects/2443ba7d3c92457e00e75a4363a601461ebd3ed4/client.jar",
+                "26.1-snapshot-2#server": "https://piston-data.mojang.com/v1/objects/165c30e5076a13848404f41692ff1e0126d0a6f3/server.jar"
               },
               "version_entry_sha1": {
                 "1.7.10#client": "e80d9b3bf5085002218d4be59e668bac718abbc6",
@@ -641,8 +641,8 @@
                 "1.21.11#server": "64bb6d763bed0a9f1d632ec347938594144943ed",
                 "1.21.11#client_mappings": "031a68bebf55d824f66d6573d8c752f0e1bf232a",
                 "1.21.11#server_mappings": "5621e9253f05fd57872bbe7f8ddf5f9a7d525955",
-                "26.1-snapshot-1#client": "bd354bbd46835d7c7753e0b19c718777fb2386ba",
-                "26.1-snapshot-1#server": "99786473e61ff6fcf0df4db9e0d6c9012c196116"
+                "26.1-snapshot-2#client": "2443ba7d3c92457e00e75a4363a601461ebd3ed4",
+                "26.1-snapshot-2#server": "165c30e5076a13848404f41692ff1e0126d0a6f3"
               },
               "version_libraries": {
                 "1.7.10": [
@@ -2929,7 +2929,7 @@
                   "windows#org.lwjgl:lwjgl:3.3.3:natives-windows-x86",
                   "common#org.slf4j:slf4j-api:2.0.17"
                 ],
-                "26.1-snapshot-1": [
+                "26.1-snapshot-2": [
                   "common#at.yawk.lz4:lz4-java:1.10.1",
                   "osx#ca.weblite:java-objc-bridge:1.1",
                   "common#com.azure:azure-json:1.4.0",
@@ -4649,16 +4649,17 @@
                 "1.17": "f425401a00adf0112fde624ee80c66333530f8a1",
                 "1.18": "d31a2e85ae149dd1b1a7070b22cb8887892fda6c",
                 "1.19": "a9c8b05a8082a65678beda6dfa2b8f21fa627bce",
-                "5": "1fb34606b21ae29b59b7feef1563466b90244eb0",
-                "12": "7a74fbb3403dc17d42016bb8d7115c7c79b1bcca",
-                "16": "faae671bbc7d79aa7d8caf1a3ed46a247d3f53e2",
-                "17": "f56f739e892f5b0b6715b45f267ccd1cf17de5f9",
-                "18": "2409c18d500fd49a8ca4fb7c3c73495f6eaadb80",
-                "19": "ebd8c4fad1c0487350d4959cc17158c7f45c97b9",
-                "24": "9878376c1ad9deb88f41d81dfbbc0ef04144f99f",
-                "26": "a559037d98693d54e6d7b7f91228fb6f69999b12",
-                "27": "6cef05715a9a2f562e91167749c4ac7821d56993",
-                "29": "6c7ffa1ae18c954e57a94f67e3bbd9031d8d588c"
+                "5": "4e39a2d5d49a8e56713f55e2743c97404f05bf2b",
+                "12": "97b2bb5ecf80920665b888a5e213b65ee0ebf170",
+                "16": "853bf5931ca464ac9e649bd5aca487a13dfca4c7",
+                "17": "f8454e23e4a2647f3ac7975d130595e802e4ce76",
+                "18": "b88f0fd3e6b8c85b70ba80c094caf8cb468e7c5b",
+                "19": "8695878c3f9e339e7c72ffc23a14eb3da34eabff",
+                "24": "f1ce23b1fce9784b80b79a6a8aafddf7a78f5725",
+                "26": "0c9fa6e98e1783b99ace21deeecc41d8025cc861",
+                "27": "5fbc646e93e10b35f5e8f92ff52f6585b88d54fa",
+                "29": "6c7ffa1ae18c954e57a94f67e3bbd9031d8d588c",
+                "30": "8b7bad607099d20bc808202adc544e43ab083e7f"
               },
               "asset_urls": {
                 "1.7.10": "https://launchermeta.mojang.com/v1/packages/1863782e33ce7b584fc45b037325a1964e095d3e/1.7.10.json",
@@ -4669,16 +4670,17 @@
                 "1.17": "https://piston-meta.mojang.com/v1/packages/f425401a00adf0112fde624ee80c66333530f8a1/1.17.json",
                 "1.18": "https://piston-meta.mojang.com/v1/packages/d31a2e85ae149dd1b1a7070b22cb8887892fda6c/1.18.json",
                 "1.19": "https://piston-meta.mojang.com/v1/packages/a9c8b05a8082a65678beda6dfa2b8f21fa627bce/1.19.json",
-                "5": "https://piston-meta.mojang.com/v1/packages/1fb34606b21ae29b59b7feef1563466b90244eb0/5.json",
-                "12": "https://piston-meta.mojang.com/v1/packages/7a74fbb3403dc17d42016bb8d7115c7c79b1bcca/12.json",
-                "16": "https://piston-meta.mojang.com/v1/packages/faae671bbc7d79aa7d8caf1a3ed46a247d3f53e2/16.json",
-                "17": "https://piston-meta.mojang.com/v1/packages/f56f739e892f5b0b6715b45f267ccd1cf17de5f9/17.json",
-                "18": "https://piston-meta.mojang.com/v1/packages/2409c18d500fd49a8ca4fb7c3c73495f6eaadb80/18.json",
-                "19": "https://piston-meta.mojang.com/v1/packages/ebd8c4fad1c0487350d4959cc17158c7f45c97b9/19.json",
-                "24": "https://piston-meta.mojang.com/v1/packages/9878376c1ad9deb88f41d81dfbbc0ef04144f99f/24.json",
-                "26": "https://piston-meta.mojang.com/v1/packages/a559037d98693d54e6d7b7f91228fb6f69999b12/26.json",
-                "27": "https://piston-meta.mojang.com/v1/packages/6cef05715a9a2f562e91167749c4ac7821d56993/27.json",
-                "29": "https://piston-meta.mojang.com/v1/packages/6c7ffa1ae18c954e57a94f67e3bbd9031d8d588c/29.json"
+                "5": "https://piston-meta.mojang.com/v1/packages/4e39a2d5d49a8e56713f55e2743c97404f05bf2b/5.json",
+                "12": "https://piston-meta.mojang.com/v1/packages/97b2bb5ecf80920665b888a5e213b65ee0ebf170/12.json",
+                "16": "https://piston-meta.mojang.com/v1/packages/853bf5931ca464ac9e649bd5aca487a13dfca4c7/16.json",
+                "17": "https://piston-meta.mojang.com/v1/packages/f8454e23e4a2647f3ac7975d130595e802e4ce76/17.json",
+                "18": "https://piston-meta.mojang.com/v1/packages/b88f0fd3e6b8c85b70ba80c094caf8cb468e7c5b/18.json",
+                "19": "https://piston-meta.mojang.com/v1/packages/8695878c3f9e339e7c72ffc23a14eb3da34eabff/19.json",
+                "24": "https://piston-meta.mojang.com/v1/packages/f1ce23b1fce9784b80b79a6a8aafddf7a78f5725/24.json",
+                "26": "https://piston-meta.mojang.com/v1/packages/0c9fa6e98e1783b99ace21deeecc41d8025cc861/26.json",
+                "27": "https://piston-meta.mojang.com/v1/packages/5fbc646e93e10b35f5e8f92ff52f6585b88d54fa/27.json",
+                "29": "https://piston-meta.mojang.com/v1/packages/6c7ffa1ae18c954e57a94f67e3bbd9031d8d588c/29.json",
+                "30": "https://piston-meta.mojang.com/v1/packages/8b7bad607099d20bc808202adc544e43ab083e7f/30.json"
               },
               "version_assets": {
                 "1.7.10": "1.7.10",
@@ -4705,7 +4707,7 @@
                 "1.21.9": "27",
                 "1.21.10": "27",
                 "1.21.11": "29",
-                "26.1-snapshot-1": "29"
+                "26.1-snapshot-2": "30"
               }
             }
           }
@@ -4936,14 +4938,25 @@
     },
     "//repo:neoforge.bzl%neoforge": {
       "general": {
-        "bzlTransitiveDigest": "sd4Cb6Ez4Z+qgHyzymT/5B+B+JqiepcQleZBj71k4IU=",
-        "usagesDigest": "SDjeQB+tSzLWV4cui/Xe/bT+MXYeb7GXAxODLST8j88=",
+        "bzlTransitiveDigest": "X9dtbiM6LBT1XnFZFxszK7jMCGC914W4+BcOMNT6FuM=",
+        "usagesDigest": "myeWTI1DtYPWIb/TQeDPd6xE9YFO1VITnKxSeqUEatM=",
         "recordedFileInputs": {
-          "@@//neoforge_pin.txt": "7c80ee0b3529764dab0ba9cfb326ac9e5a5ce7e08d47274d4f7edf0c41f21093"
+          "@@//neoforge_pin.txt": "84c9d1c76cd4796b9a68ec93219caa83ea64bb8d8a6c7f9b79c87685dc298e0e"
         },
         "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
+          "forge_1_14_4_28_2_28": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": true,
+              "version": "1.14.4-28.2.28",
+              "userdev_sha256": "310a469650ae7600a5ec3c331f390d4b9357a89aa807e521e4f8f6e6e79ce6f5",
+              "universal_sha256": "8daece39153538aaefcedd7edb936c06f1f04de2f157bed07b89fac1c399e7bb",
+              "sources_sha256": "01c3e270d51c94059118f8c255ca0b19cece2b37515a5765c8cac154225d6898",
+              "joined_patched_sources": "@@+neoform+mcp_1_14_4_20190829_143755//tasks/joined_patch:joined_patch"
+            }
+          },
           "forge_1_16_5_36_2_34": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
@@ -4953,6 +4966,50 @@
               "universal_sha256": "56d2b1501c74638f07162904e61b6bdd5312f27a3ad1f1f72d40b3818ce08ed7",
               "sources_sha256": "a1c8999617d792843c879c04e49f8658c299e5a423b4f44468f8f70961a68104",
               "joined_patched_sources": "@@+neoform+mcp_1_16_5_20210115_111550//tasks/joined_patch:joined_patch"
+            }
+          },
+          "forge_1_17_1_37_1_1": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": true,
+              "version": "1.17.1-37.1.1",
+              "userdev_sha256": "ab630a994b26e5a7938b5700da7a79aa0e8cb933c101d026feb9a355014bfe0c",
+              "universal_sha256": "2cc032ae95d60f03e62be4929f3ecd66354e6ed135fa3cf676ced2b2f7910a6d",
+              "sources_sha256": "58a7ed4c531ac8965bcded899116821e19ac02ec1aabec8942f5fe5aef9da6b8",
+              "joined_patched_sources": "@@+neoform+mcp_1_17_1_20210706_113038//tasks/joined_patch:joined_patch"
+            }
+          },
+          "forge_1_18_1_39_0_0": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": true,
+              "version": "1.18.1-39.0.0",
+              "userdev_sha256": "8d44d9b2d7542728370dbd6578bec2786ee7d853079af98ad8192acfad540aa1",
+              "universal_sha256": "525eee8863ffeb7d2f5a1dd8457ea48301606bacbedd912df07509fca265d8ad",
+              "sources_sha256": "e4bf42b6facc245bb0bb6025362d46a1c5935e640288ecc1883424ebeb7d2310",
+              "joined_patched_sources": "@@+neoform+mcp_1_18_1_20211210_034407//tasks/joined_patch:joined_patch"
+            }
+          },
+          "forge_1_18_2_40_3_12": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": true,
+              "version": "1.18.2-40.3.12",
+              "userdev_sha256": "20d72b0c2847a99aadace09b00f7f3958526008a907bc19da16751de64a96e80",
+              "universal_sha256": "d699e54a6a7bbe31efb40d39c21cc2425dc0648590350bcc85a39943ff729da0",
+              "sources_sha256": "a5d888d75586cfc229c20752cc521d8e011fd2693d4e7114578698520f912872",
+              "joined_patched_sources": "@@+neoform+mcp_1_18_2_20220404_173914//tasks/joined_patch:joined_patch"
+            }
+          },
+          "forge_1_19_2_43_5_2": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": true,
+              "version": "1.19.2-43.5.2",
+              "userdev_sha256": "79118c93b51771351c1add1979a7594734adc5f79300553de9c125d2aed54cc2",
+              "universal_sha256": "c3c92daf8669bf2329af90da3d79f909976e90c728e1a896131ad273cf4b7077",
+              "sources_sha256": "30435d534a4d66ddfdf056f6e0d2e48cb548fd447914f50f2306d03e4ecb81fe",
+              "joined_patched_sources": "@@+neoform+mcp_1_19_2_20220805_130853//tasks/joined_patch:joined_patch"
             }
           },
           "forge_1_20_1_47_1_47": {
@@ -4988,6 +5045,28 @@
               "joined_patched_sources": "@@+neoform+neoform_1_20_6_20240627_102356//tasks/joined_patch:joined_patch"
             }
           },
+          "neoforge_21_0_167": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": false,
+              "version": "21.0.167",
+              "userdev_sha256": "12d1d7536c33a20ab8cd115f23d39842c18206de556cbb15145e3b0ad83ee9bb",
+              "universal_sha256": "9c68c9c2c8bb8314fde3f1a3cf890ff4ab74b804561ae6998a4b9308397725a5",
+              "sources_sha256": "b5beeac99bf131dd309aaa46e24635bf049618feaff90e5cb83863ce2cf40f6a",
+              "joined_patched_sources": "@@+neoform+neoform_1_21_20240613_152323//tasks/joined_patch:joined_patch"
+            }
+          },
+          "neoforge_21_1_218": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": false,
+              "version": "21.1.218",
+              "userdev_sha256": "08610e4b6a65b5049e52704b4c0182133bc54dd94514ec49c680120801a6aa0d",
+              "universal_sha256": "0a7e482f83762b79d42aa0a907f82413b70b178c69237c88c505436b2913fcf2",
+              "sources_sha256": "0585399bfe575190f38ce57d33f6e4898384412aacb148c5e59f30c58b7cd783",
+              "joined_patched_sources": "@@+neoform+neoform_1_21_1_20240808_144430//tasks/joined_patch:joined_patch"
+            }
+          },
           "neoforge_21_3_91": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
@@ -5019,6 +5098,28 @@
               "universal_sha256": "be89e5fc27235ebe3ed25312290d9900a67ea5f2d9edc8f1008c55c8ee3ecdb8",
               "sources_sha256": "ff9d28d640cfcd7f896dd44e4e7d132cdbbf7305ce44117d4aadecbb2c9172a7",
               "joined_patched_sources": "@@+neoform+neoform_1_21_5_20250325_162830//tasks/joined_patch:joined_patch"
+            }
+          },
+          "neoforge_21_6_20_beta": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": false,
+              "version": "21.6.20-beta",
+              "userdev_sha256": "646bf46e7cdbd20dc91d7ba5e181270bbe44b9e1571edf3ff3a85573e98f594f",
+              "universal_sha256": "250dfe6b489b32c388427bb37a9883d06d679d26e71986055bbd0a5d26047b63",
+              "sources_sha256": "9df12009da9c8fcba87667aa906d88cacd809f37a7d391c58d08c2921bb9cf51",
+              "joined_patched_sources": "@@+neoform+neoform_1_21_6_20250617_151856//tasks/joined_patch:joined_patch"
+            }
+          },
+          "neoforge_21_7_25_beta": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": false,
+              "version": "21.7.25-beta",
+              "userdev_sha256": "10b4970427d9a3f080469c4b5e63fffad3b58339dd54ca43662e4bcce9335637",
+              "universal_sha256": "44935718e180f5ef2dfcc79a8628a9b506cdd1b99e9fbab96cf0ce641609df65",
+              "sources_sha256": "a15431b6cdcd5305833757c0fb14f3df9d35768c455add88a18f068a72efcc3c",
+              "joined_patched_sources": "@@+neoform+neoform_1_21_7_20250711_194848//tasks/joined_patch:joined_patch"
             }
           },
           "neoforge_21_8_36": {
@@ -5063,6 +5164,171 @@
               "universal_sha256": "c8bed692fd007fb2bd7b5f2f3d8e29d17d06dbbb7821278775d22ff90a7a16dc",
               "sources_sha256": "ea49161d24f0704a8a9bcaf6ba91d5d9cfeb40d2f05c07d28504886151a868d1",
               "joined_patched_sources": "@@+neoform+neoform_1_21_11_20251209_172050//tasks/joined_patch:joined_patch"
+            }
+          },
+          "neoforge_26_1_0_0_alpha_5_snapshot_2": {
+            "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
+            "attributes": {
+              "legacy": false,
+              "version": "26.1.0.0-alpha.5+snapshot-2",
+              "userdev_sha256": "ea43f43233bb06b21049fca4adb9ef8cb88447fe00ed1888f08634630e35d126",
+              "universal_sha256": "6580181386d8b5cf65528df4b9b2ce90fc60c4b0789684f61ecd7eac944916eb",
+              "sources_sha256": "6e584d0b2e8f066ba4d28be0be33eac4111f21a986365cd185f35daf0d80c391",
+              "joined_patched_sources": "@@+neoform+neoform_26_1_snapshot_2_1//tasks/joined_patch:joined_patch"
+            }
+          },
+          "forge_org_ow2_asm_asm_6_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/ow2/asm/asm/6.2/asm-6.2.jar",
+              "sha256": "917bda888bc543187325d5fbc1034207eed152574ef78df1734ca0aee40b7fc8"
+            }
+          },
+          "forge_org_ow2_asm_asm_commons_6_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-commons/6.2/asm-commons-6.2.jar",
+              "sha256": "15545913db06c987aa404f028e33501d9f27f8ced612f73727e3547ac4de878c"
+            }
+          },
+          "forge_org_ow2_asm_asm_tree_6_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-tree/6.2/asm-tree-6.2.jar",
+              "sha256": "02317d9ed739dab470a96f44de712fde51a811362ca26852b34324388e61257c"
+            }
+          },
+          "forge_cpw_mods_modlauncher_4_1_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/4.1.0/modlauncher-4.1.0.jar",
+              "sha256": "a8f8a7f3f45b2077bf5408ec5a35c7fac6fd51a9f81c15354dfff7a1a732a865"
+            }
+          },
+          "forge_cpw_mods_grossjava9hacks_1_1_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/grossjava9hacks/1.1.0/grossjava9hacks-1.1.0.jar",
+              "sha256": "708db05de641e47ccb054c4beee90cf7d58f46fefba3dd568dfcd16010061660"
+            }
+          },
+          "forge_net_minecraftforge_accesstransformers_1_0_5_shadowed": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/accesstransformers/1.0.5/accesstransformers-1.0.5-shadowed.jar",
+              "sha256": "0f2b887cda271c85b1858e223998af9b9f3d597742afbaa0a45d723e293308d4"
+            }
+          },
+          "forge_net_minecraftforge_eventbus_1_0_0_service": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/eventbus/1.0.0/eventbus-1.0.0-service.jar",
+              "sha256": "6dd59a6aa3de649938831987648bd72e12ce943a19c438c7c4a92b3fe846940a"
+            }
+          },
+          "forge_net_minecraftforge_forgespi_1_5_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/1.5.0/forgespi-1.5.0.jar",
+              "sha256": "a64c37802805251547746355d643ac4f9403d9bf5494594432adfab01bb31935"
+            }
+          },
+          "forge_net_minecraftforge_coremods_1_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/1.0.0/coremods-1.0.0.jar",
+              "sha256": "64bdb36a56cdbe4d3f78f9974a45f9df1164a7b028618010a05e8d877812f800"
+            }
+          },
+          "forge_net_minecraftforge_unsafe_0_2_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/unsafe/0.2.0/unsafe-0.2.0.jar",
+              "sha256": "946937e182ab3b518b5b88264f367e1f35ac12bc83abed220490c60c717be239"
+            }
+          },
+          "forge_com_electronwill_night_config_core_3_6_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/electronwill/night-config/core/3.6.0/core-3.6.0.jar",
+              "sha256": "5f3e9099ddbfeb49ace43598c2271d951688aeab5a9d49fbc2b574b740679211"
+            }
+          },
+          "forge_com_electronwill_night_config_toml_3_6_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/electronwill/night-config/toml/3.6.0/toml-3.6.0.jar",
+              "sha256": "df711db01d6b142b61640e74f2a62df84c9a2bf9ccd3c58afb1b8f3df0ac22d3"
+            }
+          },
+          "forge_org_jline_jline_3_12_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/jline/jline/3.12.1/jline-3.12.1.jar",
+              "sha256": "babda835ee57f2eb87ee088e53f8af7609f7117240c22792dc65539478b556e4"
+            }
+          },
+          "forge_org_apache_maven_maven_artifact_3_6_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/maven/maven-artifact/3.6.0/maven-artifact-3.6.0.jar",
+              "sha256": "3d5a0e77cde76d386b18c7400db1eb16aacef02e031ecd0d954477aeccc92155"
+            }
+          },
+          "forge_java3d_vecmath_1_5_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://libraries.minecraft.net/java3d/vecmath/1.5.2/vecmath-1.5.2.jar",
+              "sha256": ""
+            }
+          },
+          "forge_net_jodah_typetools_0_8_3": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/jodah/typetools/0.8.3/typetools-0.8.3.jar",
+              "sha256": "f853e21f7de6bd192f0ce09e64a6c8b0e154c9cf9f34e62f08d5e26f73ce3b19"
+            }
+          },
+          "forge_org_apache_logging_log4j_log4j_api_2_15_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-api/2.15.0/log4j-api-2.15.0.jar",
+              "sha256": "c8c33e7e8e05496dae69cf0caac8c3092cffd937a164526e92922d2d566d0a55"
+            }
+          },
+          "forge_org_apache_logging_log4j_log4j_core_2_15_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-core/2.15.0/log4j-core-2.15.0.jar",
+              "sha256": "419a8512895971b7b4f4f33e620d361254e5c9552b904b0474b09ddd4a6a220b"
+            }
+          },
+          "forge_org_apache_logging_log4j_log4j_slf4j18_impl_2_15_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-slf4j18-impl/2.15.0/log4j-slf4j18-impl-2.15.0.jar",
+              "sha256": "59fe1bae704100690335039688ce1edcd483201ba84d3cfeded1d49c155b8862"
+            }
+          },
+          "forge_net_minecrell_terminalconsoleappender_1_2_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecrell/terminalconsoleappender/1.2.0/terminalconsoleappender-1.2.0.jar",
+              "sha256": "912e432c9355c4b2025d788ed87fd72bb95542e2fc967ad6875fbbeb6e1c7a1c"
+            }
+          },
+          "forge_net_sf_jopt_simple_jopt_simple_5_0_4": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
+              "sha256": "df26cc58f235f477db07f753ba5a3ab243ebe5789d9f89ecf68dd62ea9a66c28"
+            }
+          },
+          "forge_net_minecraftforge_forge_1_14_4_28_2_28_launcher": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forge/1.14.4-28.2.28/forge-1.14.4-28.2.28-launcher.jar",
+              "sha256": "da0f8710934b90a98d4c4c88beb193ea6edd045da2ec8bed0659423c4dfb6e39"
             }
           },
           "forge_org_ow2_asm_asm_9_1": {
@@ -5149,13 +5415,6 @@
               "sha256": "45e109ccbfab004f70e0bee211b056ce4cf12f27a08853730f654ad1d286b872"
             }
           },
-          "forge_net_minecraftforge_unsafe_0_2_0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/unsafe/0.2.0/unsafe-0.2.0.jar",
-              "sha256": "946937e182ab3b518b5b88264f367e1f35ac12bc83abed220490c60c717be239"
-            }
-          },
           "forge_com_electronwill_night_config_core_3_6_3": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
@@ -5170,60 +5429,11 @@
               "sha256": "721b9484f2c35e1a051d5d72254b76ab98ae799858bd5daa8217a7124ef728df"
             }
           },
-          "forge_org_jline_jline_3_12_1": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/jline/jline/3.12.1/jline-3.12.1.jar",
-              "sha256": "babda835ee57f2eb87ee088e53f8af7609f7117240c22792dc65539478b556e4"
-            }
-          },
           "forge_org_apache_maven_maven_artifact_3_6_3": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
               "url": "https://maven.minecraftforge.net/releases/org/apache/maven/maven-artifact/3.6.3/maven-artifact-3.6.3.jar",
               "sha256": "61b20da4e1e3db837630d0810a6a7a5ac9fb7ea31b0a55638062aad6e479c09c"
-            }
-          },
-          "forge_net_jodah_typetools_0_8_3": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/jodah/typetools/0.8.3/typetools-0.8.3.jar",
-              "sha256": "f853e21f7de6bd192f0ce09e64a6c8b0e154c9cf9f34e62f08d5e26f73ce3b19"
-            }
-          },
-          "forge_org_apache_logging_log4j_log4j_api_2_15_0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-api/2.15.0/log4j-api-2.15.0.jar",
-              "sha256": "c8c33e7e8e05496dae69cf0caac8c3092cffd937a164526e92922d2d566d0a55"
-            }
-          },
-          "forge_org_apache_logging_log4j_log4j_core_2_15_0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-core/2.15.0/log4j-core-2.15.0.jar",
-              "sha256": "419a8512895971b7b4f4f33e620d361254e5c9552b904b0474b09ddd4a6a220b"
-            }
-          },
-          "forge_org_apache_logging_log4j_log4j_slf4j18_impl_2_15_0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-slf4j18-impl/2.15.0/log4j-slf4j18-impl-2.15.0.jar",
-              "sha256": "59fe1bae704100690335039688ce1edcd483201ba84d3cfeded1d49c155b8862"
-            }
-          },
-          "forge_net_minecrell_terminalconsoleappender_1_2_0": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecrell/terminalconsoleappender/1.2.0/terminalconsoleappender-1.2.0.jar",
-              "sha256": "912e432c9355c4b2025d788ed87fd72bb95542e2fc967ad6875fbbeb6e1c7a1c"
-            }
-          },
-          "forge_net_sf_jopt_simple_jopt_simple_5_0_4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
-              "sha256": "df26cc58f235f477db07f753ba5a3ab243ebe5789d9f89ecf68dd62ea9a66c28"
             }
           },
           "forge_org_spongepowered_mixin_0_8_4": {
@@ -5245,6 +5455,468 @@
             "attributes": {
               "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forge/1.16.5-36.2.34/forge-1.16.5-36.2.34-launcher.jar",
               "sha256": "cbd7783781efe7c17e0abf990b50adbded6941af6ca8164c886f8803cb0d241d"
+            }
+          },
+          "forge_cpw_mods_securejarhandler_0_9_54": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/securejarhandler/0.9.54/securejarhandler-0.9.54.jar",
+              "sha256": "823c9ff565c3f29013ab17d20a03e5ba178675f1f0d0a0e2b7b8355bbadb07db"
+            }
+          },
+          "forge_net_minecraftforge_accesstransformers_8_0_4": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/accesstransformers/8.0.4/accesstransformers-8.0.4.jar",
+              "sha256": "3225e2a513f658df686fe8b2ae5b4808525851a2c238ce65e38847cc4ffc6441"
+            }
+          },
+          "forge_net_minecraftforge_eventbus_5_0_3": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/eventbus/5.0.3/eventbus-5.0.3.jar",
+              "sha256": "81f34dea30f014aa45ec172370ae712476a6aa7b887428d9a85f9e2bd8eda2f9"
+            }
+          },
+          "forge_net_minecraftforge_forgespi_4_0_10": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/4.0.10/forgespi-4.0.10.jar",
+              "sha256": "5ec3c46f6b3ef3671ab4984d45807ae7b907e285fd6cf93b74e3626eb369397f"
+            }
+          },
+          "forge_net_minecraftforge_coremods_5_0_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/5.0.1/coremods-5.0.1.jar",
+              "sha256": "a0678f4d444c9d9ac816f91638308604576aa1297168e33a154538d1acc0c1ac"
+            }
+          },
+          "forge_cpw_mods_modlauncher_9_0_7": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/9.0.7/modlauncher-9.0.7.jar",
+              "sha256": "1cc15015960778cafb777cc08c7a6bf15b363ffdd7272bbd97ce8f84313b31e7"
+            }
+          },
+          "forge_org_apache_commons_commons_lang3_3_8_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/commons/commons-lang3/3.8.1/commons-lang3-3.8.1.jar",
+              "sha256": "dac807f65b07698ff39b1b07bfef3d87ae3fd46d91bbf8a2bc02b2a831616f68"
+            }
+          },
+          "forge_org_jline_jline_reader_3_12_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/jline/jline-reader/3.12.1/jline-reader-3.12.1.jar",
+              "sha256": "4d1037c7110027ed64816c510fad2afa0a5aa9bbc38fb9f0e772870823fcad2a"
+            }
+          },
+          "forge_org_jline_jline_terminal_3_12_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/jline/jline-terminal/3.12.1/jline-terminal-3.12.1.jar",
+              "sha256": "eb6115680f732562f0e8e6777f127dece81e23b25015925f3c4a2a900d48cc9e"
+            }
+          },
+          "forge_org_openjdk_nashorn_nashorn_core_15_3": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/openjdk/nashorn/nashorn-core/15.3/nashorn-core-15.3.jar",
+              "sha256": "efc4f1e6164377a6a347dae255cf764fb3e5461cafd859abbdfb39e2dc831b62"
+            }
+          },
+          "forge_com_google_guava_guava_21_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/google/guava/guava/21.0/guava-21.0.jar",
+              "sha256": "972139718abc8a4893fa78cba8cf7b2c903f35c97aaf44fa3031b0669948b480"
+            }
+          },
+          "forge_com_google_code_gson_gson_2_8_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar",
+              "sha256": "c6221763bd79c4f1c3dc7f750b5f29a0bb38b367b81314c4f71896e340c40825"
+            }
+          },
+          "forge_cpw_mods_bootstraplauncher_0_1_17": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/bootstraplauncher/0.1.17/bootstraplauncher-0.1.17.jar",
+              "sha256": "d57a076d6f6053f3b73790fd41ca8a5bd9fdce619a3073c7310d9593ed510a8a"
+            }
+          },
+          "forge_net_minecraftforge_fmlcore_1_17_1_37_1_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.17.1-37.1.1/fmlcore-1.17.1-37.1.1.jar",
+              "sha256": "400d3d56c4cc77132a5a169303c977846a7b50ae3e10290cceccb70986005bb7"
+            }
+          },
+          "forge_net_minecraftforge_fmlloader_1_17_1_37_1_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.17.1-37.1.1/fmlloader-1.17.1-37.1.1.jar",
+              "sha256": "1165b695d41a6a6dfa3bbe5da7be3a9e208eaa6acb4fcb1669217cdfe5a9d300"
+            }
+          },
+          "forge_net_minecraftforge_javafmllanguage_1_17_1_37_1_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/javafmllanguage/1.17.1-37.1.1/javafmllanguage-1.17.1-37.1.1.jar",
+              "sha256": "96d176680d936a459154aacbae625b11fb7045a2cd40196d6b865d07f285e75d"
+            }
+          },
+          "forge_net_minecraftforge_mclanguage_1_17_1_37_1_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mclanguage/1.17.1-37.1.1/mclanguage-1.17.1-37.1.1.jar",
+              "sha256": "7f68d4c69267add84b8fc14bb0c5d8b765e46a0b74b45cada9fa8ca8c56d9826"
+            }
+          },
+          "forge_com_electronwill_night_config_core_3_6_4": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/electronwill/night-config/core/3.6.4/core-3.6.4.jar",
+              "sha256": "1bc71c67b54ba9c8e5030b3ddaef7dee16ae43fee6850368f76b0cffef819700"
+            }
+          },
+          "forge_com_electronwill_night_config_toml_3_6_4": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/electronwill/night-config/toml/3.6.4/toml-3.6.4.jar",
+              "sha256": "3cb3d0ef3352e204cda68215fbe41afdc7f56425ef4fd8e84006964a656117d4"
+            }
+          },
+          "forge_org_apache_commons_commons_lang3_3_12_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
+              "sha256": "d919d904486c037f8d193412da0c92e22a9fa24230b9d67a57855c5c31c7e94e"
+            }
+          },
+          "forge_org_spongepowered_mixin_0_8_5": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/spongepowered/mixin/0.8.5/mixin-0.8.5.jar",
+              "sha256": "ca15a907e4d1f6b38cefed51d7df96a83347dcfb0bc8ced53111519e991d887d"
+            }
+          },
+          "forge_com_google_guava_guava_31_0_1_jre": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
+              "sha256": "d5be94d65e87bd219fb3193ad1517baa55a3b88fc91d21cf735826ab5af087b9"
+            }
+          },
+          "forge_com_google_code_gson_gson_2_8_8": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/google/code/gson/gson/2.8.8/gson-2.8.8.jar",
+              "sha256": "c6f3152b0c39c1b7ebe267e99604a750e9d5585b2f3f2e19d6fbd7ec9080d0fb"
+            }
+          },
+          "forge_net_minecraftforge_fmlcore_1_18_1_39_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.18.1-39.0.0/fmlcore-1.18.1-39.0.0.jar",
+              "sha256": "20189cfd90c0f592df2ca1696f9b3d07f66d0fb4e7e3bbc9a31b3b9814344aeb"
+            }
+          },
+          "forge_net_minecraftforge_fmlloader_1_18_1_39_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.18.1-39.0.0/fmlloader-1.18.1-39.0.0.jar",
+              "sha256": "a81450e410559c84b3082cc7fa63316e8cd50ef3d84e7eeb89694549e2c26f91"
+            }
+          },
+          "forge_net_minecraftforge_javafmllanguage_1_18_1_39_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/javafmllanguage/1.18.1-39.0.0/javafmllanguage-1.18.1-39.0.0.jar",
+              "sha256": "e25af24463ce8ccad925de8c76d20662e0678e34087648da8dd63af2e78797f5"
+            }
+          },
+          "forge_net_minecraftforge_mclanguage_1_18_1_39_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mclanguage/1.18.1-39.0.0/mclanguage-1.18.1-39.0.0.jar",
+              "sha256": "760570b92da397567e095adfa31440fab08e949cf6bc54811e5bfa66c69aff7c"
+            }
+          },
+          "forge_cpw_mods_securejarhandler_1_0_8": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/securejarhandler/1.0.8/securejarhandler-1.0.8.jar",
+              "sha256": "69249634131934d346ba788fd099649b2b9277b002fcb612e86e43e18091f075"
+            }
+          },
+          "forge_org_ow2_asm_asm_9_7_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/ow2/asm/asm/9.7.1/asm-9.7.1.jar",
+              "sha256": "8cadd43ac5eb6d09de05faecca38b917a040bb9139c7edeb4cc81c740b713281"
+            }
+          },
+          "forge_org_ow2_asm_asm_commons_9_7_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-commons/9.7.1/asm-commons-9.7.1.jar",
+              "sha256": "9a579b54d292ad9be171d4313fd4739c635592c2b5ac3a459bbd1049cddec6a0"
+            }
+          },
+          "forge_org_ow2_asm_asm_tree_9_7_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-tree/9.7.1/asm-tree-9.7.1.jar",
+              "sha256": "9929881f59eb6b840e86d54570c77b59ce721d104e6dfd7a40978991c2d3b41f"
+            }
+          },
+          "forge_org_ow2_asm_asm_util_9_7_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-util/9.7.1/asm-util-9.7.1.jar",
+              "sha256": "f885be71b5c90556f5f1ad1c4f9276b29b96057c497d46666fe4ddbec3cb43c6"
+            }
+          },
+          "forge_org_ow2_asm_asm_analysis_9_7_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-analysis/9.7.1/asm-analysis-9.7.1.jar",
+              "sha256": "85b29371884ba31bb76edf22323c2c24e172c3267a67152eba3d1ccc2e041ef2"
+            }
+          },
+          "forge_net_minecraftforge_forgespi_4_0_15_4_x": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/4.0.15-4.x/forgespi-4.0.15-4.x.jar",
+              "sha256": "afbea13adeb1def87a358ad529acb157506b34c3ec62d02033d584ea6a28bf14"
+            }
+          },
+          "forge_net_minecraftforge_coremods_5_2_5": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/5.2.5/coremods-5.2.5.jar",
+              "sha256": "b5d195d6b012e45abfdf196d339256900513a484ecd3e086a478c514d2cd7df7"
+            }
+          },
+          "forge_cpw_mods_modlauncher_9_1_3": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/9.1.3/modlauncher-9.1.3.jar",
+              "sha256": "433c038b505eb37a963e810b105b96b4d073fced389c68cbe332614a6b502c76"
+            }
+          },
+          "forge_org_openjdk_nashorn_nashorn_core_15_4": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/openjdk/nashorn/nashorn-core/15.4/nashorn-core-15.4.jar",
+              "sha256": "6f816e84dfd63a81d4eaa7829c08337bbaff3ec683ff3bf6bbd90d017a00dc6f"
+            }
+          },
+          "forge_net_minecraftforge_JarJarSelector_0_3_19": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarSelector/0.3.19/JarJarSelector-0.3.19.jar",
+              "sha256": "f7acfbafc9a715ee7d7ce2d539815b3ebccebc5064e0a7252c4a6a1c71d1e740"
+            }
+          },
+          "forge_net_minecraftforge_JarJarMetadata_0_3_19": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarMetadata/0.3.19/JarJarMetadata-0.3.19.jar",
+              "sha256": "6141c710b5b7b673bd544740a31339f0754d7a794cc46b952b7ef7897b7ce265"
+            }
+          },
+          "forge_net_java_dev_jna_jna_5_12_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/java/dev/jna/jna/5.12.1/jna-5.12.1.jar",
+              "sha256": "91a814ac4f40d60dee91d842e1a8ad874c62197984403d0e3c30d39e55cf53b3"
+            }
+          },
+          "forge_net_java_dev_jna_jna_platform_5_12_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/java/dev/jna/jna-platform/5.12.1/jna-platform-5.12.1.jar",
+              "sha256": "8ce969116cac95bd61b07a8d5e07174b352e63301473caac72c395e3c08488d2"
+            }
+          },
+          "forge_cpw_mods_bootstraplauncher_1_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/bootstraplauncher/1.0.0/bootstraplauncher-1.0.0.jar",
+              "sha256": "bf09102181b8d9b03b536d3388463cc08c4044e4234d233515dae84bd39920e4"
+            }
+          },
+          "forge_net_minecraftforge_JarJarFileSystems_0_3_19": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarFileSystems/0.3.19/JarJarFileSystems-0.3.19.jar",
+              "sha256": "beaa1875dd433f2dd152395c3e3c52ef2bb99f20b74860a07d70f7c4626e56d4"
+            }
+          },
+          "forge_net_minecraftforge_fmlcore_1_18_2_40_3_12": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.18.2-40.3.12/fmlcore-1.18.2-40.3.12.jar",
+              "sha256": "2e06569e085a15df7832edd2358f702003169d1479fbe1623d98adf7a6111435"
+            }
+          },
+          "forge_net_minecraftforge_fmlloader_1_18_2_40_3_12": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.18.2-40.3.12/fmlloader-1.18.2-40.3.12.jar",
+              "sha256": "594934a6de66087d1c2c19294ae7b4b14a10ed65ffa52f9ecb15d186aaee561f"
+            }
+          },
+          "forge_net_minecraftforge_javafmllanguage_1_18_2_40_3_12": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/javafmllanguage/1.18.2-40.3.12/javafmllanguage-1.18.2-40.3.12.jar",
+              "sha256": "55b99fa20957e8a7b51983036c902e853db9e66324a2092d58d59bff471d6e61"
+            }
+          },
+          "forge_net_minecraftforge_lowcodelanguage_1_18_2_40_3_12": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/lowcodelanguage/1.18.2-40.3.12/lowcodelanguage-1.18.2-40.3.12.jar",
+              "sha256": "5a8c0e701e64a398ba785dbf91355e81138deb6b613b09b2c587a893e2ee924d"
+            }
+          },
+          "forge_net_minecraftforge_mclanguage_1_18_2_40_3_12": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mclanguage/1.18.2-40.3.12/mclanguage-1.18.2-40.3.12.jar",
+              "sha256": "71db1a38ceb2ef254a326ae5550beaa9c8931d3ccf645161ffd22909053592c8"
+            }
+          },
+          "forge_cpw_mods_securejarhandler_2_1_4": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/securejarhandler/2.1.4/securejarhandler-2.1.4.jar",
+              "sha256": "5b5a039857e4868bf1ee725a2d0cfc3cd4a83fb0d01c573a2fde089bc74c9fee"
+            }
+          },
+          "forge_net_minecraftforge_eventbus_6_0_3": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/eventbus/6.0.3/eventbus-6.0.3.jar",
+              "sha256": "4bc0d5eaa086a4aecc613771fd02ad04373a06e83359185ee87f5caae4f29897"
+            }
+          },
+          "forge_net_minecraftforge_forgespi_6_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/6.0.0/forgespi-6.0.0.jar",
+              "sha256": "f7bbe556d381b9c138aae2a348ddf42ecb72de4f1f181c11df0ccc5234e494f0"
+            }
+          },
+          "forge_net_minecraftforge_coremods_5_2_4": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/5.2.4/coremods-5.2.4.jar",
+              "sha256": "db32dc040af2eea1216a145a3f5fc6bc45d006740fe696da5a9a445006167c9f"
+            }
+          },
+          "forge_cpw_mods_modlauncher_10_0_8": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/10.0.8/modlauncher-10.0.8.jar",
+              "sha256": "a8529d8ef3c754dffe8873eca20778c8814b04ab6b9ab1a892d840bf7a9832a1"
+            }
+          },
+          "forge_org_apache_maven_maven_artifact_3_8_5": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/maven/maven-artifact/3.8.5/maven-artifact-3.8.5.jar",
+              "sha256": "91172bc294d6eab02fc9f45f4ea01fd0e418962d128cf489abea7b6957d988ee"
+            }
+          },
+          "forge_net_minecraftforge_JarJarSelector_0_3_16": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarSelector/0.3.16/JarJarSelector-0.3.16.jar",
+              "sha256": "631bb520dbbfa63975c9b2297f9a354065ea20bfa44a622e390e6436053eceb2"
+            }
+          },
+          "forge_net_minecraftforge_JarJarMetadata_0_3_16": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarMetadata/0.3.16/JarJarMetadata-0.3.16.jar",
+              "sha256": "2ac8c77549948ee43f4322eee9608db8159bd26e64f255229d35361e07eacb4e"
+            }
+          },
+          "forge_org_apache_logging_log4j_log4j_slf4j_impl_2_19_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-slf4j-impl/2.19.0/log4j-slf4j-impl-2.19.0.jar",
+              "sha256": "015d5c229f3cd5c0ebf175c1da08d596d94043362ae9d92637d88848c90537c8"
+            }
+          },
+          "forge_org_apache_logging_log4j_log4j_api_2_19_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-api/2.19.0/log4j-api-2.19.0.jar",
+              "sha256": "5ccb24ad9f92e768d0bc456d3061a737951262df803e004d2cad096b75a88d60"
+            }
+          },
+          "forge_org_apache_logging_log4j_log4j_core_2_19_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-core/2.19.0/log4j-core-2.19.0.jar",
+              "sha256": "b4a1796fab7bfc36df015c1b4052459147997e8d215a7199d71d05f9e747e4f4"
+            }
+          },
+          "forge_cpw_mods_bootstraplauncher_1_1_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/cpw/mods/bootstraplauncher/1.1.2/bootstraplauncher-1.1.2.jar",
+              "sha256": "853b61fd165caf4103b5b969afbc5b2b037abc310ed644518cd967b50d5189a4"
+            }
+          },
+          "forge_net_minecraftforge_JarJarFileSystems_0_3_16": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarFileSystems/0.3.16/JarJarFileSystems-0.3.16.jar",
+              "sha256": "860f49cb58a0c41ab4d0b14118b0b5910007a6b0266e7e6c5b48253461910b22"
+            }
+          },
+          "forge_net_minecraftforge_fmlcore_1_19_2_43_5_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.19.2-43.5.2/fmlcore-1.19.2-43.5.2.jar",
+              "sha256": "049e8b9adbcd25e5e135583cb7fb67acca4a3e9c7dc363a399a1f3f52c8e704d"
+            }
+          },
+          "forge_net_minecraftforge_fmlloader_1_19_2_43_5_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.19.2-43.5.2/fmlloader-1.19.2-43.5.2.jar",
+              "sha256": "7df0bc30326a510554f2939c093c7960f30dc4d6ff7a982bcd54323c83b0e30f"
+            }
+          },
+          "forge_net_minecraftforge_javafmllanguage_1_19_2_43_5_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/javafmllanguage/1.19.2-43.5.2/javafmllanguage-1.19.2-43.5.2.jar",
+              "sha256": "359f383abde5797ea0508c1730a202e234f667bc4915ee8fef8dd422e4a71be9"
+            }
+          },
+          "forge_net_minecraftforge_lowcodelanguage_1_19_2_43_5_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/lowcodelanguage/1.19.2-43.5.2/lowcodelanguage-1.19.2-43.5.2.jar",
+              "sha256": "484ac123f70ea4cc2efc3c2c66e845db24821f8ecf11096e23e06efd6a15a0df"
+            }
+          },
+          "forge_net_minecraftforge_mclanguage_1_19_2_43_5_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mclanguage/1.19.2-43.5.2/mclanguage-1.19.2-43.5.2.jar",
+              "sha256": "c52b2d88eed8f9982d1c8e9cddfde4e988e26d60ca32ed06f1868cc18cce2d07"
             }
           },
           "forge_cpw_mods_securejarhandler_2_1_10": {
@@ -5289,13 +5961,6 @@
               "sha256": "39f1cf1791335701c3b02cae7b2bc21057ec9a55b2240789cb6d552b2b2c62fa"
             }
           },
-          "forge_net_minecraftforge_accesstransformers_8_0_4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/accesstransformers/8.0.4/accesstransformers-8.0.4.jar",
-              "sha256": "3225e2a513f658df686fe8b2ae5b4808525851a2c238ce65e38847cc4ffc6441"
-            }
-          },
           "forge_net_minecraftforge_eventbus_6_0_5": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
@@ -5308,13 +5973,6 @@
             "attributes": {
               "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/7.0.1/forgespi-7.0.1.jar",
               "sha256": "2298eaba25d066afd9b329de7f75e7bf78ef47f3045e6ecb0e40428d875e4b84"
-            }
-          },
-          "forge_net_minecraftforge_coremods_5_0_1": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/5.0.1/coremods-5.0.1.jar",
-              "sha256": "a0678f4d444c9d9ac816f91638308604576aa1297168e33a154538d1acc0c1ac"
             }
           },
           "forge_cpw_mods_modlauncher_10_0_9": {
@@ -5331,88 +5989,11 @@
               "sha256": "39d9a3d9277c1402b8e7b97f917ce278241cf1796312aec85b87f19a376dd99a"
             }
           },
-          "forge_com_electronwill_night_config_core_3_6_4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/com/electronwill/night-config/core/3.6.4/core-3.6.4.jar",
-              "sha256": "1bc71c67b54ba9c8e5030b3ddaef7dee16ae43fee6850368f76b0cffef819700"
-            }
-          },
-          "forge_com_electronwill_night_config_toml_3_6_4": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/com/electronwill/night-config/toml/3.6.4/toml-3.6.4.jar",
-              "sha256": "3cb3d0ef3352e204cda68215fbe41afdc7f56425ef4fd8e84006964a656117d4"
-            }
-          },
-          "forge_org_apache_maven_maven_artifact_3_8_5": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/apache/maven/maven-artifact/3.8.5/maven-artifact-3.8.5.jar",
-              "sha256": "91172bc294d6eab02fc9f45f4ea01fd0e418962d128cf489abea7b6957d988ee"
-            }
-          },
           "forge_net_jodah_typetools_0_6_3": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
               "url": "https://maven.minecraftforge.net/releases/net/jodah/typetools/0.6.3/typetools-0.6.3.jar",
               "sha256": "408300867804be05d1083cc0287dd3a21295a9e76090e288013ba5a4182dc96d"
-            }
-          },
-          "forge_org_jline_jline_reader_3_12_1": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/jline/jline-reader/3.12.1/jline-reader-3.12.1.jar",
-              "sha256": "4d1037c7110027ed64816c510fad2afa0a5aa9bbc38fb9f0e772870823fcad2a"
-            }
-          },
-          "forge_org_jline_jline_terminal_3_12_1": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/jline/jline-terminal/3.12.1/jline-terminal-3.12.1.jar",
-              "sha256": "eb6115680f732562f0e8e6777f127dece81e23b25015925f3c4a2a900d48cc9e"
-            }
-          },
-          "forge_org_spongepowered_mixin_0_8_5": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/spongepowered/mixin/0.8.5/mixin-0.8.5.jar",
-              "sha256": "ca15a907e4d1f6b38cefed51d7df96a83347dcfb0bc8ced53111519e991d887d"
-            }
-          },
-          "forge_org_openjdk_nashorn_nashorn_core_15_3": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/org/openjdk/nashorn/nashorn-core/15.3/nashorn-core-15.3.jar",
-              "sha256": "efc4f1e6164377a6a347dae255cf764fb3e5461cafd859abbdfb39e2dc831b62"
-            }
-          },
-          "forge_net_minecraftforge_JarJarSelector_0_3_19": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarSelector/0.3.19/JarJarSelector-0.3.19.jar",
-              "sha256": "f7acfbafc9a715ee7d7ce2d539815b3ebccebc5064e0a7252c4a6a1c71d1e740"
-            }
-          },
-          "forge_net_minecraftforge_JarJarMetadata_0_3_19": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarMetadata/0.3.19/JarJarMetadata-0.3.19.jar",
-              "sha256": "6141c710b5b7b673bd544740a31339f0754d7a794cc46b952b7ef7897b7ce265"
-            }
-          },
-          "forge_cpw_mods_bootstraplauncher_1_1_2": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/cpw/mods/bootstraplauncher/1.1.2/bootstraplauncher-1.1.2.jar",
-              "sha256": "853b61fd165caf4103b5b969afbc5b2b037abc310ed644518cd967b50d5189a4"
-            }
-          },
-          "forge_net_minecraftforge_JarJarFileSystems_0_3_19": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarFileSystems/0.3.19/JarJarFileSystems-0.3.19.jar",
-              "sha256": "beaa1875dd433f2dd152395c3e3c52ef2bb99f20b74860a07d70f7c4626e56d4"
             }
           },
           "forge_net_minecraftforge_fmlcore_1_20_1_47_1_47": {
@@ -5975,32 +6556,144 @@
               "sha256": "a58af12ee1b68cfd2ebb0c27caef164f084381a00ec81a48cc275fd7ea54e154"
             }
           },
-          "neoforge_net_neoforged_fancymodloader_earlydisplay_5_0_8": {
+          "neoforge_net_neoforged_fancymodloader_earlydisplay_4_0_23_jar": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/5.0.8/earlydisplay-5.0.8.jar",
-              "sha256": "185cb9172479874ccbc80b0f2a1b8e588cf9e52f1d7f116149abcc4e5fe89256"
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/4.0.23/earlydisplay-4.0.23.jar",
+              "sha256": "ff9e373ef765c51e76ecf2875911bef98131df97146c59829aa925747851f74f"
             }
           },
-          "neoforge_net_neoforged_fancymodloader_loader_5_0_8": {
+          "neoforge_net_neoforged_fancymodloader_loader_4_0_23_jar": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/5.0.8/loader-5.0.8.jar",
-              "sha256": "c56045c4ae38404bc03fd5c36d54613341857d8bedf6044680925767f3f9c4ff"
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/4.0.23/loader-4.0.23.jar",
+              "sha256": "e180d0359946e3fe0b566771ee15e293152a788902550ad87384272b4dc0c4c5"
             }
           },
-          "neoforge_net_neoforged_accesstransformers_at_modlauncher_11_0_1": {
+          "neoforge_cpw_mods_modlauncher_11_0_4_jar": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-modlauncher/11.0.1/at-modlauncher-11.0.1.jar",
-              "sha256": "8db72ca9f53d537edeca91438e7b815eed1abbc0dd7fca054d3fd47ab5d39d4a"
+              "url": "https://maven.neoforged.net/releases/cpw/mods/modlauncher/11.0.4/modlauncher-11.0.4.jar",
+              "sha256": "790b76e93c1c21c7ab6086237c213bc5297663f9e65176ee5a5e56c40041dc51"
             }
           },
-          "neoforge_net_neoforged_accesstransformers_11_0_1": {
+          "neoforge_org_ow2_asm_asm_commons_9_5_jar": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/11.0.1/accesstransformers-11.0.1.jar",
-              "sha256": "db59934c1a355e8af08443857c25eed66958b70ba3323485b1eb3dd807efa312"
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm-commons/9.5/asm-commons-9.5.jar",
+              "sha256": "72eee9fbafb9de8d9463f20dd584a48ceeb7e5152ad4c987bfbe17dd4811c9ae"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_util_9_5_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm-util/9.5/asm-util-9.5.jar",
+              "sha256": "c467f1bb3c08888f47243e2d475209b34a772d627e44fca06752e18bb038bd74"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_analysis_9_5_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm-analysis/9.5/asm-analysis-9.5.jar",
+              "sha256": "39f1cf1791335701c3b02cae7b2bc21057ec9a55b2240789cb6d552b2b2c62fa"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_tree_9_5_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm-tree/9.5/asm-tree-9.5.jar",
+              "sha256": "3c33a648191079aeaeaeb7c19a49b153952f9e40fe86fbac5205554ddd9acd94"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_9_5_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm/9.5/asm-9.5.jar",
+              "sha256": "b62e84b5980729751b0458c534cf1366f727542bb8d158621335682a460f0353"
+            }
+          },
+          "neoforge_com_electronwill_night_config_toml_3_8_0_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.0/toml-3.8.0.jar",
+              "sha256": "271a0f04f7b5b3155312ad2d3588fc6fcc6312d41e728f02318a33794b77aac6"
+            }
+          },
+          "neoforge_com_electronwill_night_config_core_3_8_0_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.0/core-3.8.0.jar",
+              "sha256": "82de286396fbc640205a7eebe1e4a05a7e56f7915e6ee207680cbf3bd12cbc5c"
+            }
+          },
+          "neoforge_net_minecrell_terminalconsoleappender_1_3_0_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/minecrell/terminalconsoleappender/1.3.0/terminalconsoleappender-1.3.0.jar",
+              "sha256": "1afea1bca095068f7f4483f061feed94753be34233ddb0df9ec380fc14d5a985"
+            }
+          },
+          "neoforge_net_fabricmc_sponge_mixin_0_14_0_mixin_0_8_6_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/fabricmc/sponge-mixin/0.14.0+mixin.0.8.6/sponge-mixin-0.14.0+mixin.0.8.6.jar",
+              "sha256": "3f22c86d1a89e0c2b1cdd4388d495b50c744add9a7f2e96a8937f0dfd8d0f0b1"
+            }
+          },
+          "neoforge_net_neoforged_neoform_1_21_20240613_152323_zip": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/neoform/1.21-20240613.152323/neoform-1.21-20240613.152323.zip",
+              "sha256": "33bbf6d5dc922c081521b745d73f262a5738f7c6ff7c1e98b4ceef9068398857"
+            }
+          },
+          "neoforge_io_github_llamalad7_mixinextras_neoforge_0_3_5_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/io/github/llamalad7/mixinextras-neoforge/0.3.5/mixinextras-neoforge-0.3.5.jar",
+              "sha256": "c47a887a872884749efc7df8853931632eabd1635653565b15b8be10c810ffc9"
+            }
+          },
+          "neoforge_org_jline_jline_reader_3_20_0_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/jline/jline-reader/3.20.0/jline-reader-3.20.0.jar",
+              "sha256": "acd1c94d1e228aa7b7962f69b21ed3a9fd828eb3a63e4baf9086954e626af1f0"
+            }
+          },
+          "neoforge_org_jline_jline_terminal_3_20_0_jar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/jline/jline-terminal/3.20.0/jline-terminal-3.20.0.jar",
+              "sha256": "12125170e795519ba6dc8010c070b53c76aae92b485c1e37530e54ab5dd08d43"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_earlydisplay_4_0_42": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/4.0.42/earlydisplay-4.0.42.jar",
+              "sha256": "6410270f0749c4d4666ad9259a97f4066cd2c8cdb88b70b017145df6cf1502ec"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_loader_4_0_42": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/4.0.42/loader-4.0.42.jar",
+              "sha256": "182fcee7ed6e2be4c815bd08d2c766d355c58ab1e227b6ffd84ed26a0f71b6d6"
+            }
+          },
+          "neoforge_net_neoforged_accesstransformers_at_modlauncher_10_0_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-modlauncher/10.0.1/at-modlauncher-10.0.1.jar",
+              "sha256": "2a4b447c6944a2b89e383c1eed9a26bb5cc60330a5bb26ef0a912a38d52df935"
+            }
+          },
+          "neoforge_net_neoforged_accesstransformers_10_0_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/10.0.1/accesstransformers-10.0.1.jar",
+              "sha256": "89fb0dc3d68f8a5961f309ee110dad7d2c1094ba204595602b71e02e104838a1"
             }
           },
           "neoforge_net_neoforged_bus_8_0_5": {
@@ -6017,11 +6710,11 @@
               "sha256": "d24c0d3e31af23cac36a0f9f98654b875f678b27ddccd8b28d331c1878a6de4a"
             }
           },
-          "neoforge_cpw_mods_modlauncher_11_0_4": {
+          "neoforge_cpw_mods_modlauncher_11_0_5": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/cpw/mods/modlauncher/11.0.4/modlauncher-11.0.4.jar",
-              "sha256": "790b76e93c1c21c7ab6086237c213bc5297663f9e65176ee5a5e56c40041dc51"
+              "url": "https://maven.neoforged.net/releases/cpw/mods/modlauncher/11.0.5/modlauncher-11.0.5.jar",
+              "sha256": "fd9b9fc7cf043d2264ea0113eac6b258f0a71fece5b00e831bfbdf9726c78a24"
             }
           },
           "neoforge_net_neoforged_mergetool_2_0_0_api": {
@@ -6031,18 +6724,18 @@
               "sha256": "0260881294d8b218afe3d673f084d3745a55c28b35205d07d5e62d7f22202a00"
             }
           },
-          "neoforge_com_electronwill_night_config_toml_3_8_0": {
+          "neoforge_com_electronwill_night_config_toml_3_8_3": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.0/toml-3.8.0.jar",
-              "sha256": "271a0f04f7b5b3155312ad2d3588fc6fcc6312d41e728f02318a33794b77aac6"
+              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.3/toml-3.8.3.jar",
+              "sha256": "ccb92882264bf071e3916ab122fe5ea3e211b8ebf199201698a1324f151f928f"
             }
           },
-          "neoforge_com_electronwill_night_config_core_3_8_0": {
+          "neoforge_com_electronwill_night_config_core_3_8_3": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.0/core-3.8.0.jar",
-              "sha256": "82de286396fbc640205a7eebe1e4a05a7e56f7915e6ee207680cbf3bd12cbc5c"
+              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.3/core-3.8.3.jar",
+              "sha256": "971dc88c1c22085611ee1c300f5bbf8595938178e819befbb5e98c3cbd272b79"
             }
           },
           "neoforge_net_neoforged_JarJarSelector_0_4_1": {
@@ -6171,13 +6864,6 @@
               "sha256": "df26cc58f235f477db07f753ba5a3ab243ebe5789d9f89ecf68dd62ea9a66c28"
             }
           },
-          "neoforge_net_neoforged_accesstransformers_at_parser_11_0_1": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-parser/11.0.1/at-parser-11.0.1.jar",
-              "sha256": "22945fd13ab88ba9f565401f7de769992dfa22101ede41a62be6fcd5e439aeaa"
-            }
-          },
           "neoforge_org_slf4j_slf4j_api_2_0_9": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
@@ -6185,10 +6871,17 @@
               "sha256": "0818930dc8d7debb403204611691da58e49d42c50b6ffcfdce02dadb7c3c2b6c"
             }
           },
-          "neoforge_com_mojang_logging_1_4_9": {
+          "neoforge_org_antlr_antlr4_runtime_4_13_1": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://libraries.minecraft.net/com/mojang/logging/1.4.9/logging-1.4.9.jar",
+              "url": "https://maven.neoforged.net/releases/org/antlr/antlr4-runtime/4.13.1/antlr4-runtime-4.13.1.jar",
+              "sha256": "54665d2838cc66458343468efc539e454fc95b46a8a04b13c6ac43fc9be63505"
+            }
+          },
+          "neoforge_com_mojang_logging_1_2_7": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://libraries.minecraft.net/com/mojang/logging/1.2.7/logging-1.2.7.jar",
               "sha256": ""
             }
           },
@@ -6309,6 +7002,69 @@
             "attributes": {
               "url": "https://maven.neoforged.net/releases/com/machinezoo/noexception/noexception/1.7.1/noexception-1.7.1.jar",
               "sha256": "3d70aaea3904918587a21bdf99ab6ade9ab1dd0eaf6119344ba513f60f575816"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_earlydisplay_5_0_8": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/5.0.8/earlydisplay-5.0.8.jar",
+              "sha256": "185cb9172479874ccbc80b0f2a1b8e588cf9e52f1d7f116149abcc4e5fe89256"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_loader_5_0_8": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/5.0.8/loader-5.0.8.jar",
+              "sha256": "c56045c4ae38404bc03fd5c36d54613341857d8bedf6044680925767f3f9c4ff"
+            }
+          },
+          "neoforge_net_neoforged_accesstransformers_at_modlauncher_11_0_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-modlauncher/11.0.1/at-modlauncher-11.0.1.jar",
+              "sha256": "8db72ca9f53d537edeca91438e7b815eed1abbc0dd7fca054d3fd47ab5d39d4a"
+            }
+          },
+          "neoforge_net_neoforged_accesstransformers_11_0_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/11.0.1/accesstransformers-11.0.1.jar",
+              "sha256": "db59934c1a355e8af08443857c25eed66958b70ba3323485b1eb3dd807efa312"
+            }
+          },
+          "neoforge_cpw_mods_modlauncher_11_0_4": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/cpw/mods/modlauncher/11.0.4/modlauncher-11.0.4.jar",
+              "sha256": "790b76e93c1c21c7ab6086237c213bc5297663f9e65176ee5a5e56c40041dc51"
+            }
+          },
+          "neoforge_com_electronwill_night_config_toml_3_8_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.0/toml-3.8.0.jar",
+              "sha256": "271a0f04f7b5b3155312ad2d3588fc6fcc6312d41e728f02318a33794b77aac6"
+            }
+          },
+          "neoforge_com_electronwill_night_config_core_3_8_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.0/core-3.8.0.jar",
+              "sha256": "82de286396fbc640205a7eebe1e4a05a7e56f7915e6ee207680cbf3bd12cbc5c"
+            }
+          },
+          "neoforge_net_neoforged_accesstransformers_at_parser_11_0_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-parser/11.0.1/at-parser-11.0.1.jar",
+              "sha256": "22945fd13ab88ba9f565401f7de769992dfa22101ede41a62be6fcd5e439aeaa"
+            }
+          },
+          "neoforge_com_mojang_logging_1_4_9": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://libraries.minecraft.net/com/mojang/logging/1.4.9/logging-1.4.9.jar",
+              "sha256": ""
             }
           },
           "neoforge_net_neoforged_fancymodloader_earlydisplay_6_0_18": {
@@ -6500,6 +7256,62 @@
               "sha256": "389d9b25bbaa794dd31c8c3e6e00f1a229d638333521b8ac0b4ec5a28a4e9bf3"
             }
           },
+          "neoforge_net_neoforged_fancymodloader_earlydisplay_9_0_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/9.0.2/earlydisplay-9.0.2.jar",
+              "sha256": "e2b67438c5e4789e65a22bbc6e62c58faeaf7c2e2fa6dc1560da3061c3893aa0"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_loader_9_0_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/9.0.2/loader-9.0.2.jar",
+              "sha256": "1e48116f94c0470794f75ba9f1b63286c8f37b2691a5a45747a4e38bf08c2650"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_bootstraplauncher_9_0_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/bootstraplauncher/9.0.2/bootstraplauncher-9.0.2.jar",
+              "sha256": "13ec837278f82d0dd6663f9260ff6dd66d4f648be21a0f004c3bf42600ba47ce"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_securejarhandler_9_0_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/securejarhandler/9.0.2/securejarhandler-9.0.2.jar",
+              "sha256": "ad74df789a53a8110f14070ebab00a562879708520ac764bd65d3b73a856e327"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_earlydisplay_9_0_14": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/9.0.14/earlydisplay-9.0.14.jar",
+              "sha256": "93b063a232c54efae5fd6cd04da062323b8bf671c9d3d2ff4f5c733ec835d884"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_loader_9_0_14": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/9.0.14/loader-9.0.14.jar",
+              "sha256": "75ce76e83f01b2ee419f2cac22fddd96bb143f232544002c8b9769c7ca5885c5"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_bootstraplauncher_9_0_14": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/bootstraplauncher/9.0.14/bootstraplauncher-9.0.14.jar",
+              "sha256": "aa080f1df1dbb9e60d4b6bd5f947af85b8341bd7fd732c20a06cbb3bdc57f5e6"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_securejarhandler_9_0_14": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/securejarhandler/9.0.14/securejarhandler-9.0.14.jar",
+              "sha256": "fb70f27bbe79a0c4bb49178ccab2cdc5d2cf787918f4a03d1c3f2a28c5933691"
+            }
+          },
           "neoforge_net_neoforged_fancymodloader_earlydisplay_9_0_18": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
@@ -6512,20 +7324,6 @@
             "attributes": {
               "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/9.0.18/loader-9.0.18.jar",
               "sha256": "1528c2a0ee90ca236d7810aaa271386498366d8e53555ee0fd4fb259d267c4c8"
-            }
-          },
-          "neoforge_com_electronwill_night_config_toml_3_8_3": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.3/toml-3.8.3.jar",
-              "sha256": "ccb92882264bf071e3916ab122fe5ea3e211b8ebf199201698a1324f151f928f"
-            }
-          },
-          "neoforge_com_electronwill_night_config_core_3_8_3": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.3/core-3.8.3.jar",
-              "sha256": "971dc88c1c22085611ee1c300f5bbf8595938178e819befbb5e98c3cbd272b79"
             }
           },
           "neoforge_net_neoforged_fancymodloader_bootstraplauncher_9_0_18": {
@@ -6717,10 +7515,95 @@
               "sha256": "32733ab4bc90b45b63eb72677d886961003fd4ed113e07b1028f9877cb2ac735"
             }
           },
+          "neoforge_net_neoforged_fancymodloader_earlydisplay_11_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/11.0.0/earlydisplay-11.0.0.jar",
+              "sha256": "5c0e640bef81ce089f862ecc95e826a3c028d46f52edbc490c9583525fde98a6"
+            }
+          },
+          "neoforge_net_neoforged_fancymodloader_loader_11_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/11.0.0/loader-11.0.0.jar",
+              "sha256": "0589d9e5da7dfbb6c100c16ad88dde091a2cbecd97935d59fc774658759f60e4"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_commons_9_9_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm-commons/9.9.1/asm-commons-9.9.1.jar",
+              "sha256": "c2319e014ce7199f2b7f7d56d6bb991863168c3f4b6cd6c9f542a4937ef7ef88"
+            }
+          },
+          "neoforge_net_neoforged_mergetool_2_0_7_api": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/mergetool/2.0.7/mergetool-2.0.7-api.jar",
+              "sha256": "e78f586e085206e3b5699bf0a8de3ee94c59dd34d8cd5b4033e8c58e5ac9c2ec"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_util_9_9_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm-util/9.9.1/asm-util-9.9.1.jar",
+              "sha256": "c5ebbbeaf68126af094b42fa4800f59bc4413abd02d95b9aefad722cd257e207"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_analysis_9_9_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm-analysis/9.9.1/asm-analysis-9.9.1.jar",
+              "sha256": "6260bffc8ec008dd1b713702c7994e2c94d188a3da5bef9e87278a16df6a7522"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_tree_9_9_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm-tree/9.9.1/asm-tree-9.9.1.jar",
+              "sha256": "0f3555096b720b820bbacab0b515589bee0200bee099bda14c561738ae837ba1"
+            }
+          },
+          "neoforge_org_ow2_asm_asm_9_9_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/org/ow2/asm/asm/9.9.1/asm-9.9.1.jar",
+              "sha256": "6f3828a215c920059a5efa2fb55c233d6c54ec5cadca99ce1b1bdd10077c7ddd"
+            }
+          },
+          "neoforge_net_neoforged_srgutils_1_0_10": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/srgutils/1.0.10/srgutils-1.0.10.jar",
+              "sha256": "e4cbc878bc44627196b0507291d09a445fcc8ba8407601944a06d1baa03adc5c"
+            }
+          },
           "neoforge_pin": {
             "repoRuleId": "@@//repo:neoforge.bzl%neoforge_pin",
             "attributes": {
               "urls": [
+                "https://maven.minecraftforge.net/releases/org/ow2/asm/asm/6.2/asm-6.2.jar",
+                "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-commons/6.2/asm-commons-6.2.jar",
+                "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-tree/6.2/asm-tree-6.2.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/4.1.0/modlauncher-4.1.0.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/grossjava9hacks/1.1.0/grossjava9hacks-1.1.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/accesstransformers/1.0.5/accesstransformers-1.0.5-shadowed.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/eventbus/1.0.0/eventbus-1.0.0-service.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/1.5.0/forgespi-1.5.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/1.0.0/coremods-1.0.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/unsafe/0.2.0/unsafe-0.2.0.jar",
+                "https://maven.minecraftforge.net/releases/com/electronwill/night-config/core/3.6.0/core-3.6.0.jar",
+                "https://maven.minecraftforge.net/releases/com/electronwill/night-config/toml/3.6.0/toml-3.6.0.jar",
+                "https://maven.minecraftforge.net/releases/org/jline/jline/3.12.1/jline-3.12.1.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/maven/maven-artifact/3.6.0/maven-artifact-3.6.0.jar",
+                "https://libraries.minecraft.net/java3d/vecmath/1.5.2/vecmath-1.5.2.jar",
+                "https://maven.minecraftforge.net/releases/net/jodah/typetools/0.8.3/typetools-0.8.3.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-api/2.15.0/log4j-api-2.15.0.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-core/2.15.0/log4j-core-2.15.0.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-slf4j18-impl/2.15.0/log4j-slf4j18-impl-2.15.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecrell/terminalconsoleappender/1.2.0/terminalconsoleappender-1.2.0.jar",
+                "https://maven.minecraftforge.net/releases/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forge/1.14.4-28.2.28/forge-1.14.4-28.2.28-launcher.jar",
                 "https://maven.minecraftforge.net/releases/org/ow2/asm/asm/9.1/asm-9.1.jar",
                 "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-commons/9.1/asm-commons-9.1.jar",
                 "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-tree/9.1/asm-tree-9.1.jar",
@@ -6733,44 +7616,89 @@
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/eventbus/4.0.0/eventbus-4.0.0.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/3.2.0/forgespi-3.2.0.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/4.0.6/coremods-4.0.6.jar",
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/unsafe/0.2.0/unsafe-0.2.0.jar",
                 "https://maven.minecraftforge.net/releases/com/electronwill/night-config/core/3.6.3/core-3.6.3.jar",
                 "https://maven.minecraftforge.net/releases/com/electronwill/night-config/toml/3.6.3/toml-3.6.3.jar",
-                "https://maven.minecraftforge.net/releases/org/jline/jline/3.12.1/jline-3.12.1.jar",
                 "https://maven.minecraftforge.net/releases/org/apache/maven/maven-artifact/3.6.3/maven-artifact-3.6.3.jar",
-                "https://maven.minecraftforge.net/releases/net/jodah/typetools/0.8.3/typetools-0.8.3.jar",
-                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-api/2.15.0/log4j-api-2.15.0.jar",
-                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-core/2.15.0/log4j-core-2.15.0.jar",
-                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-slf4j18-impl/2.15.0/log4j-slf4j18-impl-2.15.0.jar",
-                "https://maven.minecraftforge.net/releases/net/minecrell/terminalconsoleappender/1.2.0/terminalconsoleappender-1.2.0.jar",
-                "https://maven.minecraftforge.net/releases/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
                 "https://maven.minecraftforge.net/releases/org/spongepowered/mixin/0.8.4/mixin-0.8.4.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/nashorn-core-compat/15.1.1.1/nashorn-core-compat-15.1.1.1.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/forge/1.16.5-36.2.34/forge-1.16.5-36.2.34-launcher.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/securejarhandler/0.9.54/securejarhandler-0.9.54.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/accesstransformers/8.0.4/accesstransformers-8.0.4.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/eventbus/5.0.3/eventbus-5.0.3.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/4.0.10/forgespi-4.0.10.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/5.0.1/coremods-5.0.1.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/9.0.7/modlauncher-9.0.7.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/commons/commons-lang3/3.8.1/commons-lang3-3.8.1.jar",
+                "https://maven.minecraftforge.net/releases/org/jline/jline-reader/3.12.1/jline-reader-3.12.1.jar",
+                "https://maven.minecraftforge.net/releases/org/jline/jline-terminal/3.12.1/jline-terminal-3.12.1.jar",
+                "https://maven.minecraftforge.net/releases/org/openjdk/nashorn/nashorn-core/15.3/nashorn-core-15.3.jar",
+                "https://maven.minecraftforge.net/releases/com/google/guava/guava/21.0/guava-21.0.jar",
+                "https://maven.minecraftforge.net/releases/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/bootstraplauncher/0.1.17/bootstraplauncher-0.1.17.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.17.1-37.1.1/fmlcore-1.17.1-37.1.1.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.17.1-37.1.1/fmlloader-1.17.1-37.1.1.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/javafmllanguage/1.17.1-37.1.1/javafmllanguage-1.17.1-37.1.1.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mclanguage/1.17.1-37.1.1/mclanguage-1.17.1-37.1.1.jar",
+                "https://maven.minecraftforge.net/releases/com/electronwill/night-config/core/3.6.4/core-3.6.4.jar",
+                "https://maven.minecraftforge.net/releases/com/electronwill/night-config/toml/3.6.4/toml-3.6.4.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
+                "https://maven.minecraftforge.net/releases/org/spongepowered/mixin/0.8.5/mixin-0.8.5.jar",
+                "https://maven.minecraftforge.net/releases/com/google/guava/guava/31.0.1-jre/guava-31.0.1-jre.jar",
+                "https://maven.minecraftforge.net/releases/com/google/code/gson/gson/2.8.8/gson-2.8.8.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.18.1-39.0.0/fmlcore-1.18.1-39.0.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.18.1-39.0.0/fmlloader-1.18.1-39.0.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/javafmllanguage/1.18.1-39.0.0/javafmllanguage-1.18.1-39.0.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mclanguage/1.18.1-39.0.0/mclanguage-1.18.1-39.0.0.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/securejarhandler/1.0.8/securejarhandler-1.0.8.jar",
+                "https://maven.minecraftforge.net/releases/org/ow2/asm/asm/9.7.1/asm-9.7.1.jar",
+                "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-commons/9.7.1/asm-commons-9.7.1.jar",
+                "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-tree/9.7.1/asm-tree-9.7.1.jar",
+                "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-util/9.7.1/asm-util-9.7.1.jar",
+                "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-analysis/9.7.1/asm-analysis-9.7.1.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/4.0.15-4.x/forgespi-4.0.15-4.x.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/5.2.5/coremods-5.2.5.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/9.1.3/modlauncher-9.1.3.jar",
+                "https://maven.minecraftforge.net/releases/org/openjdk/nashorn/nashorn-core/15.4/nashorn-core-15.4.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarSelector/0.3.19/JarJarSelector-0.3.19.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarMetadata/0.3.19/JarJarMetadata-0.3.19.jar",
+                "https://maven.minecraftforge.net/releases/net/java/dev/jna/jna/5.12.1/jna-5.12.1.jar",
+                "https://maven.minecraftforge.net/releases/net/java/dev/jna/jna-platform/5.12.1/jna-platform-5.12.1.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/bootstraplauncher/1.0.0/bootstraplauncher-1.0.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarFileSystems/0.3.19/JarJarFileSystems-0.3.19.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.18.2-40.3.12/fmlcore-1.18.2-40.3.12.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.18.2-40.3.12/fmlloader-1.18.2-40.3.12.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/javafmllanguage/1.18.2-40.3.12/javafmllanguage-1.18.2-40.3.12.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/lowcodelanguage/1.18.2-40.3.12/lowcodelanguage-1.18.2-40.3.12.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mclanguage/1.18.2-40.3.12/mclanguage-1.18.2-40.3.12.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/securejarhandler/2.1.4/securejarhandler-2.1.4.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/eventbus/6.0.3/eventbus-6.0.3.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/6.0.0/forgespi-6.0.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/5.2.4/coremods-5.2.4.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/10.0.8/modlauncher-10.0.8.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/maven/maven-artifact/3.8.5/maven-artifact-3.8.5.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarSelector/0.3.16/JarJarSelector-0.3.16.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarMetadata/0.3.16/JarJarMetadata-0.3.16.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-slf4j-impl/2.19.0/log4j-slf4j-impl-2.19.0.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-api/2.19.0/log4j-api-2.19.0.jar",
+                "https://maven.minecraftforge.net/releases/org/apache/logging/log4j/log4j-core/2.19.0/log4j-core-2.19.0.jar",
+                "https://maven.minecraftforge.net/releases/cpw/mods/bootstraplauncher/1.1.2/bootstraplauncher-1.1.2.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarFileSystems/0.3.16/JarJarFileSystems-0.3.16.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.19.2-43.5.2/fmlcore-1.19.2-43.5.2.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.19.2-43.5.2/fmlloader-1.19.2-43.5.2.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/javafmllanguage/1.19.2-43.5.2/javafmllanguage-1.19.2-43.5.2.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/lowcodelanguage/1.19.2-43.5.2/lowcodelanguage-1.19.2-43.5.2.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mclanguage/1.19.2-43.5.2/mclanguage-1.19.2-43.5.2.jar",
                 "https://maven.minecraftforge.net/releases/cpw/mods/securejarhandler/2.1.10/securejarhandler-2.1.10.jar",
                 "https://maven.minecraftforge.net/releases/org/ow2/asm/asm/9.5/asm-9.5.jar",
                 "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-commons/9.5/asm-commons-9.5.jar",
                 "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-tree/9.5/asm-tree-9.5.jar",
                 "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-util/9.5/asm-util-9.5.jar",
                 "https://maven.minecraftforge.net/releases/org/ow2/asm/asm-analysis/9.5/asm-analysis-9.5.jar",
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/accesstransformers/8.0.4/accesstransformers-8.0.4.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/eventbus/6.0.5/eventbus-6.0.5.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/forgespi/7.0.1/forgespi-7.0.1.jar",
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/coremods/5.0.1/coremods-5.0.1.jar",
                 "https://maven.minecraftforge.net/releases/cpw/mods/modlauncher/10.0.9/modlauncher-10.0.9.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.5/mergetool-1.1.5-api.jar",
-                "https://maven.minecraftforge.net/releases/com/electronwill/night-config/core/3.6.4/core-3.6.4.jar",
-                "https://maven.minecraftforge.net/releases/com/electronwill/night-config/toml/3.6.4/toml-3.6.4.jar",
-                "https://maven.minecraftforge.net/releases/org/apache/maven/maven-artifact/3.8.5/maven-artifact-3.8.5.jar",
                 "https://maven.minecraftforge.net/releases/net/jodah/typetools/0.6.3/typetools-0.6.3.jar",
-                "https://maven.minecraftforge.net/releases/org/jline/jline-reader/3.12.1/jline-reader-3.12.1.jar",
-                "https://maven.minecraftforge.net/releases/org/jline/jline-terminal/3.12.1/jline-terminal-3.12.1.jar",
-                "https://maven.minecraftforge.net/releases/org/spongepowered/mixin/0.8.5/mixin-0.8.5.jar",
-                "https://maven.minecraftforge.net/releases/org/openjdk/nashorn/nashorn-core/15.3/nashorn-core-15.3.jar",
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarSelector/0.3.19/JarJarSelector-0.3.19.jar",
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarMetadata/0.3.19/JarJarMetadata-0.3.19.jar",
-                "https://maven.minecraftforge.net/releases/cpw/mods/bootstraplauncher/1.1.2/bootstraplauncher-1.1.2.jar",
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/JarJarFileSystems/0.3.19/JarJarFileSystems-0.3.19.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlcore/1.20.1-47.1.47/fmlcore-1.20.1-47.1.47.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlloader/1.20.1-47.1.47/fmlloader-1.20.1-47.1.47.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/fmlearlydisplay/1.20.1-47.1.47/fmlearlydisplay-1.20.1-47.1.47.jar",
@@ -6851,16 +7779,32 @@
                 "https://maven.neoforged.net/releases/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar",
                 "https://maven.neoforged.net/releases/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar",
                 "https://maven.neoforged.net/releases/commons-io/commons-io/2.15.1/commons-io-2.15.1.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/5.0.8/earlydisplay-5.0.8.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/5.0.8/loader-5.0.8.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-modlauncher/11.0.1/at-modlauncher-11.0.1.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/11.0.1/accesstransformers-11.0.1.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/bus/8.0.5/bus-8.0.5.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/coremods/7.0.3/coremods-7.0.3.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/4.0.23/earlydisplay-4.0.23.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/4.0.23/loader-4.0.23.jar",
                 "https://maven.neoforged.net/releases/cpw/mods/modlauncher/11.0.4/modlauncher-11.0.4.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/mergetool/2.0.0/mergetool-2.0.0-api.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm-commons/9.5/asm-commons-9.5.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm-util/9.5/asm-util-9.5.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm-analysis/9.5/asm-analysis-9.5.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm-tree/9.5/asm-tree-9.5.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm/9.5/asm-9.5.jar",
                 "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.0/toml-3.8.0.jar",
                 "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.0/core-3.8.0.jar",
+                "https://maven.neoforged.net/releases/net/minecrell/terminalconsoleappender/1.3.0/terminalconsoleappender-1.3.0.jar",
+                "https://maven.neoforged.net/releases/net/fabricmc/sponge-mixin/0.14.0+mixin.0.8.6/sponge-mixin-0.14.0+mixin.0.8.6.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/neoform/1.21-20240613.152323/neoform-1.21-20240613.152323.zip",
+                "https://maven.neoforged.net/releases/io/github/llamalad7/mixinextras-neoforge/0.3.5/mixinextras-neoforge-0.3.5.jar",
+                "https://maven.neoforged.net/releases/org/jline/jline-reader/3.20.0/jline-reader-3.20.0.jar",
+                "https://maven.neoforged.net/releases/org/jline/jline-terminal/3.20.0/jline-terminal-3.20.0.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/4.0.42/earlydisplay-4.0.42.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/4.0.42/loader-4.0.42.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-modlauncher/10.0.1/at-modlauncher-10.0.1.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/10.0.1/accesstransformers-10.0.1.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/bus/8.0.5/bus-8.0.5.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/coremods/7.0.3/coremods-7.0.3.jar",
+                "https://maven.neoforged.net/releases/cpw/mods/modlauncher/11.0.5/modlauncher-11.0.5.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/mergetool/2.0.0/mergetool-2.0.0-api.jar",
+                "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.3/toml-3.8.3.jar",
+                "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.3/core-3.8.3.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/JarJarSelector/0.4.1/JarJarSelector-0.4.1.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/JarJarMetadata/0.4.1/JarJarMetadata-0.4.1.jar",
                 "https://maven.neoforged.net/releases/org/apache/maven/maven-artifact/3.8.5/maven-artifact-3.8.5.jar",
@@ -6879,9 +7823,9 @@
                 "https://maven.neoforged.net/releases/net/neoforged/JarJarFileSystems/0.4.1/JarJarFileSystems-0.4.1.jar",
                 "https://maven.neoforged.net/releases/io/github/llamalad7/mixinextras-neoforge/0.5.0/mixinextras-neoforge-0.5.0.jar",
                 "https://maven.neoforged.net/releases/net/sf/jopt-simple/jopt-simple/5.0.4/jopt-simple-5.0.4.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-parser/11.0.1/at-parser-11.0.1.jar",
                 "https://maven.neoforged.net/releases/org/slf4j/slf4j-api/2.0.9/slf4j-api-2.0.9.jar",
-                "https://libraries.minecraft.net/com/mojang/logging/1.4.9/logging-1.4.9.jar",
+                "https://maven.neoforged.net/releases/org/antlr/antlr4-runtime/4.13.1/antlr4-runtime-4.13.1.jar",
+                "https://libraries.minecraft.net/com/mojang/logging/1.2.7/logging-1.2.7.jar",
                 "https://maven.neoforged.net/releases/org/apache/logging/log4j/log4j-slf4j2-impl/2.22.1/log4j-slf4j2-impl-2.22.1.jar",
                 "https://maven.neoforged.net/releases/org/apache/logging/log4j/log4j-core/2.22.1/log4j-core-2.22.1.jar",
                 "https://maven.neoforged.net/releases/org/apache/logging/log4j/log4j-api/2.22.1/log4j-api-2.22.1.jar",
@@ -6899,6 +7843,15 @@
                 "https://maven.neoforged.net/releases/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar",
                 "https://maven.neoforged.net/releases/org/codehaus/plexus/plexus-utils/3.3.0/plexus-utils-3.3.0.jar",
                 "https://maven.neoforged.net/releases/com/machinezoo/noexception/noexception/1.7.1/noexception-1.7.1.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/5.0.8/earlydisplay-5.0.8.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/5.0.8/loader-5.0.8.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-modlauncher/11.0.1/at-modlauncher-11.0.1.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/11.0.1/accesstransformers-11.0.1.jar",
+                "https://maven.neoforged.net/releases/cpw/mods/modlauncher/11.0.4/modlauncher-11.0.4.jar",
+                "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.0/toml-3.8.0.jar",
+                "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.0/core-3.8.0.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-parser/11.0.1/at-parser-11.0.1.jar",
+                "https://libraries.minecraft.net/com/mojang/logging/1.4.9/logging-1.4.9.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/6.0.18/earlydisplay-6.0.18.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/6.0.18/loader-6.0.18.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/accesstransformers/at-modlauncher/11.0.2/at-modlauncher-11.0.2.jar",
@@ -6926,10 +7879,16 @@
                 "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/7.0.13/loader-7.0.13.jar",
                 "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.2/toml-3.8.2.jar",
                 "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.2/core-3.8.2.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/9.0.2/earlydisplay-9.0.2.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/9.0.2/loader-9.0.2.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/bootstraplauncher/9.0.2/bootstraplauncher-9.0.2.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/securejarhandler/9.0.2/securejarhandler-9.0.2.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/9.0.14/earlydisplay-9.0.14.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/9.0.14/loader-9.0.14.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/bootstraplauncher/9.0.14/bootstraplauncher-9.0.14.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/securejarhandler/9.0.14/securejarhandler-9.0.14.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/9.0.18/earlydisplay-9.0.18.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/9.0.18/loader-9.0.18.jar",
-                "https://maven.neoforged.net/releases/com/electronwill/night-config/toml/3.8.3/toml-3.8.3.jar",
-                "https://maven.neoforged.net/releases/com/electronwill/night-config/core/3.8.3/core-3.8.3.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/bootstraplauncher/9.0.18/bootstraplauncher-9.0.18.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/securejarhandler/9.0.18/securejarhandler-9.0.18.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/10.0.14/earlydisplay-10.0.14.jar",
@@ -6956,8 +7915,18 @@
                 "https://maven.neoforged.net/releases/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar",
                 "https://maven.neoforged.net/releases/com/google/errorprone/error_prone_annotations/2.41.0/error_prone_annotations-2.41.0.jar",
                 "https://maven.neoforged.net/releases/com/google/j2objc/j2objc-annotations/3.1/j2objc-annotations-3.1.jar",
-                "https://maven.neoforged.net/releases/org/apache/commons/commons-lang3/3.19.0/commons-lang3-3.19.0.jar"
-              ]
+                "https://maven.neoforged.net/releases/org/apache/commons/commons-lang3/3.19.0/commons-lang3-3.19.0.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/earlydisplay/11.0.0/earlydisplay-11.0.0.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/fancymodloader/loader/11.0.0/loader-11.0.0.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm-commons/9.9.1/asm-commons-9.9.1.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/mergetool/2.0.7/mergetool-2.0.7-api.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm-util/9.9.1/asm-util-9.9.1.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm-analysis/9.9.1/asm-analysis-9.9.1.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm-tree/9.9.1/asm-tree-9.9.1.jar",
+                "https://maven.neoforged.net/releases/org/ow2/asm/asm/9.9.1/asm-9.9.1.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/srgutils/1.0.10/srgutils-1.0.10.jar"
+              ],
+              "pin_file": "@@//:neoforge_pin.txt"
             }
           }
         },
@@ -6974,8 +7943,33 @@
           ],
           [
             "",
+            "mcp_1_14_4",
+            "+neoform+mcp_1_14_4_20190829_143755"
+          ],
+          [
+            "",
             "mcp_1_16_5",
             "+neoform+mcp_1_16_5_20210115_111550"
+          ],
+          [
+            "",
+            "mcp_1_17_1",
+            "+neoform+mcp_1_17_1_20210706_113038"
+          ],
+          [
+            "",
+            "mcp_1_18_1",
+            "+neoform+mcp_1_18_1_20211210_034407"
+          ],
+          [
+            "",
+            "mcp_1_18_2",
+            "+neoform+mcp_1_18_2_20220404_173914"
+          ],
+          [
+            "",
+            "mcp_1_19_2",
+            "+neoform+mcp_1_19_2_20220805_130853"
           ],
           [
             "",
@@ -6991,6 +7985,16 @@
             "",
             "neoform_1_20_6",
             "+neoform+neoform_1_20_6_20240627_102356"
+          ],
+          [
+            "",
+            "neoform_1_21",
+            "+neoform+neoform_1_21_20240613_152323"
+          ],
+          [
+            "",
+            "neoform_1_21_1",
+            "+neoform+neoform_1_21_1_20240808_144430"
           ],
           [
             "",
@@ -7019,6 +8023,16 @@
           ],
           [
             "",
+            "neoform_1_21_6",
+            "+neoform+neoform_1_21_6_20250617_151856"
+          ],
+          [
+            "",
+            "neoform_1_21_7",
+            "+neoform+neoform_1_21_7_20250711_194848"
+          ],
+          [
+            "",
             "neoform_1_21_8",
             "+neoform+neoform_1_21_8_20250717_133445"
           ],
@@ -7026,20 +8040,39 @@
             "",
             "neoform_1_21_9",
             "+neoform+neoform_1_21_9_20250930_151910"
+          ],
+          [
+            "",
+            "neoform_26_1",
+            "+neoform+neoform_26_1_snapshot_2_1"
           ]
         ]
       }
     },
     "//repo:neoform.bzl%neoform": {
       "general": {
-        "bzlTransitiveDigest": "dD+moOskk29dnB+lQRLGsyrQOXM745EZcRo1rTdEmSc=",
-        "usagesDigest": "ng6GzqZn2OxEzFLk06UjUqXsu8O0SIwN6uIEw5AgybA=",
+        "bzlTransitiveDigest": "41MVQHKv5bkeMWZh5Csv2+C1f4t3dIX7kWbszQAp7kk=",
+        "usagesDigest": "IXtTqOnKF6n0HPORl2xqfsJZFMPVGiKejoj6KWniad4=",
         "recordedFileInputs": {
-          "@@//neoform_pin.txt": "69bc2437b85577cd7d49fa11705cc47fcbf13c80754af98d63c6039598bf3309"
+          "@@//neoform_pin.txt": "f5f349c33255eb0173480b40bd5ae23a8309aac7342a8267bffb9294168be7c6"
         },
         "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
+          "mcp_1_14_4_20190829_143755": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.14.4-20190829.143755",
+              "legacy": true,
+              "sha256": "49d0b7818ccf385a57feda19fbd88b1fb4bd97c95d98e7044d9cb4c735e37820",
+              "client_jar": "@@+minecraft+minecraft//1.14.4:client",
+              "server_jar": "@@+minecraft+minecraft//1.14.4:server",
+              "client_mapping": "@@+minecraft+minecraft//1.14.4:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.14.4:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.14.4:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
           "mcp_1_16_5_20210115_111550": {
             "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
             "attributes": {
@@ -7051,6 +8084,62 @@
               "client_mapping": "@@+minecraft+minecraft//1.16.5:client_mappings",
               "server_mapping": "@@+minecraft+minecraft//1.16.5:server_mappings",
               "client_libraries": "@@+minecraft+minecraft//1.16.5:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
+          "mcp_1_17_1_20210706_113038": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.17.1-20210706.113038",
+              "legacy": true,
+              "sha256": "507f59441ccdba03c526f5484cd40559cf958340c0d8b7c0d6a0dfc37f511413",
+              "client_jar": "@@+minecraft+minecraft//1.17.1:client",
+              "server_jar": "@@+minecraft+minecraft//1.17.1:server",
+              "client_mapping": "@@+minecraft+minecraft//1.17.1:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.17.1:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.17.1:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
+          "mcp_1_18_1_20211210_034407": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.18.1-20211210.034407",
+              "legacy": true,
+              "sha256": "891fd00d1ba9c762d8bcd3a82a65f81d5e9c3a29366d0e31caa9eec4ed3541cb",
+              "client_jar": "@@+minecraft+minecraft//1.18.1:client",
+              "server_jar": "@@+minecraft+minecraft//1.18.1:server",
+              "client_mapping": "@@+minecraft+minecraft//1.18.1:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.18.1:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.18.1:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
+          "mcp_1_18_2_20220404_173914": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.18.2-20220404.173914",
+              "legacy": true,
+              "sha256": "f60527297dd4e81e3da93dc95981e426a81d3b03457cf2f94af8281e2db5a8f2",
+              "client_jar": "@@+minecraft+minecraft//1.18.2:client",
+              "server_jar": "@@+minecraft+minecraft//1.18.2:server",
+              "client_mapping": "@@+minecraft+minecraft//1.18.2:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.18.2:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.18.2:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
+          "mcp_1_19_2_20220805_130853": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.19.2-20220805.130853",
+              "legacy": true,
+              "sha256": "fd4cf084b96492de87499b49d1ae5896ef14a3f85b5462d2842d7b193fba9135",
+              "client_jar": "@@+minecraft+minecraft//1.19.2:client",
+              "server_jar": "@@+minecraft+minecraft//1.19.2:server",
+              "client_mapping": "@@+minecraft+minecraft//1.19.2:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.19.2:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.19.2:client_libraries",
               "pin_file": "@@//:neoform_pin.txt"
             }
           },
@@ -7096,6 +8185,34 @@
               "pin_file": "@@//:neoform_pin.txt"
             }
           },
+          "neoform_1_21_20240613_152323": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.21-20240613.152323",
+              "legacy": false,
+              "sha256": "fc03b4e32b879a109ec78abeebb002df4231cff03fab4f0bffeb03c63cbb590c",
+              "client_jar": "@@+minecraft+minecraft//1.21:client",
+              "server_jar": "@@+minecraft+minecraft//1.21:server",
+              "client_mapping": "@@+minecraft+minecraft//1.21:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.21:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.21:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
+          "neoform_1_21_1_20240808_144430": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.21.1-20240808.144430",
+              "legacy": false,
+              "sha256": "3fcdf0f0d115774cfceaf206a05a6dc964e2189bfd00f5b5f863e37f4b7733c7",
+              "client_jar": "@@+minecraft+minecraft//1.21.1:client",
+              "server_jar": "@@+minecraft+minecraft//1.21.1:server",
+              "client_mapping": "@@+minecraft+minecraft//1.21.1:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.21.1:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.21.1:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
           "neoform_1_21_3_20241023_131943": {
             "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
             "attributes": {
@@ -7138,6 +8255,34 @@
               "pin_file": "@@//:neoform_pin.txt"
             }
           },
+          "neoform_1_21_6_20250617_151856": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.21.6-20250617.151856",
+              "legacy": false,
+              "sha256": "f537eca06638ed23796d094ab9315c6660ebb142b067c791d68bf4e6469df32a",
+              "client_jar": "@@+minecraft+minecraft//1.21.6:client",
+              "server_jar": "@@+minecraft+minecraft//1.21.6:server",
+              "client_mapping": "@@+minecraft+minecraft//1.21.6:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.21.6:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.21.6:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
+          "neoform_1_21_7_20250711_194848": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
+            "attributes": {
+              "version": "1.21.7-20250711.194848",
+              "legacy": false,
+              "sha256": "d37b1aec163eb989f0c08fdd7f2a13a4ae4100102ea1d51ed18b21d69076d481",
+              "client_jar": "@@+minecraft+minecraft//1.21.7:client",
+              "server_jar": "@@+minecraft+minecraft//1.21.7:server",
+              "client_mapping": "@@+minecraft+minecraft//1.21.7:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//1.21.7:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//1.21.7:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
+            }
+          },
           "neoform_1_21_8_20250717_133445": {
             "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
             "attributes": {
@@ -7157,7 +8302,7 @@
             "attributes": {
               "version": "1.21.9-20250930.151910",
               "legacy": false,
-              "sha256": "",
+              "sha256": "36ea1a00d8bc168a9359ee2a8799d797cd9c62512d6e873a0ed3709ae6d14085",
               "client_jar": "@@+minecraft+minecraft//1.21.9:client",
               "server_jar": "@@+minecraft+minecraft//1.21.9:server",
               "client_mapping": "@@+minecraft+minecraft//1.21.9:client_mappings",
@@ -7171,7 +8316,7 @@
             "attributes": {
               "version": "1.21.10-20251010.172816",
               "legacy": false,
-              "sha256": "",
+              "sha256": "445940ac070d37ec4294d5392de0485bfd2b9245580f7a7b6d8e774d7306de84",
               "client_jar": "@@+minecraft+minecraft//1.21.10:client",
               "server_jar": "@@+minecraft+minecraft//1.21.10:server",
               "client_mapping": "@@+minecraft+minecraft//1.21.10:client_mappings",
@@ -7185,7 +8330,7 @@
             "attributes": {
               "version": "1.21.11-20251209.172050",
               "legacy": false,
-              "sha256": "",
+              "sha256": "f3f65e0aa4926c3c3e9c60834d6e028d15f4815b33a0cb1ef63f524ba5d307ed",
               "client_jar": "@@+minecraft+minecraft//1.21.11:client",
               "server_jar": "@@+minecraft+minecraft//1.21.11:server",
               "client_mapping": "@@+minecraft+minecraft//1.21.11:client_mappings",
@@ -7194,25 +8339,39 @@
               "pin_file": "@@//:neoform_pin.txt"
             }
           },
-          "mcp_net_minecraftforge_forgeflower_1_5_478_16": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+          "neoform_26_1_snapshot_2_1": {
+            "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
             "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.478.16/forgeflower-1.5.478.16.jar",
-              "sha256": "14e68616b71c2e3c6689f6759c7c77e0cbc19a604e171df9cb5bcbfb80b599bd"
+              "version": "26.1-snapshot-2-1",
+              "legacy": false,
+              "sha256": "e5a789b397235adad0a5cb9f1157543c71f010448ad322332fd275bdb628b91c",
+              "client_jar": "@@+minecraft+minecraft//26.1-snapshot-2:client",
+              "server_jar": "@@+minecraft+minecraft//26.1-snapshot-2:server",
+              "client_mapping": "@@+minecraft+minecraft//26.1-snapshot-2:client_mappings",
+              "server_mapping": "@@+minecraft+minecraft//26.1-snapshot-2:server_mappings",
+              "client_libraries": "@@+minecraft+minecraft//26.1-snapshot-2:client_libraries",
+              "pin_file": "@@//:neoform_pin.txt"
             }
           },
-          "mcp_de_oceanlabs_mcp_mcinjector_3_8_0_fatjar": {
+          "mcp_net_minecraftforge_forgeflower_1_5_380_33": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/de/oceanlabs/mcp/mcinjector/3.8.0/mcinjector-3.8.0-fatjar.jar",
-              "sha256": "4ca2f91988f1a66868f1bafffab6be1ecd77bfd3417230d98b8ce030b2745eb2"
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.380.33/forgeflower-1.5.380.33.jar",
+              "sha256": "4d9b5d6dd127705b6b74a3164556107c659df99f9a338895296af42efe5fa5bd"
             }
           },
-          "mcp_net_minecraftforge_mergetool_1_1_1_fatjar": {
+          "mcp_de_oceanlabs_mcp_mcinjector_3_7_7_fatjar": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.1/mergetool-1.1.1-fatjar.jar",
-              "sha256": "12b7afb3f00b31db4849cbe1f50a78c1fa10ae663f70377dee6cc74a63c57993"
+              "url": "https://maven.minecraftforge.net/releases/de/oceanlabs/mcp/mcinjector/3.7.7/mcinjector-3.7.7-fatjar.jar",
+              "sha256": "2a42300475f52e416dc2b3a17016aeab6d955602e84bb91f40a78337c45da8a2"
+            }
+          },
+          "mcp_net_minecraftforge_mergetool_1_0_9_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.0.9/mergetool-1.0.9-fatjar.jar",
+              "sha256": "841bf952ee14868f2347942c4e756552d218d22d8c119432444be34d4a45b096"
             }
           },
           "mcp_net_md_5_SpecialSource_1_8_3_shaded": {
@@ -7236,6 +8395,153 @@
               "sha256": "46d9d0b4a42ab220a2baa25807bc7a076c2cb51594fa6c013c595f43b92956b3"
             }
           },
+          "mcp_net_minecraftforge_forgeflower_1_5_478_16": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.478.16/forgeflower-1.5.478.16.jar",
+              "sha256": "14e68616b71c2e3c6689f6759c7c77e0cbc19a604e171df9cb5bcbfb80b599bd"
+            }
+          },
+          "mcp_de_oceanlabs_mcp_mcinjector_3_8_0_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/de/oceanlabs/mcp/mcinjector/3.8.0/mcinjector-3.8.0-fatjar.jar",
+              "sha256": "4ca2f91988f1a66868f1bafffab6be1ecd77bfd3417230d98b8ce030b2745eb2"
+            }
+          },
+          "mcp_net_minecraftforge_mergetool_1_1_1_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.1/mergetool-1.1.1-fatjar.jar",
+              "sha256": "12b7afb3f00b31db4849cbe1f50a78c1fa10ae663f70377dee6cc74a63c57993"
+            }
+          },
+          "mcp_net_minecraftforge_forgeflower_1_5_498_12": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.498.12/forgeflower-1.5.498.12.jar",
+              "sha256": "1f5bac19befdec79433c842a09f5ee71fed275ef4c4313c6a6ad93286d1f01a7"
+            }
+          },
+          "mcp_net_minecraftforge_mergetool_1_1_3_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.3/mergetool-1.1.3-fatjar.jar",
+              "sha256": "20355859aa081c02d7eb669254ee479ad1dd3d95e409d690c81924b812e63d6b"
+            }
+          },
+          "mcp_net_minecraftforge_lex_vignette_0_2_0_10": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/lex/vignette/0.2.0.10/vignette-0.2.0.10.jar",
+              "sha256": "db9832e104d3e4a51d43f4f88c201dc19ba4ed6ebd9afbb769eee3b011b02584"
+            }
+          },
+          "mcp_net_minecraftforge_installertools_1_2_0_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.2.0/installertools-1.2.0-fatjar.jar",
+              "sha256": "13239d3ab1c884a1441e1ca723f242faa6f1300fb8abdfa9a8b067b722cd8225"
+            }
+          },
+          "mcp_ca_weblite_java_objc_bridge_1_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/ca/weblite/java-objc-bridge/1.0.0/java-objc-bridge-1.0.0.jar",
+              "sha256": "fec83601d2da127234728a8fffb429d0c4a59587452834da203163e6a3f941db"
+            }
+          },
+          "mcp_net_minecraftforge_mergetool_1_1_3_api": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.3/mergetool-1.1.3-api.jar",
+              "sha256": "a98901a786a5cf7bba1645aeca51f4ae6cc05525332178baeba72babcd76e499"
+            }
+          },
+          "mcp_net_minecraftforge_forgeflower_1_5_498_22": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.498.22/forgeflower-1.5.498.22.jar",
+              "sha256": "b6717c29bcd837b442b53d4d37c573378080eb8c5e2a290dd341500eaa9cf8a0"
+            }
+          },
+          "mcp_net_minecraftforge_ForgeAutoRenamingTool_0_1_17_all": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/ForgeAutoRenamingTool/0.1.17/ForgeAutoRenamingTool-0.1.17-all.jar",
+              "sha256": "9b3e6709f542915a91b784068591159430d4e1ab8d6e35dfd9a1d69545f16682"
+            }
+          },
+          "mcp_net_minecraftforge_installertools_1_2_10_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.2.10/installertools-1.2.10-fatjar.jar",
+              "sha256": "949a34cc1bbe6a01881f6fca1fdf2129caed9f8ae8593f27503ebd5543ab0e6f"
+            }
+          },
+          "mcp_org_jetbrains_annotations_23_0_0": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar",
+              "sha256": "7b0f19724082cbfcbc66e5abea2b9bc92cf08a1ea11e191933ed43801eb3cd05"
+            }
+          },
+          "mcp_net_minecraftforge_forgeflower_1_5_498_29": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.498.29/forgeflower-1.5.498.29.jar",
+              "sha256": "265bd2713835c155da4817c6db9717f7d0b393a8f818460b2be59197b010c79c"
+            }
+          },
+          "mcp_net_minecraftforge_forgeflower_1_5_605_9": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.605.9/forgeflower-1.5.605.9.jar",
+              "sha256": "035052fc73a94bb0d1c1a22955ae20bc2e5bddcade9a65854df473aded64295c"
+            }
+          },
+          "mcp_net_minecraftforge_mergetool_1_1_5_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.5/mergetool-1.1.5-fatjar.jar",
+              "sha256": "e5f4b711d06acc853bd199f258b02cc4e303f2efe683d73e20d6a2955f3f55a8"
+            }
+          },
+          "mcp_net_minecraftforge_ForgeAutoRenamingTool_0_1_22_all": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/ForgeAutoRenamingTool/0.1.22/ForgeAutoRenamingTool-0.1.22-all.jar",
+              "sha256": "c459a06a0ff995c31335100c84fb018f12b392bb0574b5cf9e448b10f7cb3679"
+            }
+          },
+          "mcp_net_minecraftforge_installertools_1_3_0_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.3.0/installertools-1.3.0-fatjar.jar",
+              "sha256": "f7644a81c783a3b396b7abf631f472c505aa147c9554812ac1511087a0237153"
+            }
+          },
+          "mcp_com_google_code_findbugs_jsr305_3_0_2": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
+              "sha256": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7"
+            }
+          },
+          "mcp_ca_weblite_java_objc_bridge_1_1": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/ca/weblite/java-objc-bridge/1.1/java-objc-bridge-1.1.jar",
+              "sha256": "77e34a13bccffc6c8b1a0e3ed46ddb0ea7dd56f2104ecdfacaaec9e4054ac332"
+            }
+          },
+          "mcp_net_minecraftforge_mergetool_1_1_5_api": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.5/mergetool-1.1.5-api.jar",
+              "sha256": "39d9a3d9277c1402b8e7b97f917ce278241cf1796312aec85b87f19a376dd99a"
+            }
+          },
           "mcp_net_minecraftforge_forgeflower_2_0_629_0": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
@@ -7257,32 +8563,11 @@
               "sha256": "a95a95065dc0919d3b705f9ba50404fead73b39dc2c57ac023a950855f3f5387"
             }
           },
-          "mcp_net_minecraftforge_installertools_1_2_0_fatjar": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.2.0/installertools-1.2.0-fatjar.jar",
-              "sha256": "13239d3ab1c884a1441e1ca723f242faa6f1300fb8abdfa9a8b067b722cd8225"
-            }
-          },
           "mcp_net_minecraftforge_installertools_1_3_2_fatjar": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
               "url": "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.3.2/installertools-1.3.2-fatjar.jar",
               "sha256": "b9caa6293aa4b291efca656e256dc278285278952ed6eb79bf8804b866622765"
-            }
-          },
-          "mcp_com_google_code_findbugs_jsr305_3_0_2": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-              "sha256": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7"
-            }
-          },
-          "mcp_ca_weblite_java_objc_bridge_1_1": {
-            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
-            "attributes": {
-              "url": "https://maven.minecraftforge.net/releases/ca/weblite/java-objc-bridge/1.1/java-objc-bridge-1.1.jar",
-              "sha256": "77e34a13bccffc6c8b1a0e3ed46ddb0ea7dd56f2104ecdfacaaec9e4054ac332"
             }
           },
           "mcp_org_jetbrains_annotations_24_0_1": {
@@ -7495,23 +8780,55 @@
               "sha256": "3d371ba82e89d25df90ba086cd08ab38490d3099fd05318046177e3678b2cfb3"
             }
           },
+          "neoform_net_neoforged_installertools_installertools_4_0_14_fatjar": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.14/installertools-4.0.14-fatjar.jar",
+              "sha256": "93bb7f506f082b77d80607ac86e264d1f5f1a5b4a25dbd1ce0ef83e6039d97ba"
+            }
+          },
+          "neoform_net_neoforged_vineflower_plugins_0_1_5": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
+            "attributes": {
+              "url": "https://maven.neoforged.net/releases/net/neoforged/vineflower-plugins/0.1.5/vineflower-plugins-0.1.5.jar",
+              "sha256": "ebd5712d8cf801bbecaa9e48eca9013ef408b33993a29e4b89dc877098eccc60"
+            }
+          },
           "neoform_pin": {
             "repoRuleId": "@@//repo:neoform.bzl%neoform_pin",
             "attributes": {
               "urls": [
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.478.16/forgeflower-1.5.478.16.jar",
-                "https://maven.minecraftforge.net/releases/de/oceanlabs/mcp/mcinjector/3.8.0/mcinjector-3.8.0-fatjar.jar",
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.1/mergetool-1.1.1-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.380.33/forgeflower-1.5.380.33.jar",
+                "https://maven.minecraftforge.net/releases/de/oceanlabs/mcp/mcinjector/3.7.7/mcinjector-3.7.7-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.0.9/mergetool-1.0.9-fatjar.jar",
                 "https://maven.minecraftforge.net/releases/net/md-5/SpecialSource/1.8.3/SpecialSource-1.8.3-shaded.jar",
                 "https://maven.minecraftforge.net/releases/com/google/code/findbugs/jsr305/3.0.1/jsr305-3.0.1.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.0.9/mergetool-1.0.9-api.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.478.16/forgeflower-1.5.478.16.jar",
+                "https://maven.minecraftforge.net/releases/de/oceanlabs/mcp/mcinjector/3.8.0/mcinjector-3.8.0-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.1/mergetool-1.1.1-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.498.12/forgeflower-1.5.498.12.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.3/mergetool-1.1.3-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/lex/vignette/0.2.0.10/vignette-0.2.0.10.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.2.0/installertools-1.2.0-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/ca/weblite/java-objc-bridge/1.0.0/java-objc-bridge-1.0.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.3/mergetool-1.1.3-api.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.498.22/forgeflower-1.5.498.22.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/ForgeAutoRenamingTool/0.1.17/ForgeAutoRenamingTool-0.1.17-all.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.2.10/installertools-1.2.10-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.498.29/forgeflower-1.5.498.29.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/1.5.605.9/forgeflower-1.5.605.9.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.5/mergetool-1.1.5-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/ForgeAutoRenamingTool/0.1.22/ForgeAutoRenamingTool-0.1.22-all.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.3.0/installertools-1.3.0-fatjar.jar",
+                "https://maven.minecraftforge.net/releases/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
+                "https://maven.minecraftforge.net/releases/ca/weblite/java-objc-bridge/1.1/java-objc-bridge-1.1.jar",
+                "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.5/mergetool-1.1.5-api.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/forgeflower/2.0.629.0/forgeflower-2.0.629.0.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.7/mergetool-1.1.7-fatjar.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/ForgeAutoRenamingTool/1.0.2/ForgeAutoRenamingTool-1.0.2-all.jar",
-                "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.2.0/installertools-1.2.0-fatjar.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/installertools/1.3.2/installertools-1.3.2-fatjar.jar",
-                "https://maven.minecraftforge.net/releases/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
-                "https://maven.minecraftforge.net/releases/ca/weblite/java-objc-bridge/1.1/java-objc-bridge-1.1.jar",
                 "https://maven.minecraftforge.net/releases/org/jetbrains/annotations/24.0.1/annotations-24.0.1.jar",
                 "https://maven.minecraftforge.net/releases/net/minecraftforge/mergetool/1.1.7/mergetool-1.1.7-api.jar",
                 "https://maven.neoforged.net/releases/org/vineflower/vineflower/1.9.3/vineflower-1.9.3.jar",
@@ -7541,8 +8858,11 @@
                 "https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/3.0.13/installertools-3.0.13-fatjar.jar",
                 "https://maven.neoforged.net/releases/org/vineflower/vineflower/1.11.2/vineflower-1.11.2.jar",
                 "https://maven.neoforged.net/releases/net/neoforged/AutoRenamingTool/2.0.17/AutoRenamingTool-2.0.17-all.jar",
-                "https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.7/installertools-4.0.7-fatjar.jar"
-              ]
+                "https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.7/installertools-4.0.7-fatjar.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.14/installertools-4.0.14-fatjar.jar",
+                "https://maven.neoforged.net/releases/net/neoforged/vineflower-plugins/0.1.5/vineflower-plugins-0.1.5.jar"
+              ],
+              "pin_file": "@@//:neoform_pin.txt"
             }
           }
         },
@@ -7567,7 +8887,7 @@
     },
     "//repo:parchment.bzl%parchment": {
       "general": {
-        "bzlTransitiveDigest": "3Qh/oozyABliP6cGYUiLwE1lD1yK+uZSwvtZTAYRwn8=",
+        "bzlTransitiveDigest": "PrpckC+4jnFwbT2l4sfITUfMV+7uLGfFxCWhgbbS91s=",
         "usagesDigest": "5o2wtXkABpNh800+HXz6LH2+7YXznk3cfsMf2fPx/lM=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},

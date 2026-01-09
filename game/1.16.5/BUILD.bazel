@@ -8,6 +8,7 @@ game_version(
     client_assets = "@minecraft_assets//:assets_1.16.5",
     client_libraries = "@minecraft//1.16.5:client_libraries",
     intermediary = "@maven_fabric_1_16_5//:net_fabricmc_intermediary_v2",
+    neoforge = "@forge_1_16_5//:compiled_with_neoforge",
     server = "@minecraft//1.16.5:server",
     server_legacy = True,
     version = "1.16.5",

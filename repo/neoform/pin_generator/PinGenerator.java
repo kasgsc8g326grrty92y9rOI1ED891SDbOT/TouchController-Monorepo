@@ -5,6 +5,7 @@ import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -19,11 +20,12 @@ import java.util.stream.Collectors;
 
 public class PinGenerator {
     private static final String[] URLS = new String[]{ /*INJECT HERE*/};
+    private static final String PIN_TARGET = "$PIN_TARGET";
 
     public static void main(String[] args) throws Exception {
-        var outputPath = Path.of("/*OUTPUT NAME*/.txt").toAbsolutePath();
+        var outputPath = Path.of(PIN_TARGET).toAbsolutePath();
         try (var client = HttpClient.newHttpClient();
-             var output = Files.newBufferedWriter(outputPath)) {
+             var output = Files.newBufferedWriter(outputPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             var semaphore = new Semaphore(4);
             var futures = Arrays.stream(URLS)
                     .filter(line -> !line.isEmpty())
@@ -125,6 +127,25 @@ public class PinGenerator {
     }
 
     private static CompletableFuture<String> downloadAndComputeHash(HttpClient client, String url) {
+        var sha256Url = url + ".sha256";
+        var request = HttpRequest.newBuilder(URI.create(sha256Url))
+                .GET()
+                .build();
+
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenCompose(response -> {
+                    if (response.statusCode() == 200) {
+                        var content = response.body().trim();
+                        var parts = content.split("\\s+");
+                        return CompletableFuture.completedFuture(parts[0]);
+                    } else {
+                        return downloadFileAndComputeHash(client, url);
+                    }
+                })
+                .exceptionally(throwable -> downloadFileAndComputeHash(client, url).join());
+    }
+
+    private static CompletableFuture<String> downloadFileAndComputeHash(HttpClient client, String url) {
         var request = HttpRequest.newBuilder(URI.create(url))
                 .GET()
                 .build();

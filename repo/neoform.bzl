@@ -65,51 +65,68 @@ def _neoform_repo_impl(rctx):
 
     rctx.report_progress("Downloading function JARs for NeoForm %s" % version_name)
     function_jar_tokens = {}
-    for function_name in config_data["functions"]:
-        function = config_data["functions"][function_name]
-        version = function["version"]
+    for function_name, function in config_data["functions"].items():
+        tokens = []
 
-        token = rctx.download(
-            url = _convert_maven_coordinate_to_url(repository_url, version),
-            output = "function_jars/%s.jar" % function_name,
-            sha256 = pin_content.get(_convert_maven_coordinate_to_url(repository_url, version), ""),
-            block = False,
-        )
-        function_jar_tokens[function_name] = token
+        def append_classpath(version):
+            name = _convert_maven_coordinate(version)
+            tokens.append(rctx.download(
+                url = _convert_maven_coordinate_to_url(repository_url, version),
+                output = "function_jars/%s/%s.jar" % (function_name, name),
+                sha256 = pin_content.get(_convert_maven_coordinate_to_url(repository_url, version), ""),
+                block = False,
+            ))
+
+        if "version" in function:
+            append_classpath(function["version"])
+        if "classpath" in function:
+            for classpath in function["classpath"]:
+                append_classpath(classpath)
+        function_jar_tokens[function_name] = tokens
 
     rctx.file("functions/BUILD.bazel", "")
-    for function_name in config_data["functions"]:
-        function = config_data["functions"][function_name]
-        version = function["version"]
+    for function_name, function in config_data["functions"].items():
+        classpath = function["classpath"] if "classpath" in function else []
+        if "version" in function:
+            classpath.append(function["version"])
 
-        token = function_jar_tokens[function_name]
-        token.wait()
-        rctx.extract(
-            archive = "function_jars/%s.jar" % function_name,
-            output = "function_extracted/%s" % function_name,
-        )
+        if len(classpath) < 0:
+            fail("Neoform function %s has no classpath" % function_name)
 
-        manifest = rctx.read("function_extracted/%s/META-INF/MANIFEST.MF" % function_name)
+        tokens = function_jar_tokens[function_name]
+        for token in tokens:
+            token.wait()
+
         main_class = None
-        lines = manifest.split("\n")
-        for line in lines:
-            if line.startswith(" "):
-                if main_class != None:
-                    main_class += line[1:].strip()
+        for classpath_entry in classpath:
+            name = _convert_maven_coordinate(classpath_entry)
+            rctx.extract(
+                archive = "function_jars/%s/%s.jar" % (function_name, name),
+                output = "function_extracted/%s/%s" % (function_name, name),
+            )
+
+            manifest = rctx.read("function_extracted/%s/%s/META-INF/MANIFEST.MF" % (function_name, name))
+            main_class = None
+            lines = manifest.split("\n")
+            for line in lines:
+                if line.startswith(" "):
+                    if main_class != None:
+                        main_class += line[1:].strip()
+                        continue
+                    else:
+                        continue
+                elif main_class != None:
+                    break
+                index = line.find(":")
+                if index == -1:
                     continue
-                else:
-                    continue
-            elif main_class != None:
-                break
-            index = line.find(":")
-            if index == -1:
-                continue
-            key = line[0:index].strip()
-            value = line[index + 1:].strip()
-            if key == "Main-Class":
-                main_class = value
-        if not main_class:
-            fail("Failed to extract main class from manifest")
+                key = line[0:index].strip()
+                value = line[index + 1:].strip()
+                if key == "Main-Class":
+                    main_class = value
+            if not main_class:
+                fail("Failed to extract main class from manifest")
+            break
 
         jvm_flags = []
         if "jvmargs" in function:
@@ -124,7 +141,7 @@ def _neoform_repo_impl(rctx):
             '    visibility = ["//visibility:public"],',
             '    main_class = "DecompilerWrapper",',
             "    runtime_deps = [",
-            '        "@%s//jar",' % _convert_maven_coordinate_to_repo(repository_prefix, version),
+            '        "@%s//jar",' % _convert_maven_coordinate_to_repo(repository_prefix, classpath[0]),
             '        "@//repo/neoform/rule/decompiler_wrapper",',
             "    ],",
             "    jvm_flags = [%s]," % ", ".join(jvm_flags),
@@ -136,7 +153,7 @@ def _neoform_repo_impl(rctx):
             '    name = "%s",' % function_name,
             '    visibility = ["//visibility:public"],',
             '    main_class = "%s",' % main_class,
-            '    runtime_deps = ["@%s//jar"],' % _convert_maven_coordinate_to_repo(repository_prefix, version),
+            "    runtime_deps = [%s]," % ",".join(['"@%s//jar"' % _convert_maven_coordinate_to_repo(repository_prefix, entry) for entry in classpath]),
             "    jvm_flags = [%s]," % ", ".join(jvm_flags),
             ")",
         ]
@@ -152,30 +169,30 @@ def _neoform_repo_impl(rctx):
         arg_entries = []
         output_entries = []
         for arg in args:
-            type = None
+            arg_type = None
             name = arg
             if arg.startswith("{") and arg.endswith("}"):
                 name = arg[1:-1]
                 if name == "libraries":
-                    type = "jar_list"
+                    arg_type = "jar_list"
                 elif name == "version":
-                    type = "string"
+                    arg_type = "string"
                 elif name == "output":
-                    type = "output"
+                    arg_type = "output"
                 elif name == "log":
                     output_entries.append({
                         "name": name,
                         "type": "log",
                     })
-                    type = "log"
+                    arg_type = "log"
                 else:
-                    type = "file"
+                    arg_type = "file"
             else:
-                type = "plain"
+                arg_type = "plain"
                 name = arg
             arg_entries.append({
                 "name": name,
-                "type": type,
+                "type": arg_type,
             })
             arg_names.append(name)
 
@@ -317,31 +334,38 @@ def _neoform_repo_impl(rctx):
     for side_name in config_data["steps"]:
         steps = config_data["steps"][side_name]
         for step in steps:
-            type = step["type"]
-            if type.startswith("download") or type == "listLibraries":
+            step_type = step["type"]
+            if step_type.startswith("download") or step_type == "listLibraries":
                 continue
 
-            name = step.get("name", type)
+            name = step.get("name", step_type)
             task_name = convert_task_name(side_name, name)
 
             task_def = ['package(default_visibility = ["//visibility:public"])']
-            if type == "strip":
+            if step_type == "strip":
                 task_def.append('load("@//repo/neoform/rule:split_resources.bzl", strip = "split_resources")')
-            elif type == "inject":
+            elif step_type == "inject":
                 task_def.append('load("@//repo/neoform/rule:inject_zip_content.bzl", inject = "inject_zip_content")')
-            elif type == "patch":
+            elif step_type == "patch":
                 task_def.append('load("@//repo/neoform/rule:patch_zip_content.bzl", patch = "patch_zip_content")')
-            elif not type.startswith("download") and type != "listLibraries":
-                task_def.append('load("//functions:%s.bzl", "%s")' % (type, type))
+            elif not step_type.startswith("download") and step_type != "listLibraries":
+                task_def.append('load("//functions:%s.bzl", "%s")' % (step_type, step_type))
             task_def.append("")
-            task_def.append("%s(" % type)
+            task_def.append("%s(" % step_type)
             task_def.append('    name = "%s",' % task_name)
-            if type == "inject":
+            if step_type == "inject":
                 task_def.append('    deps = ["//:inject"],')
-            elif type == "patch":
-                task_def.append('    prefix = "%s",' % config_data["data"]["patches"][side_name])
-                task_def.append('    patches = "//:neoform",')
-            elif type == "split":
+            elif step_type == "patch":
+                patches = config_data["data"]["patches"]
+                if type(patches) == type(''):
+                    task_def.append('    prefix = "%s",' % patches)
+                    task_def.append('    patches = "//:neoform",')
+                elif type(patches) == type({}):
+                    task_def.append('    prefix = "%s",' % patches[side_name])
+                    task_def.append('    patches = "//:neoform",')
+                else:
+                    fail("Bad patch type: %s" % type(patches))
+            elif step_type == "split":
                 if name == "stripClient":
                     task_def.append("    generate_manifest = True,")
                     task_def.append('    dist_id = "client",')
@@ -426,12 +450,12 @@ _neoform_repo = repository_rule(
         "client_mapping": attr.label(
             doc = "Client mapping file",
             allow_single_file = [".txt"],
-            mandatory = True,
+            mandatory = False,
         ),
         "server_mapping": attr.label(
             doc = "Server mapping file",
             allow_single_file = [".txt"],
-            mandatory = True,
+            mandatory = False,
         ),
         "client_libraries": attr.label(
             doc = "Client libraries",
@@ -448,9 +472,10 @@ _neoform_repo = repository_rule(
 
 def _neoform_pin_impl(rctx):
     url_lines = ['"%s"' % url for url in rctx.attr.urls]
+    pin_target = str(rctx.path(rctx.attr.pin_file)) if rctx.attr.pin_file else "neoform_pin.txt"
     rctx.template("PinGenerator.java", rctx.attr._pinner_source, {
         "/*INJECT HERE*/": ", ".join(url_lines),
-        "/*OUTPUT NAME*/": "neoform_pin",
+        "$PIN_TARGET": pin_target,
     })
 
     build_bazel_contents = [
@@ -470,6 +495,11 @@ neoform_pin = repository_rule(
     attrs = {
         "urls": attr.string_list(
             doc = "List of URLs to pin",
+        ),
+        "pin_file": attr.label(
+            doc = "Pin file output path",
+            allow_single_file = True,
+            mandatory = False,
         ),
         "_pinner_source": attr.label(
             allow_single_file = [".java"],
@@ -506,12 +536,12 @@ version = tag_class(
         "client_mapping": attr.label(
             doc = "Client mapping file",
             allow_single_file = [".txt"],
-            mandatory = True,
+            mandatory = False,
         ),
         "server_mapping": attr.label(
             doc = "Server mapping file",
             allow_single_file = [".txt"],
-            mandatory = True,
+            mandatory = False,
         ),
         "client_libraries": attr.label(
             doc = "Client libraries",
@@ -597,9 +627,12 @@ def _neoform_impl(mctx):
         )
 
         config_data = json.decode(mctx.read("%s/config.json" % output_prefix))
-        for function_name in config_data["functions"]:
-            function = config_data["functions"][function_name]
-            append_library(function["version"], version_legacy)
+        for function in config_data["functions"].values():
+            if "version" in function:
+                append_library(function["version"], version_legacy)
+            if "classpath" in function:
+                for classpath in function["classpath"]:
+                    append_library(classpath, version_legacy)
         for libraries_side in config_data["libraries"]:
             for library in config_data["libraries"][libraries_side]:
                 append_library(library, version_legacy)
@@ -641,6 +674,7 @@ def _neoform_impl(mctx):
             )
             for library in libraries
         ],
+        pin_file = pin_file,
     )
 
 neoform = module_extension(

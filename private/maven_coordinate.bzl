@@ -1,3 +1,5 @@
+"Functions to convert maven coordinates to urls"
+
 def convert_maven_coordinate(maven_coordinate):
     return maven_coordinate.replace(":", "_").replace("-", "_").replace(".", "_").replace("+", "_").replace("@", "_")
 

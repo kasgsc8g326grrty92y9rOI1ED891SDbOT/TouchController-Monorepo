@@ -8,6 +8,7 @@ game_version(
     client_assets = "@minecraft_assets//:assets_1.21.7",
     client_libraries = "@minecraft//1.21.7:client_libraries",
     intermediary = "@maven_fabric_1_21_7//:net_fabricmc_intermediary_v2",
+    neoforge = "@neoforge_1_21_7//:compiled_with_neoforge",
     server = "@minecraft//1.21.7:server",
     version = "1.21.7",
     visibility = ["//visibility:public"],

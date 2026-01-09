@@ -73,7 +73,7 @@ game_versions = {
     "1.21.11": {
         "mappings": True,
     },
-    "26.1-snapshot-1": {
+    "26.1-snapshot-2": {
         "mappings": False,
     },
 }
