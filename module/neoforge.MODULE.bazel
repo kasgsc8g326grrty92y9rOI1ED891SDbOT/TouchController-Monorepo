@@ -11,6 +11,7 @@ maven.install(
 
 lexforge_versions = {
     "1.14.4": {
+        "java_target": 8,
         "mcp_version": "1.14.4-20190829.143755",
         "mcp_sha256": "49d0b7818ccf385a57feda19fbd88b1fb4bd97c95d98e7044d9cb4c735e37820",
         "forge_version": "1.14.4-28.2.28",
@@ -19,6 +20,7 @@ lexforge_versions = {
         "forge_universal_sha256": "8daece39153538aaefcedd7edb936c06f1f04de2f157bed07b89fac1c399e7bb",
     },
     "1.16.5": {
+        "java_target": 8,
         "mcp_version": "1.16.5-20210115.111550",
         "mcp_sha256": "80216a0f4ae79d81a5e11ceccaa97582a1f6a2cf079b7703b88a99a26547b342",
         "forge_version": "1.16.5-36.2.34",
@@ -27,6 +29,7 @@ lexforge_versions = {
         "forge_universal_sha256": "56d2b1501c74638f07162904e61b6bdd5312f27a3ad1f1f72d40b3818ce08ed7",
     },
     "1.17.1": {
+        "java_target": 16,
         "mcp_version": "1.17.1-20210706.113038",
         "mcp_sha256": "507f59441ccdba03c526f5484cd40559cf958340c0d8b7c0d6a0dfc37f511413",
         "forge_version": "1.17.1-37.1.1",
@@ -35,6 +38,7 @@ lexforge_versions = {
         "forge_universal_sha256": "2cc032ae95d60f03e62be4929f3ecd66354e6ed135fa3cf676ced2b2f7910a6d",
     },
     "1.18.1": {
+        "java_target": 17,
         "mcp_version": "1.18.1-20211210.034407",
         "mcp_sha256": "891fd00d1ba9c762d8bcd3a82a65f81d5e9c3a29366d0e31caa9eec4ed3541cb",
         "forge_version": "1.18.1-39.0.0",
@@ -43,6 +47,7 @@ lexforge_versions = {
         "forge_universal_sha256": "525eee8863ffeb7d2f5a1dd8457ea48301606bacbedd912df07509fca265d8ad",
     },
     "1.18.2": {
+        "java_target": 17,
         "mcp_version": "1.18.2-20220404.173914",
         "mcp_sha256": "f60527297dd4e81e3da93dc95981e426a81d3b03457cf2f94af8281e2db5a8f2",
         "forge_version": "1.18.2-40.3.12",
@@ -51,6 +56,7 @@ lexforge_versions = {
         "forge_universal_sha256": "d699e54a6a7bbe31efb40d39c21cc2425dc0648590350bcc85a39943ff729da0",
     },
     "1.19.2": {
+        "java_target": 17,
         "mcp_version": "1.19.2-20220805.130853",
         "mcp_sha256": "fd4cf084b96492de87499b49d1ae5896ef14a3f85b5462d2842d7b193fba9135",
         "forge_version": "1.19.2-43.5.2",
@@ -59,6 +65,7 @@ lexforge_versions = {
         "forge_universal_sha256": "c3c92daf8669bf2329af90da3d79f909976e90c728e1a896131ad273cf4b7077",
     },
     "1.20.1": {
+        "java_target": 17,
         "mcp_version": "1.20.1-20230612.114412",
         "mcp_sha256": "f46d1050d8bed9046886b90a0d2fb80b4c6b5120fc35d32e5d37498dbe0a6d2a",
         "forge_version": "1.20.1-47.1.47",
@@ -70,6 +77,7 @@ lexforge_versions = {
 
 neoforge_versions = {
     "1.20.4": {
+        "java_target": 17,
         "neoform_version": "1.20.4-20240627.114801",
         "neoform_sha256": "31798da3449d3e296a0761b0a05bbbca1a9d85eaf55302e9a258f6cce7e38fe6",
         "neoforge_version": "20.4.251",
@@ -78,6 +86,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "54accb2e09fd75590e5896fcde24b3b7f0068d35fd4bc2437f619988fec649d7",
     },
     "1.20.6": {
+        "java_target": 21,
         "neoform_version": "1.20.6-20240627.102356",
         "neoform_sha256": "fc03b4e32b879a109ec78abeebb002df4231cff03fab4f0bffeb03c63cbb590c",
         "neoforge_version": "20.6.139",
@@ -86,6 +95,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "2214ce9640ff694de7f0c8c9eb354439003ae69e33bc7c80139ffd324c5b8a04",
     },
     "1.21": {
+        "java_target": 21,
         "neoform_version": "1.21-20240613.152323",
         "neoform_sha256": "fc03b4e32b879a109ec78abeebb002df4231cff03fab4f0bffeb03c63cbb590c",
         "neoforge_version": "21.0.167",
@@ -94,6 +104,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "9c68c9c2c8bb8314fde3f1a3cf890ff4ab74b804561ae6998a4b9308397725a5",
     },
     "1.21.1": {
+        "java_target": 21,
         "neoform_version": "1.21.1-20240808.144430",
         "neoform_sha256": "3fcdf0f0d115774cfceaf206a05a6dc964e2189bfd00f5b5f863e37f4b7733c7",
         "neoforge_version": "21.1.218",
@@ -102,6 +113,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "0a7e482f83762b79d42aa0a907f82413b70b178c69237c88c505436b2913fcf2",
     },
     "1.21.3": {
+        "java_target": 21,
         "neoform_version": "1.21.3-20241023.131943",
         "neoform_sha256": "514bfe9d6c7105c90e3fe460833471a4efff09577b9e8b4c4d44a90ad5ca0907",
         "neoforge_version": "21.3.91",
@@ -110,6 +122,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "d7b9add03e134e0c44e220bcbeb1f2b50642e250350f1d858e4584d7ee0cf9e0",
     },
     "1.21.4": {
+        "java_target": 21,
         "neoform_version": "1.21.4-20241203.161809",
         "neoform_sha256": "225224de97079060c9924afca4dddd55a15217c00d7e194b4e1348131b02f8b9",
         "neoforge_version": "21.4.148",
@@ -118,6 +131,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "cb6b62a7aa28a0bd35dc896f8c3887e946c16c7109042d8e6082df076926e895",
     },
     "1.21.5": {
+        "java_target": 21,
         "neoform_version": "1.21.5-20250325.162830",
         "neoform_sha256": "29f268a2287e90a68756c7f31f31afa73e8ff68d886741a9e1e9b5e8c4b6f897",
         "neoforge_version": "21.5.95",
@@ -126,6 +140,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "be89e5fc27235ebe3ed25312290d9900a67ea5f2d9edc8f1008c55c8ee3ecdb8",
     },
     "1.21.6": {
+        "java_target": 21,
         "neoform_version": "1.21.6-20250617.151856",
         "neoform_sha256": "f537eca06638ed23796d094ab9315c6660ebb142b067c791d68bf4e6469df32a",
         "neoforge_version": "21.6.20-beta",
@@ -134,6 +149,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "250dfe6b489b32c388427bb37a9883d06d679d26e71986055bbd0a5d26047b63",
     },
     "1.21.7": {
+        "java_target": 21,
         "neoform_version": "1.21.7-20250711.194848",
         "neoform_sha256": "d37b1aec163eb989f0c08fdd7f2a13a4ae4100102ea1d51ed18b21d69076d481",
         "neoforge_version": "21.7.25-beta",
@@ -142,6 +158,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "44935718e180f5ef2dfcc79a8628a9b506cdd1b99e9fbab96cf0ce641609df65",
     },
     "1.21.8": {
+        "java_target": 21,
         "neoform_version": "1.21.8-20250717.133445",
         "neoform_sha256": "d67401bd0769ee045128fb84142fb660fe49db8ea86538d4dc308c25cd0cdbca",
         "neoforge_version": "21.8.36",
@@ -150,6 +167,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "758961d98cab1104ad281d5d0574e06a154e8ce94b19c71c2b460c4dc89eb405",
     },
     "1.21.9": {
+        "java_target": 21,
         "neoform_version": "1.21.9-20250930.151910",
         "neoform_sha256": "36ea1a00d8bc168a9359ee2a8799d797cd9c62512d6e873a0ed3709ae6d14085",
         "neoforge_version": "21.9.16-beta",
@@ -158,6 +176,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "7e74d4b2016bd10fd9b1ddd53695acf6f271e1c9c1e9923afb59cf69ebb06051",
     },
     "1.21.10": {
+        "java_target": 21,
         "neoform_version": "1.21.10-20251010.172816",
         "neoform_sha256": "445940ac070d37ec4294d5392de0485bfd2b9245580f7a7b6d8e774d7306de84",
         "neoforge_version": "21.10.64",
@@ -166,6 +185,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "51dc4f8418cc0c067df2524bc220edef56097f475f60527d550992bed90a2b57",
     },
     "1.21.11": {
+        "java_target": 21,
         "neoform_version": "1.21.11-20251209.172050",
         "neoform_sha256": "f3f65e0aa4926c3c3e9c60834d6e028d15f4815b33a0cb1ef63f524ba5d307ed",
         "neoforge_version": "21.11.13-beta",
@@ -174,6 +194,7 @@ neoforge_versions = {
         "neoforge_universal_sha256": "c8bed692fd007fb2bd7b5f2f3d8e29d17d06dbbb7821278775d22ff90a7a16dc",
     },
     "26.1": {
+        "java_target": 25,
         "version": "26.1-snapshot-2",
         "mapping": False,
         "neoform_version": "26.1-snapshot-2-1",
@@ -215,12 +236,13 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
             }
         ),
         neoforge.version(
+            java_target = data["java_target"],
+            version = data["forge_version"],
             joined_patched_sources = "@mcp_%s//tasks/joined_patch" % version.replace(".", "_"),
             legacy = True,
             sources_sha256 = data["forge_sources_sha256"],
             universal_sha256 = data["forge_universal_sha256"],
             userdev_sha256 = data["forge_userdev_sha256"],
-            version = data["forge_version"],
         ),
         use_repo(
             neoforge,
@@ -256,11 +278,12 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
             }
         ),
         neoforge.version(
+            java_target = data["java_target"],
+            version = data["neoforge_version"],
             joined_patched_sources = "@neoform_%s//tasks/joined_patch" % version.replace(".", "_"),
             sources_sha256 = data["neoforge_sources_sha256"],
             universal_sha256 = data["neoforge_universal_sha256"],
             userdev_sha256 = data["neoforge_userdev_sha256"],
-            version = data["neoforge_version"],
         ),
         use_repo(
             neoforge,

@@ -4938,8 +4938,8 @@
     },
     "//repo:neoforge.bzl%neoforge": {
       "general": {
-        "bzlTransitiveDigest": "X9dtbiM6LBT1XnFZFxszK7jMCGC914W4+BcOMNT6FuM=",
-        "usagesDigest": "myeWTI1DtYPWIb/TQeDPd6xE9YFO1VITnKxSeqUEatM=",
+        "bzlTransitiveDigest": "94kPwfuDyHDSzjjYOADXK/yjGZRAh/FWPLs3IxycnwM=",
+        "usagesDigest": "Zy0QzfPGi44mbo5unPjNOk9NKLwoaRCNXqXi5EVvKmk=",
         "recordedFileInputs": {
           "@@//neoforge_pin.txt": "84c9d1c76cd4796b9a68ec93219caa83ea64bb8d8a6c7f9b79c87685dc298e0e"
         },
@@ -4949,8 +4949,9 @@
           "forge_1_14_4_28_2_28": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": true,
               "version": "1.14.4-28.2.28",
+              "java_target": 8,
+              "legacy": true,
               "userdev_sha256": "310a469650ae7600a5ec3c331f390d4b9357a89aa807e521e4f8f6e6e79ce6f5",
               "universal_sha256": "8daece39153538aaefcedd7edb936c06f1f04de2f157bed07b89fac1c399e7bb",
               "sources_sha256": "01c3e270d51c94059118f8c255ca0b19cece2b37515a5765c8cac154225d6898",
@@ -4960,8 +4961,9 @@
           "forge_1_16_5_36_2_34": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": true,
               "version": "1.16.5-36.2.34",
+              "java_target": 8,
+              "legacy": true,
               "userdev_sha256": "7fdf58513f2cff7a5c3007e0dd0ee36fb4dc40a0c68c18f86d9799b0ea382c1f",
               "universal_sha256": "56d2b1501c74638f07162904e61b6bdd5312f27a3ad1f1f72d40b3818ce08ed7",
               "sources_sha256": "a1c8999617d792843c879c04e49f8658c299e5a423b4f44468f8f70961a68104",
@@ -4971,8 +4973,9 @@
           "forge_1_17_1_37_1_1": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": true,
               "version": "1.17.1-37.1.1",
+              "java_target": 16,
+              "legacy": true,
               "userdev_sha256": "ab630a994b26e5a7938b5700da7a79aa0e8cb933c101d026feb9a355014bfe0c",
               "universal_sha256": "2cc032ae95d60f03e62be4929f3ecd66354e6ed135fa3cf676ced2b2f7910a6d",
               "sources_sha256": "58a7ed4c531ac8965bcded899116821e19ac02ec1aabec8942f5fe5aef9da6b8",
@@ -4982,8 +4985,9 @@
           "forge_1_18_1_39_0_0": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": true,
               "version": "1.18.1-39.0.0",
+              "java_target": 17,
+              "legacy": true,
               "userdev_sha256": "8d44d9b2d7542728370dbd6578bec2786ee7d853079af98ad8192acfad540aa1",
               "universal_sha256": "525eee8863ffeb7d2f5a1dd8457ea48301606bacbedd912df07509fca265d8ad",
               "sources_sha256": "e4bf42b6facc245bb0bb6025362d46a1c5935e640288ecc1883424ebeb7d2310",
@@ -4993,8 +4997,9 @@
           "forge_1_18_2_40_3_12": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": true,
               "version": "1.18.2-40.3.12",
+              "java_target": 17,
+              "legacy": true,
               "userdev_sha256": "20d72b0c2847a99aadace09b00f7f3958526008a907bc19da16751de64a96e80",
               "universal_sha256": "d699e54a6a7bbe31efb40d39c21cc2425dc0648590350bcc85a39943ff729da0",
               "sources_sha256": "a5d888d75586cfc229c20752cc521d8e011fd2693d4e7114578698520f912872",
@@ -5004,8 +5009,9 @@
           "forge_1_19_2_43_5_2": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": true,
               "version": "1.19.2-43.5.2",
+              "java_target": 17,
+              "legacy": true,
               "userdev_sha256": "79118c93b51771351c1add1979a7594734adc5f79300553de9c125d2aed54cc2",
               "universal_sha256": "c3c92daf8669bf2329af90da3d79f909976e90c728e1a896131ad273cf4b7077",
               "sources_sha256": "30435d534a4d66ddfdf056f6e0d2e48cb548fd447914f50f2306d03e4ecb81fe",
@@ -5015,8 +5021,9 @@
           "forge_1_20_1_47_1_47": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": true,
               "version": "1.20.1-47.1.47",
+              "java_target": 17,
+              "legacy": true,
               "userdev_sha256": "33d84a704fcef300b37696d2f0a8beb69f4f398d879db1f48425a30e49406a4d",
               "universal_sha256": "56e31f331e70597f791227dd368670c634ece32691a7ff1b0df1acf89c676adb",
               "sources_sha256": "f67acaa73376b148a7b6c359c90aa4585b37bea75752086d8fda0c43c996fecc",
@@ -5026,8 +5033,9 @@
           "neoforge_20_4_251": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "20.4.251",
+              "java_target": 17,
+              "legacy": false,
               "userdev_sha256": "405cbfd509d283aeb58b224691844ef735f737c3a71d0ff1a38ff1773d39650f",
               "universal_sha256": "54accb2e09fd75590e5896fcde24b3b7f0068d35fd4bc2437f619988fec649d7",
               "sources_sha256": "198df8b25fa20c988459d127ca1f6d3b0c464620009dea2f96a953d22da80612",
@@ -5037,8 +5045,9 @@
           "neoforge_20_6_139": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "20.6.139",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "fbc6bdfb3328e2d4f68dfae8ee57e31211fab81e4ca55078ab85d272dfb67bc4",
               "universal_sha256": "2214ce9640ff694de7f0c8c9eb354439003ae69e33bc7c80139ffd324c5b8a04",
               "sources_sha256": "73e1367eae1b7ec6e8d58bdca4f70906d906d427d536070b2a27756fca13db7f",
@@ -5048,8 +5057,9 @@
           "neoforge_21_0_167": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.0.167",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "12d1d7536c33a20ab8cd115f23d39842c18206de556cbb15145e3b0ad83ee9bb",
               "universal_sha256": "9c68c9c2c8bb8314fde3f1a3cf890ff4ab74b804561ae6998a4b9308397725a5",
               "sources_sha256": "b5beeac99bf131dd309aaa46e24635bf049618feaff90e5cb83863ce2cf40f6a",
@@ -5059,8 +5069,9 @@
           "neoforge_21_1_218": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.1.218",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "08610e4b6a65b5049e52704b4c0182133bc54dd94514ec49c680120801a6aa0d",
               "universal_sha256": "0a7e482f83762b79d42aa0a907f82413b70b178c69237c88c505436b2913fcf2",
               "sources_sha256": "0585399bfe575190f38ce57d33f6e4898384412aacb148c5e59f30c58b7cd783",
@@ -5070,8 +5081,9 @@
           "neoforge_21_3_91": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.3.91",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "6a65c90884bf829b8b03f1f72383a01b3abba25e7a4f3d09abda5c7b92dcc158",
               "universal_sha256": "d7b9add03e134e0c44e220bcbeb1f2b50642e250350f1d858e4584d7ee0cf9e0",
               "sources_sha256": "bcf6000577e3452768529be3bb247894998518cacfa344a9f4e6b05edf96e12d",
@@ -5081,8 +5093,9 @@
           "neoforge_21_4_148": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.4.148",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "538c401fa062ab3b0ed5e06c125f9009f23fa5585eb728f9c3a2f55e4ddd0674",
               "universal_sha256": "cb6b62a7aa28a0bd35dc896f8c3887e946c16c7109042d8e6082df076926e895",
               "sources_sha256": "d7ec5488c77056aa70fb13546675e00c92d3232e486dc6ac224e3e1f730fbfbb",
@@ -5092,8 +5105,9 @@
           "neoforge_21_5_95": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.5.95",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "1e5888723c757f36584186df84e231904866ffd16ec8c74680289c0a5fc9ffb6",
               "universal_sha256": "be89e5fc27235ebe3ed25312290d9900a67ea5f2d9edc8f1008c55c8ee3ecdb8",
               "sources_sha256": "ff9d28d640cfcd7f896dd44e4e7d132cdbbf7305ce44117d4aadecbb2c9172a7",
@@ -5103,8 +5117,9 @@
           "neoforge_21_6_20_beta": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.6.20-beta",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "646bf46e7cdbd20dc91d7ba5e181270bbe44b9e1571edf3ff3a85573e98f594f",
               "universal_sha256": "250dfe6b489b32c388427bb37a9883d06d679d26e71986055bbd0a5d26047b63",
               "sources_sha256": "9df12009da9c8fcba87667aa906d88cacd809f37a7d391c58d08c2921bb9cf51",
@@ -5114,8 +5129,9 @@
           "neoforge_21_7_25_beta": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.7.25-beta",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "10b4970427d9a3f080469c4b5e63fffad3b58339dd54ca43662e4bcce9335637",
               "universal_sha256": "44935718e180f5ef2dfcc79a8628a9b506cdd1b99e9fbab96cf0ce641609df65",
               "sources_sha256": "a15431b6cdcd5305833757c0fb14f3df9d35768c455add88a18f068a72efcc3c",
@@ -5125,8 +5141,9 @@
           "neoforge_21_8_36": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.8.36",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "051b0561fe0725fb953336c363f82540c80a2f4e86cdd17023b7ecc0842a6012",
               "universal_sha256": "758961d98cab1104ad281d5d0574e06a154e8ce94b19c71c2b460c4dc89eb405",
               "sources_sha256": "4abf052591e38c1c84504f2ae4b741387a303deb04b459f4fa2fe4ae17bf1764",
@@ -5136,8 +5153,9 @@
           "neoforge_21_9_16_beta": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.9.16-beta",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "6cf0698ef09fdf96fd33e413dc5a147bfc2a73c1b49ef2553cc5607edde25695",
               "universal_sha256": "7e74d4b2016bd10fd9b1ddd53695acf6f271e1c9c1e9923afb59cf69ebb06051",
               "sources_sha256": "4c08ad08adcc08aea8cccfba26f36e64efcc4ffe4e3a690aac7a51ba7f305fb3",
@@ -5147,8 +5165,9 @@
           "neoforge_21_10_64": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.10.64",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "5ef969c95fb13fecbbf43641565cd871c6d92436cf7c28baa480219b26e7364c",
               "universal_sha256": "51dc4f8418cc0c067df2524bc220edef56097f475f60527d550992bed90a2b57",
               "sources_sha256": "d52d822668b8cb1bfcf2e75c31eacc90b1935e1865d3aa0e720eed9c1b4e49b9",
@@ -5158,8 +5177,9 @@
           "neoforge_21_11_13_beta": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "21.11.13-beta",
+              "java_target": 21,
+              "legacy": false,
               "userdev_sha256": "1f26a8c8a28407a92b1369d5187c71246a5994ed4fb06db6a5bee3cf0c573aa8",
               "universal_sha256": "c8bed692fd007fb2bd7b5f2f3d8e29d17d06dbbb7821278775d22ff90a7a16dc",
               "sources_sha256": "ea49161d24f0704a8a9bcaf6ba91d5d9cfeb40d2f05c07d28504886151a868d1",
@@ -5169,8 +5189,9 @@
           "neoforge_26_1_0_0_alpha_5_snapshot_2": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "legacy": false,
               "version": "26.1.0.0-alpha.5+snapshot-2",
+              "java_target": 25,
+              "legacy": false,
               "userdev_sha256": "ea43f43233bb06b21049fca4adb9ef8cb88447fe00ed1888f08634630e35d126",
               "universal_sha256": "6580181386d8b5cf65528df4b9b2ce90fc60c4b0789684f61ecd7eac944916eb",
               "sources_sha256": "6e584d0b2e8f066ba4d28be0be33eac4111f21a986365cd185f35daf0d80c391",
@@ -8051,7 +8072,7 @@
     },
     "//repo:neoform.bzl%neoform": {
       "general": {
-        "bzlTransitiveDigest": "41MVQHKv5bkeMWZh5Csv2+C1f4t3dIX7kWbszQAp7kk=",
+        "bzlTransitiveDigest": "TiQNhVs48A8aMLd2PKujs1tZa4uiWbl0pi/fe2XHe6U=",
         "usagesDigest": "IXtTqOnKF6n0HPORl2xqfsJZFMPVGiKejoj6KWniad4=",
         "recordedFileInputs": {
           "@@//neoform_pin.txt": "f5f349c33255eb0173480b40bd5ae23a8309aac7342a8267bffb9294168be7c6"
