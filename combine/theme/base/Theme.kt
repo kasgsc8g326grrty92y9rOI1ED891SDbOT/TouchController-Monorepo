@@ -58,7 +58,7 @@ data class Theme(
 
         val tab: DrawableSet = DrawableSet.Empty,
 
-        val itemGridBackground: BackgroundTexture? = null,
+        val itemGridBackground: Drawable? = null,
     )
 
     data class Colors(
