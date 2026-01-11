@@ -18,6 +18,7 @@ import top.fifthlight.combine.layout.constraints.Constraints
 import top.fifthlight.combine.paint.Canvas
 import top.fifthlight.combine.paint.TextMeasurer
 import top.fifthlight.data.IntSize
+import top.fifthlight.data.Offset
 import kotlin.coroutines.CoroutineContext
 
 val LocalCombineOwner: ProvidableCompositionLocal<CombineOwner> =
@@ -157,7 +158,11 @@ class CombineOwner(
     }
 
     private var lastFrameTime: Long = -1L
-    fun render(size: IntSize, canvas: Canvas) {
+    fun render(
+        size: IntSize,
+        cursorPos: Offset,
+        canvas: Canvas,
+    ) {
         screenSize = size
         val nowFrameTime = System.currentTimeMillis()
         if (lastFrameTime != -1L) {
@@ -175,7 +180,7 @@ class CombineOwner(
                 )
             )
             with(canvas) {
-                layer.rootNode.run { render() }
+                layer.rootNode.run { render(cursorPos) }
             }
         }
     }

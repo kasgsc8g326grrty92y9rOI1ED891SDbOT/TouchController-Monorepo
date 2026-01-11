@@ -53,7 +53,7 @@ kt_merge_library(
         "//game/1.21.8:game_client_neoforge",
         "@iris_neoforge_1_21_6//:primary",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
-        "@minecraft//1.21.8:client_libraries",
+        "//game/1.21.8:game_client_libraries",
         "@neoforge_1_21_8//:neoforge_deps",
         "@sodium_neoforge_1_21_6//:primary",
     ],

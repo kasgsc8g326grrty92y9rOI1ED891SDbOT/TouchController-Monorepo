@@ -25,6 +25,6 @@ kt_merge_library(
         "//:compose",
         "//combine/backend/minecraft/1.21.8/game:remapped_client_access_widened_named",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
-        "@minecraft//1.21.8:client_libraries",
+        "//game/1.21.8:game_client_libraries",
     ],
 )

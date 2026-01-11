@@ -20,6 +20,6 @@ kt_merge_library(
         "//blazerod/render/game:remapped_client_access_widened_named",
         "@maven//:org_jetbrains_kotlin_kotlin_stdlib",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
-        "@minecraft//1.21.8:client_libraries",
+        "//game/1.21.8:game_client_libraries",
     ],
 )

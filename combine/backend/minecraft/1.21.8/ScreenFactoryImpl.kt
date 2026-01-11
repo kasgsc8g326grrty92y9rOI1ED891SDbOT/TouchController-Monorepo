@@ -185,9 +185,11 @@ class CombineScreen(
             super.render(guiGraphics, mouseX, mouseY, delta)
         }
 
-        val canvas: Canvas = CanvasImpl(guiGraphics)
-        val size = IntSize(width, height)
-        owner.render(size, canvas)
+        owner.render(
+            size = IntSize(width, height),
+            cursorPos = Offset(mouseX.toFloat(), mouseY.toFloat()),
+            canvas = CanvasImpl(guiGraphics),
+        )
     }
 
     override fun onClose() {
