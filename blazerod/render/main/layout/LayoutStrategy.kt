@@ -68,7 +68,7 @@ sealed interface LayoutStrategy {
         override val mat4Size: Int
             get() = 64
 
-        override val arrayAlignment: Int?
+        override val arrayAlignment: Int
             get() = 16
     }
 

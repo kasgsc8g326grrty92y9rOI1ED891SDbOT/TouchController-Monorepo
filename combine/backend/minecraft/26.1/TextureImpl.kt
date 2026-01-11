@@ -25,7 +25,7 @@ import top.fifthlight.mergetools.api.ActualImpl
 
 @ActualImpl(Texture::class)
 data class TextureImpl(
-    val Identifier: Identifier,
+    val identifier: Identifier,
     override val size: IntSize,
     override val padding: IntPadding = IntPadding.ZERO,
 ) : Texture {
@@ -39,14 +39,14 @@ data class TextureImpl(
             height: Int,
             padding: IntPadding,
         ): Texture = TextureImpl(
-            Identifier = Identifier.fromNamespaceAndPath(namespace, id),
+            identifier = Identifier.fromNamespaceAndPath(namespace, id),
             size = IntSize(width, height),
             padding = padding,
         )
     }
 
-    private fun GuiGraphics.getSprite(Identifier: Identifier) =
-        (this as SpriteAccessibleGuiGraphics).`combine$getSprite`(Identifier)
+    private fun GuiGraphics.getSprite(identifier: Identifier) =
+        (this as SpriteAccessibleGuiGraphics).`combine$getSprite`(identifier)
 
     private fun GuiGraphics.submitElement(guiElementRenderState: GuiElementRenderState) =
         (this as SubmittableGuiGraphics).`combine$submitElement`(guiElementRenderState)
@@ -124,7 +124,7 @@ data class TextureImpl(
     ) {
         val guiGraphics = (this as CanvasImpl).guiGraphics
         val client = Minecraft.getInstance()
-        val sprite = guiGraphics.getSprite(Identifier)
+        val sprite = guiGraphics.getSprite(identifier)
         val atlasLocation = sprite.atlasLocation()
         val texture = client.textureManager.getTexture(atlasLocation)
 
@@ -154,7 +154,7 @@ data class TextureImpl(
         val guiGraphics = (this as CanvasImpl).guiGraphics
         guiGraphics.blitSprite(
             RenderPipelines.GUI_TEXTURED,
-            Identifier,
+            identifier,
             dstRect.offset.x,
             dstRect.offset.y,
             dstRect.size.width,
@@ -166,7 +166,7 @@ data class TextureImpl(
 
 @ActualImpl(BackgroundTexture::class)
 data class BackgroundTextureImpl(
-    val Identifier: Identifier,
+    val identifier: Identifier,
     override val size: IntSize,
 ) : BackgroundTexture {
     companion object : BackgroundTexture.Factory {
@@ -178,7 +178,7 @@ data class BackgroundTextureImpl(
             width: Int,
             height: Int,
         ): BackgroundTexture = BackgroundTextureImpl(
-            Identifier = Identifier.fromNamespaceAndPath(namespace, id),
+            identifier = Identifier.fromNamespaceAndPath(namespace, id),
             size = IntSize(width, height),
         )
     }

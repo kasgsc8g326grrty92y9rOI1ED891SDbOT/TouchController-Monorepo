@@ -165,7 +165,7 @@ def _generate_function_build_file(rctx, version_info, function_name, function, c
         '    visibility = ["//visibility:public"],',
         '    main_class = "DecompilerWrapper",',
         "    runtime_deps = [",
-        '        %s,' % ", \n".join(['"@%s//jar"' % _convert_maven_coordinate_to_repo(version_info.repository_prefix, entry) for entry in classpath]),
+        "        %s," % ", \n".join(['"@%s//jar"' % _convert_maven_coordinate_to_repo(version_info.repository_prefix, entry) for entry in classpath]),
         '        "@//repo/neoform/rule/decompiler_wrapper",',
         "    ],",
         "    jvm_flags = [%s]," % ", ".join(jvm_flags),

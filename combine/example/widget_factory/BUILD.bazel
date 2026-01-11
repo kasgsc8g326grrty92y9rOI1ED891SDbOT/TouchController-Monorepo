@@ -5,6 +5,7 @@ kt_jvm_library(
     srcs = glob(["*.kt"]),
     resource_strip_prefix = "combine/example/widget_factory/resources",
     resources = glob(["resources/**"]),
+    visibility = ["//visibility:public"],
     deps = [
         "//:compose",
         "//combine/backend/minecraft/26.1",
@@ -35,7 +36,6 @@ kt_jvm_library(
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_lifecycle_events_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_loader",
     ],
-    visibility = ["//visibility:public"],
 )
 
 java_binary(

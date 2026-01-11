@@ -28,5 +28,5 @@ def convert_maven_coordinate_to_url(repository, maven_coordinate, extension = "j
         artifact,
         version,
         suffix,
-        extension
+        extension,
     )

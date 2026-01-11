@@ -1,6 +1,6 @@
 package top.fifthlight.combine.paint
 
-import top.fifthlight.combine.data.*
+import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.input.pointer.PointerIcon
 import top.fifthlight.data.*
 import kotlin.math.max

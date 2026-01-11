@@ -1,8 +1,8 @@
 package top.fifthlight.blazerod.runtime.load
 
+import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.vertex.VertexFormat
 import kotlinx.coroutines.Deferred
-import com.mojang.blaze3d.platform.NativeImage
 import top.fifthlight.blazerod.api.resource.RenderExpression
 import top.fifthlight.blazerod.api.resource.RenderExpressionGroup
 import top.fifthlight.blazerod.model.*
@@ -160,7 +160,7 @@ data class GpuLoadVertexData(
     val cpuBuffer: ByteBuffer?,
 )
 
-data class ModelLoadInfo<Texture : Any?, Index : Any, Vertex : Any, Morph : Any>(
+data class ModelLoadInfo<Texture, Index : Any, Vertex : Any, Morph : Any>(
     val textures: List<Deferred<Texture>>,
     val indexBuffers: List<Deferred<Index>>,
     val vertexBuffers: List<Deferred<Vertex>>,

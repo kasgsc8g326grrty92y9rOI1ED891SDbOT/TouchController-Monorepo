@@ -88,11 +88,11 @@ fun Slider(
             draw(
                 IntRect(
                     offset = trackRect.offset + IntOffset(
-                        x = progressWidth.toInt(),
+                        x = progressWidth,
                         y = 0,
                     ),
                     size = IntSize(
-                        width = trackRect.size.width - progressWidth.toInt(),
+                        width = trackRect.size.width - progressWidth,
                         height = trackRect.size.height,
                     )
                 )

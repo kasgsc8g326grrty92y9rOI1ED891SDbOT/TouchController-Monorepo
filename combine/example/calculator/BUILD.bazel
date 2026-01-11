@@ -27,8 +27,8 @@ kt_jvm_library(
         "//combine/theme/oreui:vanilla_lib_unmerged",
         "//combine/theme/vanilla",
         "//combine/widget",
-        "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
         "//game/1.21.8:game_client_libraries",
+        "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
     ],
 )
 
@@ -47,8 +47,8 @@ java_binary(
     name = "dev_client",
     srcs = [],
     data = [
-        "@minecraft_assets//:assets",
         "//game/1.21.8:game_client_assets",
+        "@minecraft_assets//:assets",
     ],
     env = {
         "LANG": "en_US.UTF8",

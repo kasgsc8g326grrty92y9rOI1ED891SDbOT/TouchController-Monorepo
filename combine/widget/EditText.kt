@@ -93,7 +93,7 @@ fun EditText(
         }
         LaunchedEffect(focused) {
             if (focused) {
-                inputManager.events?.collect { newState ->
+                inputManager.events.collect { newState ->
                     updateInputState { newState }
                 }
             }

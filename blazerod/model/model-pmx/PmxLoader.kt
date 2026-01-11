@@ -5,16 +5,15 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 import org.joml.Vector3fc
 import org.slf4j.LoggerFactory
-import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.*
 import top.fifthlight.blazerod.model.loader.LoadContext
 import top.fifthlight.blazerod.model.loader.LoadParam
 import top.fifthlight.blazerod.model.loader.LoadResult
-import top.fifthlight.blazerod.model.loader.util.openChannelCaseInsensitive
-import top.fifthlight.blazerod.model.pmx.format.*
-import top.fifthlight.blazerod.model.pmx.format.PmxMorphGroup.MorphItem
+import top.fifthlight.blazerod.model.loader.ModelFileLoader
 import top.fifthlight.blazerod.model.loader.util.MMD_SCALE
 import top.fifthlight.blazerod.model.loader.util.readAll
+import top.fifthlight.blazerod.model.pmx.format.*
+import top.fifthlight.blazerod.model.pmx.format.PmxMorphGroup.MorphItem
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.IntBuffer
@@ -785,9 +784,9 @@ class PmxLoader : ModelFileLoader {
                     localCoordinate = localCoordinate,
                     externalParentIndex = externalParentIndex,
                     ikData = ikData,
-                ).also {
-                    it.inheritData?.let {
-                        sourceToInheritMap.getOrPut(it.sourceIndex) { mutableListOf() }.add(it)
+                ).also { bone ->
+                    bone.inheritData?.let { inheritData ->
+                        sourceToInheritMap.getOrPut(inheritData.sourceIndex) { mutableListOf() }.add(inheritData)
                     }
                 }
             }

@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.AbstractClientPlayer
-import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.state.PlayerRenderState
 import org.joml.Matrix4f

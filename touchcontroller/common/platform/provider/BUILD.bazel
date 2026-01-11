@@ -7,9 +7,9 @@ kt_merge_library(
     deps = [
         "//touchcontroller/common/platform",
         "//touchcontroller/common/platform/android",
+        "//touchcontroller/common/platform/proxy",
         "//touchcontroller/common/platform/wayland",
         "//touchcontroller/common/platform/win32",
-        "//touchcontroller/common/platform/proxy",
         "//touchcontroller/proxy/message",
         "//touchcontroller/proxy/server/udp",
         "@maven//:org_slf4j_slf4j_api",

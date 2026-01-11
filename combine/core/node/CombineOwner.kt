@@ -7,13 +7,13 @@ import kotlinx.coroutines.*
 import top.fifthlight.combine.animation.LocalTweenManager
 import top.fifthlight.combine.input.focus.FocusManager
 import top.fifthlight.combine.input.focus.LocalFocusManager
-import top.fifthlight.combine.input.text.InputHandler
-import top.fifthlight.combine.input.text.TextInputReceiver
 import top.fifthlight.combine.input.key.KeyEvent
 import top.fifthlight.combine.input.key.KeyEventReceiver
 import top.fifthlight.combine.input.pointer.PointerEvent
 import top.fifthlight.combine.input.pointer.PointerEventReceiver
 import top.fifthlight.combine.input.pointer.PointerEventType
+import top.fifthlight.combine.input.text.InputHandler
+import top.fifthlight.combine.input.text.TextInputReceiver
 import top.fifthlight.combine.layout.constraints.Constraints
 import top.fifthlight.combine.paint.Canvas
 import top.fifthlight.combine.paint.TextMeasurer
@@ -54,7 +54,7 @@ class CombineOwner(
     })
 
     private val tweenManager = TweenManager()
-    private var screenSize by mutableStateOf<IntSize>(IntSize.ZERO)
+    private var screenSize by mutableStateOf(IntSize.ZERO)
 
     private val rootLayer
         get() = layers.first()

@@ -123,14 +123,14 @@ private data class DraggableModifierNode(
             }
 
             PointerEventType.Release -> {
-                if (dragState.pressed == true) {
+                if (dragState.pressed) {
                     onRelease(node, Offset.ZERO, absolutePosition)
                 }
                 dragState.pressed = false
             }
 
             PointerEventType.Cancel -> {
-                if (dragState.pressed == true) {
+                if (dragState.pressed) {
                     onCancel(node, Offset.ZERO, absolutePosition)
                 }
                 dragState.pressed = false

@@ -11,7 +11,7 @@ java_merge_library(
     visibility = ["//combine/backend/minecraft/26.1:__subpackages__"],
     deps = [
         "//combine/backend/minecraft/26.1/game:remapped_client_access_widened_named",
-        "@maven_fabric_26_1//:net_fabricmc_sponge_mixin",
         "//game/26.1:game_client_libraries",
+        "@maven_fabric_26_1//:net_fabricmc_sponge_mixin",
     ],
 )

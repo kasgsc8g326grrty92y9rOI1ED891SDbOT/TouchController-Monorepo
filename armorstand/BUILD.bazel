@@ -94,9 +94,9 @@ java_binary(
     srcs = [],
     data = [
         "//blazerod/model/example-models",
+        "//game/1.21.8:game_client_assets",
         "@makeup_ultra_fast//:primary",
         "@minecraft_assets//:assets",
-        "//game/1.21.8:game_client_assets",
     ],
     env = {
         "LANG": "en_US.UTF8",

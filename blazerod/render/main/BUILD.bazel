@@ -20,7 +20,7 @@ kt_merge_library(
 kt_merge_library(
     name = "main",
     srcs = ["BlazeRodMain.kt"],
-    merge_only_deps = [
+    merge_deps = [
         ":main_base",
         "//blazerod/render/api",
         "//blazerod/render/api/animation",

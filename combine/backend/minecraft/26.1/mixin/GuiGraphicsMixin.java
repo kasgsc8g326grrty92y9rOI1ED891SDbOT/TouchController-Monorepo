@@ -29,7 +29,7 @@ public abstract class GuiGraphicsMixin implements SubmittableGuiGraphics, Sprite
     @Final
     private TextureAtlas guiSprites;
 
-    @ModifyArg(method = "Lnet/minecraft/client/gui/GuiGraphics;<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/render/state/GuiRenderState;II)V",
+    @ModifyArg(method = "<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/render/state/GuiRenderState;II)V",
             at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;<init>(I)V", ordinal = 0))
     private static int modifyStackLimit(int stackSize) {
         return Math.max(stackSize, 64);

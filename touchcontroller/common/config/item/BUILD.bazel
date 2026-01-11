@@ -5,7 +5,7 @@ kt_merge_library(
     srcs = glob(["*.kt"]),
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [
-        "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
         "//:kotlin_serialization",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
     ],
 )

@@ -16,17 +16,17 @@ object VanillaDrawableProviderImpl: VanillaDrawableProvider {
 
     override val buttonDrawableSet = DrawableSet(
         normal = TextureImpl(
-            Identifier = Identifier.withDefaultNamespace("widget/button"),
+            identifier = Identifier.withDefaultNamespace("widget/button"),
             size = IntSize(150, 20),
             padding = IntPadding(2),
         ),
         focus = TextureImpl(
-            Identifier = Identifier.withDefaultNamespace("widget/button_highlighted"),
+            identifier = Identifier.withDefaultNamespace("widget/button_highlighted"),
             size = IntSize(150, 20),
             padding = IntPadding(2),
         ),
         disabled = TextureImpl(
-            Identifier = Identifier.withDefaultNamespace("widget/button_disabled"),
+            identifier = Identifier.withDefaultNamespace("widget/button_disabled"),
             size = IntSize(150, 20),
             padding = IntPadding(2),
         ),

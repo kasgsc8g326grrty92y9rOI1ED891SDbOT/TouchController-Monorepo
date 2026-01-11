@@ -38,6 +38,7 @@ kt_merge_library(
         "//blazerod/render/api/refcount",
         "//blazerod/render/api/render",
         "//blazerod/render/api/resource",
+        "//game/1.21.8:game_client_libraries",
         "@maven//:com_illposed_osc_javaosc_core",
         "@maven//:org_jetbrains_kotlin_kotlin_stdlib",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
@@ -45,6 +46,6 @@ kt_merge_library(
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_json_jvm",
         "@maven_fabric_1_21_8//:io_github_llamalad7_mixinextras_fabric",
         "@maven_fabric_1_21_8//:net_fabricmc_sponge_mixin",
-        "//game/1.21.8:game_client_libraries",
+        "@maven_fabric_1_21_8//:org_ow2_asm_asm",
     ],
 )

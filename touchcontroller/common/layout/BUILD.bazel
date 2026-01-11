@@ -3,9 +3,9 @@ load("//rule:merge_library.bzl", "kt_merge_library")
 kt_merge_library(
     name = "layout",
     srcs = glob(["*.kt"]),
-    visibility = ["//touchcontroller:__subpackages__"],
     merge_deps = [
         "//touchcontroller/common/util/uuid",
         "//touchcontroller/common/gal",
-    ]
+    ],
+    visibility = ["//touchcontroller:__subpackages__"],
 )
