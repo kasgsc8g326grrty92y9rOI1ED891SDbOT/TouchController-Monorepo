@@ -1,3 +1,4 @@
+load("@rules_java//java:java_binary.bzl", "java_binary")
 load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("//rule:remap_jar.bzl", "remap_jar")
 

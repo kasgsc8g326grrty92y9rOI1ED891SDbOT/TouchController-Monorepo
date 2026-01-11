@@ -1,4 +1,4 @@
-load("@rules_java//java:defs.bzl", "java_plugin", "java_toolchain")
+load("@rules_java//java:defs.bzl", "java_library", "java_plugin")
 load("@rules_kotlin//kotlin:core.bzl", "define_kt_toolchain", "kt_compiler_plugin")
 load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 

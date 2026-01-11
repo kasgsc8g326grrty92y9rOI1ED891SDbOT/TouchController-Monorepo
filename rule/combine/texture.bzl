@@ -1,8 +1,17 @@
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+"""Rules for texture generation and processing."""
 
-TextureInfo = provider(fields = ["identifier", "metadata", "texture", "background"])
-NinePatchTextureInfo = provider(fields = ["identifier", "metadata", "texture"])
-TextureGroupInfo = provider(fields = ["textures", "ninepatch_textures", "files"])
+TextureInfo = provider(
+    doc = "Information about a texture.",
+    fields = ["identifier", "metadata", "texture", "background"],
+)
+NinePatchTextureInfo = provider(
+    doc = "Information about a nine-patch texture.",
+    fields = ["identifier", "metadata", "texture"],
+)
+TextureGroupInfo = provider(
+    doc = "Information about a texture group.",
+    fields = ["textures", "ninepatch_textures", "files"],
+)
 
 def path_to_identifier(path):
     # Strip leading "/" if present
@@ -18,6 +27,16 @@ def path_to_identifier(path):
     return path.lower()
 
 def generate_ninepatch_texture(actions, texture_generator, src):
+    """Generate metadata and compress a nine-patch texture.
+
+    Args:
+        actions: The action factory for declaring output files.
+        texture_generator: The executable tool for texture generation.
+        src: The source image file.
+
+    Returns:
+        A tuple of (metadata_file, compressed_file).
+    """
     input_filename = src.basename.split(".")[0]
     metadata_file = actions.declare_file("%s.json" % input_filename, sibling = src)
     compressed_file = actions.declare_file("%s.compressed.9.png" % input_filename, sibling = src)
@@ -45,6 +64,17 @@ def generate_ninepatch_texture(actions, texture_generator, src):
     return metadata_file, compressed_file
 
 def generate_texture(actions, texture_generator, src, background = False):
+    """Generate metadata of a texture.
+
+    Args:
+        actions: The action factory for declaring output files.
+        texture_generator: The executable tool for texture generation.
+        src: The source image file.
+        background: Whether this is a background texture (default: False).
+
+    Returns:
+        The metadata file for the generated texture.
+    """
     input_filename = src.basename.split(".")[0]
     metadata_file = actions.declare_file("%s.json" % input_filename, sibling = src)
 
@@ -179,6 +209,14 @@ texture = rule(
 )
 
 def merge_texture_group_info(groups):
+    """Merge multiple texture group info objects into one.
+
+    Args:
+        groups: A list of TextureGroupInfo objects to merge.
+
+    Returns:
+        A merged TextureGroupInfo object containing all textures and files.
+    """
     files_depsets = []
     textures = []
     ninepatch_textures = []
@@ -210,7 +248,10 @@ texture_group = rule(
     },
 )
 
-TextureLibraryInfo = provider(fields = ["package", "class_name", "prefix", "textures", "ninepatch_textures", "files"])
+TextureLibraryInfo = provider(
+    doc = "Information about a texture library.",
+    fields = ["package", "class_name", "prefix", "textures", "ninepatch_textures", "files"],
+)
 
 def _texture_lib_impl(ctx):
     groups_infos = [dep[TextureGroupInfo] for dep in ctx.attr.deps]

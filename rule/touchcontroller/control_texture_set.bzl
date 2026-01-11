@@ -1,8 +1,17 @@
+"""Rules for generating control texture sets for TouchController."""
+
+load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load("//rule:merge_library.bzl", "kt_merge_library")
 load("//rule/combine:texture.bzl", "TextureGroupInfo", "TextureInfo", "TextureLibraryInfo", "generate_texture", "merge_texture_group_info", "path_to_identifier")
 
-ControlTextureSetInfo = provider(fields = ["id", "textures", "metadata", "files"])
-ControlGroupInfo = provider(fields = ["sets"])
+ControlTextureSetInfo = provider(
+    doc = "Information about a control texture set.",
+    fields = ["id", "textures", "metadata", "files"],
+)
+ControlTextureSetGroupInfo = provider(
+    doc = "Information about a controltexture set group.",
+    fields = ["sets"],
+)
 
 def _texture_set_impl(ctx):
     strip_prefix = ctx.attr.strip_prefix
@@ -83,7 +92,7 @@ control_texture_set = rule(
 def _control_texture_group_impl(ctx):
     sets = [dep[ControlTextureSetInfo] for dep in ctx.attr.deps]
     return [
-        ControlGroupInfo(sets = sets),
+        ControlTextureSetGroupInfo(sets = sets),
         merge_texture_group_info([dep[TextureGroupInfo] for dep in ctx.attr.deps]),
         DefaultInfo(files = depset(transitive = [set.files for set in sets])),
     ]
@@ -100,7 +109,7 @@ control_texture_group = rule(
 
 def _kt_control_texture_set_source_impl(ctx):
     texture_lib_info = ctx.attr.texture_lib[TextureLibraryInfo]
-    control_group_info = ctx.attr.control_group[ControlGroupInfo]
+    control_group_info = ctx.attr.control_group[ControlTextureSetGroupInfo]
 
     output_file = ctx.actions.declare_file(ctx.attr.name + ".kt")
 
@@ -155,9 +164,9 @@ _kt_control_texture_set_source = rule(
             doc = "TextureLibraryInfo containing Textures class reference",
         ),
         "control_group": attr.label(
-            providers = [ControlGroupInfo],
+            providers = [ControlTextureSetGroupInfo],
             mandatory = True,
-            doc = "ControlGroupInfo containing texture set definitions",
+            doc = "ControlTextureSetGroupInfo containing texture set definitions",
         ),
         "package": attr.string(
             mandatory = True,
@@ -238,7 +247,7 @@ kt_control_texture_set_lib = macro(
             configurable = False,
         ),
         "control_group": attr.label(
-            providers = [ControlGroupInfo],
+            providers = [ControlTextureSetGroupInfo],
             mandatory = True,
             configurable = False,
         ),

@@ -1,3 +1,5 @@
+"""Rules for generating legacy text resources."""
+
 def _generate_legacy_text_impl(ctx):
     output_files = []
     for file in ctx.files.deps:

@@ -1,3 +1,5 @@
+"""Rules for text binding generation."""
+
 load("//rule:merge_library.bzl", "kt_merge_library")
 
 def _text_binding_source_impl(ctx):
