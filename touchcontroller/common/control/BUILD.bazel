@@ -8,6 +8,8 @@ kt_merge_library(
         "//touchcontroller/common/util/uuid",
         "//touchcontroller/resources/texture:texture_set_lib",
         "//touchcontroller/common/layout",
+        "//touchcontroller/common/helper",
+        "//touchcontroller/common/layout/align",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [

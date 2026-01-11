@@ -19,15 +19,6 @@ import kotlin.math.round
 import kotlin.uuid.Uuid
 
 @Serializable
-enum class BoatButtonSide {
-    @SerialName("left")
-    LEFT,
-
-    @SerialName("right")
-    RIGHT
-}
-
-@Serializable
 @SerialName("boat_button")
 data class BoatButton(
     val textureSet: TextureSet.TextureSetKey = TextureSet.TextureSetKey.CLASSIC,

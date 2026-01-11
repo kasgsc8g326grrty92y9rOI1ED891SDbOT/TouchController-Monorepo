@@ -5,7 +5,7 @@ kt_merge_library(
     srcs = glob(["*.kt"]),
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [
-        "//touchcontroller/common/gal",
+        "//touchcontroller/common/gal/window",
         "//touchcontroller/common/platform",
         "//touchcontroller/proxy/message",
         "@maven//:org_slf4j_slf4j_api",

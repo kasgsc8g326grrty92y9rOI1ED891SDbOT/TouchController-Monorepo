@@ -7,7 +7,8 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.serialization.Serializable
 import top.fifthlight.touchcontroller.common.config.condition.LayerConditions
 import top.fifthlight.touchcontroller.common.config.ext.LayoutLayerSerializer
-import top.fifthlight.touchcontroller.config.ext.ControllerLayoutSerializer
+import top.fifthlight.touchcontroller.common.control.ControllerWidget
+import top.fifthlight.touchcontroller.config.serializer.ControllerLayoutSerializer
 
 @Serializable(with = LayoutLayerSerializer::class)
 data class LayoutLayer(

@@ -9,10 +9,15 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.serialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import top.fifthlight.combine.data.*
-import top.fifthlight.touchcontroller.common.ext.ItemSerializer
+import top.fifthlight.combine.item.data.Item
+import top.fifthlight.touchcontroller.common.gal.item.ItemDataComponentType
+import top.fifthlight.touchcontroller.common.gal.item.ItemDataComponentTypeFactory
+import top.fifthlight.touchcontroller.common.gal.item.ItemDataComponentTypeProvider
+import top.fifthlight.touchcontroller.common.gal.item.ItemDataComponentTypeProviderFactory
+import top.fifthlight.touchcontroller.common.gal.item.ItemSubclass
+import top.fifthlight.touchcontroller.common.gal.item.ItemSubclassProviderFactory
+import top.fifthlight.touchcontroller.common.serializer.ItemSerializer
 
 @Immutable
 @Serializable
@@ -30,7 +35,7 @@ data class ItemList private constructor(
     constructor(
         whitelist: PersistentList<Item> = persistentListOf(),
         blacklist: PersistentList<Item> = persistentListOf(),
-        components: PersistentList<DataComponentType> = persistentListOf(),
+        components: PersistentList<ItemDataComponentType> = persistentListOf(),
         subclasses: PersistentSet<ItemSubclass> = persistentSetOf(),
     ) : this(
         _whitelist = ItemsList(whitelist),
@@ -43,7 +48,7 @@ data class ItemList private constructor(
         get() = _whitelist.items
     val blacklist: PersistentList<Item>
         get() = _blacklist.items
-    val components: PersistentList<DataComponentType>
+    val components: PersistentList<ItemDataComponentType>
         get() = _components.items
     val subclasses: PersistentSet<ItemSubclass>
         get() = _subclasses.items
@@ -51,7 +56,7 @@ data class ItemList private constructor(
     fun copy(
         whitelist: PersistentList<Item> = this.whitelist,
         blacklist: PersistentList<Item> = this.blacklist,
-        components: PersistentList<DataComponentType> = this.components,
+        components: PersistentList<ItemDataComponentType> = this.components,
         subclasses: PersistentSet<ItemSubclass> = this.subclasses,
     ) = ItemList(
         _whitelist = ItemsList(whitelist),
@@ -60,14 +65,12 @@ data class ItemList private constructor(
         _subclasses = ItemSubclassSet(subclasses),
     )
 
-    operator fun contains(item: Item): Boolean {
-        return when {
-            blacklist.any { it.matches(item) } -> false
-            whitelist.any { it.matches(item) } -> true
-            components.any { item.containComponents(it) } -> true
-            subclasses.any { item.isSubclassOf(it) } -> true
-            else -> false
-        }
+    operator fun contains(item: Item) = when {
+        blacklist.any { it.matches(item) } -> false
+        whitelist.any { it.matches(item) } -> true
+        components.any { item in it } -> true
+        subclasses.any { item in it } -> true
+        else -> false
     }
 }
 
@@ -77,10 +80,12 @@ data class ItemList private constructor(
 value class ItemsList(val items: PersistentList<Item> = persistentListOf())
 
 private class ItemsListSerializer : KSerializer<ItemsList> {
+    companion object {
+        private val itemSerializer = ItemSerializer()
+    }
+
     @OptIn(SealedSerializationApi::class)
     private class PersistentListDescriptor : SerialDescriptor by serialDescriptor<PersistentList<Item>>()
-
-    private val itemSerializer = ItemSerializer()
 
     override val descriptor: SerialDescriptor = PersistentListDescriptor()
 
@@ -94,12 +99,10 @@ private class ItemsListSerializer : KSerializer<ItemsList> {
 }
 
 @JvmInline
-@Serializable(with = ComponentTypeSerializer::class)
-value class ComponentTypesList(val items: PersistentList<DataComponentType> = persistentListOf())
+@Serializable(with = ItemDataComponentTypeSerializer::class)
+value class ComponentTypesList(val items: PersistentList<ItemDataComponentType> = persistentListOf())
 
-private class ComponentTypeSerializer : KSerializer<ComponentTypesList>, KoinComponent {
-    private val dataComponentTypeFactory: DataComponentTypeFactory by inject()
-
+private class ItemDataComponentTypeSerializer : KSerializer<ComponentTypesList> {
     @OptIn(SealedSerializationApi::class)
     private class PersistentListDescriptor : SerialDescriptor by serialDescriptor<PersistentList<Item>>()
 
@@ -114,7 +117,7 @@ private class ComponentTypeSerializer : KSerializer<ComponentTypesList>, KoinCom
 
     override fun deserialize(decoder: Decoder): ComponentTypesList {
         return ComponentTypesList(ListSerializer(itemSerializer).deserialize(decoder).mapNotNull {
-            dataComponentTypeFactory.of(Identifier(it))
+            ItemDataComponentTypeFactory.of(Identifier(it))
         }.toPersistentList())
     }
 }
@@ -123,8 +126,10 @@ private class ComponentTypeSerializer : KSerializer<ComponentTypesList>, KoinCom
 @Serializable(with = ItemSubclassSetSerializer::class)
 value class ItemSubclassSet(val items: PersistentSet<ItemSubclass> = persistentSetOf())
 
-private class ItemSubclassSetSerializer : KSerializer<ItemSubclassSet>, KoinComponent {
-    private val itemFactory: ItemFactory by inject()
+private class ItemSubclassSetSerializer : KSerializer<ItemSubclassSet> {
+    companion object {
+        private val allSubclasses = ItemSubclassProviderFactory.of().itemSubclasses
+    }
 
     @OptIn(SealedSerializationApi::class)
     private class PersistentSetDescriptor : SerialDescriptor by serialDescriptor<PersistentSet<Item>>()
@@ -140,7 +145,7 @@ private class ItemSubclassSetSerializer : KSerializer<ItemSubclassSet>, KoinComp
 
     override fun deserialize(decoder: Decoder): ItemSubclassSet {
         return ItemSubclassSet(SetSerializer(itemSerializer).deserialize(decoder).mapNotNull { id ->
-            itemFactory.subclasses.firstOrNull { it.configId == id }
+            allSubclasses.firstOrNull { it.configId == id }
         }.toPersistentSet())
     }
 }

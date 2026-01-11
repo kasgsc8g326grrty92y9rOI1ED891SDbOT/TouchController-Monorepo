@@ -8,7 +8,6 @@ import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import top.fifthlight.combine.data.Identifier
-import top.fifthlight.combine.data.TextFactory
 import top.fifthlight.combine.paint.Color
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntPadding

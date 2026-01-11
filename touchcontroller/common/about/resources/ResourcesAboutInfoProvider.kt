@@ -18,7 +18,7 @@ object ResourcesAboutInfoProvider : AboutInfoProvider {
     private fun getResourceAsStream(name: String): InputStream? = this.javaClass.classLoader.getResourceAsStream(name)
     private fun readResource(name: String): String? = getResourceAsStream(name)?.reader()?.use { it.readText() }
 
-    private val jsonFormat = Json {
+    private val format = Json {
         ignoreUnknownKeys = true
     }
 
@@ -26,7 +26,7 @@ object ResourcesAboutInfoProvider : AboutInfoProvider {
         val modLicense = readResource("LICENSE_${BuildInfo.MOD_NAME}")
         val librariesJson = readResource("aboutlibraries.json")
         val libraries = librariesJson?.let { librariesJson ->
-            jsonFormat.decodeFromString<Libs>(librariesJson)
+            format.decodeFromString<Libs>(librariesJson)
         }
         AboutInfo(
             modLicense = modLicense,
