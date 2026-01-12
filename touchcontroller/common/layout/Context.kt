@@ -6,7 +6,10 @@ import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntRect
 import top.fifthlight.data.IntSize
 import top.fifthlight.data.Offset
+import top.fifthlight.touchcontroller.common.config.GlobalConfig
+import top.fifthlight.touchcontroller.common.config.preset.info.PresetControlInfo
 import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandler
+import top.fifthlight.touchcontroller.common.layout.align.Align
 import top.fifthlight.touchcontroller.common.layout.data.ContextInput
 import top.fifthlight.touchcontroller.common.layout.data.ContextResult
 import top.fifthlight.touchcontroller.common.layout.data.ContextStatus
@@ -27,6 +30,7 @@ data class Context(
     val status: ContextStatus = ContextStatus(),
     val keyBindingHandler: KeyBindingHandler = KeyBindingHandler.Empty,
     val timer: ContextTimer = ContextTimer(),
+    // TODO: Don't include entire config
     val config: GlobalConfig,
     val presetControlInfo: PresetControlInfo = PresetControlInfo(),
 ) {
@@ -114,3 +118,14 @@ data class Context(
 
     fun getPointersInRect(size: IntSize): List<Pointer> = pointers.values.filter { it.inRect(size) }
 }
+
+inline fun <reified T> Context.withAlign(
+    align: Align,
+    size: IntSize,
+    offset: IntOffset = IntOffset.ZERO,
+    crossinline block: Context.() -> T,
+): T = withRect(
+    offset = align.alignOffset(windowSize = this.size, offset = offset, size = size),
+    size = size,
+    block = block
+)

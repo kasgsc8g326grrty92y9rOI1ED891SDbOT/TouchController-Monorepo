@@ -6,12 +6,6 @@ import top.fifthlight.touchcontroller.common.layout.Context
 import top.fifthlight.touchcontroller.common.state.PointerState
 import kotlin.uuid.Uuid
 
-data class ButtonResult(
-    val newPointer: Boolean = false,
-    val clicked: Boolean = false,
-    val release: Boolean = false,
-)
-
 fun Context.SwipeButton(
     id: Uuid,
     content: Context.(clicked: Boolean) -> Unit,

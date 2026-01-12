@@ -7,8 +7,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import top.fifthlight.combine.data.Identifier
 import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.common.ext.LayerConditionsSerializer
-import top.fifthlight.touchcontroller.common.layout.ContextInput
+import top.fifthlight.touchcontroller.common.config.condition.serializer.LayerConditionsSerializer
 
 @Serializable(with = LayerConditionsSerializer::class)
 data class LayerConditions(
@@ -22,7 +21,7 @@ data class LayerConditions(
 
     @Serializable
     sealed interface Key {
-        fun isFulfilled(input: ContextInput): Boolean
+        fun isFulfilled(input: LayerConditionInput): Boolean
     }
 
     @Serializable
@@ -37,7 +36,7 @@ data class LayerConditions(
         REQUIRE(Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_REQUIRE);
     }
 
-    fun check(input: ContextInput): Boolean {
+    fun check(input: LayerConditionInput): Boolean {
         var haveWant = false
         var haveFulfilledWant = false
 

@@ -1,11 +1,12 @@
 package top.fifthlight.touchcontroller.common.layout.data
 
+import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.gal.PlayerHandle
 
 data class ContextResult(
     var forward: Float = 0f,
     var left: Float = 0f,
-    var lookDirection: top.fifthlight.data.Offset? = null,
+    var lookDirection: Offset? = null,
     var crosshairStatus: CrosshairStatus? = null,
     val inventory: InventoryResult = InventoryResult(),
     var boatLeft: Boolean = false,

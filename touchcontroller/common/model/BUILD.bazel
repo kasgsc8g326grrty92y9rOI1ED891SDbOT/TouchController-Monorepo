@@ -11,6 +11,6 @@ kt_merge_library(
     kotlinc_opts = "//touchcontroller/common:kotlinc_opts",
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [
-        "//combine/core/data",
+        "//combine/data",
     ],
 )

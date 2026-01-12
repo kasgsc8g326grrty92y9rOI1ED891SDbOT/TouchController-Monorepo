@@ -134,16 +134,21 @@ inline fun Canvas.withScale(x: Float, y: Float, crossinline block: Canvas.() -> 
 }
 
 fun Canvas.drawCenteredText(
-    textMeasurer: TextMeasurer,
     offset: IntOffset = IntOffset.ZERO,
     text: String,
     color: Color,
 ) {
+    val textMeasurer: TextMeasurer = TextMeasurerFactory.of()
     val size = textMeasurer.measure(text)
     drawText(offset - size / 2, text, color)
 }
 
-fun Canvas.drawCenteredText(textMeasurer: TextMeasurer, offset: IntOffset = IntOffset.ZERO, text: Text, color: Color) {
+fun Canvas.drawCenteredText(
+    offset: IntOffset = IntOffset.ZERO,
+    text: Text,
+    color: Color,
+) {
+    val textMeasurer: TextMeasurer = TextMeasurerFactory.of()
     val size = textMeasurer.measure(text)
     drawText(offset - size / 2, text, color)
 }

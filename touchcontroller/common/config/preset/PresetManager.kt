@@ -18,29 +18,6 @@ import kotlin.io.path.*
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 
-fun PresetsContainer(
-    presets: ImmutableMap<Uuid, LayoutPreset>,
-    order: ImmutableList<Uuid>,
-): PresetsContainer {
-    val orderedEntries = mutableListOf<Pair<Uuid, LayoutPreset>>()
-    val entries = presets.toMutableMap()
-    for (uuid in order) {
-        val preset = entries.remove(uuid) ?: continue
-        orderedEntries += Pair(uuid, preset)
-    }
-    for ((uuid, preset) in entries.entries.sortedBy { (id, _) -> id.toJavaUuid() }) {
-        orderedEntries += uuid to preset
-    }
-    return PresetsContainer(orderedEntries.toPersistentList())
-}
-
-data class PresetsContainer(
-    val orderedEntries: PersistentList<Pair<Uuid, LayoutPreset>> = persistentListOf(),
-) : PersistentMap<Uuid, LayoutPreset> by orderedEntries.toMap().toPersistentMap() {
-    val order: ImmutableList<Uuid>
-        get() = orderedEntries.map { it.first }.toPersistentList()
-}
-
 object PresetManager {
     private val logger = LoggerFactory.getLogger(PresetManager::class.java)
     private val configDirectoryProvider: ConfigDirectoryProvider = ConfigDirectoryProviderFactory.of()

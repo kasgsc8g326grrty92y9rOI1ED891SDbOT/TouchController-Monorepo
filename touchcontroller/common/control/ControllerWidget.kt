@@ -1,30 +1,12 @@
 package top.fifthlight.touchcontroller.common.control
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import top.fifthlight.combine.data.Identifier
-import top.fifthlight.combine.data.LocalTextFactory
-import top.fifthlight.combine.data.TextFactory
-import top.fifthlight.combine.data.TextFactoryFactory
-import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.data.IntOffset
-import top.fifthlight.data.IntSize
-import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.common.util.uuid.fastRandomUuid
-import top.fifthlight.touchcontroller.common.layout.Context
-import top.fifthlight.touchcontroller.common.layout.align.Align
-import kotlin.math.round
-import kotlin.uuid.Uuid
 
 @Immutable
 @Serializable
 sealed class ControllerWidget {
-    abstract val id: Uuid
+    abstract val id: kotlin.uuid.Uuid
     abstract val name: Name
     abstract val align: Align
     abstract val offset: IntOffset
@@ -48,7 +30,7 @@ sealed class ControllerWidget {
         }
 
         @Composable
-        fun getText() = getText(LocalTextFactory.current)
+        fun getText() = getText(TextFactory.current)
 
         fun asString(textFactory: TextFactory) = getText(textFactory).string
 
@@ -94,14 +76,14 @@ sealed class ControllerWidget {
                 messageFormatter = { opacity ->
                     textFactory.format(
                         Texts.WIDGET_GENERAL_PROPERTY_OPACITY,
-                        round(opacity * 100f).toInt().toString()
+                        kotlin.math.round(opacity * 100f).toInt().toString()
                     )
                 }
             )
         )
     }
 
-    @Transient
+    @kotlin.jvm.Transient
     open val properties: PersistentList<Property<ControllerWidget, *>> = Companion.properties
 
     abstract fun size(): IntSize
@@ -109,7 +91,7 @@ sealed class ControllerWidget {
     abstract fun layout(context: Context)
 
     abstract fun cloneBase(
-        id: Uuid = this.id,
+        id: kotlin.uuid.Uuid = this.id,
         name: Name = this.name,
         align: Align = this.align,
         offset: IntOffset = this.offset,

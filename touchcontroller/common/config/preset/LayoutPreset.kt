@@ -1,15 +1,12 @@
 package top.fifthlight.touchcontroller.common.config.preset
 
 import androidx.compose.runtime.Immutable
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.serialization.Serializable
 import top.fifthlight.touchcontroller.common.config.ControllerLayout
 import top.fifthlight.touchcontroller.common.config.LayoutLayer
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
-import top.fifthlight.touchcontroller.common.ext.LayerCustomConditionsSerializer
-import top.fifthlight.touchcontroller.common.ext.LayoutPresetsSerializer
 
 @Immutable
 @Serializable
@@ -32,26 +29,3 @@ data class LayoutPreset(
         const val DEFAULT_PRESET_NAME = "Unnamed preset"
     }
 }
-
-@JvmInline
-@Serializable(with = LayerCustomConditionsSerializer::class)
-value class LayerCustomConditions(
-    val conditions: PersistentList<CustomCondition> = persistentListOf(),
-)
-
-@Immutable
-@Serializable
-data class PresetControlInfo(
-    val splitControls: Boolean = false,
-    val disableTouchGesture: Boolean = false,
-    val disableCrosshair: Boolean = true,
-    val customConditions: LayerCustomConditions = LayerCustomConditions(),
-)
-
-@JvmInline
-@Serializable(with = LayoutPresetsSerializer::class)
-value class LayoutPresets(
-    val presets: PersistentList<LayoutPreset> = persistentListOf(),
-)
-
-fun layoutPresetsOf(vararg pairs: LayoutPreset) = LayoutPresets(persistentListOf(*pairs))

@@ -5,10 +5,9 @@ import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntPadding
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.TextureSet
-import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
-import top.fifthlight.touchcontroller.common.gal.KeyBindingHandler
-import top.fifthlight.touchcontroller.common.gal.KeyBindingHandlerFactory
-import top.fifthlight.touchcontroller.common.layout.Align
+import top.fifthlight.touchcontroller.common.gal.key.DefaultKeyBindingType
+import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandler
+import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandlerFactory
 import java.util.concurrent.ConcurrentHashMap
 
 @ConsistentCopyVisibility

@@ -3,11 +3,10 @@ load("//rule:merge_library.bzl", "kt_merge_library")
 kt_merge_library(
     name = "align",
     srcs = glob(["*.kt"]),
-    merge_deps = [
-        "//touchcontroller/common/layout",
-    ],
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [
         "//combine/core/layout",
+        "//:kotlin_serialization",
+        "//combine/data",
     ],
 )

@@ -1,0 +1,24 @@
+load("//rule:merge_library.bzl", "kt_merge_library")
+
+kt_merge_library(
+    name = "preset",
+    srcs = glob(["**/*.kt"]),
+    kotlinc_opts = "//touchcontroller/common:kotlinc_opts",
+    merge_deps = [
+        "//touchcontroller/common/config/item",
+        "//touchcontroller/common/config/preset/builtin/key",
+        "//touchcontroller/common/config/preset/info",
+        "//touchcontroller/common/gal/item",
+        "//touchcontroller/common/gal/itemlist",
+        "//touchcontroller/common/gal/gameconfig",
+        "//touchcontroller/common/serialization",
+        "//touchcontroller/common/config/widget",
+        "//touchcontroller/common/util/state",
+        "//touchcontroller/common/config/condition",
+    ],
+    visibility = ["//touchcontroller:__subpackages__"],
+    deps = [
+        "//:kotlin_serialization",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
+    ],
+)

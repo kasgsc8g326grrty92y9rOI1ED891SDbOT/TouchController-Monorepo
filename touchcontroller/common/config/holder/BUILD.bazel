@@ -1,0 +1,22 @@
+load("//rule:merge_library.bzl", "kt_merge_library")
+
+kt_merge_library(
+    name = "widget",
+    srcs = glob(["**/*.kt"]),
+    merge_deps = [
+        "//touchcontroller/common/gal/gameconfig",
+        "//touchcontroller/common/gal/config",
+        "//touchcontroller/common/util/state",
+        "//touchcontroller/common/config/preset",
+        "//touchcontroller/common/serialization",
+        "//touchcontroller/common/gal/itemlist",
+        "//touchcontroller/common/config/preset/builtin/key",
+        "//touchcontroller/common/config/widget",
+    ],
+    kotlinc_opts = "//touchcontroller/common:kotlinc_opts",
+    visibility = ["//touchcontroller:__subpackages__"],
+    deps = [
+        "//:kotlin_serialization",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)

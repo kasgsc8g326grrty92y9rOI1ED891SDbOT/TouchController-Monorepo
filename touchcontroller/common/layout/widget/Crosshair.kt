@@ -1,8 +1,8 @@
 package top.fifthlight.touchcontroller.common.layout.widget
 
 import top.fifthlight.combine.paint.*
-import top.fifthlight.touchcontroller.common.gal.crosshair.CrosshairRenderer
-import top.fifthlight.touchcontroller.common.gal.crosshair.CrosshairRendererFactory
+import top.fifthlight.touchcontroller.common.gal.paint.CrosshairRenderer
+import top.fifthlight.touchcontroller.common.gal.paint.CrosshairRendererFactory
 import top.fifthlight.touchcontroller.common.layout.Context
 
 fun Context.Crosshair() {
@@ -14,9 +14,19 @@ fun Context.Crosshair() {
         canvas.withTranslate(status.position * windowScaledSize) {
             if (status.breakPercent > 0f) {
                 val progress = status.breakPercent * (1f - config.initialProgress) + config.initialProgress
-                crosshairRenderer.renderInner(canvas, config, progress)
+                crosshairRenderer.renderInner(
+                    canvas = canvas,
+                    radius = config.radius,
+                    outerRadius = config.outerRadius,
+                    initialProgress = config.initialProgress,
+                    progress = progress
+                )
             }
-            crosshairRenderer.renderOuter(canvas, config)
+            crosshairRenderer.renderOuter(
+                canvas = canvas,
+                radius = config.radius,
+                outerRadius = config.outerRadius,
+            )
         }
     }
 }

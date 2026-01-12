@@ -1,19 +1,21 @@
 package top.fifthlight.touchcontroller.common.layout.widget
 
-import org.koin.core.component.get
 import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.util.uuid.fastRandomUuid
-import top.fifthlight.touchcontroller.common.gal.CrosshairTarget
-import top.fifthlight.touchcontroller.common.gal.DefaultKeyBindingType
 import top.fifthlight.touchcontroller.common.gal.PlayerHandleFactory
-import top.fifthlight.touchcontroller.common.gal.ViewActionProvider
+import top.fifthlight.touchcontroller.common.gal.key.DefaultKeyBindingType
+import top.fifthlight.touchcontroller.common.gal.view.CrosshairTarget
+import top.fifthlight.touchcontroller.common.gal.view.ViewActionProvider
+import top.fifthlight.touchcontroller.common.gal.view.ViewActionProviderFactory
 import top.fifthlight.touchcontroller.common.helper.fixAspectRadio
+import top.fifthlight.touchcontroller.common.layout.Context
+import top.fifthlight.touchcontroller.common.layout.data.CrosshairStatus
 import top.fifthlight.touchcontroller.common.state.PointerState
 
 private val viewUuid = fastRandomUuid()
 
 fun Context.View() {
-    val viewActionProvider: ViewActionProvider = get()
+    val viewActionProvider: ViewActionProvider = ViewActionProviderFactory.of()
 
     val attackKeyState = keyBindingHandler.getState(DefaultKeyBindingType.ATTACK)
     val useKeyState = keyBindingHandler.getState(DefaultKeyBindingType.USE)
@@ -25,8 +27,8 @@ fun Context.View() {
     for (key in pointers.keys.toList()) {
         val state = pointers[key]!!.state
         if (state is PointerState.Released) {
-            if (state.previousState is PointerState.View) {
-                val previousState = state.previousState
+            val previousState = state.previousState
+            if (previousState is PointerState.View) {
                 when (previousState.viewState) {
                     PointerState.View.ViewPointerState.CONSUMED -> {}
                     PointerState.View.ViewPointerState.BREAKING -> {
@@ -93,8 +95,7 @@ fun Context.View() {
         val movement = (pointer.position - state.lastPosition).fixAspectRadio(windowSize)
         result.lookDirection = (result.lookDirection ?: Offset.ZERO) + movement * config.control.viewMovementSensitivity
 
-        val playerHandleFactory: PlayerHandleFactory = get()
-        val player = playerHandleFactory.getPlayerHandle()
+        val player = PlayerHandleFactory.current()
         // Consume the pointer if player is null or touch gesture is disabled
         if (player == null || presetControlInfo.disableTouchGesture) {
             pointer.state = state.copy(

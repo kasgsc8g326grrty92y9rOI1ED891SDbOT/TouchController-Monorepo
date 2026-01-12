@@ -9,7 +9,4 @@ kt_merge_library(
         "//touchcontroller/resources/lang:text_binding",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
-    deps = [
-        "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
-    ],
 )

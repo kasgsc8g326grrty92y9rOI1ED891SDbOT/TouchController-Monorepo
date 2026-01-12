@@ -5,6 +5,7 @@ import top.fifthlight.combine.paint.drawCenteredText
 import top.fifthlight.combine.paint.withTranslate
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntSize
+import top.fifthlight.touchcontroller.common.layout.Context
 
 fun Context.Pointers() {
     drawQueue.enqueue { canvas ->
@@ -14,7 +15,6 @@ fun Context.Pointers() {
                 drawRect(IntOffset(-4, -4), IntSize(8, 8), Colors.WHITE)
                 drawCenteredText(
                     offset = IntOffset(0, 9),
-                    textMeasurer = textMeasurer,
                     text = id.toString(),
                     color = Colors.WHITE,
                 )

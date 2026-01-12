@@ -11,6 +11,9 @@ kt_merge_library(
         "//touchcontroller/resources/texture:texture_set_lib",
         "//touchcontroller/common/util/offset",
         "//touchcontroller/common/gal/paint",
+        "//touchcontroller/common/config/layout",
+        "//touchcontroller/common/gal/feature",
+        "//touchcontroller/common/gal/player",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
 )

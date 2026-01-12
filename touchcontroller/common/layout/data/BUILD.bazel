@@ -5,11 +5,16 @@ kt_merge_library(
     srcs = glob(["*.kt"]),
     kotlinc_opts = "//touchcontroller/common:kotlinc_opts",
     merge_deps = [
-        "//touchcontroller/common/layout/queue",
+        "//touchcontroller/common/config/condition/input",
         "//touchcontroller/common/layout/click",
         "//touchcontroller/common/gal/view",
         "//touchcontroller/common/gal/gamestate",
         "//touchcontroller/common/gal/player",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
+    deps = [
+        "//combine/data",
+        "//combine/item/data",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
+    ],
 )

@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntSize
-import top.fifthlight.touchcontroller.common.layout.Context
 
 @Serializable
 enum class Align(val alignment: Alignment) {
@@ -84,14 +83,3 @@ enum class Align(val alignment: Alignment) {
         )
     }
 }
-
-inline fun <reified T> Context.withAlign(
-    align: Align,
-    size: IntSize,
-    offset: IntOffset = IntOffset.ZERO,
-    crossinline block: Context.() -> T,
-): T = withRect(
-    offset = align.alignOffset(windowSize = this.size, offset = offset, size = size),
-    size = size,
-    block = block
-)

@@ -1,0 +1,15 @@
+load("//rule:merge_library.bzl", "kt_merge_library")
+
+kt_merge_library(
+    name = "key",
+    srcs = glob(["**/*.kt"]),
+    merge_deps = [
+        "//touchcontroller/resources/lang:text_binding",
+        "//touchcontroller/resources/texture:texture_set_lib",
+    ],
+    visibility = ["//touchcontroller:__subpackages__"],
+    deps = [
+        "//:kotlin_serialization",
+        "//combine/core/data",
+    ],
+)

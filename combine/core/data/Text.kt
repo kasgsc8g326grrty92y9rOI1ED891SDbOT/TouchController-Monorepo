@@ -4,8 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import top.fifthlight.mergetools.api.ExpectFactory
 
-val LocalTextFactory = staticCompositionLocalOf<TextFactory> { error("No TextFactory in context") }
-
 interface TextBuilder {
     fun bold(bold: Boolean = true, block: TextBuilder.() -> Unit)
     fun underline(underline: Boolean = true, block: TextBuilder.() -> Unit)
@@ -26,6 +24,12 @@ interface TextFactory {
     interface Factory {
         fun of(): TextFactory
     }
+
+    companion object {
+        val current: TextFactory by lazy {
+            TextFactoryFactory.of()
+        }
+    }
 }
 
 interface Text {
@@ -38,15 +42,13 @@ interface Text {
     operator fun plus(other: Text): Text
 
     @Composable
-    fun native(): Any = LocalTextFactory.current.toNative(this)
+    fun native(): Any = TextFactory.current.toNative(this)
 
     companion object {
-        @Composable
-        fun translatable(identifier: Identifier) = LocalTextFactory.current.of(identifier)
+        fun translatable(identifier: Identifier) = TextFactory.current.of(identifier)
 
-        @Composable
         fun format(identifier: Identifier, vararg arguments: Any?): Text {
-            val factory = LocalTextFactory.current
+            val factory = TextFactory.current
             val outArguments = Array(arguments.size) { index ->
                 val item = arguments[index]
                 if (item is Text) {
@@ -58,13 +60,10 @@ interface Text {
             return factory.format(identifier, *outArguments)
         }
 
-        @Composable
-        fun empty() = LocalTextFactory.current.empty()
+        fun empty() = TextFactory.current.empty()
 
-        @Composable
-        fun literal(string: String) = LocalTextFactory.current.literal(string)
+        fun literal(string: String) = TextFactory.current.literal(string)
 
-        @Composable
-        fun build(block: TextBuilder.() -> Unit) = LocalTextFactory.current.build(block)
+        fun build(block: TextBuilder.() -> Unit) = TextFactory.current.build(block)
     }
 }

@@ -1,18 +1,20 @@
 package top.fifthlight.touchcontroller.common.layout.widget
 
 import top.fifthlight.data.IntSize
+import top.fifthlight.touchcontroller.common.gal.PlayerHandleFactory
+import top.fifthlight.touchcontroller.common.gal.feature.GameFeatures
+import top.fifthlight.touchcontroller.common.gal.feature.GameFeaturesProviderFactory
 import top.fifthlight.touchcontroller.common.gal.key.DefaultKeyBindingType
 import top.fifthlight.touchcontroller.common.layout.Context
 import top.fifthlight.touchcontroller.common.layout.align.Align
-import top.fifthlight.touchcontroller.common.layout.align.withAlign
+import top.fifthlight.touchcontroller.common.layout.withAlign
 import top.fifthlight.touchcontroller.common.state.PointerState
 
 private const val INVENTORY_SLOT_HOLD_DROP_TIME = 40
 
 private fun Context.InventorySlot(index: Int) {
-    val gameFeatures: GameFeatures = get()
-    val playerHandleFactory: PlayerHandleFactory = get()
-    val player = playerHandleFactory.getPlayerHandle() ?: return
+    val gameFeatures: GameFeatures = GameFeaturesProviderFactory.of().gameFeatures
+    val player = PlayerHandleFactory.current()
 
     val pointers = getPointersInRect(size)
     val slot = result.inventory.slots[index]

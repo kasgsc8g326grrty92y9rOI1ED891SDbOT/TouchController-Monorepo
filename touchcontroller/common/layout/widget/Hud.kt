@@ -1,7 +1,8 @@
 package top.fifthlight.touchcontroller.common.layout.widget
 
+import top.fifthlight.touchcontroller.common.config.layout.LayoutLayer
 import top.fifthlight.touchcontroller.common.layout.Context
-import top.fifthlight.touchcontroller.common.layout.align.withAlign
+import top.fifthlight.touchcontroller.common.layout.withAlign
 
 fun Context.Hud(layers: List<LayoutLayer>) {
     for (layer in layers) {

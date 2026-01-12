@@ -1,10 +1,10 @@
 package top.fifthlight.touchcontroller.common.ui.component
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import cafe.adriel.voyager.navigator.LocalNavigator
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.modifier.Modifier
-import top.fifthlight.combine.util.LocalCloseHandler
 import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.combine.widget.ui.TextButton
 import top.fifthlight.touchcontroller.assets.Texts
