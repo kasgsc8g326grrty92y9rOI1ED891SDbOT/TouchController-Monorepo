@@ -13,6 +13,7 @@ def _game_version_impl(
         visibility,
         version,
         client,
+        client_legacy,
         client_mappings,
         client_parchment,
         client_assets,
@@ -95,6 +96,7 @@ def _game_version_impl(
     decompile_jar(
         name = client_source,
         inputs = [client],
+        tags = ["manual"],
     )
 
     if intermediary or client_mappings:
@@ -155,6 +157,7 @@ def _game_version_impl(
             name = client_named_source,
             inputs = [":" + client_named],
             mappings = ":" + merged_mapping,
+            tags = ["manual"],
         )
 
     if neoforge:
@@ -164,29 +167,30 @@ def _game_version_impl(
             visibility = visibility,
         )
 
-    if server_legacy:
-        native.alias(
-            name = server_jar,
-            actual = server,
-            visibility = visibility,
-        )
-    else:
-        extract_jar(
-            name = server_jar_file,
-            entry_path = "META-INF/versions/%s/server-%s.jar" % (version, version),
-            filename = "_minecraft/server.jar",
-            input = server,
-        )
+    if server:
+        if server_legacy:
+            native.alias(
+                name = server_jar,
+                actual = server,
+                visibility = visibility,
+            )
+        else:
+            extract_jar(
+                name = server_jar_file,
+                entry_path = "META-INF/versions/%s/server-%s.jar" % (version, version),
+                filename = "_minecraft/server.jar",
+                input = server,
+            )
 
-        java_import(
-            name = server_jar,
-            jars = [
-                ":" + server_jar_file,
-            ],
-            visibility = visibility,
-        )
+            java_import(
+                name = server_jar,
+                jars = [
+                    ":" + server_jar_file,
+                ],
+                visibility = visibility,
+            )
 
-    if intermediary:
+    if server and intermediary:
         remap_jar(
             name = server_named,
             from_namespace = "official",
@@ -240,7 +244,7 @@ def _game_version_impl(
                 "-Ddev.launch.version=%s" % version,
                 "-Ddev.launch.type=client",
                 "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
-                "-Ddev.launch.mainClass=net.minecraft.client.main.Main",
+                "-Ddev.launch.mainClass=%s" % ("net.minecraft.client.Minecraft" if client_legacy else "net.minecraft.client.main.Main"),
                 "-Xmx4G",
             ],
             main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
@@ -263,6 +267,11 @@ game_version = macro(
             mandatory = True,
             allow_single_file = True,
             doc = "Client JAR file",
+            configurable = False,
+        ),
+        "client_legacy": attr.bool(
+            default = False,
+            doc = "Use legacy main class",
             configurable = False,
         ),
         "client_mappings": attr.label(
@@ -288,7 +297,7 @@ game_version = macro(
             configurable = False,
         ),
         "server": attr.label(
-            mandatory = True,
+            mandatory = False,
             allow_single_file = True,
             doc = "Server JAR file",
             configurable = False,

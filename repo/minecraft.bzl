@@ -212,6 +212,9 @@ minecraft_repo = repository_rule(
     },
 )
 
+def _split_hash(hash):
+    return "{}/{}".format(hash[0:2], hash)
+
 def _minecraft_assets_repo_impl(rctx):
     asset_sha1 = rctx.attr.asset_sha1
     asset_urls = rctx.attr.asset_urls
@@ -233,32 +236,36 @@ def _minecraft_assets_repo_impl(rctx):
     for token in manifest_tokens:
         token.wait()
 
-    object_hashes = {}
+    object_entries = {}
     for manifest_id in asset_sha1.keys():
         manifest_path = "indexes/%s.json" % manifest_id
         manifest_text = rctx.read(manifest_path)
         asset_manifest = json.decode(manifest_text)
+        map_to_resources = asset_manifest.get("map_to_resources", False)
         manifest_paths = {}
-        for asset_item in asset_manifest["objects"].values():
+        for asset_name, asset_item in asset_manifest["objects"].items():
             asset_hash = asset_item["hash"]
-            asset_path = "{}/{}".format(asset_hash[0:2], asset_hash)
-            object_hashes[asset_hash] = asset_path
+            split_hash = _split_hash(asset_hash)
+            asset_path = ("legacy/%s" % asset_name) if map_to_resources else ("objects/%s" % split_hash)
             manifest_paths[asset_hash] = asset_path
+            object_entries[asset_path] = struct(
+                hash = asset_hash,
+                split_hash = split_hash,
+            )
         build_content.append("filegroup(")
         build_content.append('    name = "objects_%s",' % manifest_id)
         build_content.append("    srcs = [")
         for asset_hash, asset_path in manifest_paths.items():
-            build_content.append('        "objects/%s",' % asset_path)
+            build_content.append('        "%s",' % asset_path)
         build_content.append("    ],")
         build_content.append(")")
 
     object_tokens = []
-    for object_hash, object_path in object_hashes.items():
-        object_path = object_hashes[object_hash]
+    for asset_path, object_entry in object_entries.items():
         object_tokens.append(rctx.download(
-            url = "https://resources.download.minecraft.net/%s" % object_path,
-            output = "objects/%s" % object_path,
-            integrity = hex_sha1_to_sri(object_hash),
+            url = "https://resources.download.minecraft.net/%s" % object_entry.split_hash,
+            output = asset_path,
+            integrity = hex_sha1_to_sri(object_entry.hash),
             block = False,
         ))
     for token in object_tokens:
