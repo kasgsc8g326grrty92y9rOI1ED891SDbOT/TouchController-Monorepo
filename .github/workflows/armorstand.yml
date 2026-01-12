@@ -22,10 +22,6 @@ jobs:
           ndk-version: r28b
       - name: Setup Bazel
         uses: bazel-contrib/setup-bazel@0.14.0
-        with:
-          bazelisk-cache: true
-          disk-cache: ${{ github.workflow }}
-          repository-cache: true
       - name: Build
         run: |
           bazel build \
