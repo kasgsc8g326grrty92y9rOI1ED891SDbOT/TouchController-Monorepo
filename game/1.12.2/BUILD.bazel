@@ -5,8 +5,10 @@ game_version(
     client = "@minecraft//1.12.2:client",
     client_assets = "@minecraft_assets//:assets_1.12.2",
     client_libraries = "@minecraft//1.12.2:client_libraries",
+    intermediary = "@maven_fabric_1_12_2//:net_legacyfabric_intermediary_v2",
     server = "@minecraft//1.12.2:server",
     server_legacy = True,
     version = "1.12.2",
     visibility = ["//visibility:public"],
+    yarn = "@maven_fabric_1_12_2//:net_legacyfabric_yarn_v2",
 )

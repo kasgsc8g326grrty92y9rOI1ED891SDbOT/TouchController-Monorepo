@@ -27,6 +27,7 @@ def _game_version_impl(
         iris_intermediary):
     intermediary_mapping = name + "_intermediary_mapping"
     intermediary_input = name + "_intermediary_input"
+    yarn_mapping = name + "_yarn_mapping"
     named_input = name + "_named_input"
     merged_mapping = name + "_merged_mapping"
     mapping_jar = name + "_mapping_jar"
@@ -67,8 +68,25 @@ def _game_version_impl(
                 "target": "official",
             },
         )
+    elif yarn:
+        if not intermediary:
+            fail("Yarn requires intermediary")
+        extract_jar(
+            name = yarn_mapping,
+            entry_path = "mappings/mappings.tiny",
+            filename = "yarn.tiny",
+            input = yarn,
+        )
+
+        merge_mapping_input(
+            name = named_input,
+            file = ":" + yarn_mapping,
+            format = "tinyv2",
+        )
 
     if client_parchment:
+        if yarn:
+            fail("Parchment cannot be used with yarn")
         merge_mapping_input(
             name = parchment_input,
             file = client_parchment,
@@ -100,24 +118,32 @@ def _game_version_impl(
         tags = ["manual"],
     )
 
-    if client_mappings:
-        inputs = {
-            "mojmap": ":" + named_input
-        }
+    if client_mappings or yarn:
+        inputs = {}
+        if client_mappings:
+            inputs["mojmap"] = ":" + named_input
+        elif yarn:
+            inputs["yarn"] = ":" + named_input
         if intermediary:
             inputs["intermediary"] = ":" + intermediary_input
         if client_parchment:
             inputs["parchment"] = ":" + parchment_input
 
         operations = []
-        operations.append(">mojmap")
-        if client_parchment:
-            operations.append(">parchment")
-        operations.append("changeSrc(official)")
-
-        if intermediary:
+        if client_mappings:
+            operations.append(">mojmap")
+            if client_parchment:
+                operations.append(">parchment")
+            operations.append("changeSrc(official)")
+            if intermediary:
+                operations.append(">intermediary")
+                operations.append("completeNamespace(named -> intermediary)")
+        elif yarn:
             operations.append(">intermediary")
+            operations.append("changeSrc(intermediary)")
+            operations.append(">yarn")
             operations.append("completeNamespace(named -> intermediary)")
+            operations.append("changeSrc(official)")
 
         merge_mapping(
             name = merged_mapping,
@@ -191,7 +217,7 @@ def _game_version_impl(
                 visibility = visibility,
             )
 
-    if server and client_mappings:
+    if server and (client_mappings or yarn):
         remap_jar(
             name = server_named,
             from_namespace = "official",

@@ -3,10 +3,41 @@
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 
 fabric_versions = {
+    "1.5.2": {
+        "api": "1.13.2+1.5.2",
+        "loader": "0.15.11",
+        "yarn": "1.5.2+build.576",
+        "mixin": "0.13.3+mixin.0.8.5",
+        "mixin_extras": "0.3.5",
+        "flavor": "legacy",
+    },
     "1.7.10": {
         "api": "1.13.2+1.7.10",
         "loader": "0.15.11",
         "yarn": "1.7.10+build.576",
+        "mixin": "0.13.3+mixin.0.8.5",
+        "mixin_extras": "0.3.5",
+        "flavor": "legacy",
+    },
+    "1.8.8": {
+        "loader": "0.15.11",
+        "yarn": "1.8.8+build.551",
+        "mixin": "0.13.3+mixin.0.8.5",
+        "mixin_extras": "0.3.5",
+        "flavor": "legacy",
+    },
+    "1.8.9": {
+        "api": "1.13.2+1.8.9",
+        "loader": "0.15.11",
+        "yarn": "1.8.9+build.576",
+        "mixin": "0.13.3+mixin.0.8.5",
+        "mixin_extras": "0.3.5",
+        "flavor": "legacy",
+    },
+    "1.12.2": {
+        "api": "1.13.2+1.12.2",
+        "loader": "0.15.11",
+        "yarn": "1.12.2+build.576",
         "mixin": "0.13.3+mixin.0.8.5",
         "mixin_extras": "0.3.5",
         "flavor": "legacy",
@@ -189,7 +220,7 @@ fabric_versions = {
                             "net.fabricmc:fabric-language-kotlin:1.13.5+kotlin.2.2.10",
                         ] + (["eu.pb4:placeholder-api:%s" % entry["placeholder_api"]] if "placeholder_api" in entry else []) +
                         (["io.github.llamalad7:mixinextras-fabric:%s" % entry["mixin_extras"]] if "mixin_extras" in entry else []) +
-                        (["net.fabricmc:intermediary:%s:v2" % version] if "intermediary" not in entry or entry["intermediary"] else []),
+                        (["net.fabricmc:intermediary:%s:v2" % version] if entry.get("intermediary", True) else []),
             fetch_sources = True,
             lock_file = "//game/%s:maven_install_fabric.json" % version,
             repositories = [
@@ -211,12 +242,12 @@ fabric_versions = {
             name = "maven_fabric_%s" % version.replace(".", "_"),
             artifacts = [
                             "net.legacyfabric:intermediary:%s:v2" % version,
+                            "net.legacyfabric:yarn:%s:v2" % entry["yarn"],
                             "net.fabricmc:fabric-loader:%s" % entry["loader"],
                             "net.fabricmc:sponge-mixin:%s" % entry["mixin"],
                             "net.fabricmc:fabric-language-kotlin:1.13.5+kotlin.2.2.10",
                         ] + (["io.github.llamalad7:mixinextras-fabric:%s" % entry["mixin_extras"]] if "mixin_extras" in entry else []) +
-                        (["net.legacyfabric.legacy-fabric-api:legacy-fabric-api:%s" % entry["api"]] if "api" not in entry or entry["api"] else []) +
-                        (["net.legacyfabric:yarn:%s:v2" % entry["yarn"]] if "yarn" not in entry or entry["yarn"] else []),
+                        (["net.legacyfabric.legacy-fabric-api:legacy-fabric-api:%s" % entry["api"]] if "api" in entry else []),
             fetch_sources = True,
             lock_file = "//game/%s:maven_install_fabric.json" % version,
             repositories = [
