@@ -5,4 +5,5 @@ java_library(
     srcs = ["DevLaunchWrapper.java"],
     visibility = ["//visibility:public"],
     deps = ["@bazel_tools//tools/java/runfiles"],
+    javacopts = ["--release=8"],
 )

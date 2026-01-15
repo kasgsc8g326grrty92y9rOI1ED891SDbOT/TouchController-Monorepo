@@ -75,6 +75,7 @@ _minecraft_library_repo = repository_rule(
 def _minecraft_repo_impl(rctx):
     version_entries = rctx.attr.version_entries
     version_libraries = rctx.attr.version_libraries
+    library_extracts = rctx.attr.library_extracts
     library_platforms = {}
 
     for library, platforms_list in rctx.attr.library_platforms.items():
@@ -87,6 +88,7 @@ def _minecraft_repo_impl(rctx):
     for version, entries in version_entries.items():
         build_content = [
             'load("@rules_java//java:defs.bzl", "java_import")',
+            'load("@//repo/minecraft:extract_lib.bzl", "extract_manifest")',
             'package(default_visibility = ["//visibility:public"])',
             "",
         ]
@@ -99,6 +101,8 @@ def _minecraft_repo_impl(rctx):
         if "client" in entry_dict:
             common_libs = set()
             constraint_libs = {}
+            extract_common_libs = set()
+            constraint_extract_libs = {}
 
             for library_name in version_libraries.get(version, []):
                 platforms = library_platforms.get(library_name, {})
@@ -110,6 +114,8 @@ def _minecraft_repo_impl(rctx):
                 if "common" in platforms:
                     lib_label = get_lib_label(platforms["common"])
                     common_libs.add(lib_label)
+                    if library_name in library_extracts:
+                        extract_common_libs.add(lib_label)
 
                 for platform in platforms:
                     if platform == "common":
@@ -121,6 +127,10 @@ def _minecraft_repo_impl(rctx):
                     if not constraint in constraint_libs:
                         constraint_libs[constraint] = set()
                     constraint_libs[constraint].add(lib_label)
+                    if library_name in library_extracts:
+                        if not constraint in constraint_extract_libs:
+                            constraint_extract_libs[constraint] = set()
+                        constraint_extract_libs[constraint].add(lib_label)
 
             if constraint_libs:
                 build_content += [
@@ -152,8 +162,40 @@ def _minecraft_repo_impl(rctx):
                     "    jars = [",
                 ]
                 if common_libs:
-                    jars_list = ",\n".join(['            "%s"' % lib for lib in common_libs])
-                    build_content.append(jars_list)
+                    build_content.append(",\n".join(['            "%s"' % lib for lib in common_libs]))
+                build_content.append("        ])")
+
+            if constraint_extract_libs:
+                build_content += [
+                    "extract_manifest(",
+                    '    name = "client_extract_libraries",',
+                    "    deps = select({",
+                    '        "//conditions:default": [',
+                    ",\n".join(['            "%s"' % lib for lib in extract_common_libs]),
+                    "        ],",
+                    "    }) + select({",
+                ]
+                for constraint, libs in constraint_extract_libs.items():
+                    libs_to_add = libs.difference(extract_common_libs)
+                    if libs_to_add:
+                        build_content += [
+                            '        "%s": [' % constraint,
+                            ",\n".join(['            "%s"' % lib for lib in libs_to_add]),
+                            "        ],",
+                        ]
+                build_content += [
+                    '        "//conditions:default": [],',
+                    "    }),",
+                    ")",
+                ]
+            elif extract_common_libs:
+                build_content += [
+                    "extract_manifest(",
+                    '    name = "client_extract_libraries",',
+                    "    deps = [",
+                ]
+                if common_libs:
+                    build_content.append(",\n".join(['            "%s"' % lib for lib in extract_common_libs]))
                 build_content.append("        ])")
 
         for entry, name in entry_dict.items():
@@ -188,6 +230,7 @@ minecraft_repo = repository_rule(
         "version_libraries": attr.string_list_dict(),
         "library_classifiers": attr.string_list_dict(),
         "library_platforms": attr.string_list_dict(),
+        "library_extracts": attr.string_list_dict(),
     },
 )
 
@@ -395,9 +438,13 @@ def _append_library_entry(name, manifest):
             for platform in allow_platforms:
                 platforms[platform] = "default"
 
-    for platform in allow_platforms:
-        if natives:
-            add_native_platform(platform)
+    if natives:
+        if rules:
+            for platform in allow_platforms:
+                add_native_platform(platform)
+        else:
+            for platform in natives.keys():
+                add_native_platform(platform)
 
     extract = None
     if "extract" in manifest:
@@ -557,6 +604,7 @@ def _minecraft_impl(mctx):
         library_classifiers = library_classifiers,
         # library -> platform#classifier
         library_platforms = library_platforms,
+        library_extracts = {key: entry.extract.exclude for key, entry in library_entries.items() if entry.extract},
     )
 
     minecraft_assets_repo(

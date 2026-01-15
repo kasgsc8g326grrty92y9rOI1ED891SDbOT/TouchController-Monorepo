@@ -4,6 +4,8 @@ game_version(
     name = "game",
     client = "@minecraft//1.5.2:client",
     client_legacy = True,
+    client_legacy_assets = True,
+    client_native_manifest = "@minecraft//1.5.2:client_extract_libraries",
     client_assets = "@minecraft_assets//:assets_1.5.2",
     client_libraries = "@minecraft//1.5.2:client_libraries",
     intermediary = "@maven_fabric_1_5_2//:net_legacyfabric_intermediary_v2",

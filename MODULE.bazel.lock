@@ -336,7 +336,7 @@
     },
     "//repo:minecraft.bzl%minecraft": {
       "general": {
-        "bzlTransitiveDigest": "xBqTM0sn7UqCXOaayl1GWmkJvzS/ETSGde4NVeGD3B0=",
+        "bzlTransitiveDigest": "qjg2vXaTk2zwmdMv48QMGP3hdRBwVK/L1KbJbDDmMks=",
         "usagesDigest": "l612VaRgr+sfM1A+WvMoFuUWiwg8jCUtsmkVnaQtbCQ=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
@@ -9132,7 +9132,11 @@
                 "org.lwjgl.lwjgl:lwjgl-platform:2.9.1-nightly-20130708-debug3": [
                   "osx#natives-osx"
                 ],
-                "net.java.jinput:jinput-platform:2.0.5": [],
+                "net.java.jinput:jinput-platform:2.0.5": [
+                  "linux#natives-linux",
+                  "osx#natives-osx",
+                  "windows#natives-windows"
+                ],
                 "com.mojang:netty:1.8.8": [
                   "common#default"
                 ],
@@ -9208,7 +9212,11 @@
                 "org.lwjgl.lwjgl:lwjgl_util:2.9.1": [
                   "common#default"
                 ],
-                "org.lwjgl.lwjgl:lwjgl-platform:2.9.1": [],
+                "org.lwjgl.lwjgl:lwjgl-platform:2.9.1": [
+                  "linux#natives-linux",
+                  "osx#natives-osx",
+                  "windows#natives-windows"
+                ],
                 "tv.twitch:twitch:5.16": [
                   "common#default"
                 ],
@@ -10597,6 +10605,38 @@
                 ],
                 "at.yawk.lz4:lz4-java:1.10.1": [
                   "common#default"
+                ]
+              },
+              "library_extracts": {
+                "org.lwjgl.lwjgl:lwjgl-platform:2.9.0": [
+                  "META-INF/"
+                ],
+                "org.lwjgl.lwjgl:lwjgl-platform:2.9.1-nightly-20130708-debug3": [
+                  "META-INF/"
+                ],
+                "net.java.jinput:jinput-platform:2.0.5": [
+                  "META-INF/"
+                ],
+                "org.lwjgl.lwjgl:lwjgl-platform:2.9.1": [
+                  "META-INF/"
+                ],
+                "tv.twitch:twitch-platform:5.16": [
+                  "META-INF/"
+                ],
+                "tv.twitch:twitch-external-platform:4.5": [
+                  "META-INF/"
+                ],
+                "org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209": [
+                  "META-INF/"
+                ],
+                "org.lwjgl.lwjgl:lwjgl-platform:2.9.2-nightly-20140822": [
+                  "META-INF/"
+                ],
+                "tv.twitch:twitch-platform:6.5": [
+                  "META-INF/"
+                ],
+                "ca.weblite:java-objc-bridge:1.0.0": [
+                  "META-INF/"
                 ]
               }
             }

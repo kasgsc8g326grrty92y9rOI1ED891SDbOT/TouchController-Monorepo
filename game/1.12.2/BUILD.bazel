@@ -3,6 +3,7 @@ load("//game:game.bzl", "game_version")
 game_version(
     name = "game",
     client = "@minecraft//1.12.2:client",
+    client_native_manifest = "@minecraft//1.12.2:client_extract_libraries",
     client_assets = "@minecraft_assets//:assets_1.12.2",
     client_libraries = "@minecraft//1.12.2:client_libraries",
     intermediary = "@maven_fabric_1_12_2//:net_legacyfabric_intermediary_v2",

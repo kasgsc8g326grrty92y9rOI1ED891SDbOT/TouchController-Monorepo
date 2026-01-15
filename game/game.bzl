@@ -16,6 +16,8 @@ def _game_version_impl(
         client,
         client_legacy,
         client_mappings,
+        client_legacy_assets,
+        client_native_manifest,
         client_parchment,
         client_assets,
         client_libraries,
@@ -267,7 +269,7 @@ def _game_version_impl(
             data = [
                 "@minecraft_assets//:assets",
                 client_assets,
-            ],
+            ] + [client_native_manifest] if client_native_manifest else [],
             env = {
                 "LANG": "en_US.UTF8",
             },
@@ -276,8 +278,10 @@ def _game_version_impl(
                 "-Ddev.launch.type=client",
                 "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
                 "-Ddev.launch.mainClass=%s" % ("net.minecraft.client.Minecraft" if client_legacy else "net.minecraft.client.main.Main"),
+                "-Ddev.launch.legacyAssets=%s" % ("true" if client_legacy_assets else "false"),
+                "-Ddev.launch.legacyHome=%s" % ("true" if client_legacy else "false"),
                 "-Xmx4G",
-            ],
+            ] + ["-Ddev.launch.nativeManifest=$(rlocationpath %s)" % client_native_manifest] if client_native_manifest else [],
             main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
             runtime_deps = [
                 client,
@@ -315,6 +319,18 @@ game_version = macro(
             mandatory = False,
             allow_single_file = True,
             doc = "Client mappings file",
+            configurable = False,
+        ),
+        "client_legacy_assets": attr.bool(
+            mandatory = False,
+            default = False,
+            doc = "Use legacy assets",
+            configurable = False,
+        ),
+        "client_native_manifest": attr.label(
+            mandatory = False,
+            allow_single_file = ["json"],
+            doc = "Client natives file",
             configurable = False,
         ),
         "client_parchment": attr.label(

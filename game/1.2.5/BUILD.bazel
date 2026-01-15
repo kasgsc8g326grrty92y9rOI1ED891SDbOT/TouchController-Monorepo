@@ -4,6 +4,8 @@ game_version(
     name = "game",
     client = "@minecraft//1.2.5:client",
     client_legacy = True,
+    client_legacy_assets = True,
+    client_native_manifest = "@minecraft//1.2.5:client_extract_libraries",
     client_assets = "@minecraft_assets//:assets_1.2.5",
     client_libraries = "@minecraft//1.2.5:client_libraries",
     server = "@minecraft//1.2.5:server",

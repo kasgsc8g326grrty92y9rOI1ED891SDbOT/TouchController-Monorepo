@@ -4,6 +4,7 @@ game_version(
     name = "game",
     client = "@minecraft//1.7.10:client",
     client_assets = "@minecraft_assets//:assets_1.7.10",
+    client_native_manifest = "@minecraft//1.7.10:client_extract_libraries",
     client_libraries = "@minecraft//1.7.10:client_libraries",
     intermediary = "@maven_fabric_1_7_10//:net_legacyfabric_intermediary_v2",
     server = "@minecraft//1.7.10:server",
