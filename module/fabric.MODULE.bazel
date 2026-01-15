@@ -5,7 +5,7 @@ maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 fabric_versions = {
     "b1.7.3": {
         "loader": "0.16.9",
-        "yarn": "b1.7.3+build.9",
+        "yarn": "b1.7.3+e0778a3",
         "mixin": "0.15.4+mixin.0.8.7",
         "mixin_extras": "0.4.1",
         "modmenu": "1.8.5-beta.11",
@@ -277,7 +277,7 @@ fabric_versions = {
             name = "maven_fabric_%s" % version.replace(".", "_"),
             artifacts = [
                 "babric:intermediary:%s:v2" % version,
-                "babric:barn:%s:v2" % entry["yarn"],
+                "net.glasslauncher:biny:%s:v2" % entry["yarn"],
                 "net.fabricmc:fabric-loader:%s" % entry["loader"],
                 "net.fabricmc:sponge-mixin:%s" % entry["mixin"],
                 "net.fabricmc:fabric-language-kotlin:1.13.5+kotlin.2.2.10",
