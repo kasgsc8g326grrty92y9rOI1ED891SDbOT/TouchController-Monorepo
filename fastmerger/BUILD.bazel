@@ -5,7 +5,10 @@ java_binary(
     srcs = glob(["*.java"]),
     main_class = "top.fifthlight.fastmerger.Main",
     deps = [
-        "//fastmerger/pkgdeps",
+        "//fastmerger/classdeps",
+        "//fastmerger/collector",
+        "//fastmerger/symbolmap",
+        "@maven//:it_unimi_dsi_fastutil",
         "@maven//:org_ow2_asm_asm",
     ],
 )

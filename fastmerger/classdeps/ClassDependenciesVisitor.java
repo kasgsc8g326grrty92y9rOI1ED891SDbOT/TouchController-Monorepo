@@ -1,27 +1,26 @@
-package top.fifthlight.fastmerger.pkgdeps;
+package top.fifthlight.fastmerger.classdeps;
 
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.*;
-import org.objectweb.asm.signature.SignatureReader;
 
-public class PkgDepsVisitor extends ClassVisitor {
-    private final Consumer pkgDepsConsumer;
+public class ClassDependenciesVisitor extends ClassVisitor {
+    private final Consumer consumer;
 
     @FunctionalInterface
     public interface Consumer {
         void acceptClassDependency(String className, String dependencyName);
     }
 
-    public PkgDepsVisitor(@NotNull Consumer pkgDepsConsumer) {
+    public ClassDependenciesVisitor(@NotNull Consumer consumer) {
         super(Opcodes.ASM9);
-        this.pkgDepsConsumer = Objects.requireNonNull(pkgDepsConsumer);
+        this.consumer = Objects.requireNonNull(consumer);
     }
 
-    public PkgDepsVisitor(@NotNull ClassVisitor classVisitor, Consumer pkgDepsConsumer) {
+    public ClassDependenciesVisitor(@NotNull ClassVisitor classVisitor, Consumer consumer) {
         super(Opcodes.ASM9, classVisitor);
-        this.pkgDepsConsumer = Objects.requireNonNull(pkgDepsConsumer);
+        this.consumer = Objects.requireNonNull(consumer);
     }
 
     @Nullable private String className;
@@ -33,7 +32,7 @@ public class PkgDepsVisitor extends ClassVisitor {
         if (type == null) {
             return;
         }
-        pkgDepsConsumer.acceptClassDependency(className, type);
+        consumer.acceptClassDependency(className, type);
     }
 
     private void visitDesc(String descriptor) {
@@ -93,13 +92,13 @@ public class PkgDepsVisitor extends ClassVisitor {
 
         @Override
         public void visitEnum(String name, String descriptor, String value) {
-            PkgDepsVisitor.this.visitType(descriptor);
+            ClassDependenciesVisitor.this.visitType(descriptor);
             super.visitEnum(name, descriptor, value);
         }
 
         @Override
         public AnnotationVisitor visitAnnotation(String name, String descriptor) {
-            PkgDepsVisitor.this.visitType(descriptor);
+            ClassDependenciesVisitor.this.visitType(descriptor);
             return super.visitAnnotation(name, descriptor);
         }
 
@@ -169,14 +168,14 @@ public class PkgDepsVisitor extends ClassVisitor {
 
         @Override
         public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-            PkgDepsVisitor.this.visitDesc(descriptor);
+            ClassDependenciesVisitor.this.visitDesc(descriptor);
             return new PkgDepsAnnotationVisitor(super.visitAnnotation(descriptor, visible));
         }
 
         @Override
         public AnnotationVisitor visitParameterAnnotation(
             int parameter, String descriptor, boolean visible) {
-            PkgDepsVisitor.this.visitDesc(descriptor);
+            ClassDependenciesVisitor.this.visitDesc(descriptor);
             return new PkgDepsAnnotationVisitor(
                 super.visitParameterAnnotation(parameter, descriptor, visible));
         }
@@ -185,34 +184,34 @@ public class PkgDepsVisitor extends ClassVisitor {
         public AnnotationVisitor visitTypeAnnotation(
             int typeRef, TypePath typePath, String descriptor, boolean visible) {
             // TODO
-            PkgDepsVisitor.this.visitDesc(descriptor);
+            ClassDependenciesVisitor.this.visitDesc(descriptor);
             return new PkgDepsAnnotationVisitor(
                 super.visitTypeAnnotation(typeRef, typePath, descriptor, visible));
         }
 
         @Override
         public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-            PkgDepsVisitor.this.visitDesc(descriptor);
+            ClassDependenciesVisitor.this.visitDesc(descriptor);
             super.visitFieldInsn(opcode, owner, name, descriptor);
         }
 
         @Override
         public void visitMethodInsn(
             int opcode, String owner, String name, String descriptor, boolean isInterface) {
-            PkgDepsVisitor.this.visitMethodDesc(descriptor);
+            ClassDependenciesVisitor.this.visitMethodDesc(descriptor);
             super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
         }
 
         @Override
         public void visitMultiANewArrayInsn(String descriptor, int numDimensions) {
-            PkgDepsVisitor.this.visitDesc(descriptor);
+            ClassDependenciesVisitor.this.visitDesc(descriptor);
             super.visitMultiANewArrayInsn(descriptor, numDimensions);
         }
 
         @Override
         public void visitInvokeDynamicInsn(String name, String descriptor,
             Handle bootstrapMethodHandle, Object... bootstrapMethodArguments) {
-            PkgDepsVisitor.this.visitMethodDesc(descriptor);
+            ClassDependenciesVisitor.this.visitMethodDesc(descriptor);
             super.visitInvokeDynamicInsn(
                 name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
         }
@@ -221,20 +220,20 @@ public class PkgDepsVisitor extends ClassVisitor {
         public AnnotationVisitor visitInsnAnnotation(
             int typeRef, TypePath typePath, String descriptor, boolean visible) {
             // TODO
-            PkgDepsVisitor.this.visitDesc(descriptor);
+            ClassDependenciesVisitor.this.visitDesc(descriptor);
             return super.visitInsnAnnotation(typeRef, typePath, descriptor, visible);
         }
 
         @Override
         public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
-            PkgDepsVisitor.this.visitType(type);
+            ClassDependenciesVisitor.this.visitType(type);
             super.visitTryCatchBlock(start, end, handler, type);
         }
 
         @Override
         public void visitLocalVariable(
             String name, String descriptor, String signature, Label start, Label end, int index) {
-            PkgDepsVisitor.this.visitDesc(descriptor);
+            ClassDependenciesVisitor.this.visitDesc(descriptor);
             super.visitLocalVariable(name, descriptor, signature, start, end, index);
         }
 
@@ -242,7 +241,7 @@ public class PkgDepsVisitor extends ClassVisitor {
         public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath,
             Label[] start, Label[] end, int[] index, String descriptor, boolean visible) {
             // TODO
-            PkgDepsVisitor.this.visitDesc(descriptor);
+            ClassDependenciesVisitor.this.visitDesc(descriptor);
             return super.visitLocalVariableAnnotation(
                 typeRef, typePath, start, end, index, descriptor, visible);
         }
