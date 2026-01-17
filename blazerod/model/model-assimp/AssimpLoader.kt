@@ -114,6 +114,9 @@ class AssimpLoader : ModelFileLoader {
         private val keyFrameSplit: List<Pair<String, Int>> =
             param.loaderParams["keyFrameSplit"] as? List<Pair<String, Int>> ?: listOf()
 
+        private val useVanillaMaterial: Boolean =
+            param.loaderParams["useVanillaMaterial"] as? Boolean ?: false
+
         companion object {
             private val EMPTY_LOAD_RESULT = LoadResult(
                 metadata = null,
@@ -211,17 +214,31 @@ class AssimpLoader : ModelFileLoader {
                 val diffuseColor = material.getColor(Assimp.AI_MATKEY_COLOR_DIFFUSE, 0, 0)
                 val diffuseTexture = material.getTexturePath(Assimp.aiTextureType_DIFFUSE, 0)
 
-                Material.Unlit(
-                    name = "Material #${index}",
-                    baseColor = diffuseColor ?: RgbaColor(1f, 1f, 1f, 1f),
-                    baseColorTexture = diffuseTexture
-                        ?.let { loadTexture(it).getOrNull() }
-                        ?.let { texture ->
-                            Material.TextureInfo(
-                                texture = texture,
-                            )
-                        },
-                )
+                if (useVanillaMaterial) {
+                    Material.Vanilla(
+                        name = "Material #${index}",
+                        baseColor = diffuseColor ?: RgbaColor(1f, 1f, 1f, 1f),
+                        baseColorTexture = diffuseTexture
+                            ?.let { loadTexture(it).getOrNull() }
+                            ?.let { texture ->
+                                Material.TextureInfo(
+                                    texture = texture,
+                                )
+                            },
+                    )
+                } else {
+                    Material.Unlit(
+                        name = "Material #${index}",
+                        baseColor = diffuseColor ?: RgbaColor(1f, 1f, 1f, 1f),
+                        baseColorTexture = diffuseTexture
+                            ?.let { loadTexture(it).getOrNull() }
+                            ?.let { texture ->
+                                Material.TextureInfo(
+                                    texture = texture,
+                                )
+                            },
+                    )
+                }
             }
         }
 
