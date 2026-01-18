@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <groupId>{groupId}</groupId>
     <artifactId>{artifactId}</artifactId>
     <version>{version}</version>
-    <name>Proxy client library of TouchController</name>
-    <description>A library for connecting to the Minecraft mod TouchController.</description>
+    <packaging>aar</packaging>
+    <name>Proxy client library of TouchController on Android</name>
+    <description>A library for connecting to the Minecraft mod TouchController on Android.</description>
     <url>https://github.com/TouchController/TouchController</url>
     <inceptionYear>2024</inceptionYear>
     <licenses>
@@ -28,6 +30,12 @@
         <url>https://github.com/TouchController/TouchController</url>
     </scm>
     <dependencies>
+        <dependency>
+            <groupId>top.fifthlight.touchcontroller</groupId>
+            <artifactId>proxy-client</artifactId>
+            <version>{version}</version>
+            <scope>compile</scope>
+        </dependency>
 {dependencies}
     </dependencies>
 </project>

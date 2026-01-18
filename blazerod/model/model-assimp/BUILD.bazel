@@ -1,7 +1,7 @@
 load("@//rule:upload_modrinth.bzl", "modrinth_dependency", "upload_modrinth")
-load("@rules_jvm_external//:kt_defs.bzl", "kt_jvm_export")
 load("//blazerod:properties.bzl", "blazerod_version")
 load("//blazerod/model:model_info_jar.bzl", "model_info_jar")
+load("//rule:maven_publish.bzl", "kt_jvm_export")
 load("//rule/fabric:merge_jij.bzl", "fabric_merge_jij")
 
 model_info_jar(
@@ -16,7 +16,7 @@ model_info_jar(
 kt_jvm_export(
     name = "model-assimp",
     srcs = glob(["**/*.kt"]),
-    maven_coordinates = "top.fifthlight.blazerod:model-assimp:%s" % blazerod_version,
+    coordinates = "top.fifthlight.blazerod:model-assimp:%s" % blazerod_version,
     resource_jars = [
         ":mod_info_json",
         "//blazerod:icon",

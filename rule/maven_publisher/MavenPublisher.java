@@ -90,7 +90,7 @@ public class MavenPublisher {
             }
 
             var username = System.getenv("MAVEN_USER");
-            var password = System.getenv("MAVEN_PASS");
+            var password = System.getenv("MAVEN_PASSWORD");
 
             var localRepoDirectory = Path.of(System.getProperty("user.home"), ".m2", "repository");
             var session = repositorySystem.createSessionBuilder()

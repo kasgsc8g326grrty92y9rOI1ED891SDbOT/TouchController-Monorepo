@@ -4,4 +4,7 @@
     <groupId>{groupId}</groupId>
     <artifactId>{artifactId}</artifactId>
     <version>{version}</version>
+    <dependencies>
+{dependencies}
+    </dependencies>
 </project>

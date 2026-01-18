@@ -33,6 +33,6 @@ filegroup(
 
 filegroup(
     name = "pom_template",
-    srcs = ["pom_template.xml"],
+    srcs = ["pom_template.pom"],
     visibility = ["//visibility:public"],
 )

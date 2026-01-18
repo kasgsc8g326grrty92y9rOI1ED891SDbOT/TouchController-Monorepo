@@ -1,49 +1,82 @@
 """Rules for publishing artifacts to Maven repositories."""
 
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("//rule:merge_jar.bzl", "merge_jar_action")
+load("//rule:merge_library.bzl", "kt_merge_library")
 
 _SH_TOOLCHAIN_TYPE = "@rules_shell//shell:toolchain_type"
 
+_MavenCoordinateInfo = provider(
+    fields = {
+        "coordinates": "Maven coordinate in format 'groupId:artifactId:version'",
+    },
+)
+
+def _maven_coordinate_collector_impl(target, ctx):
+    coordinate = None
+    for tag in ctx.rule.attr.tags:
+        prefix = "maven_coordinates="
+        if tag.startswith(prefix):
+            coordinate = tag[len(prefix):]
+            break
+    if coordinate:
+        return [_MavenCoordinateInfo(coordinates = [coordinate])]
+    return []
+
+_maven_coordinate_collector = aspect(
+    implementation = _maven_coordinate_collector_impl,
+    required_providers = [JavaInfo],
+)
+
+def _parse_maven_coordinates(coordinates, scope = "compile"):
+    parts = coordinates.split(":")
+    if len(parts) < 3:
+        fail("coordinate must be in format 'groupId:artifactId:version[:classifier]'")
+    group_id, artifact_id, version = parts[0], parts[1], parts[2]
+    classifier = parts[3] if len(parts) > 3 else None
+    return struct(
+        group_id = group_id,
+        artifact_id = artifact_id,
+        version = version,
+        classifier = classifier,
+        scope = scope,
+    )
+
 def _maven_publish_impl(ctx):
-    parts = ctx.attr.coordinate.split(":")
+    parts = ctx.attr.coordinates.split(":")
     if len(parts) != 3:
         fail("coordinate must be in format 'groupId:artifactId:version'")
-    groupId, artifactId, version = parts
+    group_id, artifact_id, version = parts
 
-    artifact_specs = []
+    artifact_specs = {}
     input_files = []
 
-    java_info = ctx.attr.src[JavaInfo]
-    main_jars_depset = java_info.full_compile_jars
-    main_jar = ctx.actions.declare_file(ctx.label.name + "_classes.jar")
-    merge_jar_action(
-        ctx.actions,
-        ctx.executable._merge_jar_executable,
-        main_jar,
-        main_jars_depset,
-    )
-    artifact_specs.append(struct(
-        id = ":jar",
-        path = main_jar.short_path,
-    ))
-    input_files.append(main_jar)
-
-    source_jars = java_info.source_jars
-    source_jar = None
-    if source_jars:
-        source_jar = ctx.actions.declare_file(ctx.label.name + "_sources.jar")
+    if ctx.attr.src:
+        java_info = ctx.attr.src[JavaInfo]
+        main_jars_depset = java_info.full_compile_jars
+        main_jar = ctx.actions.declare_file(ctx.label.name + "_classes.jar")
         merge_jar_action(
             ctx.actions,
             ctx.executable._merge_jar_executable,
-            source_jar,
-            depset(source_jars),
+            main_jar,
+            main_jars_depset,
         )
-        artifact_specs.append(struct(
-            id = "sources:jar",
-            path = source_jar.short_path,
-        ))
-        input_files.append(source_jar)
+        artifact_specs[":jar"] = main_jar.short_path
+        input_files.append(main_jar)
+
+        source_jars = java_info.source_jars
+        source_jar = None
+        if source_jars:
+            source_jar = ctx.actions.declare_file(ctx.label.name + "_sources.jar")
+            merge_jar_action(
+                ctx.actions,
+                ctx.executable._merge_jar_executable,
+                source_jar,
+                depset(source_jars),
+            )
+            artifact_specs["sources:jar"] = source_jar.short_path
+            input_files.append(source_jar)
 
     for classifier_ext, target in ctx.attr.artifacts.items():
         # Parse key: "classifier[:extension]"
@@ -67,15 +100,43 @@ def _maven_publish_impl(ctx):
         if extension == "pom":
             fail("Cannot override POM artifact. Use pom_template attribute instead.")
 
-        artifact_specs.append(struct(
-            id = classifier + ":" + extension,
-            path = file.short_path,
-        ))
+        artifact_specs[classifier + ":" + extension] = file.short_path
+
+    dependencies_coordinates = []
+    for dep in ctx.attr.deps:
+        if _MavenCoordinateInfo in dep:
+            dependencies_coordinates.extend(dep[_MavenCoordinateInfo].coordinates)
+    dependencies_items = [_parse_maven_coordinates(coordinate, "compile") for coordinate in dependencies_coordinates]
+
+    runtime_dependencies_coordinates = []
+    for runtime_dep in ctx.attr.runtime_deps:
+        if _MavenCoordinateInfo in runtime_dep:
+            runtime_dependencies_coordinates.extend(runtime_dep[_MavenCoordinateInfo].coordinates)
+    runtime_dependencies_items = [_parse_maven_coordinates(coordinate, "runtime") for coordinate in runtime_dependencies_coordinates if not coordinate in dependencies_coordinates]
+
+    dependencies = []
+    for item in dependencies_items + runtime_dependencies_items:
+        if item.classifier:
+            dependencies.append("""        <dependency>
+            <groupId>%s</groupId>
+            <artifactId>%s</artifactId>
+            <version>%s</version>
+            <classifier>%s</classifier>
+            <scope>%s</scope>
+        </dependency>""" % (item.group_id, item.artifact_id, item.version, item.classifier, item.scope))
+        else:
+            dependencies.append("""        <dependency>
+            <groupId>%s</groupId>
+            <artifactId>%s</artifactId>
+            <version>%s</version>
+            <scope>%s</scope>
+        </dependency>""" % (item.group_id, item.artifact_id, item.version, item.scope))
 
     substitutions = {
-        "{groupId}": groupId,
-        "{artifactId}": artifactId,
+        "{groupId}": group_id,
+        "{artifactId}": artifact_id,
         "{version}": version,
+        "{dependencies}": "\n".join(dependencies),
     }
     substitutions.update(ctx.attr.pom_substitutions)
 
@@ -87,15 +148,21 @@ def _maven_publish_impl(ctx):
         substitutions = substitutions,
     )
 
+    artifact_ids = []
+    artifact_paths = []
+    for id, path in artifact_specs.items():
+        artifact_ids.append(id)
+        artifact_paths.append(path)
+
     wrapper_substitutions = {
         "{WORKSPACE_NAME}": ctx.workspace_name,
         "{EXEC_PATH}": ctx.executable._maven_publisher_binary.short_path,
         "{POM_PATH}": output_pom.short_path,
-        "{GROUP_ID}": groupId,
-        "{ARTIFACT_ID}": artifactId,
+        "{GROUP_ID}": group_id,
+        "{ARTIFACT_ID}": artifact_id,
         "{VERSION}": version,
-        "{ARTIFACT_IDS}": ' '.join([("'%s'" % spec.id) for spec in artifact_specs]),
-        "{ARTIFACT_PATHS}": ' '.join([("'%s'" % spec.path) for spec in artifact_specs]),
+        "{ARTIFACT_IDS}": " ".join([("'%s'" % id) for id in artifact_ids]),
+        "{ARTIFACT_PATHS}": " ".join([("'%s'" % path) for path in artifact_paths]),
     }
 
     if ctx.target_platform_has_constraint(ctx.attr._windows_constraint[platform_common.ConstraintValueInfo]):
@@ -116,7 +183,6 @@ def _maven_publish_impl(ctx):
             files = [
                 ctx.file._rlocation_library,
                 output_pom,
-                main_jar,
                 output_script,
             ] + input_files,
         ).merge(
@@ -134,7 +200,6 @@ def _maven_publish_impl(ctx):
             files = [
                 ctx.file._rlocation_library,
                 output_pom,
-                main_jar,
             ] + input_files,
         ).merge(
             ctx.attr._maven_publisher_binary[DefaultInfo].default_runfiles,
@@ -159,14 +224,26 @@ maven_publish = rule(
         config_common.toolchain_type(_SH_TOOLCHAIN_TYPE, mandatory = False),
     ],
     attrs = {
-        "coordinate": attr.string(
+        "coordinates": attr.string(
             mandatory = True,
             doc = "Maven coordinate in format 'groupId:artifactId:version'",
         ),
         "src": attr.label(
-            mandatory = True,
+            mandatory = False,
             providers = [JavaInfo],
             doc = "JavaInfo target providing jar and sources",
+        ),
+        "deps": attr.label_list(
+            mandatory = False,
+            providers = [JavaInfo],
+            aspects = [_maven_coordinate_collector],
+            doc = "JavaInfo targets providing dependencies for POM",
+        ),
+        "runtime_deps": attr.label_list(
+            mandatory = False,
+            providers = [JavaInfo],
+            aspects = [_maven_coordinate_collector],
+            doc = "JavaInfo targets providing dependencies for POM, for scope runtime",
         ),
         "artifacts": attr.string_keyed_label_dict(
             mandatory = False,
@@ -175,7 +252,8 @@ maven_publish = rule(
         ),
         "pom_template": attr.label(
             mandatory = False,
-            allow_single_file = [".xml"],
+            default = "//rule/maven_publisher:pom_template",
+            allow_single_file = [".xml", ".pom"],
             doc = "Custom POM template file",
         ),
         "pom_substitutions": attr.string_dict(
@@ -192,10 +270,6 @@ maven_publish = rule(
             default = "//rule/maven_publisher:maven_publisher_wrapper",
             allow_single_file = [".bash"],
         ),
-        "_default_pom_template": attr.label(
-            default = "//rule/maven_publisher:pom_template",
-            allow_single_file = [".xml"],
-        ),
         "_rlocation_library": attr.label(
             default = "@bazel_tools//tools/bash/runfiles",
             allow_single_file = [".bash"],
@@ -211,3 +285,21 @@ maven_publish = rule(
     },
     doc = "Publishes Java artifacts to a Maven repository",
 )
+
+def kt_jvm_export(**kwargs):
+    name = kwargs["name"]
+    maven_publish(
+        name = name + ".publish",
+        src = ":" + name,
+        deps = kwargs["deps"] if "deps" in kwargs else [],
+        runtime_deps = kwargs["runtime_deps"] if "runtime_deps" in kwargs else [],
+        coordinates = kwargs["coordinates"],
+    )
+
+    args = {key: value for key, value in kwargs.items() if key != "coordinates" and key != "tags"}
+    tags = kwargs["tags"] if "tags" in kwargs else []
+    tags += ["maven_coordinates=%s" % kwargs["coordinates"]]
+    kt_jvm_library(
+        tags = tags,
+        **args
+    )
