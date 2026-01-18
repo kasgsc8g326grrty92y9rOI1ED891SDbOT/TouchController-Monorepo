@@ -51,7 +51,6 @@ def _kt_text_binding_lib_impl(name, visibility, input, class_name, package_name)
         input = input,
         class_name = class_name,
         package_name = package_name,
-        tags = ["manual"],
     )
 
     kt_merge_library(

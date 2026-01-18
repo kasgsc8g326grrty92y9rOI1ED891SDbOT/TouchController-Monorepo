@@ -6,7 +6,6 @@ import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntRect
 import top.fifthlight.data.IntSize
 import top.fifthlight.data.Offset
-import top.fifthlight.touchcontroller.common.config.GlobalConfig
 import top.fifthlight.touchcontroller.common.config.preset.info.PresetControlInfo
 import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandler
 import top.fifthlight.touchcontroller.common.layout.align.Align
@@ -30,8 +29,7 @@ data class Context(
     val status: ContextStatus = ContextStatus(),
     val keyBindingHandler: KeyBindingHandler = KeyBindingHandler.Empty,
     val timer: ContextTimer = ContextTimer(),
-    // TODO: Don't include entire config
-    val config: GlobalConfig,
+    val config: ContextConfig,
     val presetControlInfo: PresetControlInfo = PresetControlInfo(),
 ) {
     inline fun <reified T> transformDrawQueue(

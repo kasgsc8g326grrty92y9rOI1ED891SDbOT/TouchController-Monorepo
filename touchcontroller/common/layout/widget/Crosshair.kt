@@ -9,7 +9,7 @@ fun Context.Crosshair() {
     val status = result.crosshairStatus ?: return
     val crosshairRenderer: CrosshairRenderer = CrosshairRendererFactory.of()
 
-    val config = config.touchRing
+    val config = touchRingConfig
     drawQueue.enqueue { canvas ->
         canvas.withTranslate(status.position * windowScaledSize) {
             if (status.breakPercent > 0f) {

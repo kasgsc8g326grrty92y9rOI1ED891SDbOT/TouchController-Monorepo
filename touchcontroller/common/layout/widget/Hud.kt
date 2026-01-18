@@ -26,7 +26,7 @@ fun Context.Hud(layers: List<LayoutLayer>) {
         Inventory()
         View()
         Crosshair()
-        if (config.debug.showPointers) {
+        if (config.showPointers) {
             Pointers()
         }
     }

@@ -2,7 +2,7 @@
 
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load("//rule:merge_library.bzl", "kt_merge_library")
-load("//rule/combine:texture.bzl", "TextureGroupInfo", "TextureInfo", "TextureLibraryInfo", "generate_texture", "merge_texture_group_info", "path_to_identifier")
+load("//rule/combine:texture.bzl", "NinePatchTextureInfo", "TextureGroupInfo", "TextureInfo", "TextureLibraryInfo", "generate_ninepatch_texture", "generate_texture", "merge_texture_group_info", "path_to_identifier")
 
 ControlTextureSetInfo = provider(
     doc = "Information about a control texture set.",
@@ -11,6 +11,10 @@ ControlTextureSetInfo = provider(
 ControlTextureSetGroupInfo = provider(
     doc = "Information about a controltexture set group.",
     fields = ["sets"],
+)
+EmptyTextureGroupInfo = provider(
+    doc = "Information about an empty texture set.",
+    fields = ["identifiers"],
 )
 
 def _texture_set_impl(ctx):
@@ -263,6 +267,218 @@ kt_control_texture_set_lib = macro(
         "class_name": attr.string(
             mandatory = False,
             default = "TextureSet",
+        ),
+    },
+)
+
+def _empty_texture_set_impl(ctx):
+    strip_prefix = ctx.attr.strip_prefix
+    if strip_prefix == ".":
+        strip_prefix = ctx.label.package
+
+    output_textures = []
+    output_files = []
+    identifiers = set()
+
+    for src in ctx.files.srcs:
+        metadata_file, compressed_file = generate_ninepatch_texture(ctx.actions, ctx.executable._texture_generator, src)
+        output_files.append(metadata_file)
+        output_files.append(compressed_file)
+
+        if not src.short_path.startswith(strip_prefix):
+            fail("Bad strip_prefix: want to strip %s from %s" % (strip_prefix, src.short_path))
+        identifier = path_to_identifier(src.short_path.removeprefix(strip_prefix))
+
+        if identifier in identifiers:
+            fail("Empty texture %s is already existing" % identifier)
+        identifiers.add(identifier)
+        output_textures.append(NinePatchTextureInfo(
+            identifier = identifier,
+            metadata = metadata_file,
+            texture = compressed_file,
+        ))
+
+    texture_files = depset(output_files)
+
+    return [
+        TextureGroupInfo(
+            textures = [],
+            ninepatch_textures = output_textures,
+            files = texture_files,
+        ),
+        EmptyTextureGroupInfo(
+            identifiers = identifiers,
+        ),
+        DefaultInfo(files = texture_files),
+    ]
+
+empty_texture_set = rule(
+    implementation = _empty_texture_set_impl,
+    provides = [TextureGroupInfo, EmptyTextureGroupInfo],
+    attrs = {
+        "srcs": attr.label_list(
+            mandatory = True,
+            doc = "Input .9.png files",
+            allow_files = [".9.png"],
+        ),
+        "strip_prefix": attr.string(
+            mandatory = False,
+            default = ".",
+        ),
+        "_texture_generator": attr.label(
+            default = "//rule/combine/metadata/generator",
+            executable = True,
+            cfg = "exec",
+        ),
+    },
+)
+
+def _empty_texture_source_impl(ctx):
+    empty_texture_info = ctx.attr.empty_texture_group[EmptyTextureGroupInfo]
+    texture_lib_info = ctx.attr.texture_lib[TextureLibraryInfo]
+
+    output_file = ctx.actions.declare_file(ctx.attr.name + ".kt")
+
+    args = ctx.actions.args()
+    args.add("--output")
+    args.add(output_file.path)
+    args.add("--package")
+    args.add(ctx.attr.package)
+    args.add("--class_name")
+    args.add(ctx.attr.class_name)
+    args.add("--texture_package")
+    args.add(texture_lib_info.package)
+    args.add("--texture_class")
+    args.add(texture_lib_info.class_name)
+    args.add("--text_package")
+    args.add(ctx.attr.text_binding_package)
+    args.add("--text_class")
+    args.add(ctx.attr.text_binding_class_name)
+
+    for identifier in empty_texture_info.identifiers:
+        args.add("--identifier")
+        args.add(identifier)
+
+    ctx.actions.run(
+        inputs = [],
+        outputs = [output_file],
+        executable = ctx.executable._generator_bin,
+        arguments = [args],
+        progress_message = "Generating EmptyTexture.kt for %s.%s" % (ctx.attr.package, ctx.attr.class_name),
+        mnemonic = "EmptyTextureGen",
+    )
+
+    return [DefaultInfo(files = depset([output_file]))]
+
+_empty_texture_source = rule(
+    implementation = _empty_texture_source_impl,
+    attrs = {
+        "empty_texture_group": attr.label(
+            providers = [EmptyTextureGroupInfo],
+            mandatory = True,
+            doc = "EmptyTextureGroupInfo containing empty texture definitions",
+        ),
+        "texture_lib": attr.label(
+            providers = [TextureLibraryInfo],
+            mandatory = True,
+            doc = "TextureLibraryInfo for texture class reference",
+        ),
+        "text_binding_package": attr.string(
+            mandatory = True,
+        ),
+        "text_binding_class_name": attr.string(
+            mandatory = True,
+        ),
+        "package": attr.string(
+            mandatory = True,
+            doc = "Package name for generated EmptyTexture class",
+        ),
+        "class_name": attr.string(
+            mandatory = True,
+            doc = "Class name for generated EmptyTexture class",
+        ),
+        "_generator_bin": attr.label(
+            default = Label("//rule/touchcontroller/empty_texture_generator"),
+            executable = True,
+            cfg = "exec",
+        ),
+    },
+)
+
+def _kt_empty_texture_lib_impl(
+        name,
+        visibility,
+        empty_texture_group,
+        texture_lib,
+        kt_texture_lib,
+        kt_text_binding_lib,
+        text_binding_package,
+        text_binding_class_name,
+        package,
+        class_name):
+    source_lib = name + "_source"
+    _empty_texture_source(
+        name = source_lib,
+        empty_texture_group = empty_texture_group,
+        texture_lib = texture_lib,
+        text_binding_package = text_binding_package,
+        text_binding_class_name = text_binding_class_name,
+        package = package,
+        class_name = class_name,
+        tags = ["manual"],
+    )
+
+    kt_merge_library(
+        name = name,
+        srcs = [source_lib],
+        visibility = visibility,
+        merge_deps = [
+            kt_texture_lib,
+            kt_text_binding_lib,
+        ],
+        deps = [
+            "//:kotlin_serialization",
+            "//combine/core/data",
+            "//combine/data",
+            "//combine/core/paint",
+        ],
+    )
+
+kt_empty_texture_lib = macro(
+    implementation = _kt_empty_texture_lib_impl,
+    attrs = {
+        "empty_texture_group": attr.label(
+            providers = [EmptyTextureGroupInfo],
+            mandatory = True,
+            configurable = False,
+        ),
+        "texture_lib": attr.label(
+            providers = [TextureLibraryInfo],
+            mandatory = True,
+            configurable = False,
+        ),
+        "kt_texture_lib": attr.label(
+            providers = [JavaInfo],
+            mandatory = True,
+            configurable = False,
+        ),
+        "kt_text_binding_lib": attr.label(
+            providers = [JavaInfo],
+            mandatory = True,
+            configurable = False,
+        ),
+        "text_binding_package": attr.string(
+            mandatory = True,
+        ),
+        "text_binding_class_name": attr.string(
+            mandatory = True,
+        ),
+        "package": attr.string(
+            mandatory = True,
+        ),
+        "class_name": attr.string(
+            mandatory = False,
+            default = "EmptyTexture",
         ),
     },
 )

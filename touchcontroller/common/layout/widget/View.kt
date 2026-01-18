@@ -43,7 +43,7 @@ fun Context.View() {
                         if (!releasedView) {
                             val pressTime = timer.clientTick - previousState.pressTime
                             // Pressed less than time threshold and not moving, recognized as short click
-                            if (pressTime < config.control.viewHoldDetectTicks && !previousState.moving) {
+                            if (pressTime < config.controlConfig.viewHoldDetectTicks && !previousState.moving) {
                                 val crosshairTarget = viewActionProvider.getCrosshairTarget() ?: break
                                 when (crosshairTarget) {
                                     CrosshairTarget.BLOCK, CrosshairTarget.MISS -> {
@@ -86,14 +86,14 @@ fun Context.View() {
         if (!state.moving) {
             // Move detect
             val delta = (pointer.position - state.initialPosition).fixAspectRadio(windowSize).squaredLength
-            val threshold = config.control.viewHoldDetectThreshold * 0.01f
+            val threshold = config.controlConfig.viewHoldDetectThreshold * 0.01f
             if (delta > threshold * threshold) {
                 moving = true
             }
         }
 
         val movement = (pointer.position - state.lastPosition).fixAspectRadio(windowSize)
-        result.lookDirection = (result.lookDirection ?: Offset.ZERO) + movement * config.control.viewMovementSensitivity
+        result.lookDirection = (result.lookDirection ?: Offset.ZERO) + movement * config.controlConfig.viewMovementSensitivity
 
         val player = PlayerHandleFactory.current()
         // Consume the pointer if player is null or touch gesture is disabled
@@ -115,10 +115,10 @@ fun Context.View() {
         val pressTime = timer.clientTick - state.pressTime
         var viewState = state.viewState
         val crosshairTarget = viewActionProvider.getCrosshairTarget()
-        val itemUsable = player.hasItemsOnHand(config.item.usableItems)
+        val itemUsable = config.isHandItemUsable(player)
 
         // If pointer kept still and held for hold-detecting ticks in config
-        if (viewState == PointerState.View.ViewPointerState.INITIAL && pressTime >= config.control.viewHoldDetectTicks && !moving) {
+        if (viewState == PointerState.View.ViewPointerState.INITIAL && pressTime >= config.controlConfig.viewHoldDetectTicks && !moving) {
             viewState = if (itemUsable) {
                 // Trigger item long click
                 useKeyState.addLock(viewUuid, timer.renderTick)

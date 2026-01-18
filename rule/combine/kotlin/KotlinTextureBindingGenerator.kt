@@ -45,13 +45,25 @@ private class Generator : CliktCommand() {
                             .build()
                     )
                 }
-                addType(TypeSpec.interfaceBuilder("Factory")
-                    .addAnnotation(ClassName("top.fifthlight.mergetools.api", "ExpectFactory"))
-                    .addFunction(FunSpec.builder("of")
-                        .addModifiers(KModifier.ABSTRACT)
-                        .returns(ClassName(packageName, className))
-                        .build())
-                    .build())
+                addType(
+                    TypeSpec.interfaceBuilder("Factory")
+                        .addAnnotation(ClassName("top.fifthlight.mergetools.api", "ExpectFactory"))
+                        .addFunction(
+                            FunSpec.builder("of")
+                                .addModifiers(KModifier.ABSTRACT)
+                                .returns(ClassName(packageName, className))
+                                .build()
+                        )
+                        .build()
+                )
+                addType(
+                    TypeSpec.companionObjectBuilder()
+                        .addSuperinterface(
+                            superinterface = ClassName(packageName, className),
+                            delegate = CodeBlock.of("${className}Factory.of()")
+                        )
+                        .build()
+                )
             }.build()
 
         val file = FileSpec

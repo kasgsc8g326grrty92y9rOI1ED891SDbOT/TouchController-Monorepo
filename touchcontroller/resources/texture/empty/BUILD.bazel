@@ -1,0 +1,7 @@
+load("//rule/touchcontroller:control_texture_set.bzl", "empty_texture_set")
+
+empty_texture_set(
+    name = "empty",
+    srcs = glob(["*.9.png"]),
+    visibility = ["//touchcontroller:__subpackages__"],
+)

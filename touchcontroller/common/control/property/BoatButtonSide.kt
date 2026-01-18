@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.common.control.data
+package top.fifthlight.touchcontroller.common.control.property
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

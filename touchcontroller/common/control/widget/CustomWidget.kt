@@ -16,13 +16,21 @@ import top.fifthlight.data.IntPadding
 import top.fifthlight.data.IntRect
 import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.common.control.ControllerWidget
 import top.fifthlight.touchcontroller.common.control.action.ButtonTrigger
+import top.fifthlight.touchcontroller.common.control.property.BooleanProperty
+import top.fifthlight.touchcontroller.common.control.property.ButtonActiveTexture
+import top.fifthlight.touchcontroller.common.control.property.ButtonActiveTextureProperty
+import top.fifthlight.touchcontroller.common.control.property.ButtonTexture
+import top.fifthlight.touchcontroller.common.control.property.ButtonTextureProperty
+import top.fifthlight.touchcontroller.common.control.property.ButtonTriggerProperty
+import top.fifthlight.touchcontroller.common.control.property.ColorProperty
+import top.fifthlight.touchcontroller.common.control.property.StringProperty
 import top.fifthlight.touchcontroller.common.util.uuid.fastRandomUuid
 import top.fifthlight.touchcontroller.common.helper.ColorHelper
 import top.fifthlight.touchcontroller.common.layout.Align
 import top.fifthlight.touchcontroller.common.layout.Button
 import top.fifthlight.touchcontroller.common.layout.Context
-import top.fifthlight.touchcontroller.common.layout.Texture
 import top.fifthlight.touchcontroller.common.layout.align.Align
 import kotlin.uuid.Uuid
 

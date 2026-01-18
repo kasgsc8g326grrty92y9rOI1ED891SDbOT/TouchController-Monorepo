@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.common.control
+package top.fifthlight.touchcontroller.common.control.property
 
 import kotlinx.serialization.Serializable
 import top.fifthlight.combine.paint.Texture

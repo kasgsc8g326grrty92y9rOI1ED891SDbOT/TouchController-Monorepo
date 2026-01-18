@@ -1,14 +1,8 @@
 load("//rule:merge_library.bzl", "kt_merge_library")
 
 kt_merge_library(
-    name = "widget",
+    name = "builtin",
     srcs = glob(["*.kt"]),
     kotlinc_opts = "//touchcontroller/common:kotlinc_opts",
-    merge_deps = [
-        "//touchcontroller/common/control/property",
-        "//touchcontroller/common/control",
-        "//touchcontroller/resources/lang:text_binding",
-    ],
     visibility = ["//touchcontroller:__subpackages__"],
-    deps = [],
 )

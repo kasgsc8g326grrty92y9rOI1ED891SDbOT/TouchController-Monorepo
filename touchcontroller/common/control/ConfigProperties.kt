@@ -1,30 +1,48 @@
 package top.fifthlight.touchcontroller.common.control
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.data.TextFactory
+import top.fifthlight.combine.data.TextFactoryFactory
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.combine.modifier.drawing.background
+import top.fifthlight.combine.modifier.drawing.innerLine
+import top.fifthlight.combine.modifier.placement.fillMaxHeight
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
+import top.fifthlight.combine.modifier.placement.height
+import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.placement.width
+import top.fifthlight.combine.modifier.pointer.clickable
+import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.paint.Color
 import top.fifthlight.combine.paint.Colors
+import top.fifthlight.combine.paint.Texture
 import top.fifthlight.combine.widget.layout.Column
+import top.fifthlight.combine.widget.layout.FlowRow
 import top.fifthlight.combine.widget.layout.Row
 import top.fifthlight.combine.widget.layout.Spacer
-import top.fifthlight.combine.widget.ui.EditText
-import top.fifthlight.combine.widget.ui.IntSlider
-import top.fifthlight.combine.widget.ui.Switch
+import top.fifthlight.combine.widget.ui.*
+import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntPadding
+import top.fifthlight.data.IntSize
+import top.fifthlight.touchcontroller.assets.EmptyTexture
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.assets.TextureSet
+import top.fifthlight.touchcontroller.assets.Textures
+import top.fifthlight.touchcontroller.assets.TexturesFactory
 import top.fifthlight.touchcontroller.common.control.action.ButtonTrigger
 import top.fifthlight.touchcontroller.common.control.action.WidgetTriggerAction
+import top.fifthlight.touchcontroller.common.control.property.ButtonActiveTexture
+import top.fifthlight.touchcontroller.common.control.property.ButtonTexture
+import top.fifthlight.touchcontroller.common.control.property.DPadExtraButton
+import top.fifthlight.touchcontroller.common.control.property.TextureCoordinate
+import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandler
+import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandlerFactory
 import top.fifthlight.touchcontroller.common.layout.align.Align
 
 private fun <Config : ControllerWidget, Value> ControllerWidget.Property<Config, Value>.paddingProperty(
@@ -173,12 +191,12 @@ class NameProperty<Config : ControllerWidget>(
     getValue: (Config) -> ControllerWidget.Name,
     setValue: (Config, ControllerWidget.Name) -> Config,
     private val name: Text,
-) : ControllerWidget.Property<Config, ControllerWidget.Name>(getValue, setValue), KoinComponent {
+) : ControllerWidget.Property<Config, ControllerWidget.Name>(getValue, setValue) {
     @Composable
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -204,12 +222,12 @@ class BooleanProperty<Config : ControllerWidget>(
     getValue: (Config) -> Boolean,
     setValue: (Config, Boolean) -> Config,
     private val name: Text,
-) : ControllerWidget.Property<Config, Boolean>(getValue, setValue), KoinComponent {
+) : ControllerWidget.Property<Config, Boolean>(getValue, setValue) {
     @Composable
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -242,7 +260,7 @@ class AnchorProperty<Config : ControllerWidget> : ControllerWidget.Property<Conf
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Composable
@@ -260,15 +278,15 @@ class AnchorProperty<Config : ControllerWidget> : ControllerWidget.Property<Conf
 
         @Composable
         fun getItemIcon(align: Align): Texture = when (align) {
-            Align.LEFT_TOP -> Textures.ICON_UP_LEFT
-            Align.LEFT_CENTER -> Textures.ICON_LEFT
-            Align.LEFT_BOTTOM -> Textures.ICON_DOWN_LEFT
-            Align.CENTER_TOP -> Textures.ICON_UP
-            Align.CENTER_CENTER -> Textures.ICON_MIDDLE
-            Align.CENTER_BOTTOM -> Textures.ICON_DOWN
-            Align.RIGHT_TOP -> Textures.ICON_UP_RIGHT
-            Align.RIGHT_CENTER -> Textures.ICON_RIGHT
-            Align.RIGHT_BOTTOM -> Textures.ICON_DOWN_RIGHT
+            Align.LEFT_TOP -> Textures.icon_up_left
+            Align.LEFT_CENTER -> Textures.icon_left
+            Align.LEFT_BOTTOM -> Textures.icon_down_left
+            Align.CENTER_TOP -> Textures.icon_up
+            Align.CENTER_CENTER -> Textures.icon_middle
+            Align.CENTER_BOTTOM -> Textures.icon_down
+            Align.RIGHT_TOP -> Textures.icon_up_right
+            Align.RIGHT_CENTER -> Textures.icon_right
+            Align.RIGHT_BOTTOM -> Textures.icon_down_right
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -335,17 +353,17 @@ class EnumProperty<Config : ControllerWidget, T>(
     setValue: (Config, T) -> Config,
     private val name: Text,
     private val items: PersistentList<Pair<T, Text>>,
-) : ControllerWidget.Property<Config, T>(getValue, setValue), KoinComponent {
-    private val textFactory: = TextFactoryFactory.of()
+) : ControllerWidget.Property<Config, T>(getValue, setValue) {
+    private val textFactory: TextFactory = TextFactoryFactory.of()
 
     private fun getItemText(item: T): Text =
-        items.firstOrNull { it.first == item }?.second ?: @DontTranslate textFactory.literal(item.toString())
+        items.firstOrNull { it.first == item }?.second ?: textFactory.literal(item.toString())
 
     @Composable
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -405,14 +423,14 @@ class FloatProperty<Config : ControllerWidget>(
     setValue: (Config, Float) -> Config,
     private val range: ClosedFloatingPointRange<Float> = 0f..1f,
     private val messageFormatter: TextFactory.(Float) -> Text,
-) : ControllerWidget.Property<Config, Float>(getValue, setValue), KoinComponent {
-    private val textFactory: = TextFactoryFactory.of()
+) : ControllerWidget.Property<Config, Float>(getValue, setValue) {
+    private val textFactory: TextFactory = TextFactoryFactory.of()
 
     @Composable
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -444,7 +462,7 @@ class IntProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -474,7 +492,7 @@ class StringProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -504,7 +522,7 @@ class ColorProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -537,7 +555,7 @@ class IntPaddingProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -619,7 +637,7 @@ class TextureCoordinateProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -673,7 +691,7 @@ class TextureCoordinateProperty<Config : ControllerWidget>(
                         Column(
                             modifier = Modifier
                                 .padding(4)
-                                .background(BackgroundTextures.BRICK_BACKGROUND)
+                                .background(Textures.BRICK_BACKGROUND)
                                 .then(modifier),
                             verticalArrangement = Arrangement.spacedBy(4),
                         ) {
@@ -684,7 +702,6 @@ class TextureCoordinateProperty<Config : ControllerWidget>(
                             ) {
                                 Text(Text.translatable(Texts.TEXTURE_COORDINATE_TEXTURE_SET))
 
-                                val textFactory = LocalTextFactory.current
                                 var expanded by remember { mutableStateOf(false) }
                                 Select(
                                     expanded = expanded,
@@ -693,7 +710,7 @@ class TextureCoordinateProperty<Config : ControllerWidget>(
                                         DropdownItemList(
                                             modifier = Modifier.verticalScroll(),
                                             items = TextureSet.TextureSetKey.entries,
-                                            textProvider = { textFactory.of(it.nameText) },
+                                            textProvider = { Text.translatable(it.nameText) },
                                             selectedIndex = TextureSet.TextureSetKey.entries.indexOf(value.textureSet),
                                             onItemSelected = {
                                                 val item = TextureSet.TextureSetKey.entries[it]
@@ -758,9 +775,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
     getValue: (Config) -> ButtonTexture,
     setValue: (Config, ButtonTexture) -> Config,
     private val name: Text,
-) : ControllerWidget.Property<Config, ButtonTexture>(getValue, setValue), KoinComponent {
-    private val textFactory: = TextFactoryFactory.of()
-
+) : ControllerWidget.Property<Config, ButtonTexture>(getValue, setValue) {
     private val emptyTexturePaddingProperty = paddingProperty(
         getPadding = { (it as? ButtonTexture.Empty)?.extraPadding },
         setPadding = { texture, value ->
@@ -769,7 +784,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
                 else -> ButtonTexture.Empty(extraPadding = value)
             }
         },
-        name = textFactory.of(Texts.WIDGET_TEXTURE_EXTRA_PADDING),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_EXTRA_PADDING),
     )
 
     private val fillTextureBorderWidthProperty = intProperty(
@@ -781,7 +796,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
             }
         },
         range = 0..16,
-        name = textFactory.of(Texts.WIDGET_TEXTURE_FILL_BORDER_WIDTH),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_FILL_BORDER_WIDTH),
     )
 
     private val fillTexturePaddingProperty = paddingProperty(
@@ -792,7 +807,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
                 else -> ButtonTexture.Fill(extraPadding = value)
             }
         },
-        name = textFactory.of(Texts.WIDGET_TEXTURE_EXTRA_PADDING),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_EXTRA_PADDING),
     )
 
     private val fillTextureBorderColorProperty = colorProperty(
@@ -803,7 +818,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
                 else -> ButtonTexture.Fill(borderColor = value)
             }
         },
-        name = textFactory.of(Texts.WIDGET_TEXTURE_FILL_BORDER_COLOR),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_FILL_BORDER_COLOR),
     )
 
     private val fillTextureBackgroundColorProperty = colorProperty(
@@ -814,7 +829,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
                 else -> ButtonTexture.Fill(backgroundColor = value)
             }
         },
-        name = textFactory.of(Texts.WIDGET_TEXTURE_FILL_BACKGROUND_COLOR),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_FILL_BACKGROUND_COLOR),
     )
 
     private val fixedTextureCoordinateProperty = textureCoordinateProperty(
@@ -825,7 +840,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
                 else -> ButtonTexture.Fixed(texture = value)
             }
         },
-        name = textFactory.of(Texts.WIDGET_TEXTURE_FIXED_TEXTURE),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_FIXED_TEXTURE),
     )
 
     private val fixedTextureScaleProperty = scaleProperty(
@@ -837,7 +852,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
             }
         },
         range = .5f..4f,
-        name = textFactory.of(Texts.WIDGET_TEXTURE_FIXED_SCALE),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_FIXED_SCALE),
     )
 
     private val ninePatchTextureTextureProperty = enumProperty(
@@ -849,8 +864,8 @@ class ButtonTextureProperty<Config : ControllerWidget>(
             }
         },
         defaultValue = EmptyTexture.EMPTY_1,
-        name = textFactory.of(Texts.WIDGET_TEXTURE_NINE_PATCH_TEXTURE),
-        items = EmptyTexture.entries.map { Pair(it, textFactory.of(it.nameId)) }.toPersistentList(),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_NINE_PATCH_TEXTURE),
+        items = EmptyTexture.entries.map { Pair(it, Text.translatable(it.nameId)) }.toPersistentList(),
     )
 
     private val ninePatchTexturePaddingProperty = paddingProperty(
@@ -861,20 +876,20 @@ class ButtonTextureProperty<Config : ControllerWidget>(
                 else -> ButtonTexture.NinePatch(extraPadding = value)
             }
         },
-        name = textFactory.of(Texts.WIDGET_TEXTURE_EXTRA_PADDING),
+        name = Text.translatable(Texts.WIDGET_TEXTURE_EXTRA_PADDING),
     )
 
     @Composable
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
         val widgetConfig = config as Config
         val value = getValue(widgetConfig)
-        val textFactory = LocalTextFactory.current
+        val textFactory: TextFactory = TextFactoryFactory.of()
         Column(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(4),
@@ -919,7 +934,7 @@ class ButtonTextureProperty<Config : ControllerWidget>(
             fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
                 modifier = Modifier.fillMaxWidth(),
                 config = config,
-                currentPreset = currentPreset,
+                context = context,
                 onConfigChanged = onConfigChanged,
             )
 
@@ -954,8 +969,8 @@ class ButtonActiveTextureProperty<Config : ControllerWidget>(
     getValue: (Config) -> ButtonActiveTexture,
     setValue: (Config, ButtonActiveTexture) -> Config,
     private val name: Text,
-) : ControllerWidget.Property<Config, ButtonActiveTexture>(getValue, setValue), KoinComponent {
-    private val textFactory: = TextFactoryFactory.of()
+) : ControllerWidget.Property<Config, ButtonActiveTexture>(getValue, setValue) {
+    private val textFactory: TextFactory = TextFactoryFactory.of()
 
     private val textureProperty = buttonTextureProperty(
         getTexture = { (it as? ButtonActiveTexture.Texture)?.texture },
@@ -972,13 +987,13 @@ class ButtonActiveTextureProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
         val widgetConfig = config as Config
         val value = getValue(widgetConfig)
-        val textFactory = LocalTextFactory.current
+        val textFactory: TextFactory = TextFactoryFactory.of()
         Column(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(4),
@@ -1022,7 +1037,7 @@ class ButtonActiveTextureProperty<Config : ControllerWidget>(
             fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
                 modifier = Modifier.fillMaxWidth(),
                 config = config,
-                currentPreset = currentPreset,
+                context = context,
                 onConfigChanged = onConfigChanged,
             )
 
@@ -1038,19 +1053,19 @@ class KeyBindingProperty<Config : ControllerWidget>(
     getValue: (Config) -> String?,
     setValue: (Config, String?) -> Config,
     private val name: Text,
-) : ControllerWidget.Property<Config, String?>(getValue, setValue), KoinComponent {
+) : ControllerWidget.Property<Config, String?>(getValue, setValue) {
     @Composable
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
         val widgetConfig = config as Config
         val value = getValue(widgetConfig)
 
-        val keyBindingHandler: KeyBindingHandler = koinInject()
+        val keyBindingHandler: KeyBindingHandler = KeyBindingHandlerFactory.of()
         val keyBindings = remember(keyBindingHandler) { keyBindingHandler.getAllStates() }
         val (keyBindingsWithCategories, keyCategories) = remember(keyBindings) {
             val keyBindingsWithCategories = keyBindings.values
@@ -1082,13 +1097,13 @@ class KeyBindingProperty<Config : ControllerWidget>(
             IconButton(onClick = {
                 showDialog = true
             }) {
-                Icon(Textures.ICON_EDIT)
+                Icon(Textures.icon_edit)
             }
 
             IconButton(onClick = {
                 onConfigChanged(setValue(config, null))
             }) {
-                Icon(Textures.ICON_DELETE)
+                Icon(Textures.icon_delete)
             }
 
             AlertDialog(
@@ -1167,8 +1182,8 @@ class TriggerActionProperty<Config : ControllerWidget>(
     getValue: (Config) -> WidgetTriggerAction?,
     setValue: (Config, WidgetTriggerAction?) -> Config,
     private val name: Text,
-) : ControllerWidget.Property<Config, WidgetTriggerAction?>(getValue, setValue), KoinComponent {
-    private val textFactory: = TextFactoryFactory.of()
+) : ControllerWidget.Property<Config, WidgetTriggerAction?>(getValue, setValue) {
+    private val textFactory: TextFactory = TextFactoryFactory.of()
 
     private val keyClickBindingProperty = keyBindingProperty(
         getKeyBinding = { (it as? WidgetTriggerAction.Key.Click)?.keyBinding },
@@ -1196,7 +1211,7 @@ class TriggerActionProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -1207,7 +1222,7 @@ class TriggerActionProperty<Config : ControllerWidget>(
         fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
             modifier = Modifier.fillMaxWidth(),
             config = config,
-            currentPreset = currentPreset,
+            context = context,
             onConfigChanged = onConfigChanged,
         )
 
@@ -1466,7 +1481,7 @@ class TriggerActionProperty<Config : ControllerWidget>(
                             SelectIcon(expanded = expanded)
                         }
                     }
-                    currentPreset?.let {
+                    context.presetControlInfo?.let { presetControlInfo ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -1483,7 +1498,7 @@ class TriggerActionProperty<Config : ControllerWidget>(
                                     DropdownItemList(
                                         modifier = Modifier.verticalScroll(),
                                         onItemSelected = { expanded = false },
-                                        items = currentPreset.controlInfo.customConditions.conditions.map { condition ->
+                                        items = presetControlInfo.customConditions.conditions.map { condition ->
                                             val name = condition.name?.let { textFactory.literal(it) }
                                                 ?: textFactory.of(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNNAMED)
                                             Pair(name) {
@@ -1501,7 +1516,7 @@ class TriggerActionProperty<Config : ControllerWidget>(
                                     Text.translatable(Texts.WIDGET_TRIGGER_LAYER_CONDITION_CONDITION_EMPTY)
                                 } else {
                                     val condition =
-                                        currentPreset.controlInfo.customConditions.conditions.firstOrNull { it.uuid == value.conditionUuid }
+                                        presetControlInfo.customConditions.conditions.firstOrNull { it.uuid == value.conditionUuid }
                                     if (condition == null) {
                                         Text.translatable(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNKNOWN)
                                     } else {
@@ -1539,7 +1554,7 @@ class DoubleClickTriggerProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -1550,7 +1565,7 @@ class DoubleClickTriggerProperty<Config : ControllerWidget>(
         fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
             modifier = Modifier.fillMaxWidth(),
             config = config,
-            currentPreset = currentPreset,
+            context = context,
             onConfigChanged = onConfigChanged,
         )
 
@@ -1625,14 +1640,14 @@ class ButtonTriggerProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Composable
         fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
             modifier = Modifier.fillMaxWidth(),
             config = config,
-            currentPreset = currentPreset,
+            context = context,
             onConfigChanged = onConfigChanged,
         )
 
@@ -1652,8 +1667,8 @@ class ButtonTriggerProperty<Config : ControllerWidget>(
 class DPadActiveTextureProperty<Config : ControllerWidget>(
     getValue: (Config) -> DPadExtraButton.ActiveTexture,
     setValue: (Config, DPadExtraButton.ActiveTexture) -> Config,
-) : ControllerWidget.Property<Config, DPadExtraButton.ActiveTexture>(getValue, setValue), KoinComponent {
-    private val textFactory: = TextFactoryFactory.of()
+) : ControllerWidget.Property<Config, DPadExtraButton.ActiveTexture>(getValue, setValue) {
+    private val textFactory: TextFactory = TextFactoryFactory.of()
 
     private val textureProperty = textureCoordinateProperty(
         getCoordinate = { (it as? DPadExtraButton.ActiveTexture.Texture)?.texture },
@@ -1670,7 +1685,7 @@ class DPadActiveTextureProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -1681,7 +1696,7 @@ class DPadActiveTextureProperty<Config : ControllerWidget>(
         fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
             modifier = Modifier.fillMaxWidth(),
             config = config,
-            currentPreset = currentPreset,
+            context = context,
             onConfigChanged = onConfigChanged,
         )
 
@@ -1728,7 +1743,7 @@ class DPadActiveTextureProperty<Config : ControllerWidget>(
             fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
                 modifier = Modifier.fillMaxWidth(),
                 config = config,
-                currentPreset = currentPreset,
+                context = context,
                 onConfigChanged = onConfigChanged,
             )
 
@@ -1743,8 +1758,8 @@ class DPadActiveTextureProperty<Config : ControllerWidget>(
 class DPadButtonInfoProperty<Config : ControllerWidget>(
     getValue: (Config) -> DPadExtraButton.ButtonInfo,
     setValue: (Config, DPadExtraButton.ButtonInfo) -> Config,
-) : ControllerWidget.Property<Config, DPadExtraButton.ButtonInfo>(getValue, setValue), KoinComponent {
-    private val textFactory: = TextFactoryFactory.of()
+) : ControllerWidget.Property<Config, DPadExtraButton.ButtonInfo>(getValue, setValue) {
+    private val textFactory: TextFactory = TextFactoryFactory.of()
 
     private val sizeProperty = intProperty(
         getInt = { it.size },
@@ -1768,14 +1783,14 @@ class DPadButtonInfoProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Composable
         fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
             modifier = Modifier.fillMaxWidth(),
             config = config,
-            currentPreset = currentPreset,
+            context = context,
             onConfigChanged = onConfigChanged,
         )
 
@@ -1789,8 +1804,8 @@ class DPadButtonInfoProperty<Config : ControllerWidget>(
 class DPadExtraButtonProperty<Config : ControllerWidget>(
     getValue: (Config) -> DPadExtraButton,
     setValue: (Config, DPadExtraButton) -> Config,
-) : ControllerWidget.Property<Config, DPadExtraButton>(getValue, setValue), KoinComponent {
-    private val textFactory: = TextFactoryFactory.of()
+) : ControllerWidget.Property<Config, DPadExtraButton>(getValue, setValue) {
+    private val textFactory: TextFactory = TextFactoryFactory.of()
 
     private val normalTriggerProperty = triggerProperty(
         getTrigger = { (it as? DPadExtraButton.Normal)?.trigger },
@@ -1875,19 +1890,19 @@ class DPadExtraButtonProperty<Config : ControllerWidget>(
     override fun controller(
         modifier: Modifier,
         config: ControllerWidget,
-        currentPreset: LayoutPreset?,
+        context: ConfigContext,
         onConfigChanged: (ControllerWidget) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
         val widgetConfig = config as Config
         val value = getValue(widgetConfig)
-        val textFactory = LocalTextFactory.current
+        val textFactory = TextFactoryFactory.of()
 
         @Composable
         fun <Config : ControllerWidget> ControllerWidget.Property<Config, *>.controller() = controller(
             modifier = Modifier.fillMaxWidth(),
             config = config,
-            currentPreset = currentPreset,
+            context = context,
             onConfigChanged = onConfigChanged,
         )
 

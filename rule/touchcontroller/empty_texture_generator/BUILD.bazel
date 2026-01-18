@@ -1,0 +1,14 @@
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_binary")
+
+kt_jvm_binary(
+    name = "empty_texture_generator",
+    srcs = ["EmptyTextureGenerator.kt"],
+    main_class = "top.fifthlight.touchcontroller.resources.generator.EmptyTextureGeneratorKt",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:kotlin_serialization",
+        "@maven//:com_github_ajalt_clikt_clikt_core_jvm",
+        "@maven//:com_github_ajalt_clikt_clikt_jvm",
+        "@maven//:com_squareup_kotlinpoet_jvm",
+    ],
+)

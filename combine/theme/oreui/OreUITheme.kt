@@ -36,30 +36,28 @@ private data class OutlineDrawable(
 }
 
 val OreUITheme = run {
-    val textures = OreUITexturesFactory.of()
-
     Theme(
         drawables = Theme.Drawables(
             button = DrawableSet(
-                normal = textures.widget_button_button,
-                hover = textures.widget_button_button_hover,
-                focus = OutlineDrawable(textures.widget_button_button_focus),
-                active = textures.widget_button_button_active,
-                disabled = textures.widget_button_button_disabled,
+                normal = OreUITextures.widget_button_button,
+                hover = OreUITextures.widget_button_button_hover,
+                focus = OutlineDrawable(OreUITextures.widget_button_button_focus),
+                active = OreUITextures.widget_button_button_active,
+                disabled = OreUITextures.widget_button_button_disabled,
             ),
             guideButton = DrawableSet(
-                normal = textures.widget_button_button_guide,
-                hover = textures.widget_button_button_guide_hover,
-                focus = OutlineDrawable(textures.widget_button_button_guide), // TODO
-                active = textures.widget_button_button_guide_active,
+                normal = OreUITextures.widget_button_button_guide,
+                hover = OreUITextures.widget_button_button_guide_hover,
+                focus = OutlineDrawable(OreUITextures.widget_button_button_guide), // TODO
+                active = OreUITextures.widget_button_button_guide_active,
             ),
             warningButton = DrawableSet(
-                normal = textures.widget_button_button_warning,
-                hover = textures.widget_button_button_warning_hover,
-                focus = OutlineDrawable(textures.widget_button_button_warning), // TODO
-                active = textures.widget_button_button_warning_active,
+                normal = OreUITextures.widget_button_button_warning,
+                hover = OreUITextures.widget_button_button_warning_hover,
+                focus = OutlineDrawable(OreUITextures.widget_button_button_warning), // TODO
+                active = OreUITextures.widget_button_button_warning_active,
             ),
-            itemGridBackground = textures.background_backpack,
+            itemGridBackground = OreUITextures.background_backpack,
         ),
         colors = Theme.Colors(
             button = ColorTheme.light,

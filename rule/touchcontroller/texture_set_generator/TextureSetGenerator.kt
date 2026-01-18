@@ -76,16 +76,6 @@ private fun generateTextureSet(
     val textureSetBuilder = TypeSpec.classBuilder(className)
         .addModifiers(KModifier.SEALED)
 
-    textureSetBuilder.addType(
-        TypeSpec.companionObjectBuilder()
-            .addProperty(
-                PropertySpec.builder("textures", textureClassName)
-                    .initializer("%T.of()", ClassName(texturePackage, textureClass + "Factory"))
-                    .build()
-            )
-            .build()
-    )
-
     for (texture in allTextures) {
         val propertyName = texture.snakeToCamelCase()
         PropertySpec.builder(propertyName, textureTypeName).apply {
@@ -118,7 +108,7 @@ private fun generateTextureSet(
             val propertyName = name.snakeToCamelCase()
             PropertySpec.builder(propertyName, textureTypeName)
                 .addModifiers(KModifier.OVERRIDE)
-                .initializer("textures.%L", identifier)
+                .initializer("%T.%L", textureClassName, identifier)
                 .build()
                 .let(subclassBuilder::addProperty)
         }

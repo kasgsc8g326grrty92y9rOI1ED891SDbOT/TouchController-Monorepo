@@ -7,7 +7,6 @@ kt_merge_library(
     merge_deps = [
         "//touchcontroller/common/layout",
         "//touchcontroller/common/layout/align",
-        "//touchcontroller/common/control/data",
         "//touchcontroller/resources/texture:texture_set_lib",
         "//touchcontroller/common/util/offset",
         "//touchcontroller/common/gal/paint",

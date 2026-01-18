@@ -9,9 +9,10 @@ kt_merge_library(
         "//touchcontroller/common/layout/data",
         "//touchcontroller/common/layout/queue",
         "//touchcontroller/common/gal/key",
-        "//touchcontroller/common/config",
+        "//touchcontroller/common/config/data",
         "//touchcontroller/common/config/preset/info",
         "//touchcontroller/common/layout/align",
+        "//touchcontroller/common/gal/player",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [

@@ -3,6 +3,7 @@ package top.fifthlight.touchcontroller.common.layout.widget
 import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.helper.fixAspectRadio
 import top.fifthlight.touchcontroller.common.layout.Context
+import top.fifthlight.touchcontroller.common.layout.widget.data.ButtonResult
 import top.fifthlight.touchcontroller.common.state.PointerState
 import kotlin.uuid.Uuid
 
@@ -47,14 +48,14 @@ fun Context.Button(
                     if (!moving) {
                         // Move detect
                         val delta = (pointer.position - state.initialPosition).fixAspectRadio(windowSize).squaredLength
-                        val threshold = config.control.viewHoldDetectThreshold * 0.01f
+                        val threshold = config.controlConfig.viewHoldDetectThreshold * 0.01f
                         if (delta > threshold * threshold) {
                             moving = true
                         }
                     } else {
                         val movement = (pointer.position - state.lastPosition).fixAspectRadio(windowSize)
                         result.lookDirection =
-                            (result.lookDirection ?: Offset.ZERO) + movement * config.control.viewMovementSensitivity
+                            (result.lookDirection ?: Offset.ZERO) + movement * config.controlConfig.viewMovementSensitivity
                     }
                     pointer.state = state.copy(
                         moving = moving,

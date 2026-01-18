@@ -25,8 +25,3 @@ maven_publish(
     pom_template = "proxy-client.pom",
     deps = ["@maven//:org_jetbrains_kotlin_kotlin_stdlib"],
 )
-
-alias(
-    name = "core_publish",
-    actual = ":core_export.publish",
-)
