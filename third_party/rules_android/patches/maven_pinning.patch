@@ -1,0 +1,19 @@
+--- a/MODULE.bazel
++++ b/MODULE.bazel
+@@ -85,6 +85,7 @@
+         "https://maven.google.com",
+         "https://repo1.maven.org/maven2",
+     ],
++    lock_file = "@@//third_party/rules_android:android_ide_common_30_1_3_install.json",
+     use_starlark_android_rules = True,
+ )
+ use_repo(maven, "android_ide_common_30_1_3")
+@@ -157,7 +158,7 @@
+     ],
+     # To generate, run:
+     # REPIN=1 bazelisk run --enable_bzlmod @rules_android_maven//:pin
+-    # lock_file = "//:rules_android_maven_install.json",
++    lock_file = "@@//third_party/rules_android:rules_android_maven_install.json",
+     use_starlark_android_rules = True,
+ )
+ use_repo(
