@@ -81,5 +81,7 @@ kt_vanilla_lib(
 atlas_pack(
     name = "atlas_pack",
     dep = ":texture",
+    height = 512,
     namespace = "touchcontroller",
+    width = 512,
 )
