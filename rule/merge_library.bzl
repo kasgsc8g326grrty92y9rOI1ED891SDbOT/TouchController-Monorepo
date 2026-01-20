@@ -230,9 +230,11 @@ def _merge_library_jar_impl(ctx):
         execution_requirements = {
             "supports-workers": "1",
             "supports-multiplex-workers": "1",
+            "supports-multiplex-sandboxing": "1",
             "requires-worker-protocol": "proto",
         },
         arguments = [args],
+        mnemonic = "MergeJar",
         progress_message = "Merging JAR %s" % ctx.label.name,
         toolchain = "@bazel_tools//tools/jdk:toolchain_type",
     )
@@ -274,12 +276,7 @@ _merge_library_jar = rule(
         ),
         "sources_jar": attr.output(),
         "_merge_expect_actual_jar_executable": attr.label(
-            default = Label("@//rule/merge_expect_actual_jar"),
-            executable = True,
-            cfg = "exec",
-        ),
-        "_merge_jar_executable": attr.label(
-            default = Label("@//rule/merge_jar"),
+            default = Label("@//rule/merge_expect_actual_jar:expect_actual"),
             executable = True,
             cfg = "exec",
         ),

@@ -17,6 +17,7 @@ def _convert_access_widener_impl(ctx):
         execution_requirements = {
             "supports-workers": "1",
             "supports-multiplex-workers": "1",
+            "supports-multiplex-sandboxing": "1",
             "requires-worker-protocol": "proto",
         },
         arguments = [args],
