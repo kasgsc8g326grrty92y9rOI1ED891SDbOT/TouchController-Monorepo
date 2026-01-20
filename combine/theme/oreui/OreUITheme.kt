@@ -7,6 +7,7 @@ import top.fifthlight.combine.paint.Drawable
 import top.fifthlight.combine.theme.Theme
 import top.fifthlight.combine.ui.style.ColorTheme
 import top.fifthlight.combine.ui.style.DrawableSet
+import top.fifthlight.combine.ui.style.TextureSet
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntPadding
 import top.fifthlight.data.IntRect
@@ -14,7 +15,7 @@ import top.fifthlight.data.IntRect
 private data class OutlineDrawable(
     val inner: Drawable,
     val color: Color = Colors.WHITE,
-): Drawable {
+) : Drawable {
     override val size
         get() = inner.size
     override val padding: IntPadding
@@ -56,6 +57,24 @@ val OreUITheme = run {
                 hover = OreUITextures.widget_button_button_warning_hover,
                 focus = OutlineDrawable(OreUITextures.widget_button_button_warning), // TODO
                 active = OreUITextures.widget_button_button_warning_active,
+            ),
+            switchFrame = DrawableSet(
+                normal = OreUITextures.widget_switch_frame,
+            ),
+            switchHandle = DrawableSet(
+                normal = OreUITextures.widget_handle_handle,
+            ),
+            switchBackground = TextureSet(
+                normal = OreUITextures.widget_switch_switch,
+            ),
+            sliderHandle = DrawableSet(
+                normal = OreUITextures.widget_handle_handle,
+            ),
+            sliderActiveTrack = DrawableSet(
+                normal = OreUITextures.widget_slider_slider_active,
+            ),
+            sliderInactiveTrack = DrawableSet(
+                normal = OreUITextures.widget_slider_slider_inactive,
             ),
             itemGridBackground = OreUITextures.background_backpack,
         ),

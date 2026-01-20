@@ -24,7 +24,7 @@ import kotlin.math.roundToInt
 
 data class SwitchDrawableSet(
     val frame: DrawableSet,
-    val background: TextureSet,
+    val background: TextureSet? = null,
     val handle: DrawableSet
 ) {
     companion object {
@@ -52,7 +52,7 @@ fun Switch(
     val interactionSource = remember { MutableInteractionSource() }
     val state by widgetState(interactionSource)
     val frameDrawable = drawableSet.frame.getByState(state, enabled = enabled)
-    val backgroundTexture = drawableSet.background.getByState(state, enabled = enabled)
+    val backgroundTexture = drawableSet.background?.getByState(state, enabled = enabled)
     val handleDrawable = drawableSet.handle.getByState(state, enabled = enabled)
 
     val modifier = if (onValueChanged == null || !enabled) {
