@@ -6,8 +6,7 @@ kt_merge_library(
     merge_deps = [
         "//touchcontroller/common/gal/key",
         "//touchcontroller/common/model",
+        "//touchcontroller/common/layout/data",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
-    deps = [
-    ],
 )

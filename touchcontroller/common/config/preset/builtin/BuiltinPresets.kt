@@ -5,9 +5,9 @@ import top.fifthlight.touchcontroller.common.config.layout.controllerLayoutOf
 import top.fifthlight.touchcontroller.common.config.preset.LayoutPreset
 import top.fifthlight.touchcontroller.common.config.preset.builtin.key.BuiltinPresetKey
 import top.fifthlight.touchcontroller.common.config.preset.info.PresetControlInfo
-import top.fifthlight.touchcontroller.common.control.property.ButtonActiveTexture
-import top.fifthlight.touchcontroller.common.control.property.ButtonTexture
 import top.fifthlight.touchcontroller.common.control.widget.boat.BoatButton
+import top.fifthlight.touchcontroller.common.control.widget.custom.ButtonActiveTexture
+import top.fifthlight.touchcontroller.common.control.widget.custom.ButtonTexture
 import top.fifthlight.touchcontroller.common.control.widget.custom.CustomWidget
 import top.fifthlight.touchcontroller.common.control.widget.dpad.DPad
 import top.fifthlight.touchcontroller.common.control.widget.joystick.Joystick

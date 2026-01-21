@@ -17,7 +17,6 @@ kt_merge_library(
         "//combine/core/modifier/placement",
         "//combine/core/paint",
         "//combine/core/screen",
-        "//combine/core/widget",
         "//combine/core/widget/layout",
         "//combine/data",
         "//combine/item/data",

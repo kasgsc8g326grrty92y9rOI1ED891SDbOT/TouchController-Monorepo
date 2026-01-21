@@ -1,40 +1,65 @@
-package top.fifthlight.touchcontroller.common.event
+package top.fifthlight.touchcontroller.common.event.render
 
-import com.sun.org.slf4j.internal.LoggerFactory
+import kotlinx.collections.immutable.toPersistentSet
+import org.slf4j.LoggerFactory
+import top.fifthlight.combine.input.text.TextInputState
+import top.fifthlight.combine.input.text.TextRange
+import top.fifthlight.combine.paint.Canvas
+import top.fifthlight.data.IntOffset
+import top.fifthlight.data.Offset
+import top.fifthlight.touchcontroller.common.config.condition.BuiltinLayerCondition
+import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder
+import top.fifthlight.touchcontroller.common.event.window.WindowEvents
+import top.fifthlight.touchcontroller.common.gal.PlayerHandleFactory
+import top.fifthlight.touchcontroller.common.gal.RidingEntityType
+import top.fifthlight.touchcontroller.common.gal.gamestate.GameStateProvider
+import top.fifthlight.touchcontroller.common.gal.gamestate.GameStateProviderFactory
+import top.fifthlight.touchcontroller.common.gal.key.DefaultKeyBindingType
+import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandler
+import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandlerFactory
+import top.fifthlight.touchcontroller.common.gal.view.CrosshairTarget
+import top.fifthlight.touchcontroller.common.gal.view.ViewActionProvider
+import top.fifthlight.touchcontroller.common.gal.view.ViewActionProviderFactory
+import top.fifthlight.touchcontroller.common.gal.window.WindowHandle
+import top.fifthlight.touchcontroller.common.gal.window.WindowHandleFactory
+import top.fifthlight.touchcontroller.common.helper.fixAspectRadio
+import top.fifthlight.touchcontroller.common.input.InputManager
+import top.fifthlight.touchcontroller.common.layout.Context
+import top.fifthlight.touchcontroller.common.layout.config.GlobalContextConfig
+import top.fifthlight.touchcontroller.common.layout.data.ContextInput
+import top.fifthlight.touchcontroller.common.layout.queue.DrawQueue
+import top.fifthlight.touchcontroller.common.layout.widget.game.Hud
+import top.fifthlight.touchcontroller.common.model.ControllerHudModel
+import top.fifthlight.touchcontroller.common.model.TouchStateModel
+import top.fifthlight.touchcontroller.common.platform.capabilities.PlatformCapabilitiesHolder
+import top.fifthlight.touchcontroller.common.platform.provider.PlatformProvider
+import top.fifthlight.touchcontroller.proxy.client.PlatformCapability
 import top.fifthlight.touchcontroller.proxy.message.*
-import java.util.*
 
 object RenderEvents {
     private val logger = LoggerFactory.getLogger(RenderEvents::class.java)
-    private val window: WindowHandle by inject()
-    private val configHolder: GlobalConfigHolder by inject()
-    private val controllerHudModel: ControllerHudModel by inject()
-    private val touchStateModel: TouchStateModel by inject()
-    private val playerHandleFactory: PlayerHandleFactory by inject()
-    private val platformProvider: PlatformProvider by inject()
-    private val gameStateProvider: GameStateProvider by inject()
-    private val keyBindingHandler: KeyBindingHandler by inject()
-    private val viewActionProvider: ViewActionProvider by inject()
+    private val window: WindowHandle = WindowHandleFactory.of()
+    private val gameStateProvider: GameStateProvider = GameStateProviderFactory.of()
+    private val keyBindingHandler: KeyBindingHandler = KeyBindingHandlerFactory.of()
+    private val viewActionProvider: ViewActionProvider = ViewActionProviderFactory.of()
+    private val touchStateModel: TouchStateModel = TouchStateModel()
     private var prevWidth = 0
     private var prevHeight = 0
 
-    private val _platformCapabilities = mutableSetOf<PlatformCapability>()
-    val platformCapabilities: Set<PlatformCapability> = Collections.unmodifiableSet(_platformCapabilities)
-
     @JvmStatic
     fun onRenderStart() {
-        controllerHudModel.timer.renderTick()
-        keyBindingHandler.renderTick(controllerHudModel.timer.renderTick)
+        ControllerHudModel.timer.renderTick()
+        keyBindingHandler.renderTick(ControllerHudModel.timer.renderTick)
 
-        if (controllerHudModel.status.vibrate) {
-            platformProvider.platform?.sendEvent(VibrateMessage(VibrateMessage.Kind.BLOCK_BROKEN))
-            controllerHudModel.status.vibrate = false
+        if (ControllerHudModel.status.vibrate) {
+            PlatformProvider.platform?.sendEvent(VibrateMessage(VibrateMessage.Kind.BLOCK_BROKEN))
+            ControllerHudModel.status.vibrate = false
         }
 
-        val config = configHolder.config.value
-        val playerHandle = playerHandleFactory.getPlayerHandle()
+        val config = GlobalConfigHolder.config.value
+        val playerHandle = PlayerHandleFactory.current()
         val gameState = gameStateProvider.currentState()
-        val platform = platformProvider.platform
+        val platform = PlatformProvider.platform
         if (platform != null) {
             while (true) {
                 val width = WindowEvents.windowWidth
@@ -66,9 +91,9 @@ object RenderEvents {
                         PlatformCapability.entries.firstOrNull { it.id == message.capability }?.let {
                             logger.info("TouchController capability ${message.capability} set to ${message.enabled}")
                             if (message.enabled) {
-                                _platformCapabilities += it
+                                PlatformCapabilitiesHolder.addCapability(it)
                             } else {
-                                _platformCapabilities -= it
+                                PlatformCapabilitiesHolder.removeCapability(it)
                             }
                         } ?: run {
                             logger.warn("Unknown capability: ${message.capability}, maybe you should update TouchController?")
@@ -134,40 +159,40 @@ object RenderEvents {
             keyBindingHandler.getState(DefaultKeyBindingType.SNEAK).clearLock()
         }
 
-        val preset = configHolder.currentPreset.value
-        val currentPresetUuid = configHolder.currentPresetUuid.value
-        if (controllerHudModel.status.previousPresetUuid != currentPresetUuid) {
-            controllerHudModel.status.previousPresetUuid = currentPresetUuid
-            controllerHudModel.status.enabledCustomConditions.clear()
+        val preset = GlobalConfigHolder.currentPreset.value
+        val currentPresetUuid = GlobalConfigHolder.currentPresetUuid.value
+        if (ControllerHudModel.status.previousPresetUuid != currentPresetUuid) {
+            ControllerHudModel.status.previousPresetUuid = currentPresetUuid
+            ControllerHudModel.status.enabledCustomConditions.clear()
         }
         val ridingType = player.ridingEntityType
         val condition = buildSet {
-            fun put(key: BuiltinLayerConditionKey.Key, condition: Boolean) {
+            fun put(key: BuiltinLayerCondition, condition: Boolean) {
                 if (condition) {
                     add(key)
                 }
             }
-            put(BuiltinLayerConditionKey.Key.FLYING, player.isFlying)
-            put(BuiltinLayerConditionKey.Key.CAN_FLY, player.canFly)
-            put(BuiltinLayerConditionKey.Key.SWIMMING, player.isTouchingWater)
-            put(BuiltinLayerConditionKey.Key.UNDERWATER, player.isSubmergedInWater)
-            put(BuiltinLayerConditionKey.Key.SPRINTING, player.isSprinting)
-            put(BuiltinLayerConditionKey.Key.SNEAKING, player.isSneaking)
-            put(BuiltinLayerConditionKey.Key.ON_GROUND, player.onGround)
-            put(BuiltinLayerConditionKey.Key.NOT_ON_GROUND, !player.onGround)
-            put(BuiltinLayerConditionKey.Key.USING_ITEM, player.isUsingItem)
-            put(BuiltinLayerConditionKey.Key.RIDING, ridingType != null)
+            put(BuiltinLayerCondition.FLYING, player.isFlying)
+            put(BuiltinLayerCondition.CAN_FLY, player.canFly)
+            put(BuiltinLayerCondition.SWIMMING, player.isTouchingWater)
+            put(BuiltinLayerCondition.UNDERWATER, player.isSubmergedInWater)
+            put(BuiltinLayerCondition.SPRINTING, player.isSprinting)
+            put(BuiltinLayerCondition.SNEAKING, player.isSneaking)
+            put(BuiltinLayerCondition.ON_GROUND, player.onGround)
+            put(BuiltinLayerCondition.NOT_ON_GROUND, !player.onGround)
+            put(BuiltinLayerCondition.USING_ITEM, player.isUsingItem)
+            put(BuiltinLayerCondition.RIDING, ridingType != null)
             put(
-                BuiltinLayerConditionKey.Key.BLOCK_SELECTED,
+                BuiltinLayerCondition.BLOCK_SELECTED,
                 viewActionProvider.getCrosshairTarget() == CrosshairTarget.BLOCK
             )
-            put(BuiltinLayerConditionKey.Key.ON_MINECART, ridingType == RidingEntityType.MINECART)
-            put(BuiltinLayerConditionKey.Key.ON_BOAT, ridingType == RidingEntityType.BOAT)
-            put(BuiltinLayerConditionKey.Key.ON_PIG, ridingType == RidingEntityType.PIG)
-            put(BuiltinLayerConditionKey.Key.ON_HORSE, ridingType == RidingEntityType.HORSE)
-            put(BuiltinLayerConditionKey.Key.ON_CAMEL, ridingType == RidingEntityType.CAMEL)
-            put(BuiltinLayerConditionKey.Key.ON_LLAMA, ridingType == RidingEntityType.LLAMA)
-            put(BuiltinLayerConditionKey.Key.ON_STRIDER, ridingType == RidingEntityType.STRIDER)
+            put(BuiltinLayerCondition.ON_MINECART, ridingType == RidingEntityType.MINECART)
+            put(BuiltinLayerCondition.ON_BOAT, ridingType == RidingEntityType.BOAT)
+            put(BuiltinLayerCondition.ON_PIG, ridingType == RidingEntityType.PIG)
+            put(BuiltinLayerCondition.ON_HORSE, ridingType == RidingEntityType.HORSE)
+            put(BuiltinLayerCondition.ON_CAMEL, ridingType == RidingEntityType.CAMEL)
+            put(BuiltinLayerCondition.ON_LLAMA, ridingType == RidingEntityType.LLAMA)
+            put(BuiltinLayerCondition.ON_STRIDER, ridingType == RidingEntityType.STRIDER)
         }.toPersistentSet()
 
         val drawQueue = DrawQueue()
@@ -180,26 +205,26 @@ object RenderEvents {
             pointers = touchStateModel.pointers,
             input = ContextInput(
                 inGui = gameState.inGui,
-                builtInCondition = condition,
-                customCondition = controllerHudModel.status.enabledCustomConditions.toPersistentSet(),
+                builtinCondition = condition,
+                customCondition = ControllerHudModel.status.enabledCustomConditions.toPersistentSet(),
                 perspective = gameState.perspective,
                 playerHandle = playerHandle,
             ),
-            status = controllerHudModel.status,
-            timer = controllerHudModel.timer,
+            status = ControllerHudModel.status,
+            timer = ControllerHudModel.timer,
             keyBindingHandler = keyBindingHandler,
-            config = configHolder.config.value,
+            config = GlobalContextConfig(GlobalConfigHolder.config.value),
             presetControlInfo = preset.controlInfo,
         ).run {
             Hud(layers = preset.layout)
             result
         }
-        controllerHudModel.result = result
-        controllerHudModel.pendingDrawQueue = drawQueue
+        ControllerHudModel.result = result
+        ControllerHudModel.pendingDrawQueue = drawQueue
 
-        val status = controllerHudModel.status
-        status.doubleClickCounter.clean(controllerHudModel.timer.clientTick)
-        result.pendingAction.forEach { it.invoke(controllerHudModel.timer, player) }
+        val status = ControllerHudModel.status
+        status.doubleClickCounter.clean(ControllerHudModel.timer.clientTick)
+        result.pendingAction.forEach { it.invoke(ControllerHudModel.timer, player) }
         result.lookDirection?.let { (x, y) ->
             player.changeLookDirection(x.toDouble(), y.toDouble())
         }
@@ -219,20 +244,20 @@ object RenderEvents {
     }
 
     fun onHudRender(canvas: Canvas) {
-        val queue = controllerHudModel.pendingDrawQueue
+        val queue = ControllerHudModel.pendingDrawQueue
         queue?.let {
             queue.execute(canvas)
-            controllerHudModel.pendingDrawQueue = null
+            ControllerHudModel.pendingDrawQueue = null
         }
     }
 
     fun shouldRenderCrosshair(): Boolean {
-        val config = configHolder.config.value
-        val preset = configHolder.currentPreset.value
+        val config = GlobalConfigHolder.config.value
+        val preset = GlobalConfigHolder.currentPreset.value
         if (!preset.controlInfo.disableCrosshair) {
             return true
         }
-        val player = playerHandleFactory.getPlayerHandle() ?: return false
+        val player = PlayerHandleFactory.current() ?: return false
         return player.hasItemsOnHand(config.item.showCrosshairItems)
     }
 }

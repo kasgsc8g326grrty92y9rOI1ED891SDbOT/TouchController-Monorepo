@@ -4,7 +4,6 @@ kt_merge_library(
     name = "connection",
     srcs = glob(["*.kt"]),
     merge_deps = [
-        "//touchcontroller/common/gal/player",
         "//touchcontroller/common/platform/provider",
         "//touchcontroller/common/gal/action",
         "//touchcontroller/common/platform",

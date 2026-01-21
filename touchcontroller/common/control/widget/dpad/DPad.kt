@@ -14,13 +14,11 @@ import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.TextureSet
 import top.fifthlight.touchcontroller.common.control.BooleanProperty
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
-import top.fifthlight.touchcontroller.common.control.DPadExtraButtonProperty
 import top.fifthlight.touchcontroller.common.control.FloatProperty
 import top.fifthlight.touchcontroller.common.control.IntProperty
 import top.fifthlight.touchcontroller.common.control.TextureSetProperty
 import top.fifthlight.touchcontroller.common.control.action.ButtonTrigger
 import top.fifthlight.touchcontroller.common.control.action.WidgetTriggerAction
-import top.fifthlight.touchcontroller.common.control.property.DPadExtraButton
 import top.fifthlight.touchcontroller.common.control.property.TextureCoordinate
 import top.fifthlight.touchcontroller.common.gal.key.DefaultKeyBindingType
 import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandler

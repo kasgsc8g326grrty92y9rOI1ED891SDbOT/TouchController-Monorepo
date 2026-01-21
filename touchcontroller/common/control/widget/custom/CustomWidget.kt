@@ -16,15 +16,11 @@ import top.fifthlight.data.IntRect
 import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.common.control.BooleanProperty
-import top.fifthlight.touchcontroller.common.control.ButtonActiveTextureProperty
-import top.fifthlight.touchcontroller.common.control.ButtonTextureProperty
 import top.fifthlight.touchcontroller.common.control.ButtonTriggerProperty
 import top.fifthlight.touchcontroller.common.control.ColorProperty
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
 import top.fifthlight.touchcontroller.common.control.StringProperty
 import top.fifthlight.touchcontroller.common.control.action.ButtonTrigger
-import top.fifthlight.touchcontroller.common.control.property.ButtonActiveTexture
-import top.fifthlight.touchcontroller.common.control.property.ButtonTexture
 import top.fifthlight.touchcontroller.common.layout.Context
 import top.fifthlight.touchcontroller.common.layout.align.Align
 import top.fifthlight.touchcontroller.common.layout.widget.Texture

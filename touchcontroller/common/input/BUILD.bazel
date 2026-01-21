@@ -9,10 +9,14 @@ kt_merge_library(
         "//touchcontroller/common/gal/window",
         "//touchcontroller/common/gal/dispatcher",
         "//touchcontroller/common/platform/provider",
+        "//touchcontroller/common/platform/capabilities",
+        "//touchcontroller/common/platform",
+        "//touchcontroller/proxy/message/input",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [
         "//combine/core/input/text",
+        "//combine/data",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
     ],
 )

@@ -9,12 +9,12 @@ import top.fifthlight.touchcontroller.assets.TextureSet
 import top.fifthlight.touchcontroller.common.control.ControllerWidget
 import top.fifthlight.touchcontroller.common.control.action.ButtonTrigger
 import top.fifthlight.touchcontroller.common.control.action.WidgetTriggerAction
-import top.fifthlight.touchcontroller.common.control.property.ButtonActiveTexture
-import top.fifthlight.touchcontroller.common.control.property.ButtonTexture
-import top.fifthlight.touchcontroller.common.control.property.DPadExtraButton
 import top.fifthlight.touchcontroller.common.control.property.TextureCoordinate
+import top.fifthlight.touchcontroller.common.control.widget.custom.ButtonActiveTexture
+import top.fifthlight.touchcontroller.common.control.widget.custom.ButtonTexture
 import top.fifthlight.touchcontroller.common.control.widget.custom.CustomWidget
 import top.fifthlight.touchcontroller.common.control.widget.dpad.DPad
+import top.fifthlight.touchcontroller.common.control.widget.dpad.DPadExtraButton
 import top.fifthlight.touchcontroller.common.gal.key.DefaultKeyBindingType
 import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandler
 import top.fifthlight.touchcontroller.common.gal.key.KeyBindingHandlerFactory

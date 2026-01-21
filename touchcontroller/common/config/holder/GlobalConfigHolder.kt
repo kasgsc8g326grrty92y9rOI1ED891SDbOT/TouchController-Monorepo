@@ -43,10 +43,12 @@ object GlobalConfigHolder {
     )
     val config = _config.asStateFlow()
 
+    // TODO: do some caching
+    private val defaultPreset = BuiltinPresets.generate(BuiltinPresetKey.DEFAULT)
     val currentPreset = combineStates(config, PresetManager.presets) { config, presets ->
         when (val preset = config.preset) {
             is PresetConfig.BuiltIn -> BuiltinPresets.generate(preset.key)
-            is PresetConfig.Custom -> presets[preset.uuid] ?: BuiltinPresetKey.DEFAULT
+            is PresetConfig.Custom -> presets[preset.uuid] ?: defaultPreset
         }
     }
     val currentPresetUuid = config.mapState { (it.preset as? PresetConfig.Custom)?.uuid }

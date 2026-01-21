@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.common.control.property
+package top.fifthlight.touchcontroller.common.control.widget.custom
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,6 +9,7 @@ import top.fifthlight.data.IntPadding
 import top.fifthlight.touchcontroller.assets.EmptyTexture
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.TextureSet
+import top.fifthlight.touchcontroller.common.control.property.TextureCoordinate
 
 @Serializable
 sealed class ButtonTexture {
