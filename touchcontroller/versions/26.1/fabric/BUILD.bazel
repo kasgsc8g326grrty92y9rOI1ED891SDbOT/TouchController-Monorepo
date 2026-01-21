@@ -1,0 +1,32 @@
+load("//rule:merge_library.bzl", "kt_merge_library")
+
+kt_merge_library(
+    name = "fabric",
+    srcs = glob([
+        "**/*.kt",
+        "**/*.java",
+    ]),
+    actual = True,
+    merge_deps = [
+        "//touchcontroller/common/gal/key",
+        "//touchcontroller/common/event/block",
+        "//touchcontroller/common/event/connection",
+        "//touchcontroller/common/event/tick",
+        "//touchcontroller/common/event/key",
+        "//touchcontroller/common/gal/config",
+        "//touchcontroller/versions/26.1",
+        "//touchcontroller/versions/26.1/mixin",
+        "//touchcontroller/common/config/holder",
+        "//touchcontroller/buildinfo",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//game/26.1:game_client",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_api",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_lifecycle_events_v1",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_networking_api_v1",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_renderer_api_v1",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_rendering_v1",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_loader",
+    ],
+)
