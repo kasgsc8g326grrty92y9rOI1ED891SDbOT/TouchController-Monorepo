@@ -26,16 +26,14 @@ import top.fifthlight.combine.widget.layout.Box
 import top.fifthlight.combine.widget.layout.Column
 import top.fifthlight.combine.widget.layout.FlowRow
 import top.fifthlight.combine.widget.layout.Row
-import top.fifthlight.combine.widget.ui.*
+import top.fifthlight.combine.widget.ui.EditText
+import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.data.IntPadding
 import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.gal.PlayerInventory
 import top.fifthlight.touchcontroller.common.gal.creativetab.CreativeTabsProvider
 import top.fifthlight.touchcontroller.common.ui.component.ListButton
-import kotlin.collections.getOrNull
-import kotlin.collections.withIndex
 
 class VanillaItemListScreen(
     private val onItemSelected: (Item) -> Unit,
