@@ -96,6 +96,7 @@ def _remap_jar_impl(ctx):
 
     # Merge all JavaInfos from individual outputs
     merged_java_info = java_common.merge(java_infos)
+    merged_java_info = java_common.make_non_strict(merged_java_info)
 
     return [
         merged_java_info,

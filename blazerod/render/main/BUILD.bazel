@@ -1,5 +1,5 @@
 load("@rules_java//java:java_library.bzl", "java_library")
-load("//rule:merge_library.bzl", "kt_merge_library")
+load("//rule:merge_library.bzl", "kt_merge_library", "merge_library_group")
 
 java_library(
     name = "main_resources",
@@ -9,7 +9,7 @@ java_library(
 )
 
 kt_merge_library(
-    name = "main_base",
+    name = "main",
     srcs = ["BlazeRod.kt"],
     visibility = ["//blazerod/render:__subpackages__"],
     deps = [
@@ -17,11 +17,10 @@ kt_merge_library(
     ],
 )
 
-kt_merge_library(
-    name = "main",
-    srcs = ["BlazeRodMain.kt"],
-    merge_deps = [
-        ":main_base",
+merge_library_group(
+    name = "main_deps",
+    deps = [
+        ":main",
         "//blazerod/render/api",
         "//blazerod/render/api/animation",
         "//blazerod/render/api/event",

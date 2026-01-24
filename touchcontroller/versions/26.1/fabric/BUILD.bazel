@@ -38,10 +38,12 @@ kt_merge_library(
         "//touchcontroller/common/gal/key",
         "//touchcontroller/common/layout/data",
         "//touchcontroller/common/model",
-        "//touchcontroller/resources/texture:vanilla_lib",
         "//touchcontroller/versions/26.1/extension",
         "//touchcontroller/versions/26.1/gal",
         "//touchcontroller/versions/26.1/mixin",
+    ],
+    merge_only_deps = [
+        "//touchcontroller/resources/texture:vanilla_lib",
     ],
     resource_jars = [
         ":fabric_mod_json",

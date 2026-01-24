@@ -9,7 +9,6 @@ kt_jvm_library(
     visibility = ["//visibility:public"],
     deps = [
         "//:compose",
-        "//combine/backend/minecraft/26.1",
         "//combine/core/data",
         "//combine/core/layout",
         "//combine/core/modifier",
@@ -24,9 +23,7 @@ kt_jvm_library(
         "//combine/style",
         "//combine/theme/base",
         "//combine/theme/blackstone",
-        "//combine/theme/blackstone:vanilla_lib_unmerged",
         "//combine/theme/oreui",
-        "//combine/theme/oreui:vanilla_lib_unmerged",
         "//combine/theme/vanilla",
         "//combine/widget",
         "//game/26.1:game_client_libraries",
@@ -36,6 +33,11 @@ kt_jvm_library(
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_key_mapping_api_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_lifecycle_events_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_loader",
+    ],
+    runtime_deps = [
+        "//combine/backend/minecraft/26.1",
+        "//combine/theme/blackstone:vanilla_lib_unmerged",
+        "//combine/theme/oreui:vanilla_lib_unmerged",
     ],
 )
 

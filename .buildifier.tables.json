@@ -1,5 +1,6 @@
 {
     "isSortableListArg": {
-        "merge_deps": true
+        "merge_deps": true,
+        "merge_only_deps": true
     }
 }

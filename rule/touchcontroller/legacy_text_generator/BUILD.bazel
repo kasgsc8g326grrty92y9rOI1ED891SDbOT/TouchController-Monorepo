@@ -6,7 +6,6 @@ kt_jvm_binary(
     main_class = "top.fifthlight.touchcontroller.resources.generator.LegacyTextGeneratorKt",
     visibility = ["//touchcontroller/resources:__subpackages__"],
     deps = [
-        "@maven//:com_squareup_kotlinpoet_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_core_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_json_jvm",
     ],

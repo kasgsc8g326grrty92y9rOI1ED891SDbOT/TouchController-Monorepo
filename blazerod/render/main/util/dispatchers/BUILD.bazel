@@ -7,7 +7,7 @@ kt_merge_library(
         "ThreadExecutorDispatcher.kt",
     ],
     merge_deps = [
-        "//blazerod/render/main:main_base",
+        "//blazerod/render/main",
     ],
     visibility = ["//blazerod/render:__subpackages__"],
     deps = [

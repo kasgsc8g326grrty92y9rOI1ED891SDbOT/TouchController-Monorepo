@@ -9,7 +9,6 @@ kt_jvm_library(
     resources = glob(["resources/**"]),
     deps = [
         "//:compose",
-        "//combine/backend/minecraft/1.21.8",
         "//combine/core/data",
         "//combine/core/layout",
         "//combine/core/modifier",
@@ -23,13 +22,16 @@ kt_jvm_library(
         "//combine/example/versions/1.21.8:remapped_deps",
         "//combine/theme/base",
         "//combine/theme/blackstone",
-        "//combine/theme/blackstone:vanilla_lib_unmerged",
         "//combine/theme/oreui",
-        "//combine/theme/oreui:vanilla_lib_unmerged",
         "//combine/theme/vanilla",
         "//combine/widget",
         "//game/1.21.8:game_client_libraries",
         "@maven_fabric_1_21_8//:net_fabricmc_fabric_loader",
+    ],
+    runtime_deps = [
+        "//combine/backend/minecraft/1.21.8",
+        "//combine/theme/oreui:vanilla_lib_unmerged",
+        "//combine/theme/blackstone:vanilla_lib_unmerged",
     ],
 )
 

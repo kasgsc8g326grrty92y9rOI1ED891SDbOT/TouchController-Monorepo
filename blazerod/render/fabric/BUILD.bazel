@@ -38,7 +38,7 @@ kt_merge_library(
         "//blazerod/render/api/resource",
         "//blazerod/render/expect",
         "//blazerod/render/main",
-        "//blazerod/render/main:main_base",
+        "//blazerod/render/main:main_deps",
         "//blazerod/render/main/debug",
         "//blazerod/render/main/layout",
         "//blazerod/render/main/runtime",
