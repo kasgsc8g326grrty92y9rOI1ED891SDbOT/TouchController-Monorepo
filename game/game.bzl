@@ -161,9 +161,11 @@ def _game_version_impl(
 
         jar(
             name = mapping_jar,
-            data = {
-                (":" + merged_mapping): "mappings/mappings.tiny",
+            resources = [":" + merged_mapping],
+            resources_rename = {
+                "merged.tiny": "mappings.tiny",
             },
+            resources_prefix = "mappings",
             visibility = visibility,
         )
 
