@@ -13,8 +13,8 @@
 
 整体项目正在从各自的仓库逐步迁移到本仓库中。进度大致如下：
 
-- Combine：迁移中
-- TouchController：暂未迁移
+- Combine：迁移完毕
+- TouchController：迁移中
 - TouchControllerWiki：迁移完毕
 - BlazeRod：迁移完毕
 - ArmorStand：迁移完毕
@@ -39,8 +39,8 @@ This is the central repository of TouchController organization. Now there are:
 
 Projects are gradually being migrated from their respective repositories to here. The progress is roughly as follows:
 
-- Combine: Migrating
-- TouchController: Not yet migrated
+- Combine: Migrated
+- TouchController: Migrating
 - TouchControllerWiki：Migrated
 - BlazeRod: Migrated
 - ArmorStand: Migrated
