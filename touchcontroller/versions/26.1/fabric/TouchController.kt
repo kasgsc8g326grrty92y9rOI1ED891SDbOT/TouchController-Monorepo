@@ -24,6 +24,7 @@ import top.fifthlight.touchcontroller.common.event.tick.TickEvents
 import top.fifthlight.touchcontroller.common.event.window.WindowEvents
 import top.fifthlight.touchcontroller.common.model.ControllerHudModel
 import top.fifthlight.touchcontroller.version_26_1.TouchControllerLoadStatus
+import top.fifthlight.touchcontroller.version_26_1.gal.GameConfigEditorImpl
 import top.fifthlight.touchcontroller.version_26_1.gal.KeyBindingStateImpl
 import top.fifthlight.touchcontroller.version_26_1.gal.PlatformWindowProviderImpl
 
@@ -46,8 +47,6 @@ class TouchController : ClientModInitializer {
     }
 
     private fun initialize() {
-        GlobalConfigHolder.load()
-
         HudElementRegistry.attachElementBefore(
             VanillaHudElements.MISC_OVERLAYS,
             Identifier.of(BuildInfo.MOD_ID, "hud").toMinecraft()
@@ -80,8 +79,9 @@ class TouchController : ClientModInitializer {
         }
         ClientLifecycleEvents.CLIENT_STARTED.register {
             val client = Minecraft.getInstance()
+            GlobalConfigHolder.load()
             WindowEvents.onWindowCreated(PlatformWindowProviderImpl(client.window))
-            //GameConfigEditorImpl.executePendingCallback()
+            GameConfigEditorImpl.executePendingCallback()
         }
         ClientPlayerBlockBreakEvents.AFTER.register { _, _, _, _ ->
             BlockBreakEvents.afterBlockBreak()

@@ -1,9 +1,9 @@
 package top.fifthlight.touchcontroller.version_26_1.fabric.mixin;
 
-import com.mojang.blaze3d.platform.InputConstants;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -16,31 +16,25 @@ import top.fifthlight.touchcontroller.version_26_1.extensions.ClickableKeyBindin
 import top.fifthlight.touchcontroller.version_26_1.fabric.TouchController;
 import top.fifthlight.touchcontroller.version_26_1.fabric.gal.KeyBindingHandlerImpl;
 
-import java.util.Map;
+import java.util.function.Consumer;
 
 @Mixin(KeyMapping.class)
 public abstract class KeyBindingMixin implements ClickableKeyBinding {
     @Shadow
-    @Final
-    private static Map<InputConstants.Key, KeyMapping> MAP;
-
-    @Shadow
     private int clickCount;
 
     @Unique
-    private static boolean touchController$doCancelKey(InputConstants.Key key) {
+    private static boolean touchController$doCancelKey(KeyMapping keyMapping) {
         var configHolder = GlobalConfigHolder.INSTANCE;
         var config = configHolder.getConfig().getValue();
 
         var client = Minecraft.getInstance();
-        KeyMapping keyBinding = MAP.get(key);
-
-        if (keyBinding == client.options.keyAttack || keyBinding == client.options.keyUse) {
+        if (keyMapping == client.options.keyAttack || keyMapping == client.options.keyUse) {
             return config.getRegular().getDisableMouseClick() || config.getDebug().getEnableTouchEmulation();
         }
 
         for (var i = 0; i < 9; i++) {
-            if (client.options.keyHotbarSlots[i] == keyBinding) {
+            if (client.options.keyHotbarSlots[i] == keyMapping) {
                 return config.getRegular().getDisableHotBarKey();
             }
         }
@@ -48,18 +42,16 @@ public abstract class KeyBindingMixin implements ClickableKeyBinding {
         return false;
     }
 
-    @Inject(method = "click", at = @At("HEAD"), cancellable = true)
-    private static void onKeyPressed(InputConstants.Key key, CallbackInfo info) {
-        if (touchController$doCancelKey(key)) {
-            info.cancel();
+    @WrapOperation(method = "forAllKeyMappings", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V"))
+    private static <T> void forAllKeyMappings(Consumer<T> instance, T keyMapping, Operation<Void> original) {
+        if (!(keyMapping instanceof KeyMapping key)) {
+            original.call(instance, keyMapping);
+            return;
         }
-    }
-
-    @Inject(method = "set", at = @At("HEAD"), cancellable = true)
-    private static void setKeyPressed(InputConstants.Key key, boolean pHeld, CallbackInfo info) {
         if (touchController$doCancelKey(key)) {
-            info.cancel();
+            return;
         }
+        original.call(instance, keyMapping);
     }
 
     @Override

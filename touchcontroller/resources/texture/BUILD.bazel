@@ -70,6 +70,7 @@ vanilla_pack(
     name = "vanilla_pack",
     dep = ":texture",
     namespace = "touchcontroller",
+    visibility = ["//touchcontroller:__subpackages__"],
 )
 
 kt_vanilla_lib(
@@ -85,5 +86,6 @@ atlas_pack(
     dep = ":texture",
     height = 512,
     namespace = "touchcontroller",
+    visibility = ["//touchcontroller:__subpackages__"],
     width = 512,
 )

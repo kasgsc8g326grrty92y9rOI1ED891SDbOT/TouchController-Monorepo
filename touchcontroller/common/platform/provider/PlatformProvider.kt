@@ -74,7 +74,6 @@ object PlatformProvider {
 
     private data class NativeLibraryInfo(
         val modContainerPath: String,
-        val debugPath: Path?,
         val extractPrefix: String,
         val extractSuffix: String,
         val readOnlySetter: (Path) -> Unit = {},
@@ -123,7 +122,6 @@ object PlatformProvider {
 
             return NativeLibraryInfo(
                 modContainerPath = "$targetArch/libproxy_server_android.so",
-                debugPath = null,
                 extractPrefix = "libproxy_server_android",
                 extractSuffix = ".so",
                 readOnlySetter = ::posixReadOnlySetter,
@@ -156,17 +154,6 @@ object PlatformProvider {
 
                 return NativeLibraryInfo(
                     modContainerPath = "$targetTriple/$libraryName.dll",
-                    debugPath = Paths.get(
-                        "..",
-                        "..",
-                        "..",
-                        "..",
-                        "proxy-windows",
-                        "build",
-                        "cmake",
-                        target,
-                        "$libraryName.dll"
-                    ),
                     extractPrefix = libraryName,
                     extractSuffix = ".dll",
                     readOnlySetter = ::windowsReadOnlySetter,
@@ -201,17 +188,6 @@ object PlatformProvider {
 
                 return NativeLibraryInfo(
                     modContainerPath = "$targetTriple/libproxy_linux_$platformName.so",
-                    debugPath = Paths.get(
-                        "..",
-                        "..",
-                        "..",
-                        "..",
-                        "proxy-linux",
-                        "build",
-                        "cmake",
-                        archPrefix,
-                        "libproxy_linux_$platformName.so"
-                    ),
                     extractPrefix = "libproxy_linux_$platformName",
                     extractSuffix = ".so",
                     readOnlySetter = ::posixReadOnlySetter,
@@ -266,11 +242,7 @@ object PlatformProvider {
 
         logger.info("Native library info:")
         logger.info("path: ${info.modContainerPath}")
-        logger.info("debugPath: ${info.debugPath}")
-        val nativeLibrary = nativeLibraryPathGetter.getNativeLibraryPath(
-            path = info.modContainerPath,
-            debugPath = info.debugPath
-        ) ?: run {
+        val nativeLibrary = nativeLibraryPathGetter.getNativeLibraryPath(info.modContainerPath) ?: run {
             logger.warn("Failed to get native library path")
             return null
         }

@@ -1,4 +1,22 @@
 load("//rule:merge_library.bzl", "kt_merge_library")
+load("//rule/fabric:mod_json_jar.bzl", "fabric_mod_json_jar")
+load("//touchcontroller:properties.bzl", "touchcontroller_authors", "touchcontroller_contributors", "touchcontroller_description", "touchcontroller_homepage", "touchcontroller_issue_tracker", "touchcontroller_license", "touchcontroller_source", "touchcontroller_version")
+
+fabric_mod_json_jar(
+    name = "fabric_mod_json",
+    src = "resources/fabric.mod.json",
+    resource_strip_prefix = "touchcontroller/versions/26.1/fabric",
+    substitutions = {
+        "${version}": touchcontroller_version,
+        "${license}": touchcontroller_license,
+        "${home_page}": touchcontroller_homepage,
+        "${sources_page}": touchcontroller_source,
+        "${issue_tracker}": touchcontroller_issue_tracker,
+        "${description}": touchcontroller_description,
+        "mod_authors_array": json.encode(touchcontroller_authors),
+        "mod_contributors_array": json.encode(touchcontroller_contributors),
+    },
+)
 
 kt_merge_library(
     name = "fabric",
@@ -8,25 +26,79 @@ kt_merge_library(
     ]),
     actual = True,
     merge_deps = [
-        "//touchcontroller/common/gal/key",
+        "//touchcontroller/buildinfo",
+        "//touchcontroller/common/config/holder",
         "//touchcontroller/common/event/block",
         "//touchcontroller/common/event/connection",
         "//touchcontroller/common/event/tick",
         "//touchcontroller/common/event/key",
+        "//touchcontroller/common/event/render",
+        "//touchcontroller/common/event/window",
+        "//touchcontroller/common/gal/key",
         "//touchcontroller/common/gal/config",
+        "//touchcontroller/common/layout/data",
+        "//touchcontroller/common/model",
         "//touchcontroller/versions/26.1",
+        "//touchcontroller/versions/26.1/extension",
         "//touchcontroller/versions/26.1/mixin",
-        "//touchcontroller/common/config/holder",
-        "//touchcontroller/buildinfo",
     ],
+    resource_jars = [
+        ":fabric_mod_json",
+        "//touchcontroller/resources/texture:vanilla_pack",
+        "//touchcontroller/resources/lang",
+    ],
+    resource_strip_prefix = "touchcontroller/versions/26.1/fabric/resources",
+    resources = glob(
+        include = ["resources/**"],
+        exclude = ["resources/fabric.mod.json"],
+    ),
     visibility = ["//visibility:public"],
     deps = [
+        "//combine/backend/minecraft/26.1",
+        "//combine/core/data",
         "//game/26.1:game_client",
+        "@maven_fabric_26_1//:io_github_llamalad7_mixinextras_fabric",
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_api",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_events_interaction_v0",
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_lifecycle_events_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_networking_api_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_renderer_api_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_rendering_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_loader",
+        "@maven_fabric_26_1//:net_fabricmc_sponge_mixin",
+        "@minecraft//26.1-snapshot-2:client_libraries",
+    ],
+)
+
+java_binary(
+    name = "dev_client",
+    srcs = [],
+    data = [
+        "//game/26.1:game_client_assets",
+        "@minecraft_assets//:assets",
+    ],
+    env = {
+        "LANG": "en_US.UTF8",
+    },
+    jvm_flags = [
+        "-Dfabric.development=true",
+        "-Ddev.launch.version=26.1-snapshot-2",
+        "-Ddev.launch.type=client",
+        "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
+        "-Ddev.launch.mainClass=net.fabricmc.loader.impl.launch.knot.KnotClient",
+        "-Xmx4G",
+    ],
+    main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
+    runtime_deps = [
+        "//game/26.1:game_client",
+        "//game/26.1:game_client_libraries",
+        # Classpath separator
+        ":fabric",
+        "//combine/backend/minecraft/26.1/fabric:fabric_merged",
+        "//rule/dev_launch_wrapper",
+        "@maven_fabric_26_1//:io_github_llamalad7_mixinextras_fabric",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_language_kotlin",
+        "@maven_fabric_26_1//:net_fabricmc_fabric_loader",
+        "@maven_fabric_26_1//:net_fabricmc_sponge_mixin",
     ],
 )

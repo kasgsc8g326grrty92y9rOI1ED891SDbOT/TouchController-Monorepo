@@ -13,3 +13,17 @@ generate_legacy_text(
     name = "legacy_text",
     deps = glob(["*.json"]),
 )
+
+java_library(
+    name = "lang",
+    resource_strip_prefix = "touchcontroller/resources/lang",
+    resources = glob(["*.json"]),
+    visibility = ["//touchcontroller:__subpackages__"],
+)
+
+java_library(
+    name = "lang_legacy",
+    resource_strip_prefix = "touchcontroller/resources/lang",
+    resources = [":legacy_text"],
+    visibility = ["//touchcontroller:__subpackages__"],
+)

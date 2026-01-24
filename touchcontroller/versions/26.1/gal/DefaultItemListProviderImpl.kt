@@ -4,10 +4,17 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import net.minecraft.world.item.Items
 import top.fifthlight.combine.backend.minecraft_26_1.ItemImpl
+import top.fifthlight.mergetools.api.ActualConstructor
+import top.fifthlight.mergetools.api.ActualImpl
 import top.fifthlight.touchcontroller.common.config.item.ItemList
 import top.fifthlight.touchcontroller.common.gal.itemlist.DefaultItemListProvider
 
+@ActualImpl(DefaultItemListProvider::class)
 object DefaultItemListProviderImpl : DefaultItemListProvider {
+    @JvmStatic
+    @ActualConstructor
+    fun of(): DefaultItemListProvider = this
+
     override val usableItems = ItemList(
         whitelist = persistentListOf(
             ItemImpl(Items.FISHING_ROD),

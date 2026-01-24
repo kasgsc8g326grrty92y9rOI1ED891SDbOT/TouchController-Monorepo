@@ -9,12 +9,12 @@ import top.fifthlight.touchcontroller.version_26_1.mixin.KeyMappingAccessor
 
 @ActualImpl(KeyBindingHandler::class)
 object KeyBindingHandlerImpl : AbstractKeyBindingHandlerImpl() {
+    @JvmStatic
+    @ActualConstructor
+    fun of(): KeyBindingHandler = this
+
     override fun getKeyBinding(name: String): KeyMapping? = KeyMapping.get(name)
 
     override fun getAllKeyBinding(): Map<String, KeyMapping> =
         KeyMappingAccessor.`touchcontroller$getAllKeyMappings`()
-
-    @JvmStatic
-    @ActualConstructor
-    fun of(): KeyBindingHandler = this
 }
