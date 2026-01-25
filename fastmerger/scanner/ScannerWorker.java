@@ -1,5 +1,6 @@
 package top.fifthlight.fastmerger.scanner;
 
+import it.unimi.dsi.fastutil.ints.IntObjectImmutablePair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import picocli.CommandLine;
@@ -8,6 +9,7 @@ import top.fifthlight.fastmerger.bindeps.BindepsWriter;
 import top.fifthlight.fastmerger.scanner.classdeps.ClassDepsScanner;
 import top.fifthlight.fastmerger.scanner.classdeps.ClassNameMap;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.*;
@@ -32,14 +34,16 @@ public class ScannerWorker extends Worker {
         }
 
         private int[] lookupClassEntries(Object2IntMap<String> entryMap, ClassNameMap.Entry[] entries) {
-            var result = new int[entries.length];
-            for (var i = 0; i < entries.length; i++) {
-                result[i] = entryMap.getInt(entries[i].fullName());
-                if (result[i] == -1) {
-                    throw new IllegalStateException("Entry not found for " + entries[i].fullName());
-                }
-            }
-            return result;
+            return Arrays.stream(entries)
+                    .mapToInt(entry -> {
+                        var index = entryMap.getInt(entry.fullName());
+                        if (index == -1) {
+                            throw new IllegalStateException("Entry not found for " + entry.fullName());
+                        }
+                        return index;
+                    })
+                    .sorted()
+                    .toArray();
         }
 
         @Override
@@ -79,25 +83,45 @@ public class ScannerWorker extends Worker {
                 }
 
                 writer.startClassInfo();
-                for (var classInfo : result.classInfos().values()) {
-                    var nameIndex = entryMap.getInt(classInfo.getFullName());
-                    if (nameIndex == -1) {
-                        throw new IllegalStateException("Class name entry not found for " + classInfo.getFullName());
-                    }
-                    var superNameIndex = -1;
-                    var superEntry = classInfo.superClass();
-                    if (superEntry != null) {
-                        superNameIndex = entryMap.getInt(superEntry.fullName());
-                        if (superNameIndex == -1) {
-                            throw new IllegalStateException("Super class name entry not found for " + superEntry.fullName());
-                        }
-                    }
+                try {
+                    result.classInfos().values().stream()
+                            .map(classInfo -> {
+                                var nameIndex = entryMap.getInt(classInfo.getFullName());
+                                if (nameIndex == -1) {
+                                    throw new IllegalStateException("Class name entry not found for " + classInfo.getFullName());
+                                }
+                                return new IntObjectImmutablePair<>(nameIndex, classInfo);
+                            })
+                            .sorted(Comparator.comparingInt(IntObjectImmutablePair::leftInt))
+                            .forEachOrdered(pair -> {
+                                var nameIndex = pair.leftInt();
+                                var classInfo = pair.right();
 
-                    var interfaces = lookupClassEntries(entryMap, classInfo.interfaces());
-                    var annotations = lookupClassEntries(entryMap, classInfo.annotations());
-                    var dependencies = lookupClassEntries(entryMap, classInfo.dependencies());
+                                var superNameIndex = -1;
+                                var superEntry = classInfo.superClass();
+                                if (superEntry != null) {
+                                    superNameIndex = entryMap.getInt(superEntry.fullName());
+                                    if (superNameIndex == -1) {
+                                        throw new IllegalStateException("Super class name entry not found for " + superEntry.fullName());
+                                    }
+                                }
 
-                    writer.writeClassInfoEntry(nameIndex, superNameIndex, classInfo.accessFlag(), interfaces, annotations, dependencies);
+                                var interfaces = lookupClassEntries(entryMap, classInfo.interfaces());
+                                var annotations = lookupClassEntries(entryMap, classInfo.annotations());
+                                var dependencies = lookupClassEntries(entryMap, classInfo.dependencies());
+
+                                try {
+                                    writer.writeClassInfoEntry(nameIndex, superNameIndex, classInfo.accessFlag(), interfaces, annotations, dependencies);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                } catch (RuntimeException e) {
+                    if (e.getCause() instanceof IOException ioException) {
+                        throw ioException;
+                    } else {
+                        throw e;
+                    }
                 }
             }
             return 0;
