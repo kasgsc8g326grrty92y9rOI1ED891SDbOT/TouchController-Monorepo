@@ -117,8 +117,12 @@ public class ClassInfoVisitor extends ClassVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-        consumer.acceptAnnotation(descriptor);
-        visitDesc(descriptor);
+        var type = Type.getType(descriptor);
+        if (type.getSort() == Type.OBJECT) {
+            var internalName = type.getInternalName();
+            visitType(internalName);
+            consumer.acceptAnnotation(internalName);
+        }
         return new PkgDepsAnnotationVisitor(super.visitAnnotation(descriptor, visible));
     }
 
