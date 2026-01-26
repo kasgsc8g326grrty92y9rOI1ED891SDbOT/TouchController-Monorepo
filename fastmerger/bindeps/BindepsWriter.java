@@ -27,7 +27,7 @@ public class BindepsWriter implements AutoCloseable {
         indexBuffer.putInt(BindepsConstants.VERSION);
         indexBuffer.putInt(stringPoolSize);
         indexBuffer.putInt(classInfoSize);
-        indexBuffer.put(new byte[4]); // Pad header to 24 bytes
+        indexBuffer.putInt(-1); // Heap size
 
         currentHeapOffset = BindepsConstants.HEADER_SIZE + BindepsConstants.STRING_RECORD_SIZE * stringPoolSize + BindepsConstants.CLASS_RECORD_SIZE * classInfoSize;
     }
@@ -136,6 +136,7 @@ public class BindepsWriter implements AutoCloseable {
             return;
         }
         try {
+            indexBuffer.putInt(20, heapBuffer.position());
             writeBuffer(indexBuffer);
             writeBuffer(heapBuffer);
         } finally {

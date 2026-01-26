@@ -29,11 +29,23 @@ public class ClassInfoVisitor extends ClassVisitor {
         this.consumer = Objects.requireNonNull(consumer);
     }
 
+    private String selfName;
+
     private void visitType(String type) {
         if (type == null) {
             return;
         }
+        if (type.equals(selfName)) {
+            return;
+        }
         consumer.acceptClassDependency(type);
+    }
+
+    private void visitDesc(Type type) {
+        if (type.getSort() != Type.OBJECT) {
+            return;
+        }
+        visitType(type.getInternalName());
     }
 
     private void visitDesc(String descriptor) {
@@ -42,13 +54,6 @@ public class ClassInfoVisitor extends ClassVisitor {
         }
         var type = Type.getType(descriptor);
         visitDesc(type);
-    }
-
-    private void visitDesc(Type type) {
-        if (type.getSort() != Type.OBJECT) {
-            return;
-        }
-        visitType(type.getInternalName());
     }
 
     private void visitMethodDesc(String descriptor) {
@@ -66,6 +71,7 @@ public class ClassInfoVisitor extends ClassVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName,
                       String[] interfaces) {
+        selfName = name;
         consumer.acceptClassInfo(name, access, superName);
         if (superName != null) {
             visitType(superName);

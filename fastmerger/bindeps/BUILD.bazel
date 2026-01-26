@@ -4,4 +4,7 @@ java_library(
     name = "bindeps",
     srcs = glob(["*.java"]),
     visibility = ["//fastmerger:__subpackages__"],
+    deps = [
+        "@maven//:org_jetbrains_annotations",
+    ],
 )
