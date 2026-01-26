@@ -209,7 +209,15 @@ public class ClassInfoVisitor extends ClassVisitor {
         @Override
         public void visitMethodInsn(
                 int opcode, String owner, String name, String descriptor, boolean isInterface) {
-            ClassInfoVisitor.this.visitType(owner);
+            if (owner.startsWith("[")) {
+                var type = Type.getType(owner);
+                var elementType = type.getElementType();
+                if (elementType.getSort() == Type.OBJECT) {
+                    ClassInfoVisitor.this.visitDesc(elementType);
+                }
+            } else {
+                ClassInfoVisitor.this.visitType(owner);
+            }
             ClassInfoVisitor.this.visitMethodDesc(descriptor);
             super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
         }
