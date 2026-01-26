@@ -4,6 +4,7 @@ java_binary(
     name = "scanner",
     srcs = glob(["*.java"]),
     main_class = "top.fifthlight.fastmerger.scanner.ScannerWorker",
+    visibility = ["//fastmerger:__subpackages__"],
     deps = [
         "//:picocli",
         "//fastmerger/bindeps",

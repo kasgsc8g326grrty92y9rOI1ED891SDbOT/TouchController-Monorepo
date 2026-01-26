@@ -9,7 +9,6 @@ import top.fifthlight.fastmerger.bindeps.BindepsWriter;
 import top.fifthlight.fastmerger.scanner.classdeps.ClassDepsScanner;
 import top.fifthlight.fastmerger.scanner.classdeps.ClassNameMap;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.*;
@@ -26,9 +25,6 @@ public class ScannerWorker extends Worker {
 
         @Parameters(index = "1", description = "Output binary dependencies file")
         Path outputFile;
-
-        @Parameters(index = "2", description = "Output binary dependencies heap file")
-        Path outputHeapFile;
 
         private final Path sandboxDir;
 
@@ -53,7 +49,6 @@ public class ScannerWorker extends Worker {
         public Integer call() throws Exception {
             var inputPath = sandboxDir.resolve(inputFile);
             var outputPath = sandboxDir.resolve(outputFile);
-            var heapPath = sandboxDir.resolve(outputHeapFile);
 
             var result = new ClassDepsScanner().scan(inputPath);
 
@@ -73,7 +68,7 @@ public class ScannerWorker extends Worker {
                         .forEachOrdered(e -> stack.push(e.getValue()));
             }
 
-            try (var writer = new BindepsWriter(outputPath, heapPath, entries.size(), result.classInfos().size())) {
+            try (var writer = new BindepsWriter(outputPath, entries.size(), result.classInfos().size())) {
                 for (var entry : entries) {
                     var parent = entry.parentEntry();
                     var parentIndex = parent != null ? entryMap.getInt(parent.fullName()) : -1;
@@ -95,12 +90,8 @@ public class ScannerWorker extends Worker {
                             var annotations = lookupClassEntries(entryMap, classInfo.annotations());
                             var dependencies = lookupClassEntries(entryMap, classInfo.dependencies());
 
-                            try {
-                                writer.writeClassInfoEntry(pair.leftInt(), superIndex, classInfo.accessFlag(),
-                                        interfaces, annotations, dependencies);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                            writer.writeClassInfoEntry(pair.leftInt(), superIndex, classInfo.accessFlag(),
+                                    interfaces, annotations, dependencies);
                         });
             }
             return 0;
