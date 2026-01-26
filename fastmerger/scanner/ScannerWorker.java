@@ -77,7 +77,7 @@ public class ScannerWorker extends Worker {
                 for (var entry : entries) {
                     var parent = entry.parentEntry();
                     var parentIndex = parent != null ? entryMap.getInt(parent.fullName()) : -1;
-                    writer.writeStringPoolEntry(entry.hash(), parentIndex, entry.nameBytes());
+                    writer.writeStringPoolEntry(entry.hash(), parentIndex, entry.nameBytes(), entry.fullNameBytes());
                 }
 
                 result.classInfos().values().stream()

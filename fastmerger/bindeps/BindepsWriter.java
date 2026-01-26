@@ -44,22 +44,24 @@ public class BindepsWriter implements AutoCloseable {
         buf.clear();
     }
 
-    public void writeStringPoolEntry(long hash, int parentIndex, byte[] stringBytes) throws IOException {
-        var len = stringBytes.length;
+    public void writeStringPoolEntry(long hash, int parentIndex, byte[] nameBytes, byte[] fullNameBytes) throws IOException {
+        var nameLength = nameBytes.length;
+        var fullNameLength = fullNameBytes.length;
 
         // Write index
-        flushIfNeeded(indexChannel, indexBuffer, 24);
+        flushIfNeeded(indexChannel, indexBuffer, BindepsConstraints.STRING_RECORD_SIZE);
         indexBuffer.putLong(hash);
         indexBuffer.putInt(parentIndex);
         indexBuffer.putInt(currentHeapOffset);
-        indexBuffer.putShort((short) len);
-        indexBuffer.put(new byte[6]); // Padded to 24 bytes
+        indexBuffer.putShort((short) nameLength);
+        indexBuffer.putShort((short) fullNameLength);
+        indexBuffer.put(new byte[4]); // Padded to 24 bytes
 
         // Write heap
-        flushIfNeeded(heapChannel, heapBuffer, len);
-        heapBuffer.put(stringBytes);
-
-        currentHeapOffset += len;
+        flushIfNeeded(heapChannel, heapBuffer, nameLength + fullNameLength);
+        heapBuffer.put(nameBytes);
+        heapBuffer.put(fullNameBytes);
+        currentHeapOffset += nameLength + fullNameLength;
     }
 
     public void writeClassInfoEntry(int nameIndex, int superIndex, int access,
@@ -70,7 +72,7 @@ public class BindepsWriter implements AutoCloseable {
         var dependenciesOffset = writeIntArrayToHeap(dependencies);
 
         // Write index
-        flushIfNeeded(indexChannel, indexBuffer, 36);
+        flushIfNeeded(indexChannel, indexBuffer, BindepsConstraints.CLASS_RECORD_SIZE);
         indexBuffer.putInt(nameIndex);
         indexBuffer.putInt(superIndex);
         indexBuffer.putInt(access);

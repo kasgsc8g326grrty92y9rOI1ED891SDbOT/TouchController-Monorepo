@@ -23,6 +23,8 @@ public class ClassNameMap {
 
         byte[] nameBytes();
 
+        byte[] fullNameBytes();
+
         String fullName();
 
         @Nullable
@@ -37,15 +39,17 @@ public class ClassNameMap {
             String name,
             String fullName,
             byte[] nameBytes,
+            byte[] fullNameBytes,
             @Nullable ClassNameMap.EntryImpl parentEntry,
             ConcurrentHashMap<String, EntryImpl> entries
     ) implements Entry {
         private static final XXHash64 HASHER = XXHashFactory.fastestInstance().hash64();
 
         public static EntryImpl of(String name, String fullName, @Nullable ClassNameMap.EntryImpl parentEntry) {
-            var stringBytes = name.getBytes(StandardCharsets.UTF_8);
-            var hash = HASHER.hash(stringBytes, 0, stringBytes.length, 0);
-            return new EntryImpl(hash, name, fullName, stringBytes, parentEntry, new ConcurrentHashMap<>());
+            var nameBytes = name.getBytes(StandardCharsets.UTF_8);
+            var fullNameBytes = fullName.getBytes(StandardCharsets.UTF_8);
+            var hash = HASHER.hash(fullNameBytes, 0, nameBytes.length, 0);
+            return new EntryImpl(hash, name, fullName, nameBytes, fullNameBytes, parentEntry, new ConcurrentHashMap<>());
         }
 
         @Override
