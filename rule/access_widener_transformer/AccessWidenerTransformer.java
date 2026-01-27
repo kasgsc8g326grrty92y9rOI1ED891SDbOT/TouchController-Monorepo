@@ -12,11 +12,22 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
 public class AccessWidenerTransformer extends Worker {
+    private static final long DOS_EPOCH = 315532800000L;
+
+    private static void setJarEntryTime(JarEntry entry) {
+        entry.setCreationTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setLastAccessTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setLastModifiedTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setTimeLocal(LocalDateTime.ofEpochSecond(DOS_EPOCH / 1000, 0, ZoneOffset.UTC));
+    }
+
     public static void main(String[] args) throws Exception {
         new AccessWidenerTransformer().run(args);
     }
@@ -45,9 +56,7 @@ public class AccessWidenerTransformer extends Worker {
                 JarEntry entry;
                 while ((entry = input.getNextJarEntry()) != null) {
                     var newEntry = new JarEntry(entry.getName());
-                    newEntry.setCreationTime(FileTime.fromMillis(0));
-                    newEntry.setLastAccessTime(FileTime.fromMillis(0));
-                    newEntry.setLastModifiedTime(FileTime.fromMillis(0));
+                    setJarEntryTime(newEntry);
                     output.putNextEntry(newEntry);
 
                     if (entry.getName().endsWith(".class")) {

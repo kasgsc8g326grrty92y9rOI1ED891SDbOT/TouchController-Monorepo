@@ -15,6 +15,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 public class JarCreator {
+    private static final long DOS_EPOCH = 315532800000L;
+
+    private static void setJarEntryTime(JarEntry entry) {
+        entry.setCreationTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setLastAccessTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setLastModifiedTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setTimeLocal(LocalDateTime.ofEpochSecond(DOS_EPOCH / 1000, 0, ZoneOffset.UTC));
+    }
+
     private final Path sandboxDir;
 
     public JarCreator(Path sandboxDir) {
@@ -63,13 +72,6 @@ public class JarCreator {
                 default -> throw new IllegalArgumentException("Unknown argument: " + arg);
             }
         }
-    }
-
-    private void setJarEntryTime(JarEntry entry) {
-        entry.setCreationTime(FileTime.fromMillis(0));
-        entry.setLastAccessTime(FileTime.fromMillis(0));
-        entry.setLastModifiedTime(FileTime.fromMillis(0));
-        entry.setTimeLocal(LocalDateTime.ofEpochSecond(0L, 0, ZoneOffset.UTC));
     }
 
     private record JarEntryData(String entry, Path filePath) {

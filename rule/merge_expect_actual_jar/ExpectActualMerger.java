@@ -14,6 +14,15 @@ import java.util.*;
 import java.util.jar.*;
 
 public class ExpectActualMerger implements AutoCloseable {
+    private static final long DOS_EPOCH = 315532800000L;
+
+    private static void setJarEntryTime(JarEntry entry) {
+        entry.setCreationTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setLastAccessTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setLastModifiedTime(FileTime.fromMillis(DOS_EPOCH));
+        entry.setTimeLocal(LocalDateTime.ofEpochSecond(DOS_EPOCH / 1000, 0, ZoneOffset.UTC));
+    }
+
     private ExpectActualMerger() {
     }
 
@@ -86,13 +95,6 @@ public class ExpectActualMerger implements AutoCloseable {
         return mergeEntries.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .toList();
-    }
-
-    private static void setJarEntryTime(JarEntry entry) {
-        entry.setCreationTime(FileTime.fromMillis(0));
-        entry.setLastAccessTime(FileTime.fromMillis(0));
-        entry.setLastModifiedTime(FileTime.fromMillis(0));
-        entry.setTimeLocal(LocalDateTime.ofEpochSecond(0L, 0, ZoneOffset.UTC));
     }
 
     private void writeJar(List<Map.Entry<String, MergeEntry>> entries, PreprocessEnvironmentImpl environment) throws Exception {
