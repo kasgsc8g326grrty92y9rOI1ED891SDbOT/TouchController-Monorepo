@@ -7,7 +7,7 @@ import picocli.CommandLine;
 import top.fifthlight.bazel.worker.api.Worker;
 import top.fifthlight.fastmerger.bindeps.BindepsWriter;
 import top.fifthlight.fastmerger.scanner.classdeps.ClassDepsScanner;
-import top.fifthlight.fastmerger.scanner.classdeps.ClassNameMap;
+import top.fifthlight.fastmerger.scanner.pathmap.PathMap;
 
 import java.io.PrintWriter;
 import java.nio.file.Path;
@@ -32,7 +32,7 @@ public class ScannerWorker extends Worker {
             this.sandboxDir = sandboxDir;
         }
 
-        private int[] lookupClassEntries(Object2IntMap<String> entryMap, ClassNameMap.Entry[] entries) {
+        private int[] lookupClassEntries(Object2IntMap<String> entryMap, PathMap.Entry[] entries) {
             return Arrays.stream(entries)
                     .mapToInt(entry -> {
                         var index = entryMap.getInt(entry.fullName());
@@ -52,11 +52,11 @@ public class ScannerWorker extends Worker {
 
             var result = new ClassDepsScanner().scan(inputPath);
 
-            var entries = new ArrayList<ClassNameMap.Entry>();
+            var entries = new ArrayList<PathMap.Entry>();
             var entryMap = new Object2IntOpenHashMap<String>();
             entryMap.defaultReturnValue(-1);
-            var stack = new ArrayDeque<ClassNameMap.Entry>();
-            result.classNameMap().rootEntries().entrySet().stream()
+            var stack = new ArrayDeque<PathMap.Entry>();
+            result.pathMap().rootEntries().entrySet().stream()
                     .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
                     .forEachOrdered(entry -> stack.push(entry.getValue()));
             while (!stack.isEmpty()) {

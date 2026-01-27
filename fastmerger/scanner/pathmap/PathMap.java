@@ -1,4 +1,4 @@
-package top.fifthlight.fastmerger.scanner.classdeps;
+package top.fifthlight.fastmerger.scanner.pathmap;
 
 import net.jpountz.xxhash.XXHash64;
 import net.jpountz.xxhash.XXHashFactory;
@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public class ClassNameMap {
+public class PathMap {
     private final ConcurrentHashMap<String, EntryImpl> rootEntries = new ConcurrentHashMap<>();
 
     public interface Entry {
@@ -28,7 +28,7 @@ public class ClassNameMap {
         String fullName();
 
         @Nullable
-        ClassNameMap.Entry parentEntry();
+        PathMap.Entry parentEntry();
 
         @NotNull
         Map<String, ? extends Entry> entries();
@@ -40,12 +40,12 @@ public class ClassNameMap {
             String fullName,
             byte[] nameBytes,
             byte[] fullNameBytes,
-            @Nullable ClassNameMap.EntryImpl parentEntry,
+            @Nullable PathMap.EntryImpl parentEntry,
             ConcurrentHashMap<String, EntryImpl> entries
     ) implements Entry {
         private static final XXHash64 HASHER = XXHashFactory.fastestInstance().hash64();
 
-        public static EntryImpl of(String name, String fullName, @Nullable ClassNameMap.EntryImpl parentEntry) {
+        public static EntryImpl of(String name, String fullName, @Nullable PathMap.EntryImpl parentEntry) {
             var nameBytes = name.getBytes(StandardCharsets.UTF_8);
             var fullNameBytes = fullName.getBytes(StandardCharsets.UTF_8);
             var hash = HASHER.hash(fullNameBytes, 0, nameBytes.length, 0);
@@ -69,7 +69,7 @@ public class ClassNameMap {
         }
     }
 
-    private EntryImpl insertEntry(@Nullable ClassNameMap.EntryImpl parentEntry, String name, Supplier<String> fullName) {
+    private EntryImpl insertEntry(@Nullable PathMap.EntryImpl parentEntry, String name, Supplier<String> fullName) {
         if (parentEntry == null) {
             return rootEntries.computeIfAbsent(name, k -> EntryImpl.of(k, fullName.get(), null));
         } else {
@@ -100,7 +100,7 @@ public class ClassNameMap {
 
     public record Result(Map<String, ? extends Entry> rootEntries) {
         @Nullable
-        public ClassNameMap.Entry get(String name) {
+        public PathMap.Entry get(String name) {
             if (name == null || name.isEmpty()) {
                 return null;
             }

@@ -2,6 +2,7 @@ package top.fifthlight.fastmerger.scanner.classdeps;
 
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.objectweb.asm.ClassReader;
+import top.fifthlight.fastmerger.scanner.pathmap.PathMap;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,11 +12,11 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class ClassDepsScanner {
-    public record Result(ClassNameMap.Result classNameMap, Map<String, ClassInfo> classInfos) {
+    public record Result(PathMap.Result pathMap, Map<String, ClassInfo> classInfos) {
     }
 
     public Result scan(Path jarPath) throws IOException {
-        var classNameMap = new ClassNameMap();
+        var pathMap = new PathMap();
         var classInfos = new HashMap<String, ClassInfo>();
         var maxConcurrency = Runtime.getRuntime().availableProcessors();
         try (var executor = new ThreadPoolExecutor(
@@ -44,7 +45,7 @@ public class ClassDepsScanner {
                     }
                     futures.add(executor.submit(() -> {
                         var classReader = new ClassReader(content);
-                        var collector = new ClassInfoCollector(classNameMap);
+                        var collector = new ClassInfoCollector(pathMap);
                         classReader.accept(new ClassInfoVisitor(collector), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                         return collector.getClassInfo();
                     }));
@@ -59,6 +60,6 @@ public class ClassDepsScanner {
                 executor.shutdownNow();
             }
         }
-        return new Result(classNameMap.finish(), classInfos);
+        return new Result(pathMap.finish(), classInfos);
     }
 }

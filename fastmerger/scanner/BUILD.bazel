@@ -9,6 +9,7 @@ java_binary(
         "//:picocli",
         "//fastmerger/bindeps",
         "//fastmerger/scanner/classdeps",
+        "//fastmerger/scanner/pathmap",
         "//rule/worker_api",
         "@maven//:it_unimi_dsi_fastutil",
     ],

@@ -1,51 +1,53 @@
 package top.fifthlight.fastmerger.scanner.classdeps;
 
+import top.fifthlight.fastmerger.scanner.pathmap.PathMap;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class ClassInfoCollector implements ClassInfoVisitor.Consumer {
-    private final ClassNameMap classNameMap;
-    private ClassNameMap.Entry entry;
+    private final PathMap pathMap;
+    private PathMap.Entry entry;
     private int accessFlag;
-    private ClassNameMap.Entry superClass;
-    private final ArrayList<ClassNameMap.Entry> interfaces = new ArrayList<>();
-    private final HashSet<ClassNameMap.Entry> annotations = new HashSet<>();
-    private final HashSet<ClassNameMap.Entry> dependencies = new HashSet<>(16);
+    private PathMap.Entry superClass;
+    private final ArrayList<PathMap.Entry> interfaces = new ArrayList<>();
+    private final HashSet<PathMap.Entry> annotations = new HashSet<>();
+    private final HashSet<PathMap.Entry> dependencies = new HashSet<>(16);
 
-    public ClassInfoCollector(ClassNameMap classNameMap) {
-        this.classNameMap = classNameMap;
+    public ClassInfoCollector(PathMap pathMap) {
+        this.pathMap = pathMap;
     }
 
     @Override
     public void acceptClassInfo(String className, int accessFlag, String superClass) {
-        entry = classNameMap.getOrCreate(className);
+        entry = pathMap.getOrCreate(className);
         this.accessFlag = accessFlag;
         if (superClass != null) {
-            this.superClass = classNameMap.getOrCreate(superClass);
+            this.superClass = pathMap.getOrCreate(superClass);
         }
     }
 
     @Override
     public void acceptInterface(String interfaceName) {
-        interfaces.add(classNameMap.getOrCreate(interfaceName));
+        interfaces.add(pathMap.getOrCreate(interfaceName));
     }
 
     @Override
     public void acceptAnnotation(String annotationName) {
-        annotations.add(classNameMap.getOrCreate(annotationName));
+        annotations.add(pathMap.getOrCreate(annotationName));
     }
 
     @Override
     public void acceptClassDependency(String dependencyName) {
-        dependencies.add(classNameMap.getOrCreate(dependencyName));
+        dependencies.add(pathMap.getOrCreate(dependencyName));
     }
 
     public ClassInfo getClassInfo() {
         return new ClassInfo(
-                classNameMap, entry, accessFlag, superClass,
-                interfaces.toArray(new ClassNameMap.Entry[0]),
-                annotations.toArray(new ClassNameMap.Entry[0]),
-                dependencies.toArray(new ClassNameMap.Entry[0])
+                pathMap, entry, accessFlag, superClass,
+                interfaces.toArray(new PathMap.Entry[0]),
+                annotations.toArray(new PathMap.Entry[0]),
+                dependencies.toArray(new PathMap.Entry[0])
         );
     }
 }

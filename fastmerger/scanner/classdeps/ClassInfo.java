@@ -1,13 +1,15 @@
 package top.fifthlight.fastmerger.scanner.classdeps;
 
+import top.fifthlight.fastmerger.scanner.pathmap.PathMap;
+
 public record ClassInfo(
-        ClassNameMap classNameMap,
-        ClassNameMap.Entry entry,
+        PathMap pathMap,
+        PathMap.Entry entry,
         int accessFlag,
-        ClassNameMap.Entry superClass,
-        ClassNameMap.Entry[] interfaces,
-        ClassNameMap.Entry[] annotations,
-        ClassNameMap.Entry[] dependencies
+        PathMap.Entry superClass,
+        PathMap.Entry[] interfaces,
+        PathMap.Entry[] annotations,
+        PathMap.Entry[] dependencies
 ) {
     public String getFullName() {
         return entry.fullName();
