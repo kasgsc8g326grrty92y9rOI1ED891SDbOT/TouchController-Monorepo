@@ -11,10 +11,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class PathMap {
     private final ConcurrentHashMap<String, EntryImpl> rootEntries = new ConcurrentHashMap<>();
+    private final AtomicInteger size = new AtomicInteger(0);
 
     public interface Entry {
         long hash();
@@ -58,6 +60,15 @@ public class PathMap {
         }
 
         @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof EntryImpl entry) {
+                return entry.fullName.equals(fullName);
+            } else {
+                return false;
+            }
+        }
+
+        @Override
         public String toString() {
             return "EntryImpl{" +
                     "nameBytes=" + Arrays.toString(nameBytes) +
@@ -71,9 +82,15 @@ public class PathMap {
 
     private EntryImpl insertEntry(@Nullable PathMap.EntryImpl parentEntry, String name, Supplier<String> fullName) {
         if (parentEntry == null) {
-            return rootEntries.computeIfAbsent(name, k -> EntryImpl.of(k, fullName.get(), null));
+            return rootEntries.computeIfAbsent(name, k -> {
+                size.incrementAndGet();
+                return EntryImpl.of(k, fullName.get(), null);
+            });
         } else {
-            return parentEntry.entries.computeIfAbsent(name, k -> EntryImpl.of(k, fullName.get(), parentEntry));
+            return parentEntry.entries.computeIfAbsent(name, k -> {
+                size.incrementAndGet();
+                return EntryImpl.of(k, fullName.get(), parentEntry);
+            });
         }
     }
 
@@ -98,7 +115,7 @@ public class PathMap {
         return currentEntry;
     }
 
-    public record Result(Map<String, ? extends Entry> rootEntries) {
+    public record Result(Map<String, ? extends Entry> rootEntries, int size) {
         @Nullable
         public PathMap.Entry get(String name) {
             if (name == null || name.isEmpty()) {
@@ -118,6 +135,6 @@ public class PathMap {
     }
 
     public Result finish() {
-        return new Result(Collections.unmodifiableMap(rootEntries));
+        return new Result(Collections.unmodifiableMap(rootEntries), size.get());
     }
 }

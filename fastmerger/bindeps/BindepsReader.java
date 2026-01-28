@@ -15,7 +15,9 @@ public class BindepsReader {
     private final ByteBuffer dataBuffer;
 
     private final int stringPoolSize;
+    private final int resourceInfoSize;
     private final int classInfoSize;
+    private final int resourceInfoOffset;
     private final int classInfoOffset;
 
     public BindepsReader(Path inputPath) throws IOException {
@@ -44,14 +46,25 @@ public class BindepsReader {
             if (stringPoolSize < 0) {
                 throw new IOException("Invalid string pool size: %d".formatted(stringPoolSize));
             }
+            resourceInfoSize = buffer.getInt();
+            if (resourceInfoSize < 0) {
+                throw new IOException("Invalid resource info size: %d".formatted(resourceInfoSize));
+            }
             classInfoSize = buffer.getInt();
             if (classInfoSize < 0) {
                 throw new IOException("Invalid class info size: %d".formatted(classInfoSize));
             }
-            classInfoOffset = BindepsConstants.STRING_RECORD_SIZE * stringPoolSize;
 
             var heapSize = buffer.getInt();
-            var dataSize = BindepsConstants.STRING_RECORD_SIZE * stringPoolSize + BindepsConstants.CLASS_RECORD_SIZE * classInfoSize + heapSize;
+            if (heapSize < 0) {
+                throw new IOException("Invalid heap size: %d".formatted(heapSize));
+            }
+
+            classInfoOffset = BindepsConstants.STRING_RECORD_SIZE * stringPoolSize + BindepsConstants.RESOURCE_RECORD_SIZE * resourceInfoSize;
+            resourceInfoOffset = BindepsConstants.STRING_RECORD_SIZE * stringPoolSize;
+
+            buffer.position(buffer.position() + 20); // Skip padding
+            var dataSize = BindepsConstants.STRING_RECORD_SIZE * stringPoolSize + BindepsConstants.RESOURCE_RECORD_SIZE * resourceInfoSize + BindepsConstants.CLASS_RECORD_SIZE * classInfoSize + heapSize;
 
             ByteBuffer dataBuffer;
             try {
@@ -80,11 +93,17 @@ public class BindepsReader {
     }
 
     public IntBuffer readHeapIntBuffer(int offset, int length) {
-        return dataBuffer.slice(offset, length * 4).order(ByteOrder.BIG_ENDIAN).asIntBuffer();
+        return dataBuffer.slice(offset, length * 4).order(ByteOrder.BIG_ENDIAN).asReadOnlyBuffer().asIntBuffer();
     }
 
     public int readHeapInt(int offset) {
         return dataBuffer.getInt(offset);
+    }
+
+    public byte[] readHeapBytes(int offset, int length) {
+        var bytes = new byte[length];
+        dataBuffer.slice(offset, length).get(bytes);
+        return bytes;
     }
 
     public class StringPoolReader {
@@ -181,6 +200,124 @@ public class BindepsReader {
         return new StringPoolEntry(index);
     }
 
+    public class ResourceInfoReader {
+        public int getFlag(int offset) {
+            return BindepsReader.this.dataBuffer.getInt(offset);
+        }
+
+        public int getNameIndex(int offset) {
+            return BindepsReader.this.dataBuffer.getInt(offset + 4);
+        }
+
+        public int getCrc32(int offset) {
+            return BindepsReader.this.dataBuffer.getInt(offset + 8);
+        }
+
+        public int getDataOffset(int offset) {
+            return BindepsReader.this.dataBuffer.getInt(offset + 12);
+        }
+
+        public int getCompressedSize(int offset) {
+            return BindepsReader.this.dataBuffer.getInt(offset + 16);
+        }
+
+        public int getUncompressedSize(int offset) {
+            return BindepsReader.this.dataBuffer.getInt(offset + 20);
+        }
+
+        public short getCompressMethod(int offset) {
+            return BindepsReader.this.dataBuffer.getShort(offset + 24);
+        }
+    }
+
+    public final ResourceInfoReader resourceInfoReader = new ResourceInfoReader();
+
+    public int getResourceInfoOffset(int index) {
+        return resourceInfoOffset + BindepsConstants.RESOURCE_RECORD_SIZE * index;
+    }
+
+    public int getResourceInfoSize() {
+        return resourceInfoSize;
+    }
+
+    public class ResourceInfoEntry {
+        private final int index;
+
+        private final int flag;
+        private final int nameIndex;
+        private final int crc32;
+        private final int dataOffset;
+        private final int compressedSize;
+        private final int uncompressedSize;
+        private final short compressMethod;
+
+        private StringPoolEntry name = null;
+        private byte[] data = null;
+
+        public ResourceInfoEntry(int index) {
+            this.index = index;
+            var reader = BindepsReader.this.resourceInfoReader;
+            var offset = getResourceInfoOffset(index);
+            this.flag = reader.getFlag(offset);
+            this.nameIndex = reader.getNameIndex(offset);
+            this.crc32 = reader.getCrc32(offset);
+            this.dataOffset = reader.getDataOffset(offset);
+            this.compressedSize = reader.getCompressedSize(offset);
+            this.uncompressedSize = reader.getUncompressedSize(offset);
+            this.compressMethod = reader.getCompressMethod(offset);
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public int getFlag() {
+            return flag;
+        }
+
+        public StringPoolEntry getName() {
+            if (name == null) {
+                name = new StringPoolEntry(nameIndex);
+            }
+            return name;
+        }
+
+        public int getCrc32() {
+            return crc32;
+        }
+
+        public int getDataOffset() {
+            return dataOffset;
+        }
+
+        public int getCompressedSize() {
+            return compressedSize;
+        }
+
+        public int getUncompressedSize() {
+            return uncompressedSize;
+        }
+
+        public short getCompressMethod() {
+            return compressMethod;
+        }
+
+        public byte[] getData() {
+            if (data == null) {
+                if ((flag & BindepsConstants.RESOURCE_FLAG_INLINE) == 0) {
+                    return null;
+                }
+                var heapOffset = dataOffset - BindepsConstants.HEADER_SIZE;
+                data = readHeapBytes(heapOffset, uncompressedSize);
+            }
+            return data;
+        }
+    }
+
+    public ResourceInfoEntry getResourceInfoEntry(int index) {
+        return new ResourceInfoEntry(index);
+    }
+
     public class ClassInfoReader {
         public int getNameIndex(int offset) {
             return BindepsReader.this.dataBuffer.getInt(offset);
@@ -194,28 +331,32 @@ public class BindepsReader {
             return BindepsReader.this.dataBuffer.getInt(offset + 8);
         }
 
-        public int getInterfaceOffset(int offset) {
+        public int getResourceIndex(int offset) {
             return BindepsReader.this.dataBuffer.getInt(offset + 12);
         }
 
-        public int getInterfaceCount(int offset) {
+        public int getInterfaceOffset(int offset) {
             return BindepsReader.this.dataBuffer.getInt(offset + 16);
         }
 
-        public int getAnnotationOffset(int offset) {
+        public int getInterfaceCount(int offset) {
             return BindepsReader.this.dataBuffer.getInt(offset + 20);
         }
 
-        public int getAnnotationCount(int offset) {
+        public int getAnnotationOffset(int offset) {
             return BindepsReader.this.dataBuffer.getInt(offset + 24);
         }
 
-        public int getDependenciesOffset(int offset) {
+        public int getAnnotationCount(int offset) {
             return BindepsReader.this.dataBuffer.getInt(offset + 28);
         }
 
-        public int getDependenciesCount(int offset) {
+        public int getDependenciesOffset(int offset) {
             return BindepsReader.this.dataBuffer.getInt(offset + 32);
+        }
+
+        public int getDependenciesCount(int offset) {
+            return BindepsReader.this.dataBuffer.getInt(offset + 36);
         }
     }
 
@@ -233,6 +374,7 @@ public class BindepsReader {
         private final int nameIndex;
         private final int superIndex;
         private final int access;
+        private final int resourceIndex;
         private final int interfaceOffset;
         private final int interfaceCount;
         private final int annotationOffset;
@@ -248,6 +390,7 @@ public class BindepsReader {
         private StringPoolEntry[] interfaces = null;
         private StringPoolEntry[] annotations = null;
         private StringPoolEntry[] dependencies = null;
+        private ResourceInfoEntry resource = null;
 
         public ClassInfoEntry(int index) {
             this.index = index;
@@ -262,6 +405,7 @@ public class BindepsReader {
             this.annotationCount = reader.getAnnotationCount(offset);
             this.dependenciesOffset = reader.getDependenciesOffset(offset);
             this.dependenciesCount = reader.getDependenciesCount(offset);
+            this.resourceIndex = reader.getResourceIndex(offset);
         }
 
         public int getIndex() {
@@ -362,6 +506,18 @@ public class BindepsReader {
                 }
             }
             return dependencies;
+        }
+
+        public int getResourceIndex() {
+            return resourceIndex;
+        }
+
+        @Nullable
+        public ResourceInfoEntry getResourceInfo() {
+            if (resource == null) {
+                resource = getResourceInfoEntry(resourceIndex);
+            }
+            return resource;
         }
     }
 

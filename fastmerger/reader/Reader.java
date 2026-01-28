@@ -16,6 +16,23 @@ public class Reader implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         var reader = new BindepsReader(inputFile);
+        for (var i = 0; i < reader.getResourceInfoSize(); i++) {
+            var entry = reader.getResourceInfoEntry(i);
+            System.out.println("Resource name: " + entry.getName().getFullName());
+            System.out.printf("    Flag: 0x%02X%n", entry.getFlag());
+            System.out.println("    CRC32: " + entry.getCrc32());
+
+            var data = entry.getData();
+            if (data != null) {
+                System.out.println("    Data (inline): " + data.length + " bytes");
+            } else {
+                System.out.println("    Data offset: " + entry.getDataOffset());
+                System.out.println("    Compressed size: " + entry.getCompressedSize());
+                System.out.println("    Uncompressed size: " + entry.getUncompressedSize());
+                System.out.println("    Compress method: " + entry.getCompressMethod());
+            }
+        }
+
         for (var i = 0; i < reader.getClassInfoSize(); i++) {
             var entry = reader.getClassInfoEntry(i);
             System.out.println("Class name: " + entry.getName().getFullName());
@@ -41,6 +58,10 @@ public class Reader implements Callable<Integer> {
             for (var dependency : entry.getDependencies()) {
                 System.out.println("        " + dependency.getFullName());
             }
+
+            var resourceInfo = entry.getResourceInfo();
+            System.out.println("    Resource:");
+            System.out.println("        Name: " + resourceInfo.getName().getFullName());
         }
         return 0;
     }

@@ -10,26 +10,30 @@ import java.nio.file.StandardOpenOption;
 public class BindepsWriter implements AutoCloseable {
     private boolean closed = false;
     private static final int BUFFER_SIZE = 256 * 1024;
-    private ByteBuffer indexBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
+    private final ByteBuffer indexBuffer;
     private ByteBuffer heapBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
 
     private final FileChannel outputChannel;
 
     private int currentHeapOffset;
 
-    public BindepsWriter(Path outputPath, int stringPoolSize, int classInfoSize) throws IOException {
+    public BindepsWriter(Path outputPath, int stringPoolSize, int resourceInfoSize, int classInfoSize) throws IOException {
         this.outputChannel = FileChannel.open(outputPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
 
-        indexBuffer.order(ByteOrder.BIG_ENDIAN);
+        var indexBufferSize = BindepsConstants.HEADER_SIZE + BindepsConstants.STRING_RECORD_SIZE * stringPoolSize + BindepsConstants.RESOURCE_RECORD_SIZE * resourceInfoSize + BindepsConstants.CLASS_RECORD_SIZE * classInfoSize;
+
+        indexBuffer = ByteBuffer.allocateDirect(indexBufferSize).order(ByteOrder.BIG_ENDIAN);
         heapBuffer.order(ByteOrder.BIG_ENDIAN);
 
         indexBuffer.put(BindepsConstants.MAGIC);
         indexBuffer.putInt(BindepsConstants.VERSION);
         indexBuffer.putInt(stringPoolSize);
+        indexBuffer.putInt(resourceInfoSize);
         indexBuffer.putInt(classInfoSize);
         indexBuffer.putInt(-1); // Heap size
+        indexBuffer.put(new byte[20]); // Pad to 48 bytes
 
-        currentHeapOffset = BindepsConstants.HEADER_SIZE + BindepsConstants.STRING_RECORD_SIZE * stringPoolSize + BindepsConstants.CLASS_RECORD_SIZE * classInfoSize;
+        currentHeapOffset = indexBufferSize;
     }
 
     private ByteBuffer expandBuffer(ByteBuffer buffer, int minRemaining) {
@@ -39,12 +43,6 @@ public class BindepsWriter implements AutoCloseable {
         newBuffer.order(ByteOrder.BIG_ENDIAN);
         newBuffer.put(buffer);
         return newBuffer;
-    }
-
-    private void ensureIndexBufferSize(int size) {
-        if (indexBuffer.remaining() < size) {
-            indexBuffer = expandBuffer(indexBuffer, size);
-        }
     }
 
     private void ensureHeapBufferSize(int size) {
@@ -61,13 +59,12 @@ public class BindepsWriter implements AutoCloseable {
         var fullNameLength = fullNameBytes.length;
 
         // Write index
-        ensureIndexBufferSize(BindepsConstants.STRING_RECORD_SIZE);
         indexBuffer.putLong(hash);
         indexBuffer.putInt(parentIndex);
         indexBuffer.putInt(currentHeapOffset);
         indexBuffer.putShort((short) nameLength);
         indexBuffer.putShort((short) fullNameLength);
-        indexBuffer.put(new byte[4]); // Padded to 24 bytes
+        indexBuffer.put(new byte[4]); // Pad to 24 bytes
 
         // Write heap
         ensureHeapBufferSize(nameLength + fullNameLength);
@@ -76,8 +73,41 @@ public class BindepsWriter implements AutoCloseable {
         currentHeapOffset += nameLength + fullNameLength;
     }
 
+    public void writeResourceEntry(int flag, int nameIndex, int crc32, int dataOffset, int compressedSize,
+                                   int uncompressedSize, short compressionMethod, byte[] data) {
+        if (closed) {
+            throw new IllegalStateException("Writer is closed");
+        }
+
+        int realDataOffset;
+        if (data != null) {
+            realDataOffset = currentHeapOffset;
+        } else {
+            if (dataOffset < 0) {
+                throw new IllegalArgumentException("dataOffset must be >= 0 when data is null");
+            }
+            realDataOffset = dataOffset;
+        }
+
+        // Write index
+        indexBuffer.putInt(flag);
+        indexBuffer.putInt(nameIndex);
+        indexBuffer.putInt(crc32);
+        indexBuffer.putInt(realDataOffset);
+        indexBuffer.putInt(compressedSize);
+        indexBuffer.putInt(uncompressedSize);
+        indexBuffer.putShort(compressionMethod);
+        indexBuffer.put(new byte[6]); // Pad to 32 bytes
+
+        // Write heap
+        if (data != null) {
+            ensureHeapBufferSize(data.length);
+			heapBuffer.put(data);
+        }
+    }
+
     public void writeClassInfoEntry(int nameIndex, int superIndex, int access,
-                                    int[] interfaces, int[] annotations, int[] dependencies) {
+                                    int[] interfaces, int[] annotations, int[] dependencies, int resourceIndex) {
         if (closed) {
             throw new IllegalStateException("Writer is closed");
         }
@@ -88,10 +118,10 @@ public class BindepsWriter implements AutoCloseable {
         var dependenciesOffset = writeIntArrayToHeap(dependencies);
 
         // Write index
-        ensureIndexBufferSize(BindepsConstants.CLASS_RECORD_SIZE);
         indexBuffer.putInt(nameIndex);
         indexBuffer.putInt(superIndex);
         indexBuffer.putInt(access);
+        indexBuffer.putInt(resourceIndex);
 
         indexBuffer.putInt(interfaceOffset);
         indexBuffer.putInt(interfaces.length);
@@ -102,7 +132,7 @@ public class BindepsWriter implements AutoCloseable {
         indexBuffer.putInt(dependenciesOffset);
         indexBuffer.putInt(dependencies.length);
 
-        indexBuffer.put(new byte[12]); // Padded to 48 bytes
+        indexBuffer.put(new byte[8]); // Pad to 48 bytes
     }
 
     private int writeIntArrayToHeap(int[] array) {
@@ -136,7 +166,10 @@ public class BindepsWriter implements AutoCloseable {
             return;
         }
         try {
-            indexBuffer.putInt(20, heapBuffer.position());
+            indexBuffer.putInt(24, heapBuffer.position());
+            if (indexBuffer.hasRemaining()) {
+                throw new IllegalStateException("Index buffer has remaining " + indexBuffer.remaining() + " bytes");
+            }
             writeBuffer(indexBuffer);
             writeBuffer(heapBuffer);
         } finally {
