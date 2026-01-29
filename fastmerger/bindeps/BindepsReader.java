@@ -60,8 +60,8 @@ public class BindepsReader {
                 throw new IOException("Invalid heap size: %d".formatted(heapSize));
             }
 
-            classInfoOffset = BindepsConstants.STRING_RECORD_SIZE * stringPoolSize + BindepsConstants.RESOURCE_RECORD_SIZE * resourceInfoSize;
             resourceInfoOffset = BindepsConstants.STRING_RECORD_SIZE * stringPoolSize;
+            classInfoOffset = resourceInfoOffset + BindepsConstants.RESOURCE_RECORD_SIZE * resourceInfoSize;
 
             buffer.position(buffer.position() + 20); // Skip padding
             var dataSize = BindepsConstants.STRING_RECORD_SIZE * stringPoolSize + BindepsConstants.RESOURCE_RECORD_SIZE * resourceInfoSize + BindepsConstants.CLASS_RECORD_SIZE * classInfoSize + heapSize;

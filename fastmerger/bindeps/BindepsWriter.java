@@ -103,6 +103,7 @@ public class BindepsWriter implements AutoCloseable {
         if (data != null) {
             ensureHeapBufferSize(data.length);
 			heapBuffer.put(data);
+            currentHeapOffset += data.length;
         }
     }
 

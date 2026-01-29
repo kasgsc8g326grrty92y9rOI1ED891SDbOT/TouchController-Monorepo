@@ -251,7 +251,7 @@ public class ScannerWorker extends Worker {
 
                         var classInfo = pair.right().classInfo();
                         var superEntry = classInfo.superClass();
-                        var superIndex = (superEntry != null) ? pathMapEntriesIndexMap.getInt(superEntry.fullName()) : -1;
+                        var superIndex = (superEntry != null) ? pathMapEntriesIndexMap.getInt(superEntry) : -1;
 
                         var interfaces = lookupClassEntries(pathMapEntriesIndexMap, classInfo.interfaces());
                         var annotations = lookupClassEntries(pathMapEntriesIndexMap, classInfo.annotations());
@@ -308,7 +308,7 @@ public class ScannerWorker extends Worker {
     }
 
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) throws Exception {
+    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) {
         var wrapper = new Handler(sandboxDir);
         var commandLine = new CommandLine(wrapper);
         commandLine.setOut(out);
