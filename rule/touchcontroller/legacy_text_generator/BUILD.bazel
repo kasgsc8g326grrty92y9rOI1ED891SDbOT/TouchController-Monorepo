@@ -11,10 +11,10 @@ kt_jvm_library(
 )
 
 java_binary(
-    name = "legacy_text_generator_lib",
+    name = "legacy_text_generator",
     main_class = "top.fifthlight.touchcontroller.resources.generator.LegacyTextGeneratorKt",
     visibility = ["//touchcontroller/resources:__subpackages__"],
     runtime_deps = [
-        ":legacy_text_generator_lib"
+        ":legacy_text_generator_lib",
     ],
 )
