@@ -10,11 +10,18 @@ import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTabs
 import top.fifthlight.combine.backend.minecraft_26_1.TextImpl
 import top.fifthlight.combine.backend.minecraft_26_1.toCombine
+import top.fifthlight.mergetools.api.ActualConstructor
+import top.fifthlight.mergetools.api.ActualImpl
 import top.fifthlight.touchcontroller.common.gal.PlayerHandle
 import top.fifthlight.touchcontroller.common.gal.creativetab.CreativeTabsProvider
 import kotlin.jvm.optionals.getOrNull
 
+@ActualImpl(CreativeTabsProvider::class)
 object CreativeTabsProviderImpl : CreativeTabsProvider {
+    @JvmStatic
+    @ActualConstructor
+    fun of(): CreativeTabsProvider = this
+
     private val client = Minecraft.getInstance()
 
     class CreativeTabImpl(group: CreativeModeTab) : CreativeTabsProvider.CreativeTab {

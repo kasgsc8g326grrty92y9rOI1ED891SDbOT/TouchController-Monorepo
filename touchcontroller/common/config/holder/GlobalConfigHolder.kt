@@ -15,8 +15,6 @@ import top.fifthlight.touchcontroller.common.ext.mapState
 import top.fifthlight.touchcontroller.common.gal.config.ConfigDirectoryProviderFactory
 import top.fifthlight.touchcontroller.common.gal.gameconfig.GameConfigEditor
 import top.fifthlight.touchcontroller.common.gal.gameconfig.GameConfigEditorFactory
-import top.fifthlight.touchcontroller.common.gal.itemlist.DefaultItemListProvider
-import top.fifthlight.touchcontroller.common.gal.itemlist.DefaultItemListProviderFactory
 import top.fifthlight.touchcontroller.common.serialization.jsonFormat
 import kotlin.collections.get
 import kotlin.io.path.createDirectories
@@ -24,10 +22,6 @@ import kotlin.io.path.exists
 import kotlin.io.path.moveTo
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import kotlin.io.readText
-import kotlin.io.resolve
-import kotlin.io.resolveSibling
-import kotlin.io.writeText
 import kotlin.jvm.java
 import kotlin.runCatching
 

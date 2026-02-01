@@ -73,7 +73,7 @@ class ComponentScreen(
                         ) {
                             Row(
                                 modifier = Modifier
-                                    .border(LocalListButtonDrawable.current.unchecked.normal)
+                                    .border(LocalTouchControllerTheme.current.listButtonDrawablesUnchecked.normal)
                                     .weight(1f)
                                     .fillMaxHeight(),
                                 verticalAlignment = Alignment.CenterVertically,

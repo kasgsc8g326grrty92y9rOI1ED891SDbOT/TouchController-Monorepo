@@ -6,40 +6,35 @@ import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import top.fifthlight.combine.data.LocalItemFactory
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
-import top.fifthlight.combine.modifier.drawing.background
 import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.scroll.verticalScroll
-import top.fifthlight.combine.widget.base.layout.Column
+import top.fifthlight.combine.widget.layout.Column
 import top.fifthlight.combine.widget.ui.Button
 import top.fifthlight.combine.widget.ui.Switch
 import top.fifthlight.combine.widget.ui.Text
-import top.fifthlight.touchcontroller.assets.BackgroundTextures
 import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.common.config.ItemList
-import top.fifthlight.touchcontroller.common.gal.DefaultItemListProvider
+import top.fifthlight.touchcontroller.common.config.item.ItemList
+import top.fifthlight.touchcontroller.common.gal.item.ItemSubclassProvider
+import top.fifthlight.touchcontroller.common.gal.itemlist.DefaultItemListProvider
+import top.fifthlight.touchcontroller.common.ui.component.screen.ComponentScreen
+import top.fifthlight.touchcontroller.common.ui.config.model.ConfigScreenModel
+import top.fifthlight.touchcontroller.common.ui.item.screen.ItemListScreen
+import top.fifthlight.touchcontroller.common.ui.theme.LocalTouchControllerTheme
 import top.fifthlight.touchcontroller.common.ui.widget.HorizontalPreferenceItem
-import top.fifthlight.touchcontroller.common.ui.model.ConfigScreenModel
-import top.fifthlight.touchcontroller.common.ui.screen.ComponentScreen
-import top.fifthlight.touchcontroller.common.ui.screen.ItemListScreen
 
 class ItemTabs(
     private val configScreenModel: ConfigScreenModel,
-) : KoinComponent {
-    private val itemListProvider: DefaultItemListProvider by inject()
-
+) {
     val usableItemsTab = ItemTab(
         options = TabOptions(
             titleId = Texts.SCREEN_CONFIG_ITEM_USABLE_ITEMS_TITLE,
             group = TabGroup.ItemGroup,
             index = 0,
-            onReset = { copy(item = item.copy(usableItems = itemListProvider.usableItems)) },
+            onReset = { copy(item = item.copy(usableItems = DefaultItemListProvider.usableItems)) },
         ),
         value = configScreenModel.uiState.map { it.config.item.usableItems },
         onValueChanged = {
@@ -52,7 +47,7 @@ class ItemTabs(
             titleId = Texts.SCREEN_CONFIG_ITEM_SHOW_CROSSHAIR_ITEMS_TITLE,
             group = TabGroup.ItemGroup,
             index = 1,
-            onReset = { copy(item = item.copy(showCrosshairItems = itemListProvider.showCrosshairItems)) },
+            onReset = { copy(item = item.copy(showCrosshairItems = DefaultItemListProvider.showCrosshairItems)) },
         ),
         value = configScreenModel.uiState.map { it.config.item.showCrosshairItems },
         onValueChanged = {
@@ -65,7 +60,7 @@ class ItemTabs(
             titleId = Texts.SCREEN_CONFIG_ITEM_CROSSHAIR_AIMING_ITEMS_TITLE,
             group = TabGroup.ItemGroup,
             index = 2,
-            onReset = { copy(item = item.copy(crosshairAimingItems = itemListProvider.crosshairAimingItems)) },
+            onReset = { copy(item = item.copy(crosshairAimingItems = DefaultItemListProvider.crosshairAimingItems)) },
         ),
         value = configScreenModel.uiState.map { it.config.item.crosshairAimingItems },
         onValueChanged = {
@@ -86,7 +81,7 @@ class ItemTab(
         Column(
             modifier = Modifier
                 .padding(8)
-                .verticalScroll(background = BackgroundTextures.BRICK_BACKGROUND)
+                .verticalScroll(background = LocalTouchControllerTheme.current.background)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8),
         ) {
@@ -142,8 +137,7 @@ class ItemTab(
                         Text(Text.translatable(Texts.SCREEN_CONFIG_ITEM_EDIT_TITLE))
                     }
                 }
-                val itemFactory = LocalItemFactory.current
-                for (subclass in itemFactory.subclasses) {
+                for (subclass in ItemSubclassProvider.itemSubclasses) {
                     HorizontalPreferenceItem(
                         title = subclass.name,
                     ) {

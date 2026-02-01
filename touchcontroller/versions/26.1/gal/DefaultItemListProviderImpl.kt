@@ -2,6 +2,7 @@ package top.fifthlight.touchcontroller.version_26_1.gal
 
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
+import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.Items
 import top.fifthlight.combine.backend.minecraft_26_1.ItemImpl
 import top.fifthlight.mergetools.api.ActualConstructor
@@ -36,14 +37,14 @@ object DefaultItemListProviderImpl : DefaultItemListProvider {
             ItemImpl(Items.FIREWORK_ROCKET),
         ),
         subclasses = persistentSetOf(
-//            ItemFactoryImpl.rangedWeaponSubclass,
-//            ItemFactoryImpl.projectileSubclass,
+            ItemSubclassProviderImpl.rangedWeaponSubclass,
+            ItemSubclassProviderImpl.projectileSubclass,
         ),
         components = persistentListOf(
-//            DataComponentTypeImpl(DataComponents.FOOD),
-//            DataComponentTypeImpl(DataComponents.BUNDLE_CONTENTS),
-//            DataComponentTypeImpl(DataComponents.CONSUMABLE),
-//            DataComponentTypeImpl(DataComponents.EQUIPPABLE),
+            ItemDataComponentTypeImpl(DataComponents.FOOD),
+            ItemDataComponentTypeImpl(DataComponents.BUNDLE_CONTENTS),
+            ItemDataComponentTypeImpl(DataComponents.CONSUMABLE),
+            ItemDataComponentTypeImpl(DataComponents.EQUIPPABLE),
         )
     )
 
@@ -59,8 +60,8 @@ object DefaultItemListProviderImpl : DefaultItemListProvider {
             ItemImpl(Items.TIPPED_ARROW),
         ),
         subclasses = persistentSetOf(
-//            ItemFactoryImpl.rangedWeaponSubclass,
-//            ItemFactoryImpl.projectileSubclass,
+            ItemSubclassProviderImpl.rangedWeaponSubclass,
+            ItemSubclassProviderImpl.projectileSubclass,
         )
     )
 
@@ -70,10 +71,10 @@ object DefaultItemListProviderImpl : DefaultItemListProvider {
             ItemImpl(Items.GLASS_BOTTLE),
         ),
         subclasses = persistentSetOf(
-//            ItemFactoryImpl.bucketSubclass,
-//            ItemFactoryImpl.boatSubclass,
-//            ItemFactoryImpl.placeableOnWaterSubclass,
-//            ItemFactoryImpl.spawnEggSubclass,
+            ItemSubclassProviderImpl.bucketSubclass,
+            ItemSubclassProviderImpl.boatSubclass,
+            ItemSubclassProviderImpl.placeableOnWaterSubclass,
+            ItemSubclassProviderImpl.spawnEggSubclass,
         )
     )
 }

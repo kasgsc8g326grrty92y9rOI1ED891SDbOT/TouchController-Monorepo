@@ -8,6 +8,7 @@ kt_merge_library(
         "//touchcontroller/common/ui/config/tab",
         "//touchcontroller/common/ui/config/tab/about",
         "//touchcontroller/common/ui/config/tab/general",
+        "//touchcontroller/common/ui/config/tab/item",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [

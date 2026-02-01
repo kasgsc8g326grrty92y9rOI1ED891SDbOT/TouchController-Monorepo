@@ -12,7 +12,6 @@ kt_merge_library(
         "//touchcontroller/common/config/widget",
         "//touchcontroller/common/gal/config",
         "//touchcontroller/common/gal/gameconfig",
-        "//touchcontroller/common/gal/itemlist",
         "//touchcontroller/common/serialization",
         "//touchcontroller/common/util/state",
     ],
