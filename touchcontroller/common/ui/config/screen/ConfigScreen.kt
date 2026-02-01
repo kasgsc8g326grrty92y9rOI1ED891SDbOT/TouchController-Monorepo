@@ -10,6 +10,7 @@ import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.placement.fillMaxHeight
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.minWidth
+import top.fifthlight.combine.screen.LocalCloseHandler
 import top.fifthlight.combine.screen.ScreenFactory
 import top.fifthlight.combine.widget.layout.Box
 import top.fifthlight.combine.widget.layout.Column
@@ -29,7 +30,6 @@ import top.fifthlight.touchcontroller.common.ui.theme.TouchControllerTheme
 import top.fifthlight.touchcontroller.common.ui.widget.*
 import top.fifthlight.touchcontroller.common.ui.widget.navigation.AppBar
 import top.fifthlight.touchcontroller.common.ui.widget.navigation.BackButton
-import top.fifthlight.touchcontroller.common.ui.widget.navigation.LocalCloseHandler
 import top.fifthlight.touchcontroller.common.ui.widget.navigation.TouchControllerNavigator
 
 @Composable

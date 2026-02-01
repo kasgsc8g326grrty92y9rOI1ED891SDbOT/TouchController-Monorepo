@@ -164,6 +164,8 @@ val BlackstoneTheme = run {
         ),
         colors = Theme.Colors(
             button = ColorTheme.light,
+            guideButton = ColorTheme.dark,
+            warningButton = ColorTheme.dark,
         ),
     )
 }

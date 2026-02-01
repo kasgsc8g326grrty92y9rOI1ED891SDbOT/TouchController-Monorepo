@@ -1,23 +1,13 @@
 package top.fifthlight.touchcontroller.common.ui.widget.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.staticCompositionLocalOf
 import cafe.adriel.voyager.navigator.LocalNavigator
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.combine.screen.LocalCloseHandler
 import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.combine.widget.ui.TextButton
 import top.fifthlight.touchcontroller.assets.Texts
-
-val LocalCloseHandler = staticCompositionLocalOf<CloseHandler> { CloseHandler.Empty }
-
-interface CloseHandler {
-    fun close()
-
-    object Empty: CloseHandler {
-        override fun close() {}
-    }
-}
 
 @Composable
 fun BackButton(
