@@ -30,7 +30,7 @@ convert_access_widener = rule(
     implementation = _convert_access_widener_impl,
     attrs = {
         "src": attr.label(
-            allow_single_file = [".accesswidener"],
+            allow_single_file = [".accesswidener", ".classtweaker"],
             mandatory = True,
             doc = "Access widener file",
         ),
