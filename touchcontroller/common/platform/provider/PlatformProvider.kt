@@ -191,7 +191,7 @@ object PlatformProvider {
                     extractPrefix = "lib$libraryName",
                     extractSuffix = ".so",
                     readOnlySetter = ::posixReadOnlySetter,
-                    removeAfterLoaded = false,
+                    removeAfterLoaded = true,
                     platformFactory = {
                         when (platform) {
                             is GlfwPlatform.Wayland -> WaylandPlatform(platform.nativeWindow)
