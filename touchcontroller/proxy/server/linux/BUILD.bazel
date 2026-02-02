@@ -1,4 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_shared_library")
 
 genrule(
     name = "text-input-unstable",
@@ -8,7 +8,13 @@ genrule(
     tools = ["@wayland//:wayland-scanner"],
 )
 
-# TODO: make it depends on system libwayland, but use Bazel one when compiling
+cc_shared_library(
+    name = "libwayland-client",
+    shared_lib_name = "libwayland-client.so.0",
+    visibility = ["//touchcontroller:__subpackages__"],
+    deps = ["@wayland//:wayland-client"],
+)
+
 cc_library(
     name = "wayland",
     srcs = [

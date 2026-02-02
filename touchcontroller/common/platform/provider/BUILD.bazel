@@ -30,6 +30,9 @@ kt_merge_library(
 
 cc_jni_library(
     name = "wayland",
+    dynamic_deps = [
+        "//touchcontroller/proxy/server/linux:libwayland-client",
+    ],
     platforms = select({
         "//:config_release": [
             "@//platforms:linux_x86_64",

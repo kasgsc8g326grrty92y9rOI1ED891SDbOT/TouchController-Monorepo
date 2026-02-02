@@ -23,6 +23,10 @@ cc_library(
         "WINVER=0x0A00",
         "_WIN32_WINNT=0x0A00",
     ],
+    linkopts = [
+        "-lwindowsapp",
+        "-luser32",
+    ],
     target_compatible_with = ["@platforms//os:windows"],
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [
@@ -43,6 +47,10 @@ cc_library(
         "WIN32_LEAN_AND_MEAN",
         "WINVER=0x0601",
         "_WIN32_WINNT=0x0601",
+    ],
+    linkopts = [
+        "-lole32",
+        "-luuid",
     ],
     target_compatible_with = ["@platforms//os:windows"],
     visibility = ["//touchcontroller:__subpackages__"],

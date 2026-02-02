@@ -2,6 +2,13 @@ load("@rules_java//java:defs.bzl", "java_library", "java_plugin")
 load("@rules_kotlin//kotlin:core.bzl", "define_kt_toolchain", "kt_compiler_plugin")
 load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
+config_setting(
+    name = "config_release",
+    values = {
+        "compilation_mode": "opt",
+    },
+)
+
 kt_compiler_plugin(
     name = "kotlin_serialization_plugin",
     compile_phase = True,
