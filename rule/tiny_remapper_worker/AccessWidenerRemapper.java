@@ -26,7 +26,8 @@ public class AccessWidenerRemapper implements OutputConsumerPath.ResourceRemappe
 
     @Override
     public boolean canTransform(TinyRemapper remapper, Path path) {
-        return path.getFileName().toString().toLowerCase().endsWith(".accesswidener");
+        var fileName = path.getFileName().toString().toLowerCase();
+        return fileName.endsWith(".accesswidener") || fileName.endsWith(".classtweaker");
     }
 
     @Override

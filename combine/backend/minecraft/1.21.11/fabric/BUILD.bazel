@@ -1,6 +1,7 @@
 load("@bazel_skylib//rules:expand_template.bzl", "expand_template")
 load("//combine:properties.bzl", "combine_description", "combine_license", "combine_version")
 load("//rule:merge_library.bzl", "merge_library_jar")
+load("//rule:remap_jar.bzl", "remap_jar")
 load("//rule/fabric:merge_jij.bzl", "fabric_merge_jij")
 
 expand_template(
@@ -15,17 +16,31 @@ expand_template(
 )
 
 merge_library_jar(
-    name = "fabric_merged",
+    name = "fabric_unmapped_merged",
+    manifest_entries = {
+        "Fabric-Loom-Mixin-Remap-Type": "static",
+    },
     resources = {
         ":fabric_mod_json": ".",
-        "//combine/backend/minecraft/26.1/game:access_widener": "combine/backend/minecraft/26.1/game",
+        "//combine/backend/minecraft/1.21.11/game:access_widener": ".",
     },
     visibility = ["//visibility:public"],
     deps = [
         "//combine",
-        "//combine/backend/minecraft/26.1",
-        "//combine/backend/minecraft/26.1/mixin",
+        "//combine/backend/minecraft/1.21.11",
+        "//combine/backend/minecraft/1.21.11/mixin",
     ],
+)
+
+remap_jar(
+    name = "fabric_merged",
+    classpath = ["//game/1.21.11:game_client_named"],
+    from_namespace = "named",
+    inputs = [":fabric_unmapped_merged"],
+    mapping = "//game/1.21.11:game_merged_mapping",
+    mixin = True,
+    to_namespace = "intermediary",
+    visibility = ["//visibility:public"],
 )
 
 fabric_merge_jij(
