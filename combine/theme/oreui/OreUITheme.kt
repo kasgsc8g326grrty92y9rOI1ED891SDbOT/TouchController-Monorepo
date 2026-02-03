@@ -61,6 +61,7 @@ val OreUITheme = run {
                 focus = OutlineDrawable(OreUITextures.widget_button_button_warning), // TODO
                 active = OreUITextures.widget_button_button_warning_active,
             ),
+
             switchFrame = DrawableSet(
                 normal = OreUITextures.widget_switch_frame,
             ),
@@ -70,6 +71,7 @@ val OreUITheme = run {
             switchBackground = TextureSet(
                 normal = OreUITextures.widget_switch_switch,
             ),
+
             sliderHandle = DrawableSet(
                 normal = OreUITextures.widget_handle_handle,
             ),
@@ -79,6 +81,11 @@ val OreUITheme = run {
             sliderInactiveTrack = DrawableSet(
                 normal = OreUITextures.widget_slider_slider_inactive,
             ),
+
+            editText = DrawableSet(
+                normal = OreUITextures.widget_textfield_textfield,
+            ),
+
             itemGridBackground = OreUITextures.background_backpack,
         ),
         colors = Theme.Colors(
