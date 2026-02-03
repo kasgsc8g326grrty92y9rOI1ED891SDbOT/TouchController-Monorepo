@@ -3,7 +3,7 @@
     "id": "touchcontroller",
     "version": "${version}",
     "name": "TouchController",
-    "description": "${mod_description}",
+    "description": "${description}",
     "authors": mod_authors_array,
     "contributors": mod_contributors_array,
     "contact": {

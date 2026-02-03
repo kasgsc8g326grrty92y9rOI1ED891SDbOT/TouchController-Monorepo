@@ -1,6 +1,19 @@
+load("@bazel_skylib//rules:expand_template.bzl", "expand_template")
+load("//combine:properties.bzl", "combine_description", "combine_license", "combine_version")
 load("//rule:merge_library.bzl", "merge_library_jar")
 load("//rule:remap_jar.bzl", "remap_jar")
 load("//rule/fabric:merge_jij.bzl", "fabric_merge_jij")
+
+expand_template(
+    name = "fabric_mod_json",
+    out = "expanded/fabric.mod.json",
+    substitutions = {
+        "${version}": combine_version,
+        "${license}": combine_license,
+        "${description}": combine_description,
+    },
+    template = "fabric.mod.json",
+)
 
 merge_library_jar(
     name = "fabric_unmapped_merged",
@@ -8,8 +21,8 @@ merge_library_jar(
         "Fabric-Loom-Mixin-Remap-Type": "static",
     },
     resources = {
-        "fabric.mod.json": "combine/backend/minecraft/1.21.8/fabric",
-        "//combine/backend/minecraft/1.21.8/game:access_widener": "combine/backend/minecraft/1.21.8/game",
+        ":fabric_mod_json": ".",
+        "//combine/backend/minecraft/1.21.8/game:access_widener": ".",
     },
     visibility = ["//visibility:public"],
     deps = [
