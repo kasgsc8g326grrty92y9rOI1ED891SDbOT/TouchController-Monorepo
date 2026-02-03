@@ -36,7 +36,11 @@ public class DecompilerWrapper {
 
                 jos.putNextEntry(newEntry);
                 try (InputStream is = jarFile.getInputStream(entry)) {
-                    is.transferTo(jos);
+                    var buffer = new byte[65536];
+                    int read;
+                    while ((read = is.read(buffer)) != -1) {
+                        jos.write(buffer, 0, read);
+                    }
                 }
                 jos.closeEntry();
             }
