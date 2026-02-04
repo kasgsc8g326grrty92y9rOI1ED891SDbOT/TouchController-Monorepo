@@ -1,4 +1,4 @@
-package top.fifthlight.mergetools.processor;
+package top.fifthlight.mergetools.processor.java.util;
 
 import com.palantir.javapoet.ArrayTypeName;
 import com.palantir.javapoet.ClassName;

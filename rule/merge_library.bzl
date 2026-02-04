@@ -68,9 +68,9 @@ def _modify_deps(deps, runtime_deps, associates, merge_deps, merge_runtime_deps,
     if expect or actual:
         real_deps.append("//rule/expect_actual_tools/api:api")
     if expect:
-        real_plugins.append("//rule/expect_actual_tools/processor/java:expect_processor")
+        real_plugins.append("//rule/expect_actual_tools/processor/java/expect")
     if actual:
-        real_plugins.append("//rule/expect_actual_tools/processor/java:actual_processor")
+        real_plugins.append("//rule/expect_actual_tools/processor/java/actual")
     runtime_deps = runtime_deps + merge_runtime_deps
     args = {"deps": real_deps, "plugins": real_plugins, "runtime_deps": runtime_deps}
     if associates != []:
