@@ -21,6 +21,7 @@ import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.layout.Box
 import top.fifthlight.combine.widget.layout.Column
 import top.fifthlight.combine.widget.layout.Row
+import top.fifthlight.combine.widget.layout.Spacer
 import top.fifthlight.combine.widget.ui.*
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.Textures
@@ -34,6 +35,7 @@ import top.fifthlight.touchcontroller.common.config.layout.LayoutLayer
 import top.fifthlight.touchcontroller.common.config.preset.LayoutPreset
 import top.fifthlight.touchcontroller.common.config.preset.info.LayerCustomConditions
 import top.fifthlight.touchcontroller.common.ui.layer.model.LayerEditorScreenModel
+import top.fifthlight.touchcontroller.common.ui.layer.tab.LayerConditionTab
 import top.fifthlight.touchcontroller.common.ui.layer.tab.LayerConditionTabContext
 import top.fifthlight.touchcontroller.common.ui.layer.tab.LocalLayerConditionTabContext
 import top.fifthlight.touchcontroller.common.ui.layer.tab.all.allLayerConditionTabs
@@ -46,7 +48,7 @@ import top.fifthlight.touchcontroller.common.ui.widget.navigation.TouchControlle
 
 @Composable
 private fun LayerConditionItem(
-    preset: LayoutPreset,
+    preset: LayoutPreset?,
     item: LayerConditions.Item,
     onValueChanged: (LayerConditions.Value) -> Unit,
     onItemRemoved: () -> Unit = {},
@@ -70,7 +72,7 @@ private fun LayerConditionItem(
                 }
 
                 is CustomLayerConditionKey -> {
-                    preset.controlInfo.customConditions.conditions.firstOrNull { it.uuid == key.key }?.let {
+                    preset?.controlInfo?.customConditions?.conditions?.firstOrNull { it.uuid == key.key }?.let {
                         Text(it.name?.let { Text.literal(it) }
                             ?: Text.translatable(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNNAMED))
                     } ?: Text(Text.translatable(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNKNOWN))
@@ -183,7 +185,6 @@ class LayerEditorScreen(
                                     if (tab == innerNavigator.lastItem) {
                                         ListButton(
                                             modifier = Modifier
-                                                .fillMaxSize(.2f)
                                                 .minWidth(100)
                                                 .fillMaxHeight(),
                                             onClick = {},
@@ -228,7 +229,6 @@ class LayerEditorScreen(
                                     .weight(.4f)
                                     .fillMaxHeight(),
                             ) {
-                                val preset = preset ?: return@Column
                                 for ((index, condition) in uiState.conditions.conditions.withIndex()) {
                                     LayerConditionItem(
                                         preset = preset,
@@ -245,30 +245,37 @@ class LayerEditorScreen(
                                 }
                             }
                         }
-                        Box(
-                            modifier = Modifier
-                                .border(LocalTouchControllerTheme.current.borderBackgroundDark)
-                                .weight(.6f)
-                                .fillMaxHeight(),
-                            alignment = Alignment.Center,
-                        ) {
-                            val preset = preset ?: return@Box
-                            TouchControllerNavigator(allLayerConditionTabs.first()) { navigator ->
-                                innerNavigator = navigator
-                                val currentLayerConditionTabContext = LayerConditionTabContext(
-                                    preset = preset,
-                                    onCustomConditionsChanged = onCustomConditionsChanged,
-                                    onConditionAdded = {
-                                        screenModel.addCondition(
-                                            LayerConditions.Item(
-                                                key = it,
-                                                value = LayerConditions.Value.WANT,
-                                            )
+                        TouchControllerNavigator(allLayerConditionTabs.first()) { navigator ->
+                            innerNavigator = navigator
+                            val currentLayerConditionTabContext = LayerConditionTabContext(
+                                preset = preset,
+                                onCustomConditionsChanged = onCustomConditionsChanged,
+                                onConditionAdded = {
+                                    screenModel.addCondition(
+                                        LayerConditions.Item(
+                                            key = it,
+                                            value = LayerConditions.Value.WANT,
                                         )
-                                    }
-                                )
-                                CompositionLocalProvider(
-                                    LocalLayerConditionTabContext provides currentLayerConditionTabContext,
+                                    )
+                                },
+                            )
+                            CompositionLocalProvider(
+                                LocalLayerConditionTabContext provides currentLayerConditionTabContext,
+                            ) {
+                                val needBorder by derivedStateOf {
+                                    (navigator.lastItem as? LayerConditionTab)?.needBorder ?: true
+                                }
+                                val borderModifier = if (needBorder) {
+                                    Modifier.border(LocalTouchControllerTheme.current.borderBackgroundDark)
+                                } else {
+                                    Modifier
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .then(borderModifier)
+                                        .weight(.6f)
+                                        .fillMaxHeight(),
+                                    alignment = Alignment.Center,
                                 ) {
                                     CurrentScreen()
                                 }

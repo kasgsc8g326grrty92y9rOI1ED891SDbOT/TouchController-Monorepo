@@ -3,6 +3,9 @@ package top.fifthlight.touchcontroller.common.ui.item.screen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import kotlinx.collections.immutable.PersistentList
@@ -91,7 +94,6 @@ class ItemListScreen(
                 }
                 Box(
                     modifier = Modifier
-                        .border(LocalTouchControllerTheme.current.borderBackgroundDark)
                         .fillMaxHeight()
                         .weight(.6f),
                 ) {

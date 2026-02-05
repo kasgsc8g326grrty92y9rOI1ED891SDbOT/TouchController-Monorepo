@@ -230,6 +230,7 @@
   "touchcontroller.screen.config.item.edit.title": "Edit",
 
   "touchcontroller.screen.item_list.title": "Item list",
+  "touchcontroller.screen.item_list.warning_not_in_game": "Enter the game first to choose items",
   "touchcontroller.screen.item_list.content": "Item list content",
   "touchcontroller.screen.item_list.default": "Default item list",
   "touchcontroller.screen.item_list.jei_items": "JEI item list",

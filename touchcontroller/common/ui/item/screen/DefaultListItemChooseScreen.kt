@@ -9,14 +9,16 @@ import top.fifthlight.combine.item.data.ItemStackFactory
 import top.fifthlight.combine.item.widget.ItemGrid
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.widget.layout.Column
 import top.fifthlight.combine.widget.ui.EditText
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.common.gal.item.ItemProviderFactory
+import top.fifthlight.touchcontroller.common.ui.theme.LocalTouchControllerTheme
 
-class DefaultItemListScreen(
+class DefaultListItemChooseScreen(
     val onItemSelected: (Item) -> Unit,
 ) : Screen {
     private val allItems = ItemProviderFactory.of().allItems
@@ -37,7 +39,9 @@ class DefaultItemListScreen(
             }
         }
         Column(
-            modifier = Modifier.padding(4),
+            modifier = Modifier
+                .padding(4)
+                .border(LocalTouchControllerTheme.current.borderBackgroundDark),
             verticalArrangement = Arrangement.spacedBy(8),
         ) {
             EditText(

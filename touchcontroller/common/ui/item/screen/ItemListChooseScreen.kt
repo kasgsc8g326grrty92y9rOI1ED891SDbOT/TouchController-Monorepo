@@ -8,6 +8,7 @@ import top.fifthlight.combine.item.data.Item
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.widget.layout.Box
@@ -18,6 +19,7 @@ import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.common.gal.player.PlayerHandleFactory
 import top.fifthlight.touchcontroller.common.gal.creativetab.CreativeTabsProvider
 import top.fifthlight.touchcontroller.common.gal.creativetab.CreativeTabsProviderFactory
+import top.fifthlight.touchcontroller.common.ui.theme.LocalTouchControllerTheme
 
 class ItemListChooseScreen(
     private val onItemSelected: (Item) -> Unit,
@@ -26,7 +28,9 @@ class ItemListChooseScreen(
     override fun Content() {
         val navigator = LocalNavigator.current
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .border(LocalTouchControllerTheme.current.borderBackgroundDark),
             alignment = Alignment.Center,
         ) {
             Column(
@@ -38,7 +42,7 @@ class ItemListChooseScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        navigator?.push(DefaultItemListScreen(onItemSelected))
+                        navigator?.push(DefaultListItemChooseScreen(onItemSelected))
                     }
                 ) {
                     Text(Text.translatable(Texts.SCREEN_ITEM_LIST_DEFAULT))
@@ -52,7 +56,7 @@ class ItemListChooseScreen(
                         onClick = {
                             val tabs = vanillaItemListProvider.getCreativeTabs(player)
                             val playerInventory = player.getInventory()
-                            navigator?.push(VanillaItemListScreen(onItemSelected, tabs, playerInventory))
+                            navigator?.push(CreativeTabItemChooseScreen(onItemSelected, tabs, playerInventory))
                         }
                     ) {
                         Text(Text.translatable(Texts.SCREEN_ITEM_LIST_VANILLA_INVENTORY))

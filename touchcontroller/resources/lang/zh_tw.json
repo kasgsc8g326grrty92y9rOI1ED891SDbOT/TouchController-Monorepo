@@ -230,6 +230,7 @@
   "touchcontroller.screen.config.item.edit.title": "編輯",
  
   "touchcontroller.screen.item_list.title": "物品清單",
+
   "touchcontroller.screen.item_list.content": "物品清單顯示內容",
   "touchcontroller.screen.item_list.default": "預設物品表",
   "touchcontroller.screen.item_list.jei_items": "JEI 物品表",

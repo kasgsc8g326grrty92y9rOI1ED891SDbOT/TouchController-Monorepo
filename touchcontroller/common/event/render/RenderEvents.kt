@@ -10,6 +10,7 @@ import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.config.condition.input.BuiltinLayerCondition
 import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder
 import top.fifthlight.touchcontroller.common.event.window.WindowEvents
+import top.fifthlight.touchcontroller.common.gal.gamestate.GameState
 import top.fifthlight.touchcontroller.common.gal.player.PlayerHandleFactory
 import top.fifthlight.touchcontroller.common.gal.gamestate.GameStateProvider
 import top.fifthlight.touchcontroller.common.gal.gamestate.GameStateProviderFactory
@@ -38,7 +39,6 @@ import top.fifthlight.touchcontroller.proxy.message.*
 object RenderEvents {
     private val logger = LoggerFactory.getLogger(RenderEvents::class.java)
     private val window: WindowHandle = WindowHandleFactory.of()
-    private val gameStateProvider: GameStateProvider = GameStateProviderFactory.of()
     private val keyBindingHandler: KeyBindingHandler = KeyBindingHandlerFactory.of()
     private val viewActionProvider: ViewActionProvider = ViewActionProviderFactory.of()
     private val touchStateModel: TouchStateModel = TouchStateModel()
@@ -57,7 +57,6 @@ object RenderEvents {
 
         val config = GlobalConfigHolder.config.value
         val playerHandle = PlayerHandleFactory.current()
-        val gameState = gameStateProvider.currentState()
         val platform = PlatformProvider.platform
         if (platform != null) {
             while (true) {
@@ -147,10 +146,10 @@ object RenderEvents {
             }
         }
 
-        if (!gameState.inGame) {
+        if (!GameState.inGame) {
             return
         }
-        if (gameState.inGui) {
+        if (GameState.inGui) {
             touchStateModel.clearPointer()
         }
         val player = playerHandle ?: return
@@ -195,12 +194,12 @@ object RenderEvents {
             screenOffset = IntOffset.ZERO,
             pointers = touchStateModel.pointers,
             input = ContextInput(
-                inGui = gameState.inGui,
+                inGui = GameState.inGui,
                 builtinCondition = condition,
                 customCondition = ControllerHudModel.status.enabledCustomConditions.toPersistentSet(),
                 crosshairTarget = crosshairTarget,
                 ridingEntity = ridingType,
-                perspective = gameState.perspective,
+                perspective = GameState.perspective,
                 playerHandle = playerHandle,
             ),
             status = ControllerHudModel.status,

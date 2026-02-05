@@ -9,7 +9,7 @@ import top.fifthlight.touchcontroller.common.config.preset.LayoutPreset
 import top.fifthlight.touchcontroller.common.config.preset.info.LayerCustomConditions
 
 data class LayerConditionTabContext(
-    val preset: LayoutPreset,
+    val preset: LayoutPreset?,
     val onCustomConditionsChanged: (LayerCustomConditions) -> Unit,
     val onConditionAdded: (LayerConditions.Key) -> Unit,
 )
@@ -20,6 +20,9 @@ val LocalLayerConditionTabContext =
 abstract class LayerConditionTab : Screen {
     @Composable
     abstract fun Icon()
+
+    open val needBorder: Boolean
+        get() = true
 
     abstract val name: Identifier
 }

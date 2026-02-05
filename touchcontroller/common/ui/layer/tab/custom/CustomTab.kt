@@ -51,11 +51,15 @@ object CustomTab : LayerConditionTab() {
                 GuideButton(
                     onClick = {
                         editState?.let { editState ->
-                            tabModel.editCondition(
-                                preset, editState.index, editState.edit(
-                                    preset.controlInfo.customConditions.conditions[editState.index]
+                            preset?.let { preset ->
+                                tabModel.editCondition(
+                                    preset = preset,
+                                    index = editState.index,
+                                    newCondition = editState.edit(
+                                        preset.controlInfo.customConditions.conditions[editState.index]
+                                    ),
                                 )
-                            )
+                            }
                             tabModel.closeEditConditionDialog()
                         }
                     },
@@ -95,44 +99,46 @@ object CustomTab : LayerConditionTab() {
                     .weight(1f)
                     .fillMaxWidth(),
             ) {
-                for ((index, condition) in preset.controlInfo.customConditions.conditions.withIndex()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(IntrinsicSize.Min),
-                    ) {
-                        ListButton(
+                preset?.let { preset ->
+                    for ((index, condition) in preset.controlInfo.customConditions.conditions.withIndex()) {
+                        Row(
                             modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight(),
-                            onClick = {
-                                onConditionAdded(CustomLayerConditionKey(condition.uuid))
-                            },
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min),
                         ) {
-                            Text(
+                            ListButton(
                                 modifier = Modifier
-                                    .alignment(Alignment.CenterLeft)
-                                    .fillMaxWidth(),
-                                text = condition.name?.let { Text.literal(it) }
-                                    ?: Text.translatable(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNNAMED),
-                            )
-                        }
+                                    .weight(1f)
+                                    .fillMaxHeight(),
+                                onClick = {
+                                    onConditionAdded(CustomLayerConditionKey(condition.uuid))
+                                },
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .alignment(Alignment.CenterLeft)
+                                        .fillMaxWidth(),
+                                    text = condition.name?.let { Text.literal(it) }
+                                        ?: Text.translatable(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_UNNAMED),
+                                )
+                            }
 
-                        IconButton(
-                            modifier = Modifier.fillMaxHeight(),
-                            onClick = {
-                                tabModel.openEditConditionDialog(index, condition)
-                            },
-                        ) {
-                            Icon(Textures.icon_edit)
-                        }
-                        IconButton(
-                            modifier = Modifier.fillMaxHeight(),
-                            onClick = {
-                                tabModel.removeCondition(preset, index)
-                            },
-                        ) {
-                            Icon(Textures.icon_delete)
+                            IconButton(
+                                modifier = Modifier.fillMaxHeight(),
+                                onClick = {
+                                    tabModel.openEditConditionDialog(index, condition)
+                                },
+                            ) {
+                                Icon(Textures.icon_edit)
+                            }
+                            IconButton(
+                                modifier = Modifier.fillMaxHeight(),
+                                onClick = {
+                                    tabModel.removeCondition(preset, index)
+                                },
+                            ) {
+                                Icon(Textures.icon_delete)
+                            }
                         }
                     }
                 }
@@ -140,7 +146,7 @@ object CustomTab : LayerConditionTab() {
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    tabModel.addCondition(preset)
+                    preset?.let { tabModel.addCondition(it) }
                 },
             ) {
                 Text(Text.translatable(Texts.SCREEN_LAYER_EDITOR_CUSTOM_CONDITION_ADD))

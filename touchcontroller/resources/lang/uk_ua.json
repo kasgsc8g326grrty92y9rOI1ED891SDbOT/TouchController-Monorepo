@@ -230,6 +230,7 @@
   "touchcontroller.screen.config.item.edit.title": "Редагувати",
 
   "touchcontroller.screen.item_list.title": "Список предметів",
+
   "touchcontroller.screen.item_list.content": "Уміст списку предметів",
   "touchcontroller.screen.item_list.default": "Усталений список предметів",
   "touchcontroller.screen.item_list.jei_items": "Список предметів JEI",

@@ -19,13 +19,16 @@ object HoldingItemTab : LayerConditionTab() {
     override val name: Identifier
         get() = Texts.SCREEN_LAYER_EDITOR_HOLDING_ITEM
 
+    override val needBorder: Boolean
+        get() = false
+
     @Composable
     override fun Content() {
         val layerConditionTabContext = LocalLayerConditionTabContext.current
         ItemChooser(
             onItemChosen = {
                 layerConditionTabContext.onConditionAdded(HoldingItemLayerConditionKey(it))
-            }
+            },
         )
     }
 }

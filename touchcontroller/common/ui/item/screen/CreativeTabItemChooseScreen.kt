@@ -35,7 +35,7 @@ import top.fifthlight.touchcontroller.common.gal.creativetab.CreativeTabsProvide
 import top.fifthlight.touchcontroller.common.ui.widget.ListButton
 import top.fifthlight.touchcontroller.common.ui.theme.LocalTouchControllerTheme
 
-class VanillaItemListScreen(
+class CreativeTabItemChooseScreen(
     private val onItemSelected: (Item) -> Unit,
     private val tabs: PersistentList<CreativeTabsProvider.CreativeTab>,
     private val playerInventory: PlayerInventory,
@@ -49,6 +49,7 @@ class VanillaItemListScreen(
                 Column(
                     modifier = Modifier
                         .padding(4)
+                        .border(LocalTouchControllerTheme.current.borderBackgroundDark)
                         .weight(1f)
                         .fillMaxHeight(),
                     verticalArrangement = Arrangement.spacedBy(4),

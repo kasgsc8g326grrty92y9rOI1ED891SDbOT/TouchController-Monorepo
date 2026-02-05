@@ -7,7 +7,6 @@ kt_merge_library(
         "//touchcontroller/common/config/condition",
         "//touchcontroller/common/config/layout",
         "//touchcontroller/common/config/preset",
-        "//touchcontroller/common/config/preset/builtin",
         "//touchcontroller/common/config/preset/builtin/key",
         "//touchcontroller/common/control",
         "//touchcontroller/common/layout/align",
