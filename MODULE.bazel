@@ -101,6 +101,8 @@ include("//module:android.MODULE.bazel")
 # tools
 include("//module:mdbook.MODULE.bazel")
 
+include("//module:copybara.MODULE.bazel")
+
 # rules
 include("//module:rules.MODULE.bazel")
 
