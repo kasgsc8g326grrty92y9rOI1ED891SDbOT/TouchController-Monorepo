@@ -9,6 +9,7 @@ kt_merge_library(
         "//touchcontroller/common/ui/layer/tab/custom",
         "//touchcontroller/common/ui/layer/tab/holdingitem",
         "//touchcontroller/common/ui/layer/tab/ridingentity",
+        "//touchcontroller/common/ui/layer/tab/selectedentity",
     ],
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [

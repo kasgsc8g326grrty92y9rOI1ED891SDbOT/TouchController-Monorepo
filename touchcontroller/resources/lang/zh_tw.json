@@ -130,6 +130,8 @@
   "touchcontroller.screen.custom_control_layout.layers.conditions.block_selected": "選取方塊",
 
 
+
+
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.1": "你確定要刪除這個圖層嗎？",
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.2": "「%s」將會永久消失！（真的很久！）",
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.delete": "刪除",

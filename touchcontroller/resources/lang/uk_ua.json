@@ -130,6 +130,8 @@
   "touchcontroller.screen.custom_control_layout.layers.conditions.block_selected": "Вибрано блок",
 
 
+
+
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.1": "Ви впевнені, що хочете видалити цей шар?",
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.2": " «%s» буде втрачено назавжди! (Надовго!)",
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.delete": "Видалити",

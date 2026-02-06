@@ -47,7 +47,9 @@ fun EntityPicker(
                 onClick = { onEntityChosen(entityType) },
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .minHeight(16),
                     horizontalArrangement = Arrangement.spacedBy(4),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -56,8 +58,7 @@ fun EntityPicker(
                     }
                     Text(
                         modifier = Modifier
-                            .weight(1f)
-                            .minHeight(16),
+                            .weight(1f),
                         text = entityType.name,
                     )
                 }

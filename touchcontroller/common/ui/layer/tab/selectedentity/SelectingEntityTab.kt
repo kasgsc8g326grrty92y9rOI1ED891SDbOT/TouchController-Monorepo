@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.common.ui.layer.tab.ridingentity
+package top.fifthlight.touchcontroller.common.ui.layer.tab.selectedentity
 
 import androidx.compose.runtime.Composable
 import top.fifthlight.combine.data.Identifier
@@ -8,19 +8,20 @@ import top.fifthlight.combine.widget.ui.Icon
 import top.fifthlight.touchcontroller.assets.Texts
 import top.fifthlight.touchcontroller.assets.Textures
 import top.fifthlight.touchcontroller.common.config.condition.RidingEntityLayerConditionKey
+import top.fifthlight.touchcontroller.common.config.condition.SelectEntityLayerConditionKey
 import top.fifthlight.touchcontroller.common.ui.entitypicker.EntityPicker
 import top.fifthlight.touchcontroller.common.ui.layer.tab.LayerConditionTab
 import top.fifthlight.touchcontroller.common.ui.layer.tab.LocalLayerConditionTabContext
 import top.fifthlight.touchcontroller.common.ui.theme.LocalTouchControllerTheme
 
-object RidingEntityTab : LayerConditionTab() {
+object SelectingEntityTab : LayerConditionTab() {
     @Composable
     override fun Icon() {
-        Icon(Textures.icon_ride)
+        Icon(Textures.icon_entity)
     }
 
     override val name: Identifier
-        get() = Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_RIDING_ENTITY_TYPE
+        get() = Texts.SCREEN_CUSTOM_CONTROL_LAYOUT_LAYERS_CONDITIONS_SELECTING_ENTITY_TYPE
 
     override val needBorder: Boolean
         get() = false
@@ -31,7 +32,7 @@ object RidingEntityTab : LayerConditionTab() {
         EntityPicker(
             modifier = Modifier.border(LocalTouchControllerTheme.current.borderBackgroundDark),
             onEntityChosen = {
-                layerConditionTabContext.onConditionAdded(RidingEntityLayerConditionKey(it))
+                layerConditionTabContext.onConditionAdded(SelectEntityLayerConditionKey(it))
             },
         )
     }

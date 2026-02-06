@@ -130,6 +130,8 @@
   "touchcontroller.screen.custom_control_layout.layers.conditions.block_selected": "Блок выбран",
 
 
+
+
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.1": "Вы точно хотите удалить этот слой?",
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.2": "Слой '%s' будет удалён навсегда! (На очень долгое время!)",
   "touchcontroller.screen.custom_control_layout.layers.delete_layer.delete": "Удалить",
