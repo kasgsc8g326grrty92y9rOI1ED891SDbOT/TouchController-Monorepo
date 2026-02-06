@@ -31,7 +31,7 @@ game_versions = {
     "26.1-snapshot-4": {},
 }
 
-minecraft = use_extension("//repo:minecraft.bzl", "minecraft")
+minecraft = use_extension("@rules_mc//:extensions.bzl", "minecraft")
 
 [
     minecraft.version(
