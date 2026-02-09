@@ -143,6 +143,10 @@ def _game_version_impl(
             operations.append("changeSrc(official)")
             if intermediary:
                 operations.append(">intermediary")
+                # Filter out entries that don't have intermediary names
+                # https://github.com/FabricMC/fabric-loom/blob/6b7a0251db4fb9b8b37b81a71bf582aa1d993b3b/src/main/java/net/fabricmc/loom/configuration/providers/mappings/mojmap/MojangMappingLayer.java#L76
+                operations.append("changeSrc(intermediary, true)")
+                operations.append("changeSrc(official)")
                 operations.append("completeNamespace(named -> intermediary)")
         elif yarn:
             operations.append(">intermediary")
