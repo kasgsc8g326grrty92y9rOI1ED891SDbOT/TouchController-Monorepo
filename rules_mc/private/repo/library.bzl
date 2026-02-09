@@ -11,7 +11,7 @@ def _minecraft_library_repo_impl(rctx):
 
     if rctx.attr.extract:
         build_content = """package(default_visibility = ["//visibility:public"])
-load("@rules_mc//repo/extract_lib.bzl", "extract_lib")
+load("@rules_mc//private/rules:extract_lib.bzl", "extract_lib")
 
 extract_lib(
     name = "file",

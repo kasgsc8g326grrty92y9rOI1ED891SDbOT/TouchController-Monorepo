@@ -5116,7 +5116,7 @@
     },
     "@@rules_mc+//:extensions.bzl%minecraft": {
       "general": {
-        "bzlTransitiveDigest": "45IdMRrmiieAUAOaunN/OGI5Ebz+nglnvX4LmILiTgM=",
+        "bzlTransitiveDigest": "WPC+/fAzOzVhBrzU7/EvyExovfcnjnX5ZTSBPbl/Iu8=",
         "usagesDigest": "e4rWdFo88S61ZdW+Mln2hKWUVKLe4Pb9Rvhsr2yz4+Y=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
