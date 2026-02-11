@@ -1,7 +1,9 @@
 load("//rule:merge_library.bzl", "kt_merge_library", "merge_library_jar")
 load("//rule:remap_jar.bzl", "remap_jar")
 load("//rule/fabric:mod_json_jar.bzl", "fabric_mod_json_jar")
-load("//touchcontroller:properties.bzl", "touchcontroller_authors", "touchcontroller_contributors", "touchcontroller_description", "touchcontroller_homepage", "touchcontroller_issue_tracker", "touchcontroller_license", "touchcontroller_source", "touchcontroller_version")
+load("//touchcontroller:properties.bzl", "touchcontroller_authors", "touchcontroller_contributors", "touchcontroller_description", "touchcontroller_homepage", "touchcontroller_issue_tracker", "touchcontroller_license", "touchcontroller_source", "touchcontroller_version", "touchcontroller_fabric_libraries")
+load("//combine:properties.bzl", "combine_version", "combine_fabric_libraries")
+load("//rule/fabric:merge_jij.bzl", "fabric_merge_jij")
 
 fabric_mod_json_jar(
     name = "fabric_mod_json",
@@ -14,6 +16,7 @@ fabric_mod_json_jar(
         "${sources_page}": touchcontroller_source,
         "${issue_tracker}": touchcontroller_issue_tracker,
         "${description}": touchcontroller_description,
+        "${combine_version}": combine_version,
         '"mod_authors_array"': json.encode(touchcontroller_authors),
         '"mod_contributors_array"': json.encode(touchcontroller_contributors),
     },
@@ -102,6 +105,15 @@ remap_jar(
     mapping = "//game/1.21.11:game_merged_mapping",
     mixin = True,
     to_namespace = "intermediary",
+)
+
+fabric_merge_jij(
+    name = "fabric",
+    input = ":fabric_merged",
+    visibility = ["//visibility:public"],
+    deps = {
+        "//combine/backend/minecraft/1.21.11/fabric:fabric_merged": "combine:=",
+    } | touchcontroller_fabric_libraries | combine_fabric_libraries,
 )
 
 java_binary(

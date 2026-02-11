@@ -61,4 +61,5 @@ merge_library_jar(
         ":blackstone",
         ":vanilla_lib_unmerged",
     ],
+    visibility = ["//visibility:public"],
 )
