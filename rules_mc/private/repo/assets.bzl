@@ -69,15 +69,19 @@ def _minecraft_assets_repo_impl(rctx):
         )
         build_content += [
             "alias(",
-            '    name = "indexes_%s",' % version_id,
+            '    name = "index_%s",' % version_id,
             '    actual = "indexes/%s.json",' % version_manifest,
+            ")",
+            "alias(",
+            '    name = "version_%s",' % version_id,
+            '    actual = "versions/%s",' % version_id,
             ")",
             "filegroup(",
             '    name = "assets_%s",' % version_id,
             "    srcs = [",
-            '        ":indexes_%s",' % version_id,
+            '        ":index_%s",' % version_id,
             '        ":objects_%s",' % version_id,
-            '        "versions/%s",' % version_id,
+            '        ":version_%s",' % version_id,
             "    ],",
             ")",
         ]
