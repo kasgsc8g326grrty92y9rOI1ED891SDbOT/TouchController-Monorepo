@@ -7,6 +7,11 @@
     "authors": ["fifth_light"],
     "license": "${license}",
     "environment": "client",
+    "contact": {
+        "homepage": "${home_page}",
+        "sources": "${sources_page}",
+        "issues": "${issue_tracker}"
+    },
     "mixins": ["combine.mixins.json"],
     "depends": {
         "minecraft": "1.21.11",
