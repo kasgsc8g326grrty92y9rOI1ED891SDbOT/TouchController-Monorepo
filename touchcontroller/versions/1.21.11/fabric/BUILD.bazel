@@ -1,9 +1,9 @@
+load("//combine:properties.bzl", "combine_fabric_libraries", "combine_version")
 load("//rule:merge_library.bzl", "kt_merge_library", "merge_library_jar")
 load("//rule:remap_jar.bzl", "remap_jar")
-load("//rule/fabric:mod_json_jar.bzl", "fabric_mod_json_jar")
-load("//touchcontroller:properties.bzl", "touchcontroller_authors", "touchcontroller_contributors", "touchcontroller_description", "touchcontroller_homepage", "touchcontroller_issue_tracker", "touchcontroller_license", "touchcontroller_source", "touchcontroller_version", "touchcontroller_fabric_libraries")
-load("//combine:properties.bzl", "combine_version", "combine_fabric_libraries")
 load("//rule/fabric:merge_jij.bzl", "fabric_merge_jij")
+load("//rule/fabric:mod_json_jar.bzl", "fabric_mod_json_jar")
+load("//touchcontroller:properties.bzl", "touchcontroller_authors", "touchcontroller_contributors", "touchcontroller_description", "touchcontroller_fabric_libraries", "touchcontroller_homepage", "touchcontroller_issue_tracker", "touchcontroller_license", "touchcontroller_source", "touchcontroller_version")
 
 fabric_mod_json_jar(
     name = "fabric_mod_json",
@@ -28,6 +28,7 @@ remap_jar(
     from_namespace = "intermediary",
     inputs = [
         "@maven_fabric_1_21_11//:net_fabricmc_fabric_api_fabric_api",
+        "@maven_fabric_1_21_11//:com_terraformersmc_modmenu",
     ],
     mapping = "//game/1.21.11:game_merged_mapping",
     mixin = True,
@@ -37,7 +38,7 @@ remap_jar(
 )
 
 kt_merge_library(
-    name = "fabric_unmapped",
+    name = "fabric_unmapped_unmerged",
     srcs = glob([
         "**/*.kt",
         "**/*.java",
@@ -56,6 +57,7 @@ kt_merge_library(
         "//touchcontroller/common/gal/key",
         "//touchcontroller/common/layout/data",
         "//touchcontroller/common/model",
+        "//touchcontroller/common/ui/config/screen",
         "//touchcontroller/versions/1.21.11/extension",
         "//touchcontroller/versions/1.21.11/gal",
         "//touchcontroller/versions/1.21.11/mixin",
@@ -94,7 +96,7 @@ kt_merge_library(
 
 merge_library_jar(
     name = "fabric_unmapped_merged",
-    deps = [":fabric_unmapped"],
+    deps = [":fabric_unmapped_unmerged"],
 )
 
 remap_jar(
@@ -140,7 +142,7 @@ java_binary(
         "//game/1.21.11:game_client_libraries",
         # Classpath separator
         "//game/1.21.11:game_mapping_jar",
-        ":fabric_unmapped",
+        ":fabric_unmapped_unmerged",
         ":remapped_deps",
         "//combine/backend/minecraft/1.21.11/fabric:fabric_unmapped_merged",
         "//rule/dev_launch_wrapper",

@@ -17,6 +17,9 @@
     "entrypoints": {
         "client": [
             "top.fifthlight.touchcontroller.version_1_21_11.fabric.TouchController"
+        ],
+        "modmenu": [
+            "top.fifthlight.touchcontroller.version_1_21_11.fabric.TouchControllerModMenuApiImpl"
         ]
     },
     "mixins": [
