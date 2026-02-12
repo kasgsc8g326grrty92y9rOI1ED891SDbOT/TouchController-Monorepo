@@ -6,7 +6,7 @@
     "description": "${description}",
     "authors": ["fifth_light"],
     "license": "${license}",
-    "icon": "assets/combine/icon.png",
+    "icon": "icon.png",
     "contact": {
         "homepage": "${home_page}",
         "sources": "${sources_page}",

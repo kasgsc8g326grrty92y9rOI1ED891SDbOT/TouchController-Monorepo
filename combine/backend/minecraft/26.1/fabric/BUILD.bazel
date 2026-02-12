@@ -22,6 +22,7 @@ merge_library_jar(
     resources = {
         ":fabric_mod_json": ".",
         "//combine/backend/minecraft/26.1/game:access_widener": "combine/backend/minecraft/26.1/game",
+        "//combine/resources:icon": ".",
     },
     visibility = ["//visibility:public"],
     deps = [

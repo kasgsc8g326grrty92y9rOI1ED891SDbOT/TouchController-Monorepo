@@ -12,6 +12,7 @@
         "sources": "${sources_page}",
         "issues": "${issue_tracker}"
     },
+    "icon": "icon.png",
     "mixins": ["combine.mixins.json"],
     "depends": {
         "minecraft": "~26.1-",
