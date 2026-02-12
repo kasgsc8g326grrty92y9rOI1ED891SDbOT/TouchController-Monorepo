@@ -53,7 +53,7 @@ java_binary(
     },
     jvm_flags = [
         "-Dfabric.development=true",
-        "-Ddev.launch.version=26.1-snapshot-4",
+        "-Ddev.launch.version=26.1-snapshot-6",
         "-Ddev.launch.type=client",
         "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
         "-Ddev.launch.mainClass=net.fabricmc.loader.impl.launch.knot.KnotClient",
