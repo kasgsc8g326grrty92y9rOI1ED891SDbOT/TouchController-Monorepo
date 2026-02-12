@@ -20,6 +20,7 @@ def _game_version_impl(
         client_native_manifest,
         client_parchment,
         client_assets,
+        client_assets_version,
         client_libraries,
         server,
         server_legacy,
@@ -109,6 +110,13 @@ def _game_version_impl(
         native.alias(
             name = name + "_client_assets",
             actual = client_assets,
+            visibility = visibility,
+        )
+
+    if client_assets_version:
+        native.alias(
+            name = name + "_client_assets_version",
+            actual = client_assets_version,
             visibility = visibility,
         )
 
@@ -268,13 +276,13 @@ def _game_version_impl(
             remove_jar_in_jar = True,
         )
 
-    if client_assets and client_libraries:
+    if client_assets and client_assets_version and client_libraries:
         java_binary(
             name = vanilla_client,
             srcs = [],
             data = [
-                "@minecraft_assets//:assets",
                 client_assets,
+                client_assets_version,
             ] + [client_native_manifest] if client_native_manifest else [],
             env = {
                 "LANG": "en_US.UTF8",
@@ -282,7 +290,7 @@ def _game_version_impl(
             jvm_flags = [
                 "-Ddev.launch.version=%s" % version,
                 "-Ddev.launch.type=client",
-                "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
+                "-Ddev.launch.assetsVersion=$(rlocationpath %s)" % client_assets_version,
                 "-Ddev.launch.mainClass=%s" % ("net.minecraft.client.Minecraft" if client_legacy else "net.minecraft.client.main.Main"),
                 "-Ddev.launch.legacyAssets=%s" % ("true" if client_legacy_assets else "false"),
                 "-Ddev.launch.legacyHome=%s" % ("true" if client_legacy else "false"),
@@ -348,6 +356,11 @@ game_version = macro(
         "client_assets": attr.label(
             mandatory = False,
             doc = "Client assets for the game",
+            configurable = False,
+        ),
+        "client_assets_version": attr.label(
+            mandatory = False,
+            doc = "Client assets version file for the game",
             configurable = False,
         ),
         "client_libraries": attr.label(

@@ -2,6 +2,7 @@
 
 load("@rules_java//java/common:java_info.bzl", "JavaInfo")
 load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
+load("@bazel_lib//lib:windows_utils.bzl", "create_windows_native_launcher_script")
 load("//rule:merge_jar.bzl", "merge_jar_action")
 load("//rule:merge_library.bzl", "kt_merge_library")
 
@@ -166,41 +167,27 @@ def _maven_publish_impl(ctx):
     }
 
     if ctx.target_platform_has_constraint(ctx.attr._windows_constraint[platform_common.ConstraintValueInfo]):
-        output_executable = ctx.actions.declare_file(ctx.attr.name + ".bat")
-        output_script = ctx.actions.declare_file(ctx.attr.name + ".bash")
+        output_script = ctx.actions.declare_file(ctx.attr.name + ".sh")
         ctx.actions.expand_template(
             output = output_script,
             template = ctx.file._wrapper_template,
             substitutions = wrapper_substitutions,
             is_executable = True,
         )
-
-        sh_toolchain = ctx.toolchains[_SH_TOOLCHAIN_TYPE]
-        if not sh_toolchain or not sh_toolchain.path:
-            fail("No suitable shell toolchain found")
+        output_executable = create_windows_native_launcher_script(ctx, output_script)
 
         runfiles = ctx.runfiles(
             files = [
-                ctx.file._rlocation_library,
                 output_pom,
                 output_script,
-            ] + input_files,
+            ] + ctx.files._rlocation_library + input_files,
         ).merge(
             ctx.attr._maven_publisher_binary[DefaultInfo].default_runfiles,
         )
-
-        ctx.actions.write(
-            output = output_executable,
-            content = sh_toolchain.path + " -c 'PATH=/usr/local/bin:/usr/bin:/bin:/opt/bin:$PATH RUNFILES_MANIFEST_FILE=../%s.bat.runfiles_manifest ../" % ctx.attr.name + output_script.basename + "'",
-            is_executable = True,
-        )
     else:
-        output_executable = ctx.actions.declare_file(ctx.attr.name + ".bash")
+        output_executable = ctx.actions.declare_file(ctx.attr.name + ".sh")
         runfiles = ctx.runfiles(
-            files = [
-                ctx.file._rlocation_library,
-                output_pom,
-            ] + input_files,
+            files = [output_pom] + ctx.files._rlocation_library + input_files,
         ).merge(
             ctx.attr._maven_publisher_binary[DefaultInfo].default_runfiles,
         )
@@ -271,8 +258,7 @@ maven_publish = rule(
             allow_single_file = [".bash"],
         ),
         "_rlocation_library": attr.label(
-            default = "@bazel_tools//tools/bash/runfiles",
-            allow_single_file = [".bash"],
+            default = "@rules_shell//shell/runfiles",
         ),
         "_windows_constraint": attr.label(
             default = "@platforms//os:windows",

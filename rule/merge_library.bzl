@@ -273,7 +273,7 @@ def _merge_library_jar_impl(ctx):
     )
 
     return [
-        JavaInfo(
+        _JavaInfo(
             output_jar = output_jar,
             compile_jar = output_jar,
             source_jar = ctx.outputs.sources_jar,

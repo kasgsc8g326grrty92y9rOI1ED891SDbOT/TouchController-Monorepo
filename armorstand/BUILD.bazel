@@ -95,8 +95,8 @@ java_binary(
     data = [
         "//blazerod/model/example-models",
         "//game/1.21.8:game_client_assets",
+        "//game/1.21.8:game_client_assets_version",
         "@makeup_ultra_fast//:primary",
-        "@minecraft_assets//:assets",
     ],
     env = {
         "LANG": "en_US.UTF8",
@@ -106,7 +106,7 @@ java_binary(
         "-Dfabric.development=true",
         "-Ddev.launch.version=1.21.8",
         "-Ddev.launch.type=client",
-        "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
+        "-Ddev.launch.assetsVersion=$(rlocationpath //game/1.21.8:game_client_assets_version)",
         "-Ddev.launch.mainClass=net.fabricmc.loader.impl.launch.knot.KnotClient",
         "-Ddev.launch.copyFiles=" +
         "$(rlocationpath @makeup_ultra_fast//:primary):shaderpacks/MakeUp-UltraFast-9.2.zip," +

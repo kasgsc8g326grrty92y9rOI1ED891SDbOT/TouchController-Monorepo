@@ -4,6 +4,7 @@ game_version(
     name = "game",
     client = "@minecraft//b1.7.3:client",
     client_assets = "@minecraft_assets//:assets_b1.7.3",
+    client_assets_version = "@minecraft_assets//:version_b1.7.3",
     client_legacy = True,
     client_legacy_assets = True,
     client_libraries = "@minecraft//b1.7.3:client_libraries",

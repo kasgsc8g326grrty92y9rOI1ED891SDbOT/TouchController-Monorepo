@@ -4,6 +4,7 @@ load("@//private:maven_coordinate.bzl", _convert_maven_coordinate = "convert_mav
 load("@//private:pin_file.bzl", _parse_pin_file = "parse_pin_file")
 load("@//private:snake_case.bzl", _camel_case_to_snake_case = "camel_case_to_snake_case")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
+load("@rules_java//java:defs.bzl", "JavaInfo")
 
 _neoforge_repository_url = "https://maven.neoforged.net/releases"
 _minecraftforge_repository_url = "https://maven.minecraftforge.net/releases"
@@ -439,9 +440,11 @@ def _generate_function(rctx, version_info, java_target, data_paths, function_nam
     rule_impl = _generate_function_impl(function_name, rule_impl_name, jar_output, main_class, arg_entries, placeholder_types, output_entries)
     rule_def = _generate_function_definition(data_paths, function_name, rule_impl_name, jar_output, placeholder_types)
 
+    header = 'load("@rules_java//java:defs.bzl", "JavaInfo")'
+
     rctx.file(
         "functions/%s.bzl" % (function_name),
-        rule_impl + "\n" + "\n" + rule_def,
+        header + "\n" + rule_impl + "\n" + "\n" + rule_def,
     )
 
 def _convert_task_name(side, name):
