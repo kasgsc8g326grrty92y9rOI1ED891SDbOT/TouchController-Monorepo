@@ -144,8 +144,9 @@ def _extract_function_classpaths(rctx, function_name, function_jar):
         rctx.extract(
             archive = entry.path,
             output = extracted,
+            strip_prefix = "META-INF",
         )
-        manifest = rctx.read(extracted + "/META-INF/MANIFEST.MF")
+        manifest = rctx.read(extracted + "/MANIFEST.MF")
         main_class = _extract_main_class_from_manifest(manifest)
         break
     return main_class
