@@ -1,4 +1,6 @@
 {
+  "modmenu.descriptionTranslation.touchcontroller": "给 Java 版的 Minecraft 带来基岩版的操作方式！",
+
   "touchcontroller.warning.proxy_not_connected": "警告：代理未连接。TouchController 将被禁用。",
   "touchcontroller.warning.proxy_not_connected_android": "你正在使用 Android，但是启动器没有启动消息代理。如果你的启动器支持 TouchController，请启用它的相应支持；否则你应该更换支持 TouchController 的启动器。",
   "touchcontroller.warning.proxy_not_connected_linux": "TouchController 加载失败。可能的原因有：TouchController 动态库加载失败；你使用的是 X11，而 TouchController 仅支持 Wayland。请检查游戏日志以确认详情。",
@@ -27,7 +29,7 @@
   "touchcontroller.screen.config": "触摸设置…",
   "touchcontroller.screen.config.title": "触摸设置",
 
-  "touchcontroller.screen.config.precent": "%s：%s%%",
+
   "touchcontroller.screen.config.value": "%s：%s",
 
   "touchcontroller.screen.config.reset": "重置",
@@ -92,7 +94,7 @@
   "touchcontroller.screen.custom_control_layout.no_widget_selected": "选中一个控件以编辑属性",
   "touchcontroller.screen.custom_control_layout.copy": "复制控件",
   "touchcontroller.screen.custom_control_layout.cut": "剪切控件",
-  
+
   "touchcontroller.screen.custom_control_layout.widgets": "控件",
   "touchcontroller.screen.custom_control_layout.widgets.builtin": "内置控件",
   "touchcontroller.screen.custom_control_layout.widgets.preset": "模板控件",
@@ -106,7 +108,7 @@
   "touchcontroller.screen.custom_control_layout.widgets.edit_widget_preset.title": "编辑控件预设",
   "touchcontroller.screen.custom_control_layout.widgets.edit_widget_preset.save": "保存",
   "touchcontroller.screen.custom_control_layout.widgets.edit_widget_preset.cancel": "取消",
-  
+
   "touchcontroller.screen.custom_control_layout.layers": "图层",
   "touchcontroller.screen.custom_control_layout.layers.move_up": "上移",
   "touchcontroller.screen.custom_control_layout.layers.move_down": "下移",
@@ -151,7 +153,7 @@
   "touchcontroller.screen.layer_editor.custom_condition.name.placeholder": "自定义图层条件名称",
   "touchcontroller.screen.layer_editor.custom_condition.edit.ok": "确定",
   "touchcontroller.screen.layer_editor.custom_condition.edit.cancel": "取消",
-  
+
   "touchcontroller.screen.custom_control_layout.presets": "预设",
   "touchcontroller.screen.custom_control_layout.presets.move_up": "上移",
   "touchcontroller.screen.custom_control_layout.presets.move_down": "下移",
@@ -412,6 +414,5 @@
   "touchcontroller.widget.trigger.layer_condition.condition": "条件",
   "touchcontroller.widget.trigger.layer_condition.condition.empty": "空",
   "touchcontroller.widget.double_trigger.interval": "触发间隔",
-  "touchcontroller.widget.double_trigger.action": "触发行为",
-  "modmenu.descriptionTranslation.touchcontroller": "给 Java 版的 Minecraft 带来基岩版的操作方式！"
+  "touchcontroller.widget.double_trigger.action": "触发行为"
 }

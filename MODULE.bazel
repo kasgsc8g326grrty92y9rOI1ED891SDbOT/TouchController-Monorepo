@@ -60,7 +60,7 @@ archive_override(
     patch_strip = 1,
     patches = [
         "//third_party/rules_android_ndk/patches:fix-windows-path.patch",
-        "//third_party/rules_android_ndk/patches:load-rules-cc.patch"
+        "//third_party/rules_android_ndk/patches:load-rules-cc.patch",
     ],
     strip_prefix = "rules_android_ndk-0.1.3",
     url = "https://github.com/bazelbuild/rules_android_ndk/releases/download/v0.1.3/rules_android_ndk-v0.1.3.tar.gz",
@@ -133,6 +133,10 @@ include("//module/third_party:wayland.MODULE.bazel")
 include("//module/third_party:saba.MODULE.bazel")
 
 include("//module/third_party:fabric_loom.MODULE.bazel")
+
+# libraries
+
+include("//module:compose.MODULE.bazel")
 
 # projects
 include("//module:blazerod.MODULE.bazel")

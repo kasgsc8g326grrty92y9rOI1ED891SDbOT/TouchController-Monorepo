@@ -1,4 +1,6 @@
 {
+  "modmenu.descriptionTranslation.touchcontroller": "Портує стиль керування з Bedrock Edition до Java Edition",
+
   "touchcontroller.warning.proxy_not_connected": "Попередження: проксі не приєднано. TouchController буде вимкнено.",
   "touchcontroller.warning.proxy_not_connected_android": "Ви використовуєте Android, але проксі-сервер повідомлень запускача не ввімкнено. Якщо ваш запускач підтримує TouchController, увімкніть його; інакше вам слід підібрати запускач, який підтримує TouchController.",
   "touchcontroller.warning.proxy_not_connected_linux": "Не вдалося завантажити TouchController. Можливі причини: не вдалося завантажити динамічну бібліотеку TouchController; ви використовуєте X11, але TouchController наразі підтримує лише Wayland. Подробиці перевірте в журналі гри.",
@@ -87,12 +89,12 @@
   "touchcontroller.screen.custom_control_layout.edit_presets": "Редагувати пресети",
   "touchcontroller.screen.custom_control_layout.delete_widget": "Видалити віджет",
   "touchcontroller.screen.custom_control_layout.paste_widget": "Уставити віджет",
-  
+
   "touchcontroller.screen.custom_control_layout.properties": "Властивості",
   "touchcontroller.screen.custom_control_layout.no_widget_selected": "Виберіть віджет, щоб змінити його властивості.",
   "touchcontroller.screen.custom_control_layout.copy": "Копіювати віджет",
   "touchcontroller.screen.custom_control_layout.cut": "Вирізати віджет",
-  
+
   "touchcontroller.screen.custom_control_layout.widgets": "Віджети",
   "touchcontroller.screen.custom_control_layout.widgets.builtin": "Убудований",
   "touchcontroller.screen.custom_control_layout.widgets.preset": "Попереднє налаштування",
@@ -106,7 +108,7 @@
   "touchcontroller.screen.custom_control_layout.widgets.edit_widget_preset.title": "Редагувати пресет віджета",
   "touchcontroller.screen.custom_control_layout.widgets.edit_widget_preset.save": "Зберегти",
   "touchcontroller.screen.custom_control_layout.widgets.edit_widget_preset.cancel": "Скасувати",
-  
+
   "touchcontroller.screen.custom_control_layout.layers": "Шари",
   "touchcontroller.screen.custom_control_layout.layers.move_up": "Угору",
   "touchcontroller.screen.custom_control_layout.layers.move_down": "Униз",
@@ -151,7 +153,7 @@
   "touchcontroller.screen.layer_editor.custom_condition.name.placeholder": "Назва умови користувацького шару",
   "touchcontroller.screen.layer_editor.custom_condition.edit.ok": "Продовжити",
   "touchcontroller.screen.layer_editor.custom_condition.edit.cancel": "Скасувати",
-  
+
   "touchcontroller.screen.custom_control_layout.presets": "Пресети",
   "touchcontroller.screen.custom_control_layout.presets.move_up": "Угору",
   "touchcontroller.screen.custom_control_layout.presets.move_down": "Униз",
@@ -412,6 +414,5 @@
   "touchcontroller.widget.trigger.layer_condition.condition": "Умова",
   "touchcontroller.widget.trigger.layer_condition.condition.empty": "Порожній",
   "touchcontroller.widget.double_trigger.interval": "Інтервал запуску",
-  "touchcontroller.widget.double_trigger.action": "Запустити дію",
-  "modmenu.descriptionTranslation.touchcontroller": "Портує стиль керування з Bedrock Edition до Java Edition"
+  "touchcontroller.widget.double_trigger.action": "Запустити дію"
 }
