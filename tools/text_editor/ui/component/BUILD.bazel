@@ -6,7 +6,6 @@ kt_jvm_library(
     visibility = ["//tools/text_editor:__subpackages__"],
     deps = [
         "//:compose",
-        "//tools/text_editor/model",
         "//tools/text_editor/state",
         "@maven//:org_jetbrains_compose_foundation_foundation_desktop",
         "@maven//:org_jetbrains_compose_foundation_foundation_layout_desktop",
@@ -17,6 +16,5 @@ kt_jvm_library(
         "@maven//:org_jetbrains_compose_ui_ui_text_desktop",
         "@maven//:org_jetbrains_compose_ui_ui_unit_desktop",
         "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
-        "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
     ],
 )
