@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        game-version: [ "1.21.11", "26.1" ]
+        game-version: [ "1.21.11", "1.21.8" ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
