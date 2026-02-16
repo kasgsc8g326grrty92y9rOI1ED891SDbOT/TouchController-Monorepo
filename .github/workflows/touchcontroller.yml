@@ -1,5 +1,8 @@
 name: Build TouchController
-on: [ pull_request, push ]
+on:
+  push:
+  pull_request:
+  workflow_dispatch: 
 
 jobs:
   build:
